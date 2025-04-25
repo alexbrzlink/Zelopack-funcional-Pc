@@ -330,8 +330,7 @@ def get_recent_documents():
         
         # Documentos pendentes para revisão ou assinatura
         pending_reports = Report.query.filter(
-            Report.status == 'pendente',
-            Report.stage == 'validado'  # Fase de validação, precisa de assinatura
+            Report.status == 'pendente'
         ).order_by(
             Report.upload_date.desc()
         ).limit(5).all()
@@ -340,14 +339,34 @@ def get_recent_documents():
         recent_reports_dict = []
         for report in recent_reports:
             try:
-                recent_reports_dict.append(report.to_dict())
+                # Criar dicionário manualmente para evitar erros com novos campos
+                report_dict = {
+                    'id': report.id,
+                    'title': report.title,
+                    'description': report.description,
+                    'filename': report.filename,
+                    'category': report.category,
+                    'status': report.status,
+                    'upload_date': report.upload_date.strftime('%d/%m/%Y %H:%M') if report.upload_date else None
+                }
+                recent_reports_dict.append(report_dict)
             except Exception as e:
                 print(f"Erro ao converter relatório para dicionário: {e}")
         
         pending_reports_dict = []
         for report in pending_reports:
             try:
-                pending_reports_dict.append(report.to_dict())
+                # Criar dicionário manualmente para evitar erros com novos campos
+                report_dict = {
+                    'id': report.id,
+                    'title': report.title,
+                    'description': report.description,
+                    'filename': report.filename,
+                    'category': report.category,
+                    'status': report.status,
+                    'upload_date': report.upload_date.strftime('%d/%m/%Y %H:%M') if report.upload_date else None
+                }
+                pending_reports_dict.append(report_dict)
             except Exception as e:
                 print(f"Erro ao converter relatório pendente para dicionário: {e}")
         
@@ -366,22 +385,21 @@ def get_recent_documents():
 def get_recent_activities():
     """Obtém atividades recentes"""
     try:
-        # Esta função seria melhor implementada com um modelo 
-        # específico para logs, mas vamos simular usando laudos recentemente atualizados
-        
-        recent_activities = db.session.query(
-            Report, User
-        ).join(
-            User, User.id == Report.assigned_to
-        ).filter(
+        # Utilizar uma abordagem diferente: buscar apenas Reports e depois User
+        recent_reports = Report.query.filter(
             Report.assigned_to.isnot(None)
         ).order_by(
             Report.updated_date.desc()
         ).limit(10).all()
         
         activities = []
-        for report, user in recent_activities:
+        for report in recent_reports:
             try:
+                # Buscar usuário associado
+                user = User.query.get(report.assigned_to)
+                if not user:
+                    continue
+                
                 action = ""
                 if report.status == 'aprovado':
                     action = "aprovou"
