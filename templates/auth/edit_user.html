@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Editar Usuário</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                            {% for error in form.name.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        {% if current_user.role == 'admin' %}
+                        <div class="mb-3">
+                            {{ form.role.label(class="form-label") }}
+                            {{ form.role(class="form-select" + (" is-invalid" if form.role.errors else "")) }}
+                            {% for error in form.role.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            {{ form.is_active(class="form-check-input" + (" is-invalid" if form.is_active.errors else "")) }}
+                            {{ form.is_active.label(class="form-check-label") }}
+                            {% for error in form.is_active.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row mt-4">
+                            <div class="col d-flex justify-content-between">
+                                {% if current_user.role == 'admin' and current_user.id != user.id %}
+                                <a href="{{ url_for('auth.users') }}" class="btn btn-secondary">Voltar</a>
+                                {% else %}
+                                <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">Voltar</a>
+                                {% endif %}
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <strong>Nome de usuário:</strong> {{ user.username }}
+                            {% if user.last_login %}
+                            <br><strong>Último login:</strong> {{ user.last_login.strftime('%d/%m/%Y %H:%M') }}
+                            {% endif %}
+                        </small>
+                        <a href="{{ url_for('auth.change_password') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-key"></i> Alterar Senha
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

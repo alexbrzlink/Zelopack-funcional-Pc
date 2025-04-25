@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from flask import render_template, request, redirect, url_for, flash, jsonify, send_from_directory, current_app, abort
+from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 import uuid
 
@@ -12,6 +13,7 @@ from blueprints.reports import reports_bp
 from blueprints.reports.forms import ReportUploadForm, SearchForm
 
 @reports_bp.route('/')
+@login_required
 def index():
     """Página inicial do módulo de laudos."""
     recent_reports = Report.query.order_by(Report.upload_date.desc()).limit(10).all()
