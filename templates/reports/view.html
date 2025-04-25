@@ -76,6 +76,14 @@
                         <i class="fas fa-download"></i> Baixar Arquivo
                     </a>
                     
+                    <a href="{{ url_for('reports.print_report', id=report.id) }}" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-file-pdf"></i> Visualizar PDF
+                    </a>
+                    
+                    <a href="{{ url_for('reports.download_print_report', id=report.id) }}" class="btn btn-warning">
+                        <i class="fas fa-print"></i> Baixar PDF
+                    </a>
+                    
                     <form action="{{ url_for('reports.delete', id=report.id) }}" method="POST" class="d-inline">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" class="btn btn-danger delete-confirm">

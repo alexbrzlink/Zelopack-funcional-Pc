@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+<style>
+    .print-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .print-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #ccc;
+    }
+    
+    .print-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0d6efd;
+    }
+    
+    .print-subtitle {
+        font-size: 18px;
+        color: #6c757d;
+    }
+    
+    .print-body {
+        margin-bottom: 30px;
+    }
+    
+    .print-section {
+        margin-bottom: 20px;
+    }
+    
+    .print-footer {
+        margin-top: 50px;
+        padding-top: 20px;
+        border-top: 1px solid #ccc;
+        text-align: center;
+        font-size: 14px;
+        color: #6c757d;
+    }
+    
+    .print-actions {
+        margin: 30px 0;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .print-actions .btn {
+        min-width: 160px;
+    }
+    
+    @media print {
+        .print-actions, 
+        .navbar, 
+        .footer, 
+        .sidebar {
+            display: none !important;
+        }
+        
+        body {
+            font-size: 12pt;
+        }
+        
+        .print-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="print-container">
+    <div class="print-header">
+        <div class="print-title">Relatório de Laudo Técnico</div>
+        <div class="print-subtitle">Zelopack Indústria</div>
+    </div>
+    
+    <div class="print-body">
+        <div class="print-section">
+            <h3>Informações do Laudo #{{ report.id }}</h3>
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th style="width: 30%">Título</th>
+                                <td>{{ report.title }}</td>
+                            </tr>
+                            <tr>
+                                <th>Data do Laudo</th>
+                                <td>{{ report.report_date.strftime('%d/%m/%Y') if report.report_date else 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Fornecedor</th>
+                                <td>{{ report.supplier }}</td>
+                            </tr>
+                            <tr>
+                                <th>Categoria</th>
+                                <td>{{ report.category }}</td>
+                            </tr>
+                            <tr>
+                                <th>Número do Lote</th>
+                                <td>{{ report.batch_number or 'N/A' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="print-section">
+            <h3>Datas</h3>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Data de Fabricação</h5>
+                                    <p class="card-text fs-4">{{ report.manufacturing_date.strftime('%d/%m/%Y') if report.manufacturing_date else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Data de Validade</h5>
+                                    <p class="card-text fs-4">{{ report.expiration_date.strftime('%d/%m/%Y') if report.expiration_date else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Hora do Laudo</h5>
+                                    <p class="card-text fs-4">{{ report.report_time.strftime('%H:%M') if report.report_time else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="print-section">
+            <h3>Análises</h3>
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Parâmetro</th>
+                                <th>Laudo</th>
+                                <th>Laboratório</th>
+                                <th>Unidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>pH</th>
+                                <td>{{ report.ph or 'N/A' }}</td>
+                                <td>{{ report.lab_ph or 'N/A' }}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Brix</th>
+                                <td>{{ report.brix or 'N/A' }}</td>
+                                <td>{{ report.lab_brix or 'N/A' }}</td>
+                                <td>°Bx</td>
+                            </tr>
+                            <tr>
+                                <th>Acidez</th>
+                                <td>{{ report.acidity or 'N/A' }}</td>
+                                <td>{{ report.lab_acidity or 'N/A' }}</td>
+                                <td>g/100ml</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="print-section">
+            <h3>Validação Físico-Química</h3>
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-center py-3">
+                        <h4>Status: 
+                            {% if report.physicochemical_validation == "OK" %}
+                            <span class="badge bg-success">OK</span>
+                            {% else %}
+                            <span class="badge bg-danger">NÃO PADRÃO</span>
+                            {% endif %}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="print-section">
+            <h3>Rastreabilidade</h3>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Laudo Arquivado</h5>
+                                    <p class="card-text fs-4">
+                                        {% if report.report_archived %}
+                                        <span class="badge bg-success">Sim</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Não</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Microbiologia Coletada</h5>
+                                    <p class="card-text fs-4">
+                                        {% if report.microbiology_collected %}
+                                        <span class="badge bg-success">Sim</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Não</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Documento Físico</h5>
+                                    <p class="card-text fs-4">
+                                        {% if report.has_report_document %}
+                                        <span class="badge bg-success">Sim</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Não</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="print-section">
+            <h3>Aprovações</h3>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <p>_________________________</p>
+                            <p>Elaborado por</p>
+                            <p>Data: ___/___/___</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>_________________________</p>
+                            <p>Verificado por</p>
+                            <p>Data: ___/___/___</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>_________________________</p>
+                            <p>Aprovado por</p>
+                            <p>Data: ___/___/___</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="print-actions">
+        <button class="btn btn-primary" onclick="window.print()">
+            <i class="fas fa-print me-2"></i> Imprimir Relatório
+        </button>
+        <a href="{{ url_for('reports.download_print_report', id=report.id) }}" class="btn btn-success">
+            <i class="fas fa-download me-2"></i> Baixar PDF
+        </a>
+        <a href="{{ url_for('reports.view', id=report.id) }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i> Voltar ao Laudo
+        </a>
+    </div>
+    
+    <div class="print-footer">
+        <p>Relatório gerado em: {{ now.strftime('%d/%m/%Y %H:%M:%S') }}</p>
+        <p>ZELOPACK INDÚSTRIA - Sistema de Gerenciamento de Laudos</p>
+    </div>
+</div>
+{% endblock %}
