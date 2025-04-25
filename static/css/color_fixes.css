@@ -42,22 +42,30 @@ body {
 /* Logo ZELOPACK com destaque */
 .brand-zelopack {
     color: #FFFFFF !important; /* Branco vivo */
-    font-size: 1.8rem; /* Tamanho aumentado */
+    font-size: 2.2rem; /* Tamanho bem maior */
     font-weight: 800;
     letter-spacing: 0.5px;
     padding: 0.5rem 1rem;
     position: relative;
     font-family: 'Inter', sans-serif;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Glow efeito */
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Glow efeito mais forte */
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
 }
 
+.zelopack-logo-text {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
 .brand-zelopack i {
-    font-size: 1.6rem;
-    margin-right: 0.5rem;
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    font-size: 2rem; /* Ícone maior */
+    margin-right: 0.7rem;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
 }
 
 /* Hover efeito no logo */
@@ -121,17 +129,51 @@ body {
 
 /* Tema alternador - Design atualizado */
 .theme-toggle {
-    background: rgba(255, 255, 255, 0.15);
+    background: transparent;
     border: none;
     padding: 0.5rem 0.75rem;
     transition: all 0.3s ease;
-    border-radius: 6px;
+    border-radius: 50%;
     color: #ffffff !important;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle i {
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 .theme-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.25);
-    transform: translateY(-1px);
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: rotate(8deg);
+}
+
+.theme-toggle:hover i {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+}
+
+/* Esconde o texto do tema, mostra apenas o ícone */
+.theme-toggle #theme-text {
+    display: none;
+}
+
+/* Animação para a troca de ícones */
+@keyframes iconRotate {
+    0% { transform: rotate(0deg) scale(0.5); opacity: 0; }
+    100% { transform: rotate(360deg) scale(1); opacity: 1; }
+}
+
+.theme-toggle i {
+    animation: iconRotate 0.4s ease forwards;
 }
 
 /* Rodapé - Design 2025 */
