@@ -1,0 +1,4435 @@
+{
+  "arquivo": "./attached_assets/CALCULOS_LAB_RAFA.xlsx",
+  "planilhas": {
+    "PRODUÇÃO 200 ": {
+      "nome": "PRODUÇÃO 200 ",
+      "linhas": 23,
+      "colunas": 17,
+      "cabeçalhos": [
+        "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10",
+        "Unnamed: 11",
+        "Unnamed: 12",
+        "Unnamed: 13",
+        "Unnamed: 14",
+        "Unnamed: 15",
+        "Unnamed: 16"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 1): CÁLCULO DE ESTIMATIVA DE VOLUME DO TANQUE X PRODUÇÃO ",
+        "Possível cálculo (linha 3): DENSIDADE DO PRODUTO:",
+        "Possível cálculo (linha 4): PESO DO TANQUE KG (BLENDER)",
+        "Possível cálculo (linha 4): DESVIO EM UNIDADES DE PRODUTO ",
+        "Possível cálculo (linha 4): DESVIO EM LITROS DE PRODUTO "
+      ],
+      "amostra_dados": [
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": "CÁLCULO DE ESTIMATIVA DE VOLUME DO TANQUE X PRODUÇÃO ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": "LINHA ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "200ML",
+          "Unnamed: 6": "DENSIDADE DO PRODUTO:",
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 1.007,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": "STATUS ",
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": "PESO DO TANQUE KG (BLENDER)",
+          "Unnamed: 1": "Nº DO TANQUE ",
+          "Unnamed: 2": "Nº DA RECEITA",
+          "Unnamed: 3": "HORA INICIAL",
+          "Unnamed: 4": "HORA FINAL ",
+          "Unnamed: 5": "PRODUÇÃO  (TBA)",
+          "Unnamed: 6": "QUANTIDADE PRODUZIDA (REAL) INCLUINDO ENCHIMENTO DE LINHA -FIM DE ENVASE",
+          "Unnamed: 7": "QUANTIDADE ESPERADA A PRODUZIR (SEM PERDA) ",
+          "Unnamed: 8": "QUANTIDADE ESPERADA A PRODUZIR  (COM PERDA)",
+          "Unnamed: 9": "DESVIO EM UNIDADES DE PRODUTO ",
+          "Unnamed: 10": "DESVIO EM LITROS DE PRODUTO ",
+          "Unnamed: 11": "HORAS DE PRODUÇÃO POR TANQUE ",
+          "Unnamed: 12": "PRODUÇÃO (UNIDADES/HORA) ",
+          "Unnamed: 13": null,
+          "Unnamed: 14": "PRODUZIU A MAIS",
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 17253,
+          "Unnamed: 1": 610,
+          "Unnamed: 2": 1,
+          "Unnamed: 3": "14:27:00",
+          "Unnamed: 4": "19:00:00",
+          "Unnamed: 5": 83905,
+          "Unnamed: 6": 83905,
+          "Unnamed: 7": 85665.34260178749,
+          "Unnamed: 8": 83095.38232373387,
+          "Unnamed: 9": -2343.5948361469636,
+          "Unnamed: 10": -468.7189672293928,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": "VOLUME TEÓRICO FORMULADO (KG)",
+          "Unnamed: 15": null,
+          "Unnamed: 16": 100332.0
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 17510,
+          "Unnamed: 1": 620,
+          "Unnamed: 2": 2,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": 174884,
+          "Unnamed: 6": 90979,
+          "Unnamed: 7": 86941.41012909633,
+          "Unnamed: 8": 84333.16782522344,
+          "Unnamed: 9": 3405.1638530288037,
+          "Unnamed: 10": 681.0327706057608,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 10355,
+          "Unnamed: 1": 610,
+          "Unnamed: 2": 3,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": 230839,
+          "Unnamed: 6": 55955,
+          "Unnamed: 7": 51415.09433962264,
+          "Unnamed: 8": 49872.64150943396,
+          "Unnamed: 9": 4150.943396226423,
+          "Unnamed: 10": 830.1886792452847,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": "VOLUME REAL PRODUZIDO (KG)",
+          "Unnamed: 15": null,
+          "Unnamed: 16": 104014.84259999999
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 17255,
+          "Unnamed: 1": null,
+          "Unnamed: 2": 4,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": 320311,
+          "Unnamed: 6": 89472,
+          "Unnamed: 7": 85675.27308838133,
+          "Unnamed: 8": 83105.0148957299,
+          "Unnamed: 9": 3174.7765640516445,
+          "Unnamed: 10": 634.9553128103289,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 17259,
+          "Unnamed: 1": null,
+          "Unnamed: 2": 5,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": 407460,
+          "Unnamed: 6": 87149,
+          "Unnamed: 7": 85695.13406156901,
+          "Unnamed: 8": 83124.28003972194,
+          "Unnamed: 9": 848.0635551142186,
+          "Unnamed: 10": 169.61271102284374,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        }
+      ]
+    },
+    "PRODUÇÃO LITRO ": {
+      "nome": "PRODUÇÃO LITRO ",
+      "linhas": 23,
+      "colunas": 17,
+      "cabeçalhos": [
+        "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10",
+        "Unnamed: 11",
+        "Unnamed: 12",
+        "Unnamed: 13",
+        "Unnamed: 14",
+        "Unnamed: 15",
+        "Unnamed: 16"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 1): CÁLCULO DE ESTIMATIVA DE VOLUME DO TANQUE X PRODUÇÃO ",
+        "Possível cálculo (linha 3): DENSIDADE DO PRODUTO:",
+        "Possível cálculo (linha 4): PESO DO TANQUE KG (BLENDER)",
+        "Possível cálculo (linha 4): DESVIO EM UNIDADES DE PRODUTO (COM PERDA)",
+        "Possível cálculo (linha 4): DESVIO EM LITROS DE PRODUTO "
+      ],
+      "amostra_dados": [
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": "CÁLCULO DE ESTIMATIVA DE VOLUME DO TANQUE X PRODUÇÃO ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": "LINHA ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "1L",
+          "Unnamed: 6": "DENSIDADE DO PRODUTO:",
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 1.043,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": "STATUS ",
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": "PESO DO TANQUE KG (BLENDER)",
+          "Unnamed: 1": "Nº DO TANQUE ",
+          "Unnamed: 2": "Nº DA RECEITA",
+          "Unnamed: 3": "HORA INICIAL",
+          "Unnamed: 4": "HORA FINAL ",
+          "Unnamed: 5": "PRODUÇÃO  (TBA)",
+          "Unnamed: 6": "QUANTIDADE PRODUZIDA (REAL) INCLUINDO ENCHIMENTO DE LINHA -FIM DE ENVASE",
+          "Unnamed: 7": "QUANTIDADE ESPERADA A PRODUZIR (SEM PERDA) ",
+          "Unnamed: 8": "QUANTIDADE ESPERADA A PRODUZIR  (COM PERDA)",
+          "Unnamed: 9": "DESVIO EM UNIDADES DE PRODUTO (COM PERDA)",
+          "Unnamed: 10": "DESVIO EM LITROS DE PRODUTO ",
+          "Unnamed: 11": "HORAS DE PRODUÇÃO POR TANQUE ",
+          "Unnamed: 12": "PRODUÇÃO (UNIDADES/HORA) ",
+          "Unnamed: 13": null,
+          "Unnamed: 14": "PRODUZIU A MAIS",
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 25000,
+          "Unnamed: 1": 610,
+          "Unnamed: 2": 1,
+          "Unnamed: 3": "14:27:00",
+          "Unnamed: 4": "19:00:00",
+          "Unnamed: 5": 22818,
+          "Unnamed: 6": 24018,
+          "Unnamed: 7": 23969.319271332697,
+          "Unnamed: 8": 23250.239693192718,
+          "Unnamed: 9": -941.5148609779499,
+          "Unnamed: 10": -941.5148609779499,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": "VOLUME TEÓRICO FORMULADO (KG)",
+          "Unnamed: 15": null,
+          "Unnamed: 16": 175000.0
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 25000,
+          "Unnamed: 1": 620,
+          "Unnamed: 2": 2,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": 47878,
+          "Unnamed: 6": 25060,
+          "Unnamed: 7": 23969.319271332697,
+          "Unnamed: 8": 23250.239693192718,
+          "Unnamed: 9": 57.52636625119703,
+          "Unnamed: 10": 57.52636625119703,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 25000,
+          "Unnamed: 1": 610,
+          "Unnamed: 2": 3,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": 70935,
+          "Unnamed: 6": 23057,
+          "Unnamed: 7": 23969.319271332697,
+          "Unnamed: 8": 23250.239693192718,
+          "Unnamed: 9": -1862.8954937679773,
+          "Unnamed: 10": -1862.8954937679773,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": "VOLUME REAL FORMULADO  (KG)",
+          "Unnamed: 15": null,
+          "Unnamed: 16": 168421.0
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 25000,
+          "Unnamed: 1": null,
+          "Unnamed: 2": 4,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": 94780,
+          "Unnamed: 6": 23845,
+          "Unnamed: 7": 23969.319271332697,
+          "Unnamed: 8": 23250.239693192718,
+          "Unnamed: 9": -1107.382550335573,
+          "Unnamed: 10": -1107.382550335573,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        },
+        {
+          "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA ": 25000,
+          "Unnamed: 1": null,
+          "Unnamed: 2": 5,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": 118460,
+          "Unnamed: 6": 23680,
+          "Unnamed: 7": 23969.319271332697,
+          "Unnamed: 8": 23250.239693192718,
+          "Unnamed: 9": -1265.5800575263675,
+          "Unnamed: 10": -1265.5800575263675,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null
+        }
+      ]
+    },
+    "abaixar brix": {
+      "nome": "abaixar brix",
+      "linhas": 23,
+      "colunas": 6,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 3): CORREÇÃO DO BRIX                      (PARA DIMINUIR)",
+        "Possível cálculo (linha 5): VOLUME DO TANQUE NA RECEITA "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CORREÇÃO DO BRIX                      (PARA DIMINUIR)",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA!",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "VOLUME DO TANQUE NA RECEITA ",
+          "Unnamed: 4": 28000,
+          "Unnamed: 5": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "VOLUME DO TANQUE ATUAL ",
+          "Unnamed: 4": 25400,
+          "Unnamed: 5": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "BRIX ATUAL",
+          "Unnamed: 4": 10.9,
+          "Unnamed: 5": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "BRIX DESEJADO",
+          "Unnamed: 4": 10,
+          "Unnamed: 5": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "ACIDEZ ATUAL DO TQ",
+          "Unnamed: 4": 0.45,
+          "Unnamed: 5": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "ADICIONAR DE ÁGUA ",
+          "Unnamed: 4": 2286,
+          "Unnamed: 5": "KG"
+        }
+      ]
+    },
+    "BRIX CORRIGIDO": {
+      "nome": "BRIX CORRIGIDO",
+      "linhas": 9,
+      "colunas": 8,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 5): CÁLCULO DO BRIX CORRIGIDO DO PRODUTO "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": "CÁLCULO DO BRIX CORRIGIDO DO PRODUTO ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": "ACIDEZ DA AMOSTRA ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": 0.55,
+          "Unnamed: 7": "%"
+        },
+        {
+          "Unnamed: 0": "BRIX DA AMOSTRA",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": 10.0,
+          "Unnamed: 7": "%"
+        },
+        {
+          "Unnamed: 0": "ACIDEZ DA AMOSTRA ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": 10.11,
+          "Unnamed: 7": "%"
+        }
+      ]
+    },
+    "PESO BRUTO": {
+      "nome": "PESO BRUTO",
+      "linhas": 10,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 2): CÁLCULO DO PESO BRUTO - LINHA 200ML (SEM CANUDO)",
+        "Possível cálculo (linha 4): DENSIDADE DA AMOSTRA",
+        "Possível cálculo (linha 5): PESO BRUTO FINAL"
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CÁLCULO DO PESO BRUTO - LINHA 200ML (SEM CANUDO)",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "DENSIDADE DA AMOSTRA",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 1.006,
+          "Unnamed: 10": "g/ml"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO BRUTO FINAL",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 209.5,
+          "Unnamed: 10": "g"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CÁLCULO DO PESO BRUTO - LINHA 1.000ML (SEM TAMPA)",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "DENSIDADE DA AMOSTRA",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 1.006,
+          "Unnamed: 10": "g/ml"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO BRUTO FINAL",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 233.04,
+          "Unnamed: 10": "g"
+        }
+      ]
+    },
+    "MENU": {
+      "nome": "MENU",
+      "linhas": 14,
+      "colunas": 19,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10",
+        "Unnamed: 11",
+        "Unnamed: 12",
+        "Unnamed: 13",
+        "Unnamed: 14",
+        "Unnamed: 15",
+        "Unnamed: 16",
+        "Unnamed: 17",
+        "Unnamed: 18"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        },
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        },
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        },
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        },
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        },
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        },
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        },
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        },
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        },
+        {
+          "Unnamed: 0": null,
+          "MENU DE CÁLCULOS DE ROTINA PARA CONTROLE DE QUALIDADE DE BEBIDAS": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null,
+          "Unnamed: 15": null,
+          "Unnamed: 16": null,
+          "Unnamed: 17": null,
+          "Unnamed: 18": null
+        }
+      ]
+    },
+    "CORANTES": {
+      "nome": "CORANTES",
+      "linhas": 8,
+      "colunas": 14,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10",
+        "Unnamed: 11",
+        "Unnamed: 12",
+        "Unnamed: 13"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 2): CORREÇÃO DE CORANTES",
+        "Possível cálculo (linha 5): VOLUME DO TANQUE "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CORREÇÃO DE CORANTES",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "QUANTIDADE DE CORANTE NA RECEITA ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 5.91,
+          "Unnamed: 10": "KG",
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "VOLUME DO TANQUE ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 16660,
+          "Unnamed: 10": "KG",
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "QUANTIDADE DE CORANTE A SER ADICIONADO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 0.3547418967587035,
+          "Unnamed: 10": "KG",
+          "Unnamed: 11": "OU ",
+          "Unnamed: 12": 354.7418967587035,
+          "Unnamed: 13": "g"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "PARA BALANÇA DO FRACIONAMENTO ",
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": "PARA BALANÇA SEMI ANALÍTICA",
+          "Unnamed: 13": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PARA CORREÇÃO DE PRODUTOS LIFENESS, UTILIZAR A QUANTIDADE DE MIX DA RECEITA PARA PREENCHER A INFORMAÇÃO DE \"QUANTIDADE DE CORANTE NA RECEITA\". E, O RESULTADO ENCONTRADO NOS CAMPOS EM VERMELHO, DEVERÁ SER DIVIDIDO POR 100",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null
+        }
+      ]
+    },
+    "DENSIDADE": {
+      "nome": "DENSIDADE",
+      "linhas": 6,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 2): CÁLCULO DA DENSIDADE DO PRODUTO",
+        "Possível cálculo (linha 4): VOLUME DA PIPETA VOLUMÉTRICA UTILIZADA"
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CÁLCULO DA DENSIDADE DO PRODUTO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "VOLUME DA PIPETA VOLUMÉTRICA UTILIZADA",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 20.0,
+          "Unnamed: 10": "ml"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "VALOR OBTIDO NA BALANÇA ANALÍTICA",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 28.0,
+          "Unnamed: 10": "g"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "DENSIDADE DO PRODUTO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 1.4,
+          "Unnamed: 10": "g/ml"
+        }
+      ]
+    },
+    "RATIO": {
+      "nome": "RATIO",
+      "linhas": 6,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 2): CÁLCULO DO RATIO",
+        "Possível cálculo (linha 4): BRIX ANALISADO ",
+        "Possível cálculo (linha 5): ACIDEZ ANALISADA"
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CÁLCULO DO RATIO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "BRIX ANALISADO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 28.0,
+          "Unnamed: 10": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "ACIDEZ ANALISADA",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 1.84,
+          "Unnamed: 10": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "RATIO DA AMOSTRA",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 15.217391304347826,
+          "Unnamed: 10": "%"
+        }
+      ]
+    },
+    "RATIO - BRIX ": {
+      "nome": "RATIO - BRIX ",
+      "linhas": 14,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 2): CÁLCULO DO BRIX PELO RATIO",
+        "Possível cálculo (linha 4): BRIX CORRIGIDO ",
+        "Possível cálculo (linha 5): RATIO DO PRODUTO "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CÁLCULO DO BRIX PELO RATIO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "BRIX CORRIGIDO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 61.49,
+          "Unnamed: 10": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "RATIO DO PRODUTO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 13.17,
+          "Unnamed: 10": "-"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "ACIDEZ DA AMOSTRA ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 4.67,
+          "Unnamed: 10": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "BRIX DIRETO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 61.3966,
+          "Unnamed: 10": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "OU ",
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        }
+      ]
+    },
+    "RATIO - ACIDEZ": {
+      "nome": "RATIO - ACIDEZ",
+      "linhas": 7,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 2): CÁLCULO DA ACIDEZ PELO RATIO",
+        "Possível cálculo (linha 4): BRIX CORRIGIDO ",
+        "Possível cálculo (linha 5): RATIO DO PRODUTO "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CÁLCULO DA ACIDEZ PELO RATIO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "BRIX CORRIGIDO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 66.0,
+          "Unnamed: 10": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "RATIO DO PRODUTO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 15.82,
+          "Unnamed: 10": "-"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "BRIX DIRETO DA AMOSTRA",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 65.91656131479141,
+          "Unnamed: 10": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "ACIDEZ DA AMOSTRA ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 4.171934260429835,
+          "Unnamed: 10": "%"
+        }
+      ]
+    },
+    "Plan1": {
+      "nome": "Plan1",
+      "linhas": 20,
+      "colunas": 12,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10",
+        "Unnamed: 11"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 1): SE O VOLUME DO TQ ESTIVER MENOR DO QUE A RECEITA ",
+        "Possível cálculo (linha 1): SE O VOLUME DO TQ ESTIVER MAIOR DO QUE A RECEITA ",
+        "Possível cálculo (linha 2): VOLUME TQ RECEITA",
+        "Possível cálculo (linha 2): VOLUME TQ RECEITA",
+        "Possível cálculo (linha 3): VOLUME TQ ATUAL ",
+        "Possível cálculo (linha 3): VOLUME TQ ATUAL ",
+        "Possível cálculo (linha 4): BRIX DO TQ ",
+        "Possível cálculo (linha 4): BRIX DO TQ "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "SE O VOLUME DO TQ ESTIVER MENOR DO QUE A RECEITA ",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "SE O VOLUME DO TQ ESTIVER MAIOR DO QUE A RECEITA ",
+          "Unnamed: 10": null,
+          "Unnamed: 11": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "VOLUME TQ RECEITA",
+          "Unnamed: 3": 12000,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "VOLUME TQ RECEITA",
+          "Unnamed: 10": null,
+          "Unnamed: 11": 12000.0
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "VOLUME TQ ATUAL ",
+          "Unnamed: 3": 11500,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "VOLUME TQ ATUAL ",
+          "Unnamed: 10": null,
+          "Unnamed: 11": 12510.0
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "BRIX DO TQ ",
+          "Unnamed: 3": 10.6,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "BRIX DO TQ ",
+          "Unnamed: 10": null,
+          "Unnamed: 11": 15.0
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": 10.158333333333333,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": 15.182038834951456
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "BRIX MÍNIMO  DA RECEITA ",
+          "Unnamed: 3": 10.3,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "BRIX MÍNIMO  DA RECEITA ",
+          "Unnamed: 10": null,
+          "Unnamed: 11": 10.3
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "BRIX MÁXIMO DA RECEIA ",
+          "Unnamed: 3": 10.5,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "BRIX MÁXIMO DA RECEIA ",
+          "Unnamed: 10": null,
+          "Unnamed: 11": 10.5
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "ACIDEZ DO TQ ",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "ACIDEZ DO TQ ",
+          "Unnamed: 10": null,
+          "Unnamed: 11": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "ACIDEZ DA RECEITA ",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "ACIDEZ DA RECEITA ",
+          "Unnamed: 10": null,
+          "Unnamed: 11": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "VOLUME TQ +3%",
+          "Unnamed: 10": null,
+          "Unnamed: 11": 12360.0
+        }
+      ]
+    },
+    "ACIDEZ": {
+      "nome": "ACIDEZ",
+      "linhas": 7,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 2): CÁLCULO DA ACIDEZ DO PRODUTO ",
+        "Possível cálculo (linha 4): VOLUME GASTO DE HIDRÓXIDO DE SÓDIO 0,3125"
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CÁLCULO DA ACIDEZ DO PRODUTO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "VOLUME GASTO DE HIDRÓXIDO DE SÓDIO 0,3125",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 1.4,
+          "Unnamed: 10": "ml"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "QUANTIDADE AMOSTRA PESADA ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 10.12,
+          "Unnamed: 10": "g"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "RESULTADO DO PH NO EQUIPAMENTO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 8.2,
+          "Unnamed: 10": "-"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "ACIDEZ DA AMOSTRA ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 0.2766798418972332,
+          "Unnamed: 10": "%"
+        }
+      ]
+    },
+    "CÁLCULO DE SODA ": {
+      "nome": "CÁLCULO DE SODA ",
+      "linhas": 7,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 5): CONCENTRAÇÃO DESEJADA (GERALMENTE 15%)"
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PREPARO DE SODA PARA ANÁLISE DE SELAGEM TRANSVERSAL",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "QUANTIDADE FINAL DE SOLUÇÃO A SER PREPARADA",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 4.0,
+          "Unnamed: 10": "L"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CONCENTRAÇÃO DESEJADA (GERALMENTE 15%)",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 1.625,
+          "Unnamed: 10": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "QUANTIDADE DE SODA 50% A SER UTILIZADA ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 130.0,
+          "Unnamed: 10": "ml"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "ADICIONAR ÁGUA ATÉ COMPLETAR O VOLUME FINAL A SER PREPARADO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        }
+      ]
+    },
+    "VITC": {
+      "nome": "VITC",
+      "linhas": 5,
+      "colunas": 10,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 4): VOLUME GASTO DE IODO (ML)",
+        "Possível cálculo (linha 5): CONCENTRAÇÃO DE VITAMINA C NO PRODUTO:"
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CÁLCULO DA VITAMINA C NO PRODUTO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "VOLUME GASTO DE IODO (ML)",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 3.8
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CONCENTRAÇÃO DE VITAMINA C NO PRODUTO:",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 66.88
+        }
+      ]
+    },
+    "SODA-ANTIGO": {
+      "nome": "SODA-ANTIGO",
+      "linhas": 5,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 4): VOLUME GASTO DE ÁCIDO CLORÍDRICO ",
+        "Possível cálculo (linha 5): CONCENTRAÇÃO DA SODA DA AMOSTRA "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CIP - CÁLCULO DA SODA - MÉTODO ANTIGO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "VOLUME GASTO DE ÁCIDO CLORÍDRICO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 0.0,
+          "Unnamed: 10": "ml"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CONCENTRAÇÃO DA SODA DA AMOSTRA ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 0.0,
+          "Unnamed: 10": "%"
+        }
+      ]
+    },
+    "SODA - DIVERSEY": {
+      "nome": "SODA - DIVERSEY",
+      "linhas": 5,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 5): CONCENTRAÇÃO DA SODA DA AMOSTRA "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CIP - CÁLCULO DA SODA - MÉTODO DIVERSEY",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "QUANTIDADE DE ÁCIDO CLORÍDRICO GASTO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 24.0,
+          "Unnamed: 10": "GOTAS"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CONCENTRAÇÃO DA SODA DA AMOSTRA ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 3.2245999999999997,
+          "Unnamed: 10": "%"
+        }
+      ]
+    },
+    "ACIDO - DIVERSEY": {
+      "nome": "ACIDO - DIVERSEY",
+      "linhas": 5,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 5): CONCENTRAÇÃO DO ÁCIDO DA AMOSTRA "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CIP - CÁLCULO DO ÁCIDO - MÉTODO DIVERSEY",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "QUANTIDADE DE ÁCIDO HIDRÓXIDO DE SÓDIO GASTO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 35.0,
+          "Unnamed: 10": "GOTAS"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CONCENTRAÇÃO DO ÁCIDO DA AMOSTRA ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 3.9623999999999997,
+          "Unnamed: 10": "%"
+        }
+      ]
+    },
+    "ACIDO-ANTIGO": {
+      "nome": "ACIDO-ANTIGO",
+      "linhas": 5,
+      "colunas": 11,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 4): VOLUME GASTO DE HIDRÓXIDO DE SÓDIO ",
+        "Possível cálculo (linha 5): CONCENTRAÇÃO DA SODA DA AMOSTRA"
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CIP - CÁLCULO DO ÁCIDO - MÉTODO ANTIGO",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "VOLUME GASTO DE HIDRÓXIDO DE SÓDIO ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 0.0,
+          "Unnamed: 10": "ml"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "CONCENTRAÇÃO DA SODA DA AMOSTRA",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 0.0,
+          "Unnamed: 10": "%"
+        }
+      ]
+    },
+    "VITAMINA C": {
+      "nome": "VITAMINA C",
+      "linhas": 10,
+      "colunas": 6,
+      "cabeçalhos": [
+        "CORREÇÃO DE VITAMINA C NO TANQUE",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (coluna): CORREÇÃO DE VITAMINA C NO TANQUE",
+        "Possível cálculo (linha 3): VOLUME DO TANQUE "
+      ],
+      "amostra_dados": [
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDAS",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": "VOLUME DO TANQUE ",
+          "Unnamed: 1": 10000.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": "RESULTADO VIT. C DA AMOSTRA (ANALISADA) ",
+          "Unnamed: 1": 10.0,
+          "Unnamed: 2": "mg/200ML",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": "QUANTIDADE ESPERADA DE VITAMINA C NO TQ",
+          "Unnamed: 1": 45.0,
+          "Unnamed: 2": "mg/200ML",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": 3.5,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CORREÇÃO DE VITAMINA C NO TANQUE": "ACRESCENTAR NO TANQUE",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "KG DE ÁCIDO ASCÓRBICO "
+        }
+      ]
+    },
+    "SABER PERDA DE BASE": {
+      "nome": "SABER PERDA DE BASE",
+      "linhas": 17,
+      "colunas": 6,
+      "cabeçalhos": [
+        "CÁLCULO DE PERDA DE BASE",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 3): ACIDEZ ATUAL DO TANQUE ",
+        "Possível cálculo (linha 4): VOLUME ATUAL DO TANQUE ",
+        "Possível cálculo (linha 5): ACIDEZ DA BASE PRINCIPAL UTILIZADA "
+      ],
+      "amostra_dados": [
+        {
+          "CÁLCULO DE PERDA DE BASE": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDAS",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO DE PERDA DE BASE": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO DE PERDA DE BASE": "ACIDEZ ATUAL DO TANQUE ",
+          "Unnamed: 1": 0.23,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO DE PERDA DE BASE": "VOLUME ATUAL DO TANQUE ",
+          "Unnamed: 1": 29368.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO DE PERDA DE BASE": "ACIDEZ DA BASE PRINCIPAL UTILIZADA ",
+          "Unnamed: 1": 8.73,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO DE PERDA DE BASE": "QUANTIDADE DE BASE PRINCIPAL UTILIZADA ",
+          "Unnamed: 1": 660.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO DE PERDA DE BASE": "QUANTIDADE DE ÁCIDO CÍTRICO DA RECEITA ",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO DE PERDA DE BASE": "QUANTIDADE DE ÁCIDO ASCÓRBICO ",
+          "Unnamed: 1": 10.042,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO DE PERDA DE BASE": "QUANTIDADE DE ÁCIDO FOSFÓRICO ",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO DE PERDA DE BASE": "QUANTIDADE DE BASE SECUNDÁRIA ",
+          "Unnamed: 1": 660.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        }
+      ]
+    },
+    "QNT DE AÇUCAR PUXAR": {
+      "nome": "QNT DE AÇUCAR PUXAR",
+      "linhas": 6,
+      "colunas": 5,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 4):  BRIX DO AÇÚCAR QUE ESTÁ NA RECEITA",
+        "Possível cálculo (linha 5): BRIX DO AÇÚCAR QUE SERÁ UTILIZADO "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA!",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "PREVISÃO DE QUANTIDADE DE AÇUCAR A SER PUXADA ",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "QUANTIDADE DE AÇÚCAR DA RECEITA ",
+          "Unnamed: 3": 3500.0,
+          "Unnamed: 4": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": " BRIX DO AÇÚCAR QUE ESTÁ NA RECEITA",
+          "Unnamed: 3": 100.0,
+          "Unnamed: 4": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "BRIX DO AÇÚCAR QUE SERÁ UTILIZADO ",
+          "Unnamed: 3": 100.0,
+          "Unnamed: 4": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "QUANTIDADE DE AÇÚCAR TOTAL A PUXAR (KG)",
+          "Unnamed: 3": 3500.0,
+          "Unnamed: 4": "KG"
+        }
+      ]
+    },
+    "AUMENTAR BRIX AÇÚCAR BATIDO ": {
+      "nome": "AUMENTAR BRIX AÇÚCAR BATIDO ",
+      "linhas": 17,
+      "colunas": 7,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 3): CORREÇÃO DO BRIX USANDO AÇÚCAR BATIDO                    (PARA AUMENTAR)",
+        "Possível cálculo (linha 4): VOLUME DO TANQUE NA RECEITA",
+        "Possível cálculo (linha 5): VOLUME DO TANQUE ATUAL "
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA!",
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": "CORREÇÃO DO BRIX USANDO AÇÚCAR BATIDO                    (PARA AUMENTAR)",
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": "VOLUME DO TANQUE NA RECEITA",
+          "Unnamed: 5": 10000,
+          "Unnamed: 6": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": "VOLUME DO TANQUE ATUAL ",
+          "Unnamed: 5": 9000,
+          "Unnamed: 6": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": "BRIX ATUAL ",
+          "Unnamed: 5": 1.1,
+          "Unnamed: 6": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": "BRIX DESEJADO ",
+          "Unnamed: 5": 1.7,
+          "Unnamed: 6": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": "BRIX DO AÇUCAR CRISTAL BATIDO ",
+          "Unnamed: 5": 50,
+          "Unnamed: 6": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": "ADICIONAR DE AÇÚCAR BATIDO  (KG) :",
+          "Unnamed: 5": 142,
+          "Unnamed: 6": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        }
+      ]
+    },
+    "previsao brix": {
+      "nome": "previsao brix",
+      "linhas": 14,
+      "colunas": 6,
+      "cabeçalhos": [
+        "PREVISÃO DO BRIX DA FORMULAÇÃO",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (coluna): PREVISÃO DO BRIX DA FORMULAÇÃO",
+        "Possível cálculo (linha 3): VOLUME FINAL DO TANQUE ",
+        "Possível cálculo (linha 4): BRIX DA BASE PRINCIPAL UTILIZADA "
+      ],
+      "amostra_dados": [
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDAS",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": "VOLUME FINAL DO TANQUE ",
+          "Unnamed: 1": 29710.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": "BRIX DA BASE PRINCIPAL UTILIZADA ",
+          "Unnamed: 1": 30.0,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": "QUANTIDADE DE BASE PRINCIPAL UTILIZADA ",
+          "Unnamed: 1": 660.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": "QUANTIDADE DE ÁCIDO CÍTRICO DA RECEITA ",
+          "Unnamed: 1": 61.439,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": "QUANTIDADE DE ÁCIDO ASCÓRBICO ",
+          "Unnamed: 1": 10.095,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": "QUANTIDADE DE NÃO ALCOÓLICO ",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": "UN.",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": "QUANTIDADE DE BASE SECUNDÁRIA ",
+          "Unnamed: 1": 55.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DO BRIX DA FORMULAÇÃO": "BRIX DA BASE SECUNDÁRIA ",
+          "Unnamed: 1": 28.0,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        }
+      ]
+    },
+    "PREVISAO ACIDEZ": {
+      "nome": "PREVISAO ACIDEZ",
+      "linhas": 14,
+      "colunas": 6,
+      "cabeçalhos": [
+        "PREVISÃO DA ACIDEZ DA FORMULAÇÃO",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (coluna): PREVISÃO DA ACIDEZ DA FORMULAÇÃO",
+        "Possível cálculo (linha 3): VOLUME FINAL DO TANQUE ",
+        "Possível cálculo (linha 4): ACIDEZ DA BASE PRINCIPAL UTILIZADA "
+      ],
+      "amostra_dados": [
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDAS",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": "VOLUME FINAL DO TANQUE ",
+          "Unnamed: 1": 29710.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": "ACIDEZ DA BASE PRINCIPAL UTILIZADA ",
+          "Unnamed: 1": 0.67,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": "QUANTIDADE DE BASE PRINCIPAL UTILIZADA ",
+          "Unnamed: 1": 660.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": "QUANTIDADE DE ÁCIDO CÍTRICO DA RECEITA ",
+          "Unnamed: 1": 61.439,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": "QUANTIDADE DE ÁCIDO ASCÓRBICO ",
+          "Unnamed: 1": 10.095,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": "QUANTIDADE DE ÁCIDO FOSFÓRICO ",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": "QUANTIDADE DE BASE SECUNDÁRIA ",
+          "Unnamed: 1": 0.98,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "PREVISÃO DA ACIDEZ DA FORMULAÇÃO": "ACIDEZ DA BASE SECUNDÁRIA ",
+          "Unnamed: 1": 55.0,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        }
+      ]
+    },
+    "TEMPO DE FINALIZAÇÃO (ok) ": {
+      "nome": "TEMPO DE FINALIZAÇÃO (ok) ",
+      "linhas": 13,
+      "colunas": 13,
+      "cabeçalhos": [
+        "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10",
+        "Unnamed: 11",
+        "Unnamed: 12"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 2): VOLUME ATUAL DO TANQUE (kg)"
+      ],
+      "amostra_dados": [
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null
+        },
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": "VOLUME ATUAL DO TANQUE (kg)",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": 14000,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": "O TANQUE IRÁ FINALIZAR ÁS:",
+          "Unnamed: 12": null
+        },
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null
+        },
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null
+        },
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null
+        },
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": "HORÁRIO ATUAL(hh:mm)",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "2025-03-01T05:43:30.280000",
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": "2025-03-01T08:34:14.182000",
+          "Unnamed: 12": null
+        },
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null
+        },
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null
+        },
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null
+        },
+        {
+          "ESTIMATIVA DE FINALIZAÇÃO DE TANQUE ": "LINHA ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "200ML",
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": 2.8455284552845526,
+          "Unnamed: 12": 2.8455284552845526
+        }
+      ]
+    },
+    "AUMENTAR  ACIDEZ (ok)": {
+      "nome": "AUMENTAR  ACIDEZ (ok)",
+      "linhas": 22,
+      "colunas": 6,
+      "cabeçalhos": [
+        "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (coluna): CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)",
+        "Possível cálculo (linha 3): VOLUME ATUAL DO TANQUE ",
+        "Possível cálculo (linha 4): VOLUME FINAL DO TANQUE ",
+        "Possível cálculo (linha 5): ACIDEZ ATUAL- (ANALISADA)"
+      ],
+      "amostra_dados": [
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDAS",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": "VOLUME ATUAL DO TANQUE ",
+          "Unnamed: 1": 25974.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": "VOLUME FINAL DO TANQUE ",
+          "Unnamed: 1": 14500.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": "ACIDEZ ATUAL- (ANALISADA)",
+          "Unnamed: 1": 0.4,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": "ACIDEZ FINAL DESEJADA (%)",
+          "Unnamed: 1": 0.45,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": "BRIX ATUAL (ANALISADO) ",
+          "Unnamed: 1": 7.5,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (AUMENTAR)": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null
+        }
+      ]
+    },
+    "DIMINUIR ACIDEZ": {
+      "nome": "DIMINUIR ACIDEZ",
+      "linhas": 20,
+      "colunas": 8,
+      "cabeçalhos": [
+        "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (coluna): CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)",
+        "Possível cálculo (linha 3): VOLUME ATUAL DO TANQUE ",
+        "Possível cálculo (linha 4): VOLUME FINAL DO TANQUE ",
+        "Possível cálculo (linha 5): ACIDEZ ATUAL (ANALISADA) "
+      ],
+      "amostra_dados": [
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDAS",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": "VOLUME ATUAL DO TANQUE ",
+          "Unnamed: 1": 16600.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": "VOLUME FINAL DO TANQUE ",
+          "Unnamed: 1": 16600.0,
+          "Unnamed: 2": "KG",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": "ACIDEZ ATUAL (ANALISADA) ",
+          "Unnamed: 1": 0.3,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": "ACIDEZ FINAL DESEJADA ",
+          "Unnamed: 1": 0.28,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": "BRIX ATUAL  (ANALISADO) ",
+          "Unnamed: 1": 10.6,
+          "Unnamed: 2": "%",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": 17785.714285714283,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "CÁLCULO PARA CORREÇÃO DE ACIDEZ (DIMINUIR)": "COMPLETAR O TANQUE COM ÁGUA ATÉ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "KGs ",
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        }
+      ]
+    },
+    "CORREÇÃO DE BRIX ": {
+      "nome": "CORREÇÃO DE BRIX ",
+      "linhas": 18,
+      "colunas": 5,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 5): CORREÇÃO DO BRIX USANDO AÇÚCAR LÍQUIDO    (77º)                         (PARA AUMENTAR)"
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "CORREÇÃO DO BRIX USANDO AÇÚCAR LÍQUIDO    (77º)                         (PARA AUMENTAR)",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "VOLUME DO TANQUE ATUAL ",
+          "Unnamed: 3": 15927,
+          "Unnamed: 4": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "VOLUME DO TANQUE FINAL (RECEITA)",
+          "Unnamed: 3": 16894,
+          "Unnamed: 4": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "BRIX ATUAL ",
+          "Unnamed: 3": 3.1,
+          "Unnamed: 4": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "BRIX DESEJADO  ",
+          "Unnamed: 3": 3.2,
+          "Unnamed: 4": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "ADICIONAR DE AÇÚCAR LÍQUIDO",
+          "Unnamed: 3": 699.1657533835881,
+          "Unnamed: 4": "KG"
+        }
+      ]
+    },
+    "CONV - CRISTAL LIQ": {
+      "nome": "CONV - CRISTAL LIQ",
+      "linhas": 10,
+      "colunas": 7,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "CONVERSÃO DE AÇÚCAR CRISTAL PARA AÇÚCAR LÍQUIDO ",
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA!",
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "QUANTIDADE DE AÇÚCAR CRISTAL DA RECEITA (KG)           ",
+          "Unnamed: 6": 1000.0
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": "ADICIONAR DE AÇÚCAR LÍQUIDO (KG)  ",
+          "Unnamed: 6": 1315.7894736842106
+        }
+      ]
+    },
+    "CORREÇÃO AÇÚCAR CRISTAL": {
+      "nome": "CORREÇÃO AÇÚCAR CRISTAL",
+      "linhas": 18,
+      "colunas": 5,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (linha 5): CORREÇÃO DO BRIX USANDO AÇÚCAR CRISTAL                             (PARA AUMENTAR)"
+      ],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "CORREÇÃO DO BRIX USANDO AÇÚCAR CRISTAL                             (PARA AUMENTAR)",
+          "Unnamed: 3": null,
+          "Unnamed: 4": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "VOLUME DO TANQUE ATUAL ",
+          "Unnamed: 3": 20000,
+          "Unnamed: 4": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "VOLUME DO TANQUE FINAL (RECEITA)",
+          "Unnamed: 3": 24000,
+          "Unnamed: 4": "KG"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "BRIX ATUAL ",
+          "Unnamed: 3": 10.2,
+          "Unnamed: 4": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "BRIX DESEJADO  ",
+          "Unnamed: 3": 10.8,
+          "Unnamed: 4": "%"
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": "ADICIONAR DE AÇÚCAR CRISTAL ",
+          "Unnamed: 3": 2583.5000000000005,
+          "Unnamed: 4": "KG"
+        }
+      ]
+    },
+    "CONVERSAO LIQ - CRIS": {
+      "nome": "CONVERSAO LIQ - CRIS",
+      "linhas": 8,
+      "colunas": 8,
+      "cabeçalhos": [
+        "Unnamed: 0",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [],
+      "amostra_dados": [
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA!",
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": "CONVERSÃO DE AÇÚCAR LÍQUIDO PARA AÇÚCAR CRISTAL ",
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": "QUANTIDADE DE AÇÚCAR LÍQUIDO DA RECEITA (KG)          ",
+          "Unnamed: 7": 1200.0
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "Unnamed: 0": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": "ADICIONAR DE AÇÚCAR CRISTAL (KG)  ",
+          "Unnamed: 7": 912.0
+        }
+      ]
+    },
+    "PESO LIQUIDO 200": {
+      "nome": "PESO LIQUIDO 200",
+      "linhas": 12,
+      "colunas": 8,
+      "cabeçalhos": [
+        "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (coluna): PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML",
+        "Possível cálculo (linha 4): PESO LÍQUIDO 1 ",
+        "Possível cálculo (linha 5): PESO LÍQUIDO 2"
+      ],
+      "amostra_dados": [
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO A UNIDADE DE MEDIDA",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": "AMOSTRA 1 (g)",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO LÍQUIDO 1 ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": -7.830188679245209
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": "AMOSTRA 2 (g)",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO LÍQUIDO 2",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": -7.830188679245209
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": "DENSIDADE DO PRODUTO ",
+          "Unnamed: 1": 1.06000000000001,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": "TARA DA EMBALAGEM  S/ CANUDO (g)",
+          "Unnamed: 1": 8.3,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": "AMOSTRA 1 (g)",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO LÍQUIDO 1 ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": -9.03096903096903
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM 200 ML": "AMOSTRA 2 (g)",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO LÍQUIDO 2",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": -9.03096903096903
+        }
+      ]
+    },
+    "PESO LIQUIDO LITRO ": {
+      "nome": "PESO LIQUIDO LITRO ",
+      "linhas": 12,
+      "colunas": 8,
+      "cabeçalhos": [
+        "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [
+        "Possível cálculo (coluna): PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ",
+        "Possível cálculo (linha 4): PESO LÍQUIDO 1 ",
+        "Possível cálculo (linha 5): PESO LÍQUIDO 2"
+      ],
+      "amostra_dados": [
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO A UNIDADE DE MEDIDA",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": "AMOSTRA 1 (g)",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO LÍQUIDO 1 ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": -31.74476570289133
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": "AMOSTRA 2 (g)",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO LÍQUIDO 2",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": -31.74476570289133
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": "DENSIDADE DO PRODUTO ",
+          "Unnamed: 1": 1.003,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": "TARA DA EMBALAGEM  S/ TAMPA(g)",
+          "Unnamed: 1": 31.84,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": "AMOSTRA 1 (g)",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO LÍQUIDO 1 ",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": -34.37678401522327
+        },
+        {
+          "PESO LÍQUIDO - INSPEÇÃO DE EMBALAGEM LITRO ": "AMOSTRA 2 (g)",
+          "Unnamed: 1": 0.0,
+          "Unnamed: 2": null,
+          "Unnamed: 3": "PESO LÍQUIDO 2",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": -34.37678401522327
+        }
+      ]
+    },
+    "ZERAGEM DE EMBALAGEM": {
+      "nome": "ZERAGEM DE EMBALAGEM",
+      "linhas": 9,
+      "colunas": 15,
+      "cabeçalhos": [
+        "CÁLCULO PARA ZERAR EMBALAGEM ",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "Unnamed: 3",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "Unnamed: 6",
+        "Unnamed: 7",
+        "Unnamed: 8",
+        "Unnamed: 9",
+        "Unnamed: 10",
+        "Unnamed: 11",
+        "Unnamed: 12",
+        "Unnamed: 13",
+        "Unnamed: 14"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [],
+      "amostra_dados": [
+        {
+          "CÁLCULO PARA ZERAR EMBALAGEM ": "ATENÇÃO: PREENCHER SOMENTE OS ESPAÇOS AMARELOS, CONSIDERANDO AS UNIDADES DE MEDIDA",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null
+        },
+        {
+          "CÁLCULO PARA ZERAR EMBALAGEM ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": "NECESSÁRIO DE PRODUTO PARA ZERAR EMBALAGEM:",
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null
+        },
+        {
+          "CÁLCULO PARA ZERAR EMBALAGEM ": "QUANTIDADE DE EMBALAGEM  DISPONÍVEL PARA UTILIZAR ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": 15000,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": "UN",
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null
+        },
+        {
+          "CÁLCULO PARA ZERAR EMBALAGEM ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": 14000,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": "KG"
+        },
+        {
+          "CÁLCULO PARA ZERAR EMBALAGEM ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null
+        },
+        {
+          "CÁLCULO PARA ZERAR EMBALAGEM ": "QUANTIDADE DE PRODUTO NOS TQS ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": 1000,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": "KG",
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null
+        },
+        {
+          "CÁLCULO PARA ZERAR EMBALAGEM ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null
+        },
+        {
+          "CÁLCULO PARA ZERAR EMBALAGEM ": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": null,
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null
+        },
+        {
+          "CÁLCULO PARA ZERAR EMBALAGEM ": "VOLUME DA EMBALAGEM: ",
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "Unnamed: 3": null,
+          "Unnamed: 4": "1L",
+          "Unnamed: 5": null,
+          "Unnamed: 6": null,
+          "Unnamed: 7": "OBS: USAR OPÇÕES DE PREENCHIMENTO AUTOMÁTICO ",
+          "Unnamed: 8": null,
+          "Unnamed: 9": null,
+          "Unnamed: 10": null,
+          "Unnamed: 11": null,
+          "Unnamed: 12": null,
+          "Unnamed: 13": null,
+          "Unnamed: 14": null
+        }
+      ]
+    },
+    "DADOS": {
+      "nome": "DADOS",
+      "linhas": 60,
+      "colunas": 7,
+      "cabeçalhos": [
+        "DADOS",
+        "Unnamed: 1",
+        "Unnamed: 2",
+        "200ML",
+        "Unnamed: 4",
+        "Unnamed: 5",
+        "1"
+      ],
+      "tem_formulas": "Não verificado",
+      "possiveis_calculos": [],
+      "amostra_dados": [
+        {
+          "DADOS": null,
+          "Unnamed: 1": null,
+          "Unnamed: 2": null,
+          "200ML": "1L",
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.001
+        },
+        {
+          "DADOS": "TANQUE",
+          "Unnamed: 1": 600.0,
+          "Unnamed: 2": null,
+          "200ML": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.002
+        },
+        {
+          "DADOS": "TANQUE ",
+          "Unnamed: 1": 610.0,
+          "Unnamed: 2": null,
+          "200ML": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.003
+        },
+        {
+          "DADOS": null,
+          "Unnamed: 1": 620.0,
+          "Unnamed: 2": null,
+          "200ML": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.004
+        },
+        {
+          "DADOS": "RECEITA ",
+          "Unnamed: 1": 700.0,
+          "Unnamed: 2": null,
+          "200ML": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.005
+        },
+        {
+          "DADOS": "RECEITA ",
+          "Unnamed: 1": 710.0,
+          "Unnamed: 2": null,
+          "200ML": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.006
+        },
+        {
+          "DADOS": "RECEITA ",
+          "Unnamed: 1": 720.0,
+          "Unnamed: 2": null,
+          "200ML": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.007
+        },
+        {
+          "DADOS": "RECEITA ",
+          "Unnamed: 1": 300.0,
+          "Unnamed: 2": null,
+          "200ML": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.008
+        },
+        {
+          "DADOS": "RECEITA ",
+          "Unnamed: 1": 310.0,
+          "Unnamed: 2": null,
+          "200ML": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.009
+        },
+        {
+          "DADOS": "RECEITA ",
+          "Unnamed: 1": 6.0,
+          "Unnamed: 2": null,
+          "200ML": null,
+          "Unnamed: 4": null,
+          "Unnamed: 5": null,
+          "1": 1.01
+        }
+      ]
+    }
+  }
+}
