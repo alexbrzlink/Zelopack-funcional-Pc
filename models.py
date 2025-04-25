@@ -177,33 +177,53 @@ class Supplier(db.Model):
 class ReportTemplate(db.Model):
     """Modelo para templates de laudos."""
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    structure = db.Column(db.Text, nullable=False)  # JSON com a estrutura do template
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
+    template_file = db.Column(db.String(255), nullable=True)
+    file_path = db.Column(db.String(500), nullable=True)
+    structure = db.Column(db.Text, nullable=True)  # JSON com a estrutura do template
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    version = db.Column(db.String(20), default='1.0')
     is_active = db.Column(db.Boolean, default=True)
+    fields = db.Column(db.JSON, nullable=True)  # Para armazenar metadados sobre campos do template
     
     # Relações
-    creator = db.relationship('User', foreign_keys=[created_by], backref='created_templates')
+    category = db.relationship('Category', backref='report_templates')
+    creator = db.relationship('User', backref='created_templates')
     
     def __repr__(self):
         return f"<ReportTemplate {self.id}: {self.name}>"
     
     def to_dict(self):
         """Converte o template para dicionário."""
-        return {
+        data = {
             'id': self.id,
             'name': self.name,
             'description': self.description,
-            'structure': json.loads(self.structure) if self.structure else {},
+            'category_id': self.category_id,
+            'category_name': self.category.name if self.category else None,
             'created_by': self.created_by,
+            'creator_name': self.creator.name if self.creator else None,
             'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
             'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'version': self.version,
             'is_active': self.is_active,
-            'creator_name': self.creator.name if self.creator else None
+            'fields': self.fields
         }
+        
+        # Adicionar informações do arquivo se presentes
+        if self.template_file:
+            data['template_file'] = self.template_file
+            data['file_path'] = self.file_path
+            
+        # Adicionar estrutura se presente
+        if self.structure:
+            data['structure'] = json.loads(self.structure) if self.structure else {}
+            
+        return data
 
 
 class ReportAttachment(db.Model):
@@ -658,3 +678,72 @@ class DocumentAttachment(db.Model):
             'uploader_name': self.uploader.name if self.uploader else None,
             'upload_date': self.upload_date.strftime('%d/%m/%Y %H:%M')
         }
+
+
+# Modelo já definido anteriormente - removido para evitar duplicação
+
+
+class AutomaticReport(db.Model):
+    """Modelo para laudos gerados automaticamente a partir de templates."""
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    template_id = db.Column(db.Integer, db.ForeignKey('report_template.id'), nullable=False)
+    data = db.Column(db.JSON, nullable=False)  # Dados preenchidos do template
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    status = db.Column(db.String(50), default='draft')  # draft, review, approved, rejected
+    approved_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
+    generated_file = db.Column(db.String(255), nullable=True)  # Arquivo PDF gerado
+    file_path = db.Column(db.String(500), nullable=True)
+    
+    # Relações
+    template = db.relationship('ReportTemplate', backref='automatic_reports')
+    creator = db.relationship('User', foreign_keys=[created_by], backref='created_auto_reports')
+    approver = db.relationship('User', foreign_keys=[approved_by], backref='approved_auto_reports')
+    
+    def __repr__(self):
+        return f"<AutomaticReport {self.id}: {self.title}>"
+    
+    def to_dict(self):
+        """Converte o laudo automático para dicionário."""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'template_id': self.template_id,
+            'template_name': self.template.name if self.template else None,
+            'data': self.data,
+            'created_by': self.created_by,
+            'creator_name': self.creator.name if self.creator else None,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'status': self.status,
+            'approved_by': self.approved_by,
+            'approver_name': self.approver.name if self.approver else None,
+            'approved_at': self.approved_at.strftime('%d/%m/%Y %H:%M') if self.approved_at else None,
+            'generated_file': self.generated_file,
+            'file_path': self.file_path
+        }
+    
+    def get_status_label(self):
+        """Retorna um rótulo formatado para o status."""
+        status_map = {
+            'draft': 'Rascunho',
+            'review': 'Em Revisão',
+            'approved': 'Aprovado',
+            'rejected': 'Rejeitado'
+        }
+        return status_map.get(self.status, self.status)
+    
+    def get_status_badge(self):
+        """Retorna uma classe CSS para o status."""
+        status_map = {
+            'draft': 'secondary',
+            'review': 'info',
+            'approved': 'success',
+            'rejected': 'danger'
+        }
+        return status_map.get(self.status, 'primary')
