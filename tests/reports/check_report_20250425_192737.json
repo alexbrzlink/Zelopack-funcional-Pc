@@ -1,0 +1,980 @@
+{
+  "timestamp": "20250425_192737",
+  "issues": [
+    {
+      "file": "static/css/login.css",
+      "type": "code_quality",
+      "message": "Uso excessivo de unidades px (66 ocorr\u00eancias) vs unidades relativas (10 ocorr\u00eancias)",
+      "suggestion": "Prefira unidades relativas (rem, em, %) para melhor responsividade",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/login.css",
+      "type": "code_quality",
+      "message": "Seletores CSS muito complexos (1 ocorr\u00eancias)",
+      "suggestion": "Seletores muito longos s\u00e3o dif\u00edceis de manter e podem afetar o desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/login.css",
+      "type": "code_quality",
+      "message": "Propriedades CSS duplicadas: background",
+      "suggestion": "Propriedades duplicadas podem causar comportamento inesperado",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/login.css",
+      "type": "code_quality",
+      "message": "Propriedades CSS duplicadas: background",
+      "suggestion": "Propriedades duplicadas podem causar comportamento inesperado",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/animations.css",
+      "type": "code_quality",
+      "message": "Uso excessivo de unidades px (32 ocorr\u00eancias) vs unidades relativas (0 ocorr\u00eancias)",
+      "suggestion": "Prefira unidades relativas (rem, em, %) para melhor responsividade",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/tba_form.css",
+      "type": "code_quality",
+      "message": "Uso de 1 vendor prefixes",
+      "suggestion": "Considere usar autoprefixer ou uma ferramenta similar para gerenciar prefixos automaticamente",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/tba_form.css",
+      "type": "code_quality",
+      "message": "Seletores CSS muito complexos (2 ocorr\u00eancias)",
+      "suggestion": "Seletores muito longos s\u00e3o dif\u00edceis de manter e podem afetar o desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/modern_tables.css",
+      "type": "code_quality",
+      "message": "Seletores CSS muito complexos (1 ocorr\u00eancias)",
+      "suggestion": "Seletores muito longos s\u00e3o dif\u00edceis de manter e podem afetar o desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/calculos.css",
+      "type": "code_quality",
+      "message": "Uso de 16 vendor prefixes",
+      "suggestion": "Considere usar autoprefixer ou uma ferramenta similar para gerenciar prefixos automaticamente",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/calculos.css",
+      "type": "code_quality",
+      "message": "Seletores CSS muito complexos (2 ocorr\u00eancias)",
+      "suggestion": "Seletores muito longos s\u00e3o dif\u00edceis de manter e podem afetar o desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/theme.css",
+      "type": "code_quality",
+      "message": "Seletores CSS muito complexos (4 ocorr\u00eancias)",
+      "suggestion": "Seletores muito longos s\u00e3o dif\u00edceis de manter e podem afetar o desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/style.css",
+      "type": "code_quality",
+      "message": "Uso excessivo de !important (11 ocorr\u00eancias)",
+      "suggestion": "Evite usar !important; melhore a especificidade dos seletores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/style.css",
+      "type": "code_quality",
+      "message": "Uso de 4 vendor prefixes",
+      "suggestion": "Considere usar autoprefixer ou uma ferramenta similar para gerenciar prefixos automaticamente",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/css/style.css",
+      "type": "code_quality",
+      "message": "Seletores CSS muito complexos (5 ocorr\u00eancias)",
+      "suggestion": "Seletores muito longos s\u00e3o dif\u00edceis de manter e podem afetar o desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/search.js",
+      "type": "code_quality",
+      "message": "Uso de fun\u00e7\u00e3o an\u00f4nima tradicional",
+      "suggestion": "Considere usar arrow functions => para fun\u00e7\u00f5es an\u00f4nimas",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/login.js",
+      "type": "code_quality",
+      "message": "Uso de console.log() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Remova console.log() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/login.js",
+      "type": "code_quality",
+      "message": "Uso de fun\u00e7\u00e3o an\u00f4nima tradicional",
+      "suggestion": "Considere usar arrow functions => para fun\u00e7\u00f5es an\u00f4nimas",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/animations.js",
+      "type": "code_quality",
+      "message": "Uso de console.log() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Remova console.log() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/animations.js",
+      "type": "code_quality",
+      "message": "Uso de alert() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use componentes de UI mais modernos para notifica\u00e7\u00f5es",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/animations.js",
+      "type": "code_quality",
+      "message": "Uso de fun\u00e7\u00e3o an\u00f4nima tradicional",
+      "suggestion": "Considere usar arrow functions => para fun\u00e7\u00f5es an\u00f4nimas",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/animations.js",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es possivelmente duplicadas: hideLoading, showFlashMessage, showLoading",
+      "suggestion": "Remova ou renomeie fun\u00e7\u00f5es duplicadas",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/calculos.js",
+      "type": "code_quality",
+      "message": "Uso de console.log() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Remova console.log() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/calculos.js",
+      "type": "code_quality",
+      "message": "Uso de alert() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use componentes de UI mais modernos para notifica\u00e7\u00f5es",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/calculos.js",
+      "type": "code_quality",
+      "message": "Uso de fun\u00e7\u00e3o an\u00f4nima tradicional",
+      "suggestion": "Considere usar arrow functions => para fun\u00e7\u00f5es an\u00f4nimas",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/calculos_ultra.js",
+      "type": "code_quality",
+      "message": "Uso de console.log() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Remova console.log() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/calculos_ultra.js",
+      "type": "code_quality",
+      "message": "Uso de alert() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use componentes de UI mais modernos para notifica\u00e7\u00f5es",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/calculos_ultra.js",
+      "type": "code_quality",
+      "message": "Uso de fun\u00e7\u00e3o an\u00f4nima tradicional",
+      "suggestion": "Considere usar arrow functions => para fun\u00e7\u00f5es an\u00f4nimas",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/theme_manager.js",
+      "type": "code_quality",
+      "message": "Uso de fun\u00e7\u00e3o an\u00f4nima tradicional",
+      "suggestion": "Considere usar arrow functions => para fun\u00e7\u00f5es an\u00f4nimas",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/skeleton-loader.js",
+      "type": "code_quality",
+      "message": "Uso de fun\u00e7\u00e3o an\u00f4nima tradicional",
+      "suggestion": "Considere usar arrow functions => para fun\u00e7\u00f5es an\u00f4nimas",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/main.js",
+      "type": "code_quality",
+      "message": "Uso de 'var' em vez de let/const",
+      "suggestion": "Use 'const' para vari\u00e1veis que n\u00e3o mudam e 'let' para vari\u00e1veis que mudam",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "static/js/main.js",
+      "type": "code_quality",
+      "message": "Uso de fun\u00e7\u00e3o an\u00f4nima tradicional",
+      "suggestion": "Considere usar arrow functions => para fun\u00e7\u00f5es an\u00f4nimas",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "reset_report_table.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\nfrom sqlalchemy import text, create_engine\nfrom sqlalchemy.exc import SQLAlchemyError\n\n# Configurar logging\nlogging.basicConfig, db\n    import models\n    \n    with app.app_context",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "reset_report_table.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: reset_report_table (81 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "reset_report_table.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "setup.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: find_packages\nimport os\n\n# Obter a vers\u00e3o atual do arquivo",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "generate_icon.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: ImageFont\nimport os\n\ndef generate_icon",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "generate_icon.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: generate_icon (60 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "generate_icon.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "create_installer_images.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: ImageFont\nimport os\n\ndef create_installer_sidebar",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "create_installer_images.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: create_installer_sidebar (64 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "create_installer_images.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "package_all.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Path\n\nclass ZelopackPackager:\n    def __init__",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "package_all.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "zelopack_app.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: closing\n\n# Adicionar o diret\u00f3rio atual ao PATH para garantir importa\u00e7\u00f5es corretas\nsys.path.insert, app\n# Importar o arquivo main para inicializar rotas\ntry:\n    import main  # noqa\nexcept ImportError:\n    print",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "zelopack_app.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "check_admin.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: app, db\nfrom models import User\n\nwith app.app_context",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "check_admin.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "check_alex.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: app, db\nfrom models import User\nfrom werkzeug.security import generate_password_hash\n\nwith app.app_context",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "check_alex.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "login_as_alex.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: db\nfrom models import User\nfrom flask_login import login_user\nfrom datetime import datetime\n\n# Rota customizada para fazer login como o usu\u00e1rio Alex direto\ndef login_as_alex, url_for\n        from flask_login import login_user\n        \n        login_user, url_for\n        flash",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "login_as_alex.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "main.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: flash\nfrom flask_login import current_user, login_user\nfrom app import app, db\n\n@app.route, User\n    from datetime import datetime\n    \n    # Buscar o usu\u00e1rio Alex diretamente\n    user = User.query.filter_by",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "test_full_system.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: urljoin\nfrom bs4 import BeautifulSoup\n\n# Configura\u00e7\u00e3o de logging\nlogging.basicConfig",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "test_full_system.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: test_forms_listing (55 linhas), test_predefined_fields (58 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "update_db_schema.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\n\n# Adicionar o diret\u00f3rio atual ao path para importa\u00e7\u00f5es\nsys.path.append, db\nfrom sqlalchemy import text\n\ndef run_migration",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "update_db_schema.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "update_supplier_schema.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: text\nfrom sqlalchemy.exc import SQLAlchemyError\nimport logging\n\n# Configurar logging\nlogging.basicConfig",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "update_supplier_schema.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: update_supplier_schema (74 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "models.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\nfrom flask_login import UserMixin\nfrom werkzeug.security import generate_password_hash, check_password_hash\nfrom app import db\nimport json\nimport os\n\nclass Report, User\n            assigned_user = User.query.get, User\n            approved_user = User.query.get, url_for\n        return url_for, url_for\n        return url_for, url_for\n        return url_for",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "update_report_schema.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: sys, sqlalchemy, text\nfrom sqlalchemy.exc import OperationalError, ProgrammingError\nfrom app import app, db\n\ndef execute_sql",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "update_report_schema.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "fix_db.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: db\n\ndef fix_database",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "fix_db.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "extract_excel.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: pandas, Path\n\n# Classe customizada para serializa\u00e7\u00e3o JSON de objetos especiais\nclass CustomJSONEncoder",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "extract_excel.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "create_tables.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\n\n# Configurar logging\nlogging.basicConfig, app, db\n    import models\n\n    with app.app_context",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "create_tables.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "sync_database.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\nfrom sqlalchemy import text\n\n# Configurar logging\nlogging.basicConfig, db\n    import models\n\n    with app.app_context, create_engine\n            engine = create_engine",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "sync_database.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: sync_database (87 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "sync_database.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "app.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\n\nfrom flask import Flask, url_for\nfrom flask_sqlalchemy import SQLAlchemy\nfrom flask_login import LoginManager, current_user, login_user\nfrom flask_wtf.csrf import CSRFProtect\nfrom sqlalchemy.orm import DeclarativeBase\n\n# Configurar logging\nlogging.basicConfig, User\n    return User.query.get, User\n    from werkzeug.security import generate_password_hash, check_password_hash\n    \n    # Verificar se existe usu\u00e1rio admin\n    user = User.query.filter_by, User\n    \n    # Se n\u00e3o existir usu\u00e1rio, criamos um\n    if User.query.count, User\n    from werkzeug.security import generate_password_hash, check_password_hash\n    \n    # Verificar se existe usu\u00e1rio admin\n    total_users = User.query.count, Report\n    from werkzeug.security import generate_password_hash, reports_bp\nfrom blueprints.dashboard import dashboard_bp\nfrom blueprints.auth import auth_bp\nfrom blueprints.templates import templates_bp\nfrom blueprints.documents import documents_bp\nfrom blueprints.forms import forms_bp\nfrom blueprints.calculos import calculos_bp\n\napp.register_blueprint, editor_bp\napp.register_blueprint, inspect\n    from utils.error_handler import log_exception, handle_database_error\n    \n    # Criar tabelas do banco de dados\n    db.create_all",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "app.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: check_admin_user (114 linhas), login_direct (76 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "app.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "run_tests.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime, json",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "run_tests.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: run_ai_analysis (74 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "run_tests.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "auto_check.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: threading, Path\n\n# Configura\u00e7\u00f5es de logging\nlogging.basicConfig",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "auto_check.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: _check_html_content (57 linhas), apply_fixes (73 linhas), _display_summary (59 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "auto_check.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/reports/forms.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: FlaskForm\nfrom flask_wtf.file import FileField, FileRequired\nfrom wtforms import StringField, BooleanField\nfrom wtforms.validators import DataRequired, NumberRange\n\nclass ReportUploadForm",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/reports/routes.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\nfrom flask import render_template, abort, make_response\nfrom flask_login import login_required, current_user\nfrom werkzeug.utils import secure_filename\nimport uuid\nfrom reportlab.pdfgen import canvas\nfrom reportlab.lib.pagesizes import A4\nfrom reportlab.lib import colors\nfrom reportlab.platypus import SimpleDocTemplate, Image\nfrom reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle\nfrom reportlab.lib.units import mm, cm\n\nfrom app import db\nfrom models import Report, Supplier\nfrom utils.search import search_reports\nfrom utils.file_handler import save_file, get_file_size\nfrom blueprints.reports import reports_bp\nfrom blueprints.reports.forms import ReportUploadForm, SupplierForm\n\n\n# Definir fun\u00e7\u00e3o para gerar PDF do laudo\ndef generate_print_version",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/reports/routes.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: generate_print_version (227 linhas), upload (103 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/dashboard/routes.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: jsonify, request, send_file, flash\nfrom flask_login import login_required, current_user\nfrom sqlalchemy import func, desc, extract, case, and_\nfrom datetime import datetime, timedelta\nimport os\nimport json\nimport io\nimport base64\n\nfrom app import db\nfrom models import Report, Category, Supplier, User\nfrom blueprints.dashboard import dashboard_bp\nfrom utils.dashboard import",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/dashboard/routes.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: index (51 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/auth/__init__.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Blueprint\n\nauth_bp = Blueprint, routes",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/auth/__init__.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/auth/forms.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: FlaskForm\nfrom wtforms import StringField, SelectField\nfrom wtforms.validators import DataRequired",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/auth/routes.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\nfrom flask import render_template, jsonify\nfrom flask_login import login_user, login_required\nfrom urllib.parse import urlparse\n\nfrom app import db, csrf\nfrom models import User\nfrom blueprints.auth import auth_bp\nfrom blueprints.auth.forms import, generate_password_hash, check_password_hash\n    \n    # Se o usu\u00e1rio j\u00e1 est\u00e1 autenticado, redirecionar para a p\u00e1gina inicial\n    if current_user.is_authenticated:\n        return redirect",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/auth/routes.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: login (76 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/auth/routes.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/templates/forms.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: FlaskForm\nfrom flask_wtf.file import FileField, FileRequired\nfrom wtforms import StringField, FloatField\nfrom wtforms import SubmitField, IntegerField\nfrom wtforms.validators import DataRequired, ValidationError\nimport os\nimport json\n\n\nclass ImportTemplateForm",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/templates/__init__.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Blueprint\n\ntemplates_bp = Blueprint, routes",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/templates/__init__.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/templates/routes.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\nfrom flask import render_template, send_file\nfrom flask_login import login_required, current_user\nfrom sqlalchemy import desc\nfrom werkzeug.utils import secure_filename\nimport io\nimport pandas, ParagraphStyle\nfrom reportlab.platypus import SimpleDocTemplate, Spacer\n\nfrom . import templates_bp\nfrom app import db\nfrom blueprints.templates.forms import ImportTemplateForm, FillReportForm\nfrom models import ReportTemplate, ReportAttachment\n\n\n@templates_bp.route",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/templates/routes.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: fill_report (111 linhas), download_pdf (120 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/documents/__init__.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Blueprint\n\ndocuments_bp = Blueprint, routes",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/documents/__init__.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/documents/forms.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: FlaskForm\nfrom flask_wtf.file import FileField, FileRequired\nfrom wtforms import StringField, BooleanField\nfrom wtforms.validators import DataRequired, ValidationError\n\nclass DocumentForm",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/documents/routes.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: jsonify, abort\nfrom flask_login import login_required, current_user\nfrom sqlalchemy import desc, or_\nfrom werkzeug.utils import secure_filename\nimport os\nimport datetime\nfrom PIL import Image\nimport io\n\nfrom app import db\nfrom models import TechnicalDocument, User\nfrom blueprints.documents import documents_bp\nfrom blueprints.documents.forms import DocumentForm",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/documents/routes.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: new_version (110 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/__init__.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Blueprint\n\nforms_bp = Blueprint, routes",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/__init__.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/routes.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Response, flash\nfrom flask_login import login_required, current_user\nfrom flask_wtf.csrf import generate_csrf\nfrom . import forms_bp\nfrom app import db, csrf\nfrom models import StandardFields, FormPreset\nfrom models import FormPreset\nimport openpyxl\nfrom openpyxl.styles import Font, PatternFill\nfrom openpyxl.utils import get_column_letter\nimport PyPDF2\nfrom reportlab.pdfgen import canvas\nfrom reportlab.lib.pagesizes import letter\nimport docx\n\n# Diret\u00f3rio base dos formul\u00e1rios\nFORMS_DIR = os.path.join",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/routes.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: create_preset_ajax (76 linhas), create_preset (64 linhas), edit_standard_fields (60 linhas), get_form_fields (142 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/routes.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/online_editor.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: json, base64, datetime\nfrom typing import Dict, Optional, Tuple\n\n# Importa\u00e7\u00f5es para manipula\u00e7\u00e3o de documentos\nimport docx\nimport PyPDF2\nimport pandas",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/online_editor.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: extract_data_from_excel (107 linhas), extract_data_from_docx (139 linhas), extract_data_from_pdf (94 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/routes_editor.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\nfrom io import BytesIO\n\n# Importa\u00e7\u00f5es do Flask\nfrom flask import, current_user\nfrom flask_wtf.csrf import generate_csrf\n\n# Importar fun\u00e7\u00f5es de processamento de documentos\nfrom .online_editor import, db\nfrom models import FormPreset, StandardFields\n\n# Criar blueprint para o editor universal\neditor_bp = Blueprint",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/routes_editor.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: api_create_preset (53 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/routes_editor.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/editor/__init__.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Blueprint\n\neditor_bp = Blueprint, routes",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/editor/__init__.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/editor/routes.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: datetime\nfrom flask import render_template, Response, session\nfrom flask_login import login_required, current_user\n\n# Importa\u00e7\u00f5es para processamento de documentos\nimport openpyxl\nfrom docx import Document\nimport PyPDF2\nimport pandas, A4\n\nfrom app import db\nfrom models import FormTemplate\nfrom utils.file_handler import save_file, allowed_file, get_file_size\nfrom blueprints.editor import editor_bp\nfrom utils.forms_extract import extract_form_fields, extract_form_structure\nfrom utils.forms_processor import process_xlsx, process_pdf\n\n# Lista de arquivos de formul\u00e1rios dispon\u00edveis",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/calculos/__init__.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Blueprint\n\ncalculos_bp = Blueprint, routes",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/calculos/__init__.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/calculos/routes.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Blueprint, current_app\nfrom flask_login import login_required\nimport os\nimport json\nimport math\nimport numpy, matplotlib, BytesIO\nimport base64\n\n# Importar o blueprint do arquivo __init__.py\nfrom . import calculos_bp\n\n# Carregar configura\u00e7\u00f5es de fatores de convers\u00e3o de um arquivo JSON\ndef load_conversion_factors, api_error_response\n        \n        # Carregar fatores de convers\u00e3o\n        factors = load_conversion_factors",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/calculos/routes.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: calculate (510 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/file_handler.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: current_app\nimport uuid\nfrom werkzeug.utils import secure_filename\n\ndef allowed_file",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/dashboard.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: timedelta\nfrom io import BytesIO\nimport calendar\nfrom collections import defaultdict\n\nimport numpy, and_\n\nfrom models import Report, User\nfrom app import db\n\n# Configura\u00e7\u00f5es globais para os gr\u00e1ficos\nplt.style.use",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/dashboard.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: get_quality_indicators (103 linhas), get_recent_documents (62 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/dashboard.py",
+      "type": "code_quality",
+      "message": "Uso de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "suggestion": "Use logging ao inv\u00e9s de print() em c\u00f3digo de produ\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/search.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: and_, func\nfrom datetime import datetime\n\nfrom models import Report\n\ndef search_reports",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/search.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: search_reports (58 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/forms_extract.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Document\nimport PyPDF2\n\ndef extract_form_fields",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/forms_processor.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: Document\nimport PyPDF2\nimport pandas",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/forms_processor.py",
+      "type": "code_quality",
+      "message": "Fun\u00e7\u00f5es muito longas: process_xlsx (89 linhas), process_pdf (92 linhas)",
+      "suggestion": "Fun\u00e7\u00f5es muito longas s\u00e3o dif\u00edceis de entender e manter. Considere refator\u00e1-las em fun\u00e7\u00f5es menores",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/database.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: logging, wraps\nfrom flask import current_app\nfrom sqlalchemy import func, text\nfrom sqlalchemy.orm import joinedload, load_only\nfrom sqlalchemy.exc import SQLAlchemyError\nimport time\nimport json\n\n# Configura\u00e7\u00e3o de logging\nlogger = logging.getLogger",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "utils/error_handler.py",
+      "type": "code_quality",
+      "message": "Imports n\u00e3o utilizados: logging, datetime\nfrom flask import flash, current_app\n\n# Configura\u00e7\u00e3o do logger espec\u00edfico para erros\nerror_logger = logging.getLogger",
+      "suggestion": "Remova imports n\u00e3o utilizados para melhorar a legibilidade e desempenho",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "templates/base.html",
+      "type": "code_quality",
+      "message": "Uso excessivo de scripts inline (7 ocorr\u00eancias)",
+      "suggestion": "Mova scripts inline para arquivos JS",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "templates/templates/fill_report.html",
+      "type": "code_quality",
+      "message": "IDs HTML duplicados: ${fieldId}, template_${fieldId}",
+      "suggestion": "IDs devem ser \u00fanicos em todo o documento",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "templates/forms/interactive_form.html",
+      "type": "code_quality",
+      "message": "IDs HTML duplicados: field_{{ field.id }}, {{ field.id }}",
+      "suggestion": "IDs devem ser \u00fanicos em todo o documento",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "auto_check.py",
+      "type": "security",
+      "message": "Acesso direto a request.form sem verifica\u00e7\u00e3o",
+      "suggestion": "Use request.form.get() com valor padr\u00e3o ou valida\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "auto_check.py",
+      "type": "security",
+      "message": "Acesso direto a request.args sem verifica\u00e7\u00e3o",
+      "suggestion": "Use request.args.get() com valor padr\u00e3o ou valida\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/routes.py",
+      "type": "security",
+      "message": "Acesso direto a request.form sem verifica\u00e7\u00e3o",
+      "suggestion": "Use request.form.get() com valor padr\u00e3o ou valida\u00e7\u00e3o",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/forms/routes.py",
+      "type": "security",
+      "message": "Poss\u00edvel falta de valida\u00e7\u00e3o em formul\u00e1rios",
+      "suggestion": "Use Flask-WTF ou outra biblioteca para valida\u00e7\u00e3o de entrada",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/editor/routes.py",
+      "type": "security",
+      "message": "Poss\u00edvel falta de valida\u00e7\u00e3o em formul\u00e1rios",
+      "suggestion": "Use Flask-WTF ou outra biblioteca para valida\u00e7\u00e3o de entrada",
+      "timestamp": "20250425_192737"
+    },
+    {
+      "file": "blueprints/auth/forms.py",
+      "type": "security",
+      "message": "Poss\u00edvel armazenamento de senha sem hash",
+      "suggestion": "Use bcrypt, werkzeug.security ou outra biblioteca para hash de senhas",
+      "timestamp": "20250425_192737"
+    }
+  ],
+  "fixes": [],
+  "test_results": {
+    "success": false,
+    "output": "2025-04-25 19:27:38,086 - ERROR - Erro ao importar m\u00f3dulos necess\u00e1rios: cannot import name 'Report' from partially initialized module 'models' (most likely due to a circular import) (/home/runner/workspace/models.py)\n2025-04-25 19:27:38,086 - ERROR - Certifique-se de que os arquivos models.py e app.py existem e s\u00e3o acess\u00edveis\n",
+    "failed_tests": [],
+    "passed_tests": [],
+    "return_code": 1
+  },
+  "components_checked": {
+    "static_files": 21,
+    "python_files": 53,
+    "templates": 39,
+    "database_models": 18,
+    "api_endpoints": 97,
+    "authentication": 4
+  }
+}
