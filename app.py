@@ -67,9 +67,11 @@ def inject_variables():
 # Registrar blueprints
 from blueprints.reports import reports_bp
 from blueprints.dashboard import dashboard_bp
+from blueprints.auth import auth_bp
 
 app.register_blueprint(reports_bp)
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(auth_bp)
 
 # Criar tabelas do banco de dados
 with app.app_context():
