@@ -47,7 +47,7 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('search-input');
@@ -57,28 +57,74 @@
         const categoriesSection = document.getElementById('categories-section');
         const clearSearchButton = document.getElementById('clear-search');
 
-        // Função para pesquisar formulários
+        // Adicionar animação aos cards de categoria
+        document.querySelectorAll('.card').forEach((card, index) => {
+            card.classList.add('card-hover');
+            
+            // Efeito de aparecimento com delay baseado no índice
+            card.style.opacity = "0";
+            card.style.transform = "translateY(20px)";
+            card.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+            
+            setTimeout(() => {
+                card.style.opacity = "1";
+                card.style.transform = "translateY(0)";
+            }, 100 * index); // Delay escalonado para cada card
+        });
+
+        // Função para pesquisar formulários com animações
         function searchForms() {
             const query = searchInput.value.trim();
             
             if (query.length < 3) {
-                alert('Por favor, digite pelo menos 3 caracteres para pesquisar.');
+                // Toast em vez de alert
+                const toast = document.createElement('div');
+                toast.className = 'toast align-items-center text-white bg-warning border-0 position-fixed bottom-0 end-0 m-3';
+                toast.setAttribute('role', 'alert');
+                toast.setAttribute('aria-live', 'assertive');
+                toast.setAttribute('aria-atomic', 'true');
+                toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas fa-exclamation-triangle me-2"></i> Por favor, digite pelo menos 3 caracteres para pesquisar.
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                
+                // Inicializar e mostrar o toast
+                const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: 3000 });
+                bsToast.show();
+                
+                // Remover o toast do DOM após ser escondido
+                toast.addEventListener('hidden.bs.toast', function() {
+                    document.body.removeChild(toast);
+                });
+                
                 return;
             }
+            
+            // Mostrar animação de carregamento
+            ZelopackAnimations.showLoading('Pesquisando formulários...', 'dots');
             
             // Fazer requisição AJAX para pesquisar
             fetch(`/forms/search?q=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
+                    // Esconder animação de carregamento
+                    ZelopackAnimations.hideLoading();
+                    
                     searchResultsList.innerHTML = '';
                     
                     if (data.length === 0) {
-                        searchResultsList.innerHTML = '<div class="alert alert-info">Nenhum formulário encontrado para a pesquisa.</div>';
+                        searchResultsList.innerHTML = '<div class="alert alert-info fadeIn"><i class="fas fa-info-circle me-2"></i> Nenhum formulário encontrado para a pesquisa.</div>';
                     } else {
-                        data.forEach(form => {
+                        data.forEach((form, index) => {
                             const item = document.createElement('a');
-                            item.className = 'list-group-item list-group-item-action';
+                            item.className = 'list-group-item list-group-item-action fadeIn';
                             item.href = `/forms/view/${encodeURIComponent(form.path)}`;
+                            item.style.animationDelay = `${index * 0.1}s`;
                             item.innerHTML = `
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">
@@ -87,10 +133,10 @@
                                     <small>${form.category}</small>
                                 </div>
                                 <div class="mt-2">
-                                    <a href="/forms/fill/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-primary">
+                                    <a href="/forms/fill/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-primary btn-animated">
                                         <i class="fas fa-edit"></i> Preencher
                                     </a>
-                                    <a href="/forms/download/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-secondary">
+                                    <a href="/forms/download/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-secondary btn-animated">
                                         <i class="fas fa-download"></i> Baixar
                                     </a>
                                 </div>
@@ -99,24 +145,61 @@
                         });
                     }
                     
-                    // Mostrar resultados e ocultar categorias
+                    // Mostrar resultados e ocultar categorias com animação
                     searchResults.style.display = 'block';
-                    categoriesSection.style.display = 'none';
+                    searchResults.classList.add('fadeIn');
+                    
+                    // Esconder categorias com fade out
+                    categoriesSection.style.opacity = "1";
+                    categoriesSection.style.transition = "opacity 0.3s ease";
+                    categoriesSection.style.opacity = "0";
+                    
+                    setTimeout(() => {
+                        categoriesSection.style.display = 'none';
+                    }, 300);
                 })
                 .catch(error => {
+                    // Esconder animação de carregamento
+                    ZelopackAnimations.hideLoading();
+                    
                     console.error('Erro ao pesquisar formulários:', error);
-                    searchResultsList.innerHTML = '<div class="alert alert-danger">Erro ao realizar a pesquisa. Tente novamente.</div>';
+                    searchResultsList.innerHTML = '<div class="alert alert-danger fadeIn"><i class="fas fa-exclamation-circle me-2"></i> Erro ao realizar a pesquisa. Tente novamente.</div>';
+                    
+                    // Mostrar resultados
                     searchResults.style.display = 'block';
+                    searchResults.classList.add('fadeIn');
                 });
         }
 
-        // Função para limpar pesquisa
+        // Função para limpar pesquisa com animações
         function clearSearch() {
             searchInput.value = '';
-            searchResults.style.display = 'none';
-            categoriesSection.style.display = 'block';
+            
+            // Esconder resultados com animação
+            searchResults.style.opacity = "1";
+            searchResults.style.transition = "opacity 0.3s ease";
+            searchResults.style.opacity = "0";
+            
+            setTimeout(() => {
+                searchResults.style.display = 'none';
+                
+                // Mostrar categorias com animação
+                categoriesSection.style.display = 'block';
+                categoriesSection.style.opacity = "0";
+                
+                setTimeout(() => {
+                    categoriesSection.style.opacity = "1";
+                }, 50);
+            }, 300);
         }
 
+        // Adicionar efeito de hover aos botões
+        searchButton.classList.add('btn-animated');
+        clearSearchButton.classList.add('btn-animated');
+        
+        // Adicionar animação ao campo de pesquisa
+        searchInput.classList.add('form-animated');
+        
         // Eventos
         searchButton.addEventListener('click', searchForms);
         clearSearchButton.addEventListener('click', clearSearch);
