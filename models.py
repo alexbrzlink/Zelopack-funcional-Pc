@@ -187,12 +187,32 @@ class Supplier(db.Model):
     """Modelo para fornecedores relacionados aos laudos."""
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False, unique=True)
-    contact = db.Column(db.String(150), nullable=True)
+    contact_name = db.Column(db.String(150), nullable=True)  # Renomeado de contact para contact_name
     email = db.Column(db.String(150), nullable=True)
     phone = db.Column(db.String(20), nullable=True)
+    address = db.Column(db.Text, nullable=True)  # Novo campo para endereço
+    notes = db.Column(db.Text, nullable=True)  # Novo campo para observações
+    type = db.Column(db.String(50), nullable=True)  # Novo campo para tipo de fornecedor
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     def __repr__(self):
         return f"<Supplier {self.name}>"
+        
+    def to_dict(self):
+        """Converte objeto para dicionário."""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'contact_name': self.contact_name,
+            'email': self.email,
+            'phone': self.phone,
+            'address': self.address,
+            'notes': self.notes,
+            'type': self.type,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M') if self.created_at else None,
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M') if self.updated_at else None
+        }
 
 
 # [Antiga definição de ReportTemplate removida para evitar duplicação]

@@ -216,3 +216,78 @@ def delete(id):
     
     flash('Laudo excluído com sucesso!', 'success')
     return redirect(url_for('reports.view_all'))
+
+@reports_bp.route('/suppliers', methods=['GET'])
+@login_required
+def suppliers():
+    """Lista todos os fornecedores."""
+    page = request.args.get('page', 1, type=int)
+    suppliers = Supplier.query.order_by(Supplier.name).paginate(page=page, per_page=20)
+    return render_template('reports/suppliers.html', suppliers=suppliers, title="Fornecedores")
+
+@reports_bp.route('/suppliers/add', methods=['GET', 'POST'])
+@login_required
+def add_supplier():
+    """Adicionar novo fornecedor."""
+    form = SupplierForm()
+    
+    if form.validate_on_submit():
+        supplier = Supplier(
+            name=form.name.data,
+            contact_name=form.contact_name.data,
+            email=form.email.data,
+            phone=form.phone.data,
+            address=form.address.data,
+            notes=form.notes.data,
+            type=form.type.data
+        )
+        
+        db.session.add(supplier)
+        db.session.commit()
+        
+        flash('Fornecedor adicionado com sucesso!', 'success')
+        return redirect(url_for('reports.suppliers'))
+    
+    return render_template('reports/supplier_form.html', form=form, title="Adicionar Fornecedor")
+
+@reports_bp.route('/suppliers/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_supplier(id):
+    """Editar um fornecedor existente."""
+    supplier = Supplier.query.get_or_404(id)
+    form = SupplierForm(obj=supplier)
+    
+    if form.validate_on_submit():
+        supplier.name = form.name.data
+        supplier.contact_name = form.contact_name.data
+        supplier.email = form.email.data
+        supplier.phone = form.phone.data
+        supplier.address = form.address.data
+        supplier.notes = form.notes.data
+        supplier.type = form.type.data
+        
+        db.session.commit()
+        
+        flash('Fornecedor atualizado com sucesso!', 'success')
+        return redirect(url_for('reports.suppliers'))
+    
+    return render_template('reports/supplier_form.html', form=form, supplier=supplier, title="Editar Fornecedor")
+
+@reports_bp.route('/suppliers/delete/<int:id>', methods=['POST'])
+@login_required
+def delete_supplier(id):
+    """Excluir um fornecedor."""
+    supplier = Supplier.query.get_or_404(id)
+    
+    # Verificar se há laudos associados a este fornecedor
+    reports_count = Report.query.filter_by(supplier=supplier.name).count()
+    
+    if reports_count > 0:
+        flash(f'Não é possível excluir este fornecedor. Existem {reports_count} laudos associados a ele.', 'danger')
+        return redirect(url_for('reports.suppliers'))
+    
+    db.session.delete(supplier)
+    db.session.commit()
+    
+    flash('Fornecedor excluído com sucesso!', 'success')
+    return redirect(url_for('reports.suppliers'))
