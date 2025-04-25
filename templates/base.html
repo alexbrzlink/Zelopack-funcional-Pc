@@ -20,6 +20,35 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
+    <style>
+        /* Estilo para o item destacado no menu */
+        .highlight-nav-item {
+            position: relative;
+            background-color: rgba(13, 110, 253, 0.05);
+            border-radius: 6px;
+            animation: pulse-light 2s infinite;
+        }
+        
+        .highlight-nav-item .badge {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.5rem;
+            vertical-align: 1px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes pulse-light {
+            0% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.2); }
+            70% { box-shadow: 0 0 0 8px rgba(13, 110, 253, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-3px); }
+            60% { transform: translateY(-1px); }
+        }
+    </style>
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -62,6 +91,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('forms.index') }}">
                             <i class="fas fa-file-signature"></i> Formulários
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link highlight-nav-item" href="{{ url_for('editor.index') }}">
+                            <i class="fas fa-edit"></i> Editor Universal <span class="badge bg-primary">Novo</span>
                         </a>
                     </li>
                 </ul>
