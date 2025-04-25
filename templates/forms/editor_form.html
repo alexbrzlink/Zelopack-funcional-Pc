@@ -1542,7 +1542,7 @@
             }
             
             // Buscar dados da predefinição
-            fetch('{{ url_for("editor.api_get_preset", preset_id="") }}' + presetId)
+            fetch('/editor/api/get-preset/' + presetId)
                 .then(response => response.json())
                 .then(data => {
                     // Esconder animação de carregamento
@@ -1594,7 +1594,7 @@
             }
             
             // Buscar dados dos campos padronizados
-            fetch('{{ url_for("editor.api_get_standard_fields", fields_id="") }}' + fieldsId)
+            fetch('/editor/api/get-standard-fields/' + fieldsId)
                 .then(response => response.json())
                 .then(data => {
                     // Esconder animação de carregamento
