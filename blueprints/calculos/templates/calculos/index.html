@@ -3,451 +3,52 @@
 {% block title %}Cálculos de Laboratório | ZeloPack{% endblock %}
 
 {% block head_extra %}
-<style>
-    /* Estilos gerais */
-    .calculation-tabs {
-        margin-bottom: 30px;
-    }
-    
-    .calculation-tabs .nav-link {
-        color: #495057;
-        font-weight: 500;
-        padding: 12px 20px;
-        border-radius: 0;
-        border: 1px solid transparent;
-        transition: all 0.3s;
-    }
-    
-    .calculation-tabs .nav-link.active {
-        color: #0d6efd;
-        background-color: #fff;
-        border-color: #dee2e6 #dee2e6 #fff;
-        border-top: 3px solid #0d6efd;
-    }
-    
-    .calculation-tabs .nav-link:hover:not(.active) {
-        border-color: transparent;
-        background-color: rgba(13, 110, 253, 0.05);
-    }
-    
-    .tab-content {
-        background-color: #fff;
-        border: 1px solid #dee2e6;
-        border-top: none;
-        padding: 25px;
-        border-radius: 0 0 8px 8px;
-    }
-    
-    .calculator-container {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
-    
-    .calculator-container:hover {
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        transform: translateY(-2px);
-    }
-    
-    .calculator-title {
-        background-color: #0d6efd;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 6px;
-        margin-bottom: 20px;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .calculator-title:hover {
-        background-color: #0b5ed7;
-    }
-    
-    .calculator-body {
-        display: none;
-        padding: 15px 10px;
-        background-color: white;
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-    }
-    
-    .calculator-body.active {
-        display: block;
-    }
-    
-    .form-group {
-        margin-bottom: 15px;
-    }
-    
-    .form-label {
-        font-weight: 500;
-        margin-bottom: 5px;
-    }
-    
-    .form-control {
-        border-radius: 4px;
-    }
-    
-    .btn-calculate {
-        background-color: #28a745;
-        border: none;
-        color: white;
-        padding: 8px 20px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    
-    .btn-calculate:hover {
-        background-color: #218838;
-    }
-    
-    .result-box {
-        margin-top: 15px;
-        padding: 15px;
-        background-color: #f0f8ff;
-        border: 1px solid #b8daff;
-        border-radius: 6px;
-        display: none;
-    }
-    
-    .result-value {
-        font-weight: bold;
-        font-size: 1.2rem;
-        color: #0d6efd;
-    }
-    
-    .result-unit {
-        font-size: 0.9rem;
-        color: #6c757d;
-    }
-    
-    .calculation-description {
-        margin-bottom: 15px;
-        color: #495057;
-        font-style: italic;
-    }
-    
-    .category-header {
-        background-color: #343a40;
-        color: white;
-        padding: 12px 15px;
-        border-radius: 6px;
-        margin: 30px 0 20px;
-        font-size: 1.2rem;
-    }
-    
-    .calculator-icon {
-        margin-right: 10px;
-        font-size: 1.1rem;
-    }
-    
-    .error-message {
-        color: #dc3545;
-        margin-top: 5px;
-        font-size: 0.9rem;
-        display: none;
-    }
-    
-    .formula-text {
-        background: #f8f9fa;
-        padding: 8px 12px;
-        border-radius: 4px;
-        border-left: 3px solid #0d6efd;
-        font-family: 'Courier New', monospace;
-        margin: 10px 0 15px;
-    }
-    
-    .pulse {
-        animation: pulse-animation 0.5s;
-    }
-    
-    @keyframes pulse-animation {
-        0% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.05);
-        }
-        100% {
-            transform: scale(1);
-        }
-    }
-    
-    .action-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-    }
-    
-    .action-button {
-        flex: 1;
-        text-align: center;
-        padding: 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    
-    .action-button.copy {
-        background-color: #6c757d;
-        color: white;
-    }
-    
-    .action-button.reset {
-        background-color: #dc3545;
-        color: white;
-    }
-    
-    .action-button:hover {
-        opacity: 0.9;
-        transform: translateY(-2px);
-    }
-    
-    .info-icon {
-        color: #17a2b8;
-        cursor: pointer;
-        margin-left: 5px;
-    }
-    
-    .formula-box {
-        background-color: #f8f9fa;
-        border-left: 3px solid #0d6efd;
-        padding: 10px;
-        margin: 10px 0;
-        font-size: 0.9rem;
-    }
-    
-    /* Melhorias visuais */
-    .calculation-visual {
-        display: flex;
-        align-items: center;
-        margin: 20px 0;
-        padding: 15px;
-        background-color: #f8f9fa;
-        border-radius: 8px;
-    }
-    
-    .calculation-icon {
-        flex: 0 0 100px;
-        text-align: center;
-        font-size: 2.5rem;
-        color: #0d6efd;
-    }
-    
-    .calculation-details {
-        flex: 1;
-        padding-left: 15px;
-    }
-    
-    .calculation-image {
-        max-width: 100%;
-        height: auto;
-        margin: 15px 0;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .card-calculator {
-        border: none;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s, box-shadow 0.3s;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    
-    .card-calculator:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    }
-    
-    .card-header-calculator {
-        background-color: #1565C0;
-        color: white;
-        font-weight: 500;
-        padding: 15px;
-    }
-    
-    .card-body-calculator {
-        padding: 20px;
-    }
-    
-    .card-footer-calculator {
-        background-color: #f8f9fa;
-        border-top: 1px solid rgba(0, 0, 0, 0.125);
-        padding: 15px;
-    }
-    
-    /* Estilo para o diagrama interativo */
-    .interactive-diagram {
-        position: relative;
-        margin: 20px 0;
-        height: 250px;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        overflow: hidden;
-        background-color: #f8f9fa;
-    }
-    
-    .diagram-item {
-        position: absolute;
-        background-color: #fff;
-        border: 1px solid #0d6efd;
-        border-radius: 6px;
-        padding: 10px;
-        min-width: 100px;
-        text-align: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s;
-    }
-    
-    .diagram-item:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 10;
-    }
-    
-    .diagram-arrow {
-        position: absolute;
-        height: 2px;
-        background-color: #0d6efd;
-        transform-origin: left;
-    }
-    
-    .diagram-arrow::after {
-        content: '';
-        position: absolute;
-        right: 0;
-        top: -4px;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 5px 0 5px 10px;
-        border-color: transparent transparent transparent #0d6efd;
-    }
-    
-    /* Estilos para subabas dentro das abas principais */
-    .subtab-nav {
-        border-bottom: 1px solid #dee2e6;
-        margin-bottom: 20px;
-    }
-    
-    .subtab-nav .nav-link {
-        color: #495057;
-        font-size: 0.9rem;
-        padding: 8px 15px;
-        border: 1px solid transparent;
-        border-radius: 4px 4px 0 0;
-        margin-right: 5px;
-    }
-    
-    .subtab-nav .nav-link.active {
-        color: #0d6efd;
-        border-color: #dee2e6 #dee2e6 #fff;
-        background-color: #fff;
-    }
-    
-    .subtab-content {
-        padding: 15px 0;
-    }
-    
-    /* Animações para transições entre abas */
-    .fade-transition {
-        transition: opacity 0.3s ease;
-    }
-    
-    .fade-enter {
-        opacity: 0;
-    }
-    
-    .fade-enter-active {
-        opacity: 1;
-    }
-    
-    /* Estilos para visualizações gráficas */
-    .graph-container {
-        margin-top: 20px;
-        height: 300px;
-        background-color: #fff;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 20px;
-    }
-    
-    /* Estilos para calculadora especial */
-    .special-calculator {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-    
-    .special-calculator-input {
-        flex: 1;
-        min-width: 200px;
-    }
-    
-    .special-calculator-result {
-        flex: 1;
-        min-width: 200px;
-        background-color: #f0f8ff;
-        border: 1px solid #b8daff;
-        border-radius: 6px;
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .special-calculator-value {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: #0d6efd;
-        margin: 10px 0;
-    }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/calculos.css') }}">
+<script src="{{ url_for('static', filename='vendor/chart.min.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="mb-4">Cálculos de Laboratório</h1>
-            <p class="lead">Utilize as ferramentas de cálculo para análises de laboratório e controle do processo de produção.</p>
-            
-            <!-- Abas principais -->
-            <ul class="nav nav-tabs calculation-tabs" id="calculationTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="producao-tab" data-bs-toggle="tab" data-bs-target="#producao" type="button" role="tab" aria-controls="producao" aria-selected="true">
-                        <i class="fas fa-industry me-2"></i>Produção
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="laboratorio-tab" data-bs-toggle="tab" data-bs-target="#laboratorio" type="button" role="tab" aria-controls="laboratorio" aria-selected="false">
-                        <i class="fas fa-flask me-2"></i>Laboratório
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="conversoes-tab" data-bs-toggle="tab" data-bs-target="#conversoes" type="button" role="tab" aria-controls="conversoes" aria-selected="false">
-                        <i class="fas fa-exchange-alt me-2"></i>Conversões
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="juice-tab" data-bs-toggle="tab" data-bs-target="#juice" type="button" role="tab" aria-controls="juice" aria-selected="false">
-                        <i class="fas fa-tint me-2"></i>Sucos
-                    </button>
-                </li>
-            </ul>
-            
-            <!-- Conteúdo das abas -->
-            <div class="tab-content" id="calculationTabsContent">
+<div class="calculos-container">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="calculos-intro">
+                    <h2>Cálculos de Laboratório</h2>
+                    <p>Utilize ferramentas de cálculo precisas e interativas para análises de laboratório e controle do processo de produção. Todos os cálculos são baseados em fórmulas validadas e fatores de conversão configuráveis para o ambiente específico da ZeloPack.</p>
+                    <div class="intro-badges mt-3">
+                        <span class="badge bg-primary">36 Calculadoras Disponíveis</span>
+                        <span class="badge bg-success">Resultados em Tempo Real</span>
+                        <span class="badge bg-info">Fatores de Conversão Personalizáveis</span>
+                        <span class="badge bg-warning text-dark">Visualizações Gráficas</span>
+                    </div>
+                </div>
+                
+                <!-- Abas principais -->
+                <ul class="nav nav-tabs calculation-tabs" id="calculationTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="producao-tab" data-bs-toggle="tab" data-bs-target="#producao" type="button" role="tab" aria-controls="producao" aria-selected="true">
+                            <i class="fas fa-industry me-2"></i>Produção
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="laboratorio-tab" data-bs-toggle="tab" data-bs-target="#laboratorio" type="button" role="tab" aria-controls="laboratorio" aria-selected="false">
+                            <i class="fas fa-flask me-2"></i>Laboratório
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="conversoes-tab" data-bs-toggle="tab" data-bs-target="#conversoes" type="button" role="tab" aria-controls="conversoes" aria-selected="false">
+                            <i class="fas fa-exchange-alt me-2"></i>Conversões
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="juice-tab" data-bs-toggle="tab" data-bs-target="#juice" type="button" role="tab" aria-controls="juice" aria-selected="false">
+                            <i class="fas fa-tint me-2"></i>Sucos
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Conteúdo das abas -->
+                <div class="tab-content" id="calculationTabsContent">
                 
                 <!-- Aba de Produção -->
                 <div class="tab-pane fade show active" id="producao" role="tabpanel" aria-labelledby="producao-tab">
