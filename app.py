@@ -50,8 +50,8 @@ db.init_app(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-# Configuração do CSRF - desabilitado temporariamente para resolver problemas de login
-app.config['WTF_CSRF_ENABLED'] = False  # Desabilitado para resolver problemas
+# Configuração do CSRF
+app.config['WTF_CSRF_ENABLED'] = True  # Habilitado para produção
 app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # 1 hora
 app.config['WTF_CSRF_SECRET_KEY'] = app.secret_key  # Usar a mesma chave da aplicação
 
