@@ -1,282 +1,437 @@
 {% extends "base.html" %}
 
+{% block head_extra %}
+<style>
+    .hover-shadow {
+        transition: all 0.3s ease;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-3px);
+        border-color: #0d6efd;
+    }
+    
+    .card-header {
+        transition: background-color 0.3s ease;
+    }
+    
+    .card:hover .card-header {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+
+    .form-check-input {
+        cursor: pointer;
+    }
+    
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+    
+    .input-group-text {
+        transition: all 0.3s ease;
+    }
+    
+    .input-group:focus-within .input-group-text {
+        background-color: #0d6efd !important;
+        color: white;
+        border-color: #0d6efd;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .btn {
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Estilo para indicador de loading */
+    .spinner-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    
+    .loading-text {
+        margin-top: 1rem;
+        font-weight: bold;
+        color: #0d6efd;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
-    <div class="col-lg-8 col-md-10 mx-auto">
-        <div class="card">
-            <div class="card-header">
-                <i class="fas fa-upload"></i> Upload de Laudo
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-upload me-2"></i> Upload de Laudo</h4>
             </div>
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                     {{ form.csrf_token }}
                     
-                    <div class="row mb-3">
-                        <div class="col-md-8">
-                            <label for="{{ form.title.id }}" class="form-label">Título do Laudo *</label>
-                            {{ form.title(class="form-control", placeholder="Ex: Análise de Qualidade - Lote 123") }}
-                            {% if form.title.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.title.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-4">
-                            <label for="{{ form.report_date.id }}" class="form-label">Data do Laudo</label>
-                            {{ form.report_date(class="form-control", type="date") }}
-                            {% if form.report_date.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.report_date.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.description.id }}" class="form-label">Descrição</label>
-                        {{ form.description(class="form-control", rows=3, placeholder="Descrição detalhada do conteúdo do laudo") }}
-                        {% if form.description.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.description.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="{{ form.category.id }}" class="form-label">Categoria</label>
-                            {{ form.category(class="form-select") }}
-                            {% if form.category.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.category.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="{{ form.supplier.id }}" class="form-label">Fornecedor</label>
-                            <div class="input-group">
-                                {{ form.supplier(class="form-select") }}
-                                <a href="{{ url_for('reports.suppliers') }}" class="btn btn-outline-primary" title="Gerenciar Fornecedores">
-                                    <i class="fas fa-building"></i>
-                                </a>
-                            </div>
-                            {% if form.supplier.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.supplier.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            <small class="text-muted">Clique no ícone para gerenciar a lista de fornecedores</small>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.batch_number.id }}" class="form-label">Número do Lote</label>
-                        {{ form.batch_number(class="form-control", placeholder="Ex: LOT-2023-0001") }}
-                        {% if form.batch_number.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.batch_number.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label for="{{ form.file.id }}" class="form-label">Arquivo do Laudo *</label>
-                        <div class="input-group">
-                            {{ form.file(class="form-control", accept=".pdf,.doc,.docx,.xls,.xlsx") }}
-                            {% if form.file.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {% for error in form.file.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <small class="text-muted">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX. Tamanho máximo: 16MB</small>
-                    </div>
-                    
-                    <!-- Seção de análises do laudo -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-flask"></i> Análises do Laudo
+                    <!-- Seção de Informações Básicas do Laudo -->
+                    <div class="card mb-4 border-primary">
+                        <div class="card-header bg-primary bg-opacity-10">
+                            <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i> Informações Básicas do Laudo</h5>
                         </div>
                         <div class="card-body">
                             <div class="row mb-3">
-                                <div class="col-md-4">
-                                    <label for="{{ form.ph.id }}" class="form-label">
-                                        <i class="fas fa-tint"></i> pH
+                                <div class="col-md-8">
+                                    <label for="{{ form.title.id }}" class="form-label">
+                                        <i class="fas fa-heading me-1"></i> Título do Laudo <span class="text-danger">*</span>
                                     </label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-vial"></i></span>
-                                        {{ form.ph(class="form-control", placeholder="Ex: 3.5") }}
+                                        <span class="input-group-text bg-light"><i class="fas fa-tag"></i></span>
+                                        {{ form.title(class="form-control", placeholder="Ex: Análise de Qualidade - Lote 123") }}
                                     </div>
-                                    <small class="text-muted">Medida de acidez (0-14)</small>
+                                    {% if form.title.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.title.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Nome descritivo para identificação do laudo</small>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="{{ form.brix.id }}" class="form-label">
-                                        <i class="fas fa-percentage"></i> Brix (°Bx)
+                                    <label for="{{ form.report_date.id }}" class="form-label">
+                                        <i class="fas fa-calendar-day me-1"></i> Data do Laudo
                                     </label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-chart-line"></i></span>
-                                        {{ form.brix(class="form-control", placeholder="Ex: 12.5") }}
+                                        <span class="input-group-text bg-light"><i class="fas fa-calendar"></i></span>
+                                        {{ form.report_date(class="form-control", type="date") }}
                                     </div>
-                                    <small class="text-muted">Concentração de sólidos solúveis</small>
+                                    {% if form.report_date.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.report_date.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Data em que o laudo foi emitido</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.description.id }}" class="form-label">
+                                    <i class="fas fa-align-left me-1"></i> Descrição
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fas fa-comment-alt"></i></span>
+                                    {{ form.description(class="form-control", rows=3, placeholder="Descrição detalhada do conteúdo do laudo") }}
+                                </div>
+                                {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.description.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <small class="text-muted">Detalhes adicionais sobre o laudo</small>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="{{ form.category.id }}" class="form-label">
+                                        <i class="fas fa-layer-group me-1"></i> Categoria
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-folder"></i></span>
+                                        {{ form.category(class="form-select") }}
+                                    </div>
+                                    {% if form.category.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.category.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Tipo de material analisado</small>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="{{ form.acidity.id }}" class="form-label">
-                                        <i class="fas fa-flask"></i> Acidez (g/100ml)
+                                    <label for="{{ form.supplier.id }}" class="form-label">
+                                        <i class="fas fa-truck me-1"></i> Fornecedor
                                     </label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-fill-drip"></i></span>
-                                        {{ form.acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                        <span class="input-group-text bg-light"><i class="fas fa-building"></i></span>
+                                        {{ form.supplier(class="form-select") }}
+                                        <a href="{{ url_for('reports.suppliers') }}" class="btn btn-primary" title="Gerenciar Fornecedores">
+                                            <i class="fas fa-cog"></i>
+                                        </a>
                                     </div>
-                                    <small class="text-muted">Concentração de ácidos</small>
+                                    {% if form.supplier.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.supplier.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Empresa fornecedora do material</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.batch_number.id }}" class="form-label">
+                                        <i class="fas fa-barcode me-1"></i> Número do Lote
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-hashtag"></i></span>
+                                        {{ form.batch_number(class="form-control", placeholder="Ex: LOT-2023-0001") }}
+                                    </div>
+                                    {% if form.batch_number.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.batch_number.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Identificação única do lote</small>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.file.id }}" class="form-label">
+                                    <i class="fas fa-file-upload me-1"></i> Arquivo do Laudo <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fas fa-paperclip"></i></span>
+                                    {{ form.file(class="form-control", accept=".pdf,.doc,.docx,.xls,.xlsx") }}
+                                </div>
+                                {% if form.file.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.file.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <small class="text-muted">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX. Tamanho máximo: 16MB</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de análises do laudo -->
+                    <div class="card mb-4 border-success">
+                        <div class="card-header bg-success bg-opacity-10">
+                            <h5 class="mb-0 d-flex align-items-center">
+                                <i class="fas fa-flask me-2"></i> Análises do Laudo
+                                <span class="badge bg-success ms-2">Informado pelo Fornecedor</span>
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-success mb-3"><i class="fas fa-tint me-1"></i> pH</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success bg-opacity-10"><i class="fas fa-vial"></i></span>
+                                                {{ form.ph(class="form-control", placeholder="Ex: 3.5") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Medida de acidez (0-14)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-success mb-3"><i class="fas fa-percentage me-1"></i> Brix (°Bx)</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success bg-opacity-10"><i class="fas fa-chart-line"></i></span>
+                                                {{ form.brix(class="form-control", placeholder="Ex: 12.5") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Concentração de sólidos solúveis</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-success mb-3"><i class="fas fa-flask me-1"></i> Acidez (g/100ml)</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success bg-opacity-10"><i class="fas fa-fill-drip"></i></span>
+                                                {{ form.acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Concentração de ácidos</small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="{{ form.manufacturing_date.id }}" class="form-label">
-                                        <i class="fas fa-calendar-plus"></i> Data de Fabricação
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-industry"></i></span>
-                                        {{ form.manufacturing_date(class="form-control", type="date") }}
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-success mb-3"><i class="fas fa-calendar-plus me-1"></i> Data de Fabricação</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success bg-opacity-10"><i class="fas fa-industry"></i></span>
+                                                {{ form.manufacturing_date(class="form-control", type="date") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Data em que o produto foi fabricado</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Data em que o produto foi fabricado</small>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="{{ form.expiration_date.id }}" class="form-label">
-                                        <i class="fas fa-calendar-times"></i> Data de Validade
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-hourglass-end"></i></span>
-                                        {{ form.expiration_date(class="form-control", type="date") }}
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-success mb-3"><i class="fas fa-calendar-times me-1"></i> Data de Validade</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-success bg-opacity-10"><i class="fas fa-hourglass-end"></i></span>
+                                                {{ form.expiration_date(class="form-control", type="date") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Data de vencimento do produto</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Data de vencimento do produto</small>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Seção de análises realizadas em laboratório -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-microscope"></i> Análises Realizadas em Laboratório
+                    <div class="card mb-4 border-info">
+                        <div class="card-header bg-info bg-opacity-10">
+                            <h5 class="mb-0 d-flex align-items-center">
+                                <i class="fas fa-microscope me-2"></i> Análises Realizadas em Laboratório
+                                <span class="badge bg-info ms-2">Contra-Prova</span>
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div class="row mb-3">
+                            <div class="row mb-4">
                                 <div class="col-md-4">
-                                    <label for="{{ form.lab_ph.id }}" class="form-label">
-                                        <i class="fas fa-tint"></i> pH - Laboratório
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-microscope"></i></span>
-                                        {{ form.lab_ph(class="form-control", placeholder="Ex: 3.5") }}
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-info mb-3"><i class="fas fa-tint me-1"></i> pH - Laboratório</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-info bg-opacity-10"><i class="fas fa-microscope"></i></span>
+                                                {{ form.lab_ph(class="form-control", placeholder="Ex: 3.5") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Medido em laboratório</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Medido em laboratório</small>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="{{ form.lab_brix.id }}" class="form-label">
-                                        <i class="fas fa-percentage"></i> Brix (°Bx) - Laboratório
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-microscope"></i></span>
-                                        {{ form.lab_brix(class="form-control", placeholder="Ex: 12.5") }}
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-info mb-3"><i class="fas fa-percentage me-1"></i> Brix (°Bx) - Laboratório</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-info bg-opacity-10"><i class="fas fa-microscope"></i></span>
+                                                {{ form.lab_brix(class="form-control", placeholder="Ex: 12.5") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Medido em laboratório</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Medido em laboratório</small>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="{{ form.lab_acidity.id }}" class="form-label">
-                                        <i class="fas fa-flask"></i> Acidez (g/100ml) - Lab.
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-microscope"></i></span>
-                                        {{ form.lab_acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-info mb-3"><i class="fas fa-flask me-1"></i> Acidez (g/100ml) - Lab</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-info bg-opacity-10"><i class="fas fa-microscope"></i></span>
+                                                {{ form.lab_acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Medido em laboratório</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Medido em laboratório</small>
                                 </div>
                             </div>
                             
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="{{ form.physicochemical_validation.id }}" class="form-label">
-                                        <i class="fas fa-check-circle"></i> Validação Físico-Química
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-clipboard-check"></i></span>
-                                        {{ form.physicochemical_validation(class="form-select") }}
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-info mb-3"><i class="fas fa-check-circle me-1"></i> Validação Físico-Química</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-info bg-opacity-10"><i class="fas fa-clipboard-check"></i></span>
+                                                {{ form.physicochemical_validation(class="form-select") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Resultado da análise físico-química</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Resultado da análise físico-química</small>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="{{ form.report_time.id }}" class="form-label">
-                                        <i class="fas fa-clock"></i> Hora do Laudo
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light"><i class="fas fa-hourglass-half"></i></span>
-                                        {{ form.report_time(class="form-control", type="time") }}
+                                    <div class="card h-100 border-light hover-shadow">
+                                        <div class="card-body">
+                                            <h6 class="text-info mb-3"><i class="fas fa-clock me-1"></i> Hora do Laudo</h6>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-info bg-opacity-10"><i class="fas fa-hourglass-half"></i></span>
+                                                {{ form.report_time(class="form-control", type="time") }}
+                                            </div>
+                                            <small class="text-muted d-block mt-2">Horário em que o laudo foi emitido</small>
+                                        </div>
                                     </div>
-                                    <small class="text-muted">Horário em que o laudo foi emitido</small>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Informações adicionais -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-info-circle"></i> Informações Adicionais
+                    <div class="card mb-4 border-warning">
+                        <div class="card-header bg-warning bg-opacity-10">
+                            <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Informações de Rastreabilidade</h5>
                         </div>
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <div class="card h-100 border-light">
+                                    <div class="card h-100 border-light hover-shadow">
                                         <div class="card-body text-center">
-                                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-2">
+                                            <h6 class="text-warning mb-3">
+                                                <i class="fas fa-archive me-1"></i> Status do Documento
+                                            </h6>
+                                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-3">
                                                 {{ form.report_archived(class="form-check-input me-2", style="height: 1.5rem; width: 3rem;") }}
-                                                <label class="form-check-label" for="{{ form.report_archived.id }}">
-                                                    <i class="fas fa-archive text-primary me-2"></i> Laudo Arquivado
+                                                <label class="form-check-label fw-bold" for="{{ form.report_archived.id }}">
+                                                    Laudo Arquivado
                                                 </label>
                                             </div>
-                                            <small class="text-muted">O laudo foi arquivado fisicamente</small>
+                                            <small class="text-muted">O laudo foi arquivado fisicamente no sistema de arquivos</small>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="card h-100 border-light">
+                                    <div class="card h-100 border-light hover-shadow">
                                         <div class="card-body text-center">
-                                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-2">
+                                            <h6 class="text-warning mb-3">
+                                                <i class="fas fa-bacteria me-1"></i> Análise Microbiológica
+                                            </h6>
+                                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-3">
                                                 {{ form.microbiology_collected(class="form-check-input me-2", style="height: 1.5rem; width: 3rem;") }}
-                                                <label class="form-check-label" for="{{ form.microbiology_collected.id }}">
-                                                    <i class="fas fa-bacteria text-danger me-2"></i> Microbiologia
+                                                <label class="form-check-label fw-bold" for="{{ form.microbiology_collected.id }}">
+                                                    Microbiologia Coletada
                                                 </label>
                                             </div>
-                                            <small class="text-muted">Amostra para microbiologia coletada</small>
+                                            <small class="text-muted">Amostra para análise microbiológica foi coletada</small>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="card h-100 border-light">
+                                    <div class="card h-100 border-light hover-shadow">
                                         <div class="card-body text-center">
-                                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-2">
+                                            <h6 class="text-warning mb-3">
+                                                <i class="fas fa-file-alt me-1"></i> Documentação
+                                            </h6>
+                                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-3">
                                                 {{ form.has_report_document(class="form-check-input me-2", style="height: 1.5rem; width: 3rem;") }}
-                                                <label class="form-check-label" for="{{ form.has_report_document.id }}">
-                                                    <i class="fas fa-file-alt text-success me-2"></i> Documento
+                                                <label class="form-check-label fw-bold" for="{{ form.has_report_document.id }}">
+                                                    Possui Documento Físico
                                                 </label>
                                             </div>
-                                            <small class="text-muted">Possui documento físico original</small>
+                                            <small class="text-muted">O documento físico original está disponível no arquivo</small>
                                         </div>
                                     </div>
                                 </div>
@@ -284,9 +439,13 @@
                         </div>
                     </div>
                     
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{{ url_for('reports.index') }}" class="btn btn-outline-secondary">Cancelar</a>
-                        {{ form.submit(class="btn btn-primary") }}
+                    <div class="d-flex gap-2 justify-content-between mt-4 mb-2">
+                        <a href="{{ url_for('reports.index') }}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i> Salvar Laudo
+                        </button>
                     </div>
                 </form>
             </div>
@@ -296,25 +455,140 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Spinner de carregamento -->
+<div class="spinner-container">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Carregando...</span>
+    </div>
+    <div class="loading-text">Processando Laudo...</div>
+</div>
+
 <script>
-    // Script para validação do formulário
+    // Script para validação do formulário e interatividade
     (function() {
         'use strict';
         
         // Fetch todos os formulários que precisamos validar
         var forms = document.querySelectorAll('.needs-validation');
+        const spinnerContainer = document.querySelector('.spinner-container');
         
-        // Loop para prevenir submissão
+        // Adicionar interatividade aos campos
+        document.querySelectorAll('.hover-shadow').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.borderColor = '#0d6efd';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                if (!this.contains(document.activeElement)) {
+                    this.style.borderColor = '';
+                }
+            });
+        });
+        
+        // Adicionar animação de foco aos campos
+        document.querySelectorAll('.form-control, .form-select').forEach(input => {
+            input.addEventListener('focus', function() {
+                if (this.closest('.card')) {
+                    this.closest('.card').style.borderColor = '#0d6efd';
+                }
+            });
+            
+            input.addEventListener('blur', function() {
+                if (this.closest('.card')) {
+                    this.closest('.card').style.borderColor = '';
+                }
+            });
+        });
+        
+        // Adicionar evento para mostrar spinner durante o envio
         Array.prototype.slice.call(forms).forEach(function(form) {
             form.addEventListener('submit', function(event) {
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                    
+                    // Destacar campos com erro
+                    form.querySelectorAll(':invalid').forEach(input => {
+                        if (input.closest('.card')) {
+                            input.closest('.card').classList.add('border-danger');
+                        }
+                    });
+                } else {
+                    // Mostrar spinner de carregamento
+                    spinnerContainer.style.display = 'flex';
+                    
+                    // Após envio bem-sucedido, gerar PDF para impressão (será redirecionado pelo backend)
+                    setTimeout(() => {
+                        // O redirecionamento real será feito pelo backend
+                        // Este timeout é apenas para garantir que o spinner seja exibido
+                    }, 500);
                 }
                 
                 form.classList.add('was-validated');
             }, false);
         });
+        
+        // Melhorar a experiência dos toggles
+        document.querySelectorAll('.form-check-input[type="checkbox"]').forEach(checkbox => {
+            checkbox.closest('.card').addEventListener('click', function(e) {
+                // Não alterar o estado se o clique for no próprio checkbox
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    // Disparar o evento de alteração para ativar quaisquer listeners
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            });
+            
+            checkbox.addEventListener('change', function() {
+                const card = this.closest('.card');
+                if (this.checked) {
+                    card.style.borderColor = '#0d6efd';
+                    card.style.backgroundColor = 'rgba(13, 110, 253, 0.05)';
+                } else {
+                    card.style.borderColor = '';
+                    card.style.backgroundColor = '';
+                }
+            });
+        });
+        
+        // Adicionar orientação visual aos campos de data
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(dateInput => {
+            dateInput.addEventListener('change', function() {
+                const inputDate = new Date(this.value);
+                const currentDate = new Date(today);
+                
+                // Remover classes anteriores
+                this.classList.remove('border-success', 'border-warning', 'border-danger');
+                
+                if (this.id.includes('expiration')) {
+                    // Lógica para data de validade
+                    const diffTime = Math.abs(inputDate - currentDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (inputDate < currentDate) {
+                        this.classList.add('border-danger'); // Produto vencido
+                    } else if (diffDays <= 30) {
+                        this.classList.add('border-warning'); // Próximo ao vencimento
+                    } else {
+                        this.classList.add('border-success'); // Dentro da validade
+                    }
+                }
+                
+                if (this.id.includes('manufacturing')) {
+                    // Lógica para data de fabricação
+                    if (inputDate > currentDate) {
+                        this.classList.add('border-warning'); // Data futura
+                    }
+                }
+            });
+        });
     })();
+    
+    // Função para gerar relatório para impressão (será chamada após redirecionamento)
+    function gerarRelatorioParaImpressao() {
+        // Esta função será implementada no backend e redirecionará para uma página de relatório
+        console.log('Gerando relatório para impressão...');
+    }
 </script>
 {% endblock %}

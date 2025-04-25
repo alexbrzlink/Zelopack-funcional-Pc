@@ -111,8 +111,12 @@ def upload():
             db.session.add(new_report)
             db.session.commit()
             
+            # Gerar versão para impressão do relatório
+            generate_print_version(new_report)
+            
             flash('Laudo enviado com sucesso!', 'success')
-            return redirect(url_for('reports.view', id=new_report.id))
+            # Redirecionar para a página de impressão do relatório
+            return redirect(url_for('reports.print_report', id=new_report.id))
         else:
             flash('Tipo de arquivo não permitido!', 'danger')
     
