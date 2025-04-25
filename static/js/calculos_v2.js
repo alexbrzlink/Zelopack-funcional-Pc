@@ -125,6 +125,29 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         `;
                         emptyState.classList.add('active');
+                        
+                        // Mostrar área vazia para implementação futura
+                        document.querySelectorAll('.calculo-area').forEach(area => area.classList.remove('active'));
+                        emptyState.classList.add('active');
+                    } else {
+                        console.warn('Elemento calculo-empty-state não encontrado, criando dinâmicamente');
+                        // Criar elemento empty state se não existir
+                        const newEmptyState = document.createElement('div');
+                        newEmptyState.id = 'calculo-empty-state';
+                        newEmptyState.className = 'calculo-area active';
+                        newEmptyState.innerHTML = `
+                            <div class="empty-state-content">
+                                <i class="fas fa-tools fa-3x mb-3 text-primary"></i>
+                                <h4>Cálculo em Implementação</h4>
+                                <p>O cálculo "${this.textContent.trim()}" está sendo desenvolvido e estará disponível em breve.</p>
+                            </div>
+                        `;
+                        
+                        // Ocultar todos os elementos
+                        document.querySelectorAll('.calculo-area').forEach(area => area.classList.remove('active'));
+                        
+                        // Adicionar ao DOM e ativar
+                        document.querySelector('.content-calculos').appendChild(newEmptyState);
                     }
                 }
             });
