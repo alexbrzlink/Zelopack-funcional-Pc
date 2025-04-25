@@ -1,0 +1,442 @@
+1. Produção 200
+Descrição: Determina o peso líquido de embalagens de 200g, subtraindo a tara (peso da embalagem) do peso bruto.
+
+Entradas:
+
+Peso Bruto (g)
+
+Tara (g)
+
+Saída:
+
+Peso Líquido = Peso Bruto - Tara
+
+✅ 2. Produção Litro
+Descrição: Calcula o volume final de produção com base no peso e densidade do produto.
+
+Entradas:
+
+Peso Total (kg ou g)
+
+Densidade (g/mL ou kg/L)
+
+Saída:
+
+Volume Produzido (L) = Peso / Densidade
+
+✅ 3. Abaixar Brix
+Descrição: Estima quanto de água é necessário adicionar para reduzir o Brix de uma solução até o valor desejado.
+
+Entradas:
+
+Brix Atual
+
+Brix Desejado
+
+Volume Inicial (L)
+
+Saída:
+
+Água a Adicionar (L) = Volume Inicial × [(Brix Atual / Brix Desejado) - 1]
+
+✅ 4. Brix Corrigido
+Descrição: Aplica uma correção ao Brix medido levando em conta temperatura ou densidade.
+
+Entradas:
+
+Brix Medido
+
+Temperatura ou Fator de Correção
+
+Saída:
+
+Brix Corrigido = Brix Medido × Fator
+
+✅ 5. PESO BRUTO
+Descrição: Soma do peso líquido do produto e a tara (embalagem).
+
+Entradas:
+
+Peso Líquido
+
+Tara
+
+Saída:
+
+Peso Bruto = Peso Líquido + Tara
+
+✅ 6. CORANTES
+Descrição: Quantifica a quantidade de corante a ser adicionado por litro ou por lote.
+
+Entradas:
+
+Volume Total (L)
+
+Dosagem (mL/L ou g/L)
+
+Saída:
+
+Corante a Adicionar = Volume Total × Dosagem
+
+✅ 7. DENSIDADE
+Descrição: Calcula a densidade com base na razão entre massa e volume.
+
+Entradas:
+
+Massa (g)
+
+Volume (mL)
+
+Saída:
+
+Densidade = Massa / Volume
+
+✅ 8. RATIO
+Descrição: Relação simples entre Brix e Acidez.
+
+Entradas:
+
+Brix
+
+Acidez
+
+Saída:
+
+Ratio = Brix / Acidez
+
+✅ 9. ACIDEZ
+Descrição: Cálculo padrão da acidez de um produto.
+
+Entradas:
+
+Volume da Amostra
+
+Fator de Titulação (ou normalidade do NaOH)
+
+Volume NaOH utilizado
+
+Saída:
+
+Acidez (%) = (Volume NaOH × Fator × 100) / Volume da Amostra
+
+✅ 10. CÁLCULO DE SODA
+Descrição: Estima a quantidade de soda (NaOH) necessária para ajustar o pH ou neutralizar a acidez.
+
+Entradas:
+
+Acidez Inicial e Final
+
+Volume do tanque
+
+Fator de neutralização
+
+Saída:
+
+Soda a Adicionar = (Acidez Final - Acidez Inicial) × Volume × Fator
+
+✅ 11. VITAMINA C (VITC)
+Descrição: Determina o teor de vitamina C por titulação.
+
+Entradas:
+
+Volume de reagente usado
+
+Fator do reagente
+
+Volume da amostra
+
+Saída:
+
+Vitamina C = (Volume × Fator) / Volume da amostra
+
+✅ 12. PERDA DE BASE
+Descrição: Verifica perda de produto durante o processo.
+
+Entradas:
+
+Peso inicial
+
+Peso final
+
+Saída:
+
+Perda (%) = ((Peso Inicial - Peso Final) / Peso Inicial) × 100
+
+✅ 13. QUANTIDADE DE AÇÚCAR PUXAR
+Descrição: Calcula o açúcar necessário para atingir determinado Brix em um lote.
+
+Entradas:
+
+Brix Atual
+
+Brix Desejado
+
+Volume (L)
+
+Saída:
+
+Açúcar = (Brix Desejado - Brix Atual) × Volume × 10
+
+✅ 14. AUMENTAR ACIDEZ
+Descrição: Quantifica quanto ácido adicionar para alcançar uma acidez desejada.
+
+Entradas:
+
+Acidez Atual
+
+Acidez Desejada
+
+Volume Total (L)
+
+Saída:
+
+Ácido = (Acidez Desejada - Acidez Atual) × Volume
+
+✅ 15. DIMINUIR ACIDEZ
+Descrição: Quantifica quanta água ou base neutralizante deve ser adicionada para reduzir a acidez.
+
+Entradas:
+
+Acidez Atual
+
+Acidez Desejada
+
+Volume
+
+Saída:
+
+Volume a adicionar = fórmula baseada no fator de diluição
+
+✅ 16. CONVERSÃO CRISTAL ⇄ LÍQUIDO
+Descrição: Converte massa de açúcar cristal em líquido e vice-versa.
+
+Entradas:
+
+Tipo de conversão
+
+Quantidade em kg
+
+Saída:
+
+Açúcar líquido = Cristal × Fator (ou o inverso)
+
+✅ 17. ZERAGEM DE EMBALAGEM
+Descrição: Verifica e corrige o valor da tara de embalagens na linha de produção.
+
+Entradas:
+
+Peso embalagens vazias
+
+Saída:
+
+Tara Média = Média dos pesos vazios
+
+Esses são os principais cálculos organizados com descrição, entradas e saídas. Se quiser, posso seguir com os restantes ou organizar isso em PDF para download. Deseja isso agora?
+
+
+
+
+
+
+Dito por si:
+faça de todos aqui mesmo 
+
+
+Dito pelo ChatGPT:
+Perfeito. Aqui vai a continuação com todos os cálculos restantes, no mesmo padrão: nome, descrição clara, entradas, saídas e fórmula explicada.
+
+✅ 18. RATIO - BRIX
+Descrição: Compara o Brix de duas amostras diferentes ou de um mesmo produto em etapas diferentes.
+
+Entradas:
+
+Brix 1
+
+Brix 2
+
+Saída:
+
+Ratio Brix = Brix 1 / Brix 2
+
+✅ 19. RATIO - ACIDEZ
+Descrição: Relação entre duas medições de acidez (ex: antes e depois de um ajuste).
+
+Entradas:
+
+Acidez 1
+
+Acidez 2
+
+Saída:
+
+Ratio Acidez = Acidez 1 / Acidez 2
+
+✅ 20. SODA - ANTIGO / SODA - DIVERSEY
+Descrição: Cálculo de dosagem de soda baseado em concentração (linha antiga ou Diversey).
+
+Entradas:
+
+Volume do tanque
+
+Dosagem desejada (% ou mL/L)
+
+Saída:
+
+Soda necessária = Volume × Dosagem
+
+✅ 21. ÁCIDO - DIVERSEY / ÁCIDO - ANTIGO
+Descrição: Similar ao da soda, mas para adição de ácido (correção de pH ou acidez).
+
+Entradas:
+
+Volume do lote
+
+Dosagem recomendada (g/L ou mL/L)
+
+Saída:
+
+Ácido necessário = Volume × Dosagem
+
+✅ 22. AUMENTAR BRIX COM AÇÚCAR BATIDO
+Descrição: Quantidade de açúcar (em solução batida) a ser adicionada para aumentar o Brix.
+
+Entradas:
+
+Brix Atual
+
+Brix Desejado
+
+Volume do lote (L)
+
+Concentração da solução de açúcar (%)
+
+Saída:
+
+Litros de açúcar batido = cálculo proporcional com base no delta de Brix
+
+✅ 23. PREVISÃO BRIX
+Descrição: Estima o Brix final após mistura de dois volumes com Brix diferentes.
+
+Entradas:
+
+Volume 1 (L), Brix 1
+
+Volume 2 (L), Brix 2
+
+Saída:
+
+Brix Final = (Brix 1 × Volume 1 + Brix 2 × Volume 2) / (Volume 1 + Volume 2)
+
+✅ 24. PREVISÃO ACIDEZ
+Descrição: Idêntico à previsão de Brix, mas com valores de acidez.
+
+Entradas:
+
+Volume 1, Acidez 1
+
+Volume 2, Acidez 2
+
+Saída:
+
+Acidez Final = (Acidez 1 × V1 + Acidez 2 × V2) / (V1 + V2)
+
+✅ 25. TEMPO DE FINALIZAÇÃO
+Descrição: Estima o tempo necessário para finalizar a produção de um lote baseado na vazão.
+
+Entradas:
+
+Volume Total (L)
+
+Vazão da linha (L/min)
+
+Saída:
+
+Tempo (min) = Volume / Vazão
+
+✅ 26. CORREÇÃO DE BRIX
+Descrição: Ajuste de Brix através de adição de água ou concentrado.
+
+Entradas:
+
+Brix Atual
+
+Brix Desejado
+
+Volume Inicial
+
+Saída:
+
+Volume de correção necessário (água se for abaixar, concentrado se for subir)
+
+✅ 27. CORREÇÃO AÇÚCAR CRISTAL
+Descrição: Cálculo do açúcar cristal necessário para corrigir o Brix em produtos não líquidos.
+
+Entradas:
+
+Brix Atual
+
+Brix Alvo
+
+Volume ou peso do lote
+
+Saída:
+
+Kg de açúcar cristal = fórmula proporcional com base na diferença de Brix
+
+✅ 28. CONVERSÃO LÍQUIDO - CRISTAL
+Descrição: Transformação entre açúcar líquido e açúcar cristal, considerando um fator de equivalência.
+
+Entradas:
+
+Tipo de conversão
+
+Quantidade de entrada
+
+Saída:
+
+Resultado convertido com base no fator (ex: 1 kg cristal ≈ 0,85 L líquido)
+
+✅ 29. PESO LÍQUIDO 200
+Descrição: Peso final do conteúdo sem embalagem, específico para frascos de 200g.
+
+Entradas:
+
+Peso Bruto
+
+Tara
+
+Saída:
+
+Peso Líquido = Peso Bruto - Tara
+
+✅ 30. PESO LÍQUIDO LITRO
+Descrição: Cálculo do peso líquido total por litro de produto.
+
+Entradas:
+
+Volume Total (L)
+
+Densidade
+
+Saída:
+
+Peso Líquido = Volume × Densidade
+
+✅ 31. ZERAGEM DE EMBALAGEM
+Descrição: Determinação do peso médio da embalagem (tara), para compensação automática nas balanças.
+
+Entradas:
+
+Peso de amostras vazias
+
+Saída:
+
+Tara Média = média dos pesos amostrados
+
+📌 Nota geral sobre os fatores usados nos cálculos:
+
+Os fatores de conversão (como os de açúcar cristal → líquido) devem ser ajustados conforme especificações da fábrica.
+
+Os volumes e massas precisam estar na mesma unidade (kg/L, g/mL) para evitar erros.
+
+Se quiser, posso agora compilar isso tudo em um PDF ou documento para facilitar a entrega à sua IA. Deseja o arquivo?

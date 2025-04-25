@@ -1,0 +1,157 @@
+<!--
+Arquivo: InterfaceCompletaCalculos.html
+Descricao: Interface moderna e interativa contendo todos os cálculos extraídos das abas do arquivo CALCULOS_LAB_RAFA.xlsx.
+-->
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cálculos Laboratoriais - App</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    .container { max-width: 1000px; margin: auto; padding: 20px; background: #fff; border-radius: 8px; }
+    h1 { text-align: center; color: #333; }
+    .section { margin-bottom: 30px; }
+    .section h2 { background: #007bff; color: #fff; padding: 10px; border-radius: 6px; cursor: pointer; }
+    .card { padding: 15px; border: 1px solid #ccc; border-radius: 6px; background: #fafafa; display: none; }
+    .input-group { margin-bottom: 10px; }
+    .input-group label { display: block; margin-bottom: 5px; }
+    .input-group input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    .result { font-weight: bold; margin-top: 10px; }
+    .btn { background: #28a745; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+    .btn:hover { background: #218838; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cálculos Laboratoriais</h1>
+
+    <!-- Seções de Cálculos -->
+
+    <!-- 1. Produção 200 -->
+    <div class="section">
+      <h2 onclick="toggleSection('producao200')">Produção 200</h2>
+      <div class="card" id="producao200">
+        <p><strong>Descrição:</strong> Calcula o peso líquido de uma embalagem de 200g subtraindo a tara do peso bruto.</p>
+        <div class="input-group">
+          <label for="pesoBruto200">Peso Bruto (g):</label>
+          <input type="number" id="pesoBruto200" placeholder="Digite o peso bruto">
+        </div>
+        <div class="input-group">
+          <label for="tara">Tara (g):</label>
+          <input type="number" id="tara" placeholder="Digite a tara">
+        </div>
+        <button class="btn" onclick="calcProducao200()">Calcular</button>
+        <div class="result" id="resultadoProducao200"></div>
+      </div>
+    </div>
+
+    <!-- 2. Ratio (Brix / Acidez) -->
+    <div class="section">
+      <h2 onclick="toggleSection('brixAcidez')">Ratio (Brix / Acidez)</h2>
+      <div class="card" id="brixAcidez">
+        <p><strong>Descrição:</strong> Divide o valor do Brix pela Acidez, fornecendo uma relação importante para controle de qualidade.</p>
+        <div class="input-group">
+          <label for="brix">Brix:</label>
+          <input type="number" id="brix" placeholder="Digite o Brix">
+        </div>
+        <div class="input-group">
+          <label for="acidez">Acidez:</label>
+          <input type="number" id="acidez" placeholder="Digite a Acidez">
+        </div>
+        <button class="btn" onclick="calcRatio()">Calcular</button>
+        <div class="result" id="resultadoRatio"></div>
+      </div>
+    </div>
+
+    <!-- 3. Correção de Acidez -->
+    <div class="section">
+      <h2 onclick="toggleSection('acidezCorrecao')">Correção de Acidez</h2>
+      <div class="card" id="acidezCorrecao">
+        <p><strong>Descrição:</strong> Determina a quantidade de ácido a adicionar para atingir uma acidez desejada em um tanque.</p>
+        <div class="input-group">
+          <label for="acidezAtual">Acidez Atual:</label>
+          <input type="number" id="acidezAtual" placeholder="Acidez atual">
+        </div>
+        <div class="input-group">
+          <label for="acidezDesejada">Acidez Desejada:</label>
+          <input type="number" id="acidezDesejada" placeholder="Acidez desejada">
+        </div>
+        <div class="input-group">
+          <label for="volume">Volume do tanque (L):</label>
+          <input type="number" id="volume" placeholder="Volume em litros">
+        </div>
+        <button class="btn" onclick="calcCorrecaoAcidez()">Calcular</button>
+        <div class="result" id="resultadoCorrecao"></div>
+      </div>
+    </div>
+
+    <!-- 4. Correção de Brix -->
+    <div class="section">
+      <h2 onclick="toggleSection('brixCorrecao')">Correção de Brix</h2>
+      <div class="card" id="brixCorrecao">
+        <p><strong>Descrição:</strong> Estima a quantidade de açúcar necessária para elevar o Brix a um nível desejado.</p>
+        <div class="input-group">
+          <label for="brixAtual">Brix Atual:</label>
+          <input type="number" id="brixAtual" placeholder="Brix atual">
+        </div>
+        <div class="input-group">
+          <label for="brixDesejado">Brix Desejado:</label>
+          <input type="number" id="brixDesejado" placeholder="Brix desejado">
+        </div>
+        <div class="input-group">
+          <label for="litros">Litros do tanque:</label>
+          <input type="number" id="litros" placeholder="Volume em litros">
+        </div>
+        <button class="btn" onclick="calcCorrecaoBrix()">Calcular</button>
+        <div class="result" id="resultadoBrixCorrecao"></div>
+      </div>
+    </div>
+
+    <!-- Continuação: TODO adicionar demais cálculos aqui -->
+
+    <script>
+      function toggleSection(id) {
+        const el = document.getElementById(id);
+        el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+      }
+
+      function calcProducao200() {
+        const peso = parseFloat(document.getElementById('pesoBruto200').value) || 0;
+        const tara = parseFloat(document.getElementById('tara').value) || 0;
+        const resultado = peso - tara;
+        document.getElementById('resultadoProducao200').textContent = `Peso Líquido: ${resultado.toFixed(2)} g`;
+      }
+
+      function calcRatio() {
+        const brix = parseFloat(document.getElementById('brix').value) || 0;
+        const acidez = parseFloat(document.getElementById('acidez').value) || 1;
+        const ratio = brix / acidez;
+        document.getElementById('resultadoRatio').textContent = `Ratio: ${ratio.toFixed(2)}`;
+      }
+
+      function calcCorrecaoAcidez() {
+        const acidezAtual = parseFloat(document.getElementById('acidezAtual').value);
+        const acidezDesejada = parseFloat(document.getElementById('acidezDesejada').value);
+        const volume = parseFloat(document.getElementById('volume').value);
+        if (isNaN(acidezAtual) || isNaN(acidezDesejada) || isNaN(volume)) return;
+        const delta = acidezDesejada - acidezAtual;
+        const resultado = delta * volume;
+        document.getElementById('resultadoCorrecao').textContent = `Ácido necessário: ${resultado.toFixed(2)} g`;
+      }
+
+      function calcCorrecaoBrix() {
+        const atual = parseFloat(document.getElementById('brixAtual').value);
+        const desejado = parseFloat(document.getElementById('brixDesejado').value);
+        const litros = parseFloat(document.getElementById('litros').value);
+        if (isNaN(atual) || isNaN(desejado) || isNaN(litros)) return;
+        const delta = desejado - atual;
+        const resultado = delta * litros * 10;
+        document.getElementById('resultadoBrixCorrecao').textContent = `Açúcar a adicionar: ${resultado.toFixed(2)} g`;
+      }
+    </script>
+  </div>
+</body>
+</html>
