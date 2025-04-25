@@ -1,0 +1,445 @@
+{% extends 'base.html' %}
+
+{% block title %}Preenchimento Interativo - {{ file_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+        <div>
+            <h1 class="d-flex align-items-center">
+                <i class="fas fa-file-edit text-primary me-2"></i>
+                Preenchimento Interativo
+            </h1>
+            <p class="text-muted mb-0">Visualize e edite o formulário em tempo real.</p>
+        </div>
+        <div>
+            <a href="{{ url_for('forms.category', category=file_path.split('/')[0]) }}" class="btn btn-outline-secondary me-2 animate-fade-in-left">
+                <i class="fas fa-arrow-left me-1"></i> Voltar
+            </a>
+            {% if presets and presets|length > 0 %}
+            <div class="btn-group animate-fade-in-left" role="group">
+                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-bookmark me-1"></i> Aplicar Preset
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    {% for preset in presets %}
+                    <li>
+                        <button class="dropdown-item preset-option" data-preset-id="{{ preset.id }}">
+                            {% if preset.is_default %}
+                            <i class="fas fa-star text-warning me-1"></i>
+                            {% else %}
+                            <i class="fas fa-bookmark text-primary me-1"></i>
+                            {% endif %}
+                            {{ preset.name }}
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Coluna de visualização do documento -->
+        <div class="col-md-7 mb-4">
+            <div class="card shadow-sm animate-fade-in-up">
+                <div class="card-header bg-primary bg-gradient text-white d-flex align-items-center">
+                    <i class="fas {% if file_ext.lower() == '.pdf' %}fa-file-pdf{% elif file_ext.lower() == '.docx' %}fa-file-word{% elif file_ext.lower() == '.xlsx' %}fa-file-excel{% else %}fa-file-alt{% endif %} me-2"></i>
+                    <h5 class="mb-0">{{ file_name }}</h5>
+                </div>
+                <div class="card-body p-0 position-relative">
+                    <!-- Container do documento com altura fixa e scroll -->
+                    <div class="document-preview-container">
+                        {% if file_ext.lower() == '.pdf' %}
+                        <!-- Visualização de PDF via iframe -->
+                        <iframe id="pdf-preview" class="pdf-viewer" src="{{ url_for('forms.view_form', file_path=file_path) }}" width="100%" height="100%"></iframe>
+                        {% elif file_ext.lower() == '.docx' %}
+                        <!-- Preview temporário de Word em HTML -->
+                        <div id="docx-preview" class="docx-preview text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-file-word text-primary display-4"></i>
+                            </div>
+                            <h4>Visualização de documento Word</h4>
+                            <p class="text-muted">Os campos detectados estão disponíveis para edição ao lado.</p>
+                            <a href="{{ url_for('forms.view_form', file_path=file_path) }}" target="_blank" class="btn btn-outline-primary mt-2">
+                                <i class="fas fa-external-link-alt me-1"></i> Abrir em nova aba
+                            </a>
+                        </div>
+                        {% elif file_ext.lower() == '.xlsx' or file_ext.lower() == '.xls' %}
+                        <!-- Preview temporário de Excel em HTML -->
+                        <div id="excel-preview" class="excel-preview text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-file-excel text-success display-4"></i>
+                            </div>
+                            <h4>Visualização de planilha Excel</h4>
+                            <p class="text-muted">Os campos detectados estão disponíveis para edição ao lado.</p>
+                            <a href="{{ url_for('forms.view_form', file_path=file_path) }}" target="_blank" class="btn btn-outline-success mt-2">
+                                <i class="fas fa-external-link-alt me-1"></i> Abrir em nova aba
+                            </a>
+                        </div>
+                        {% else %}
+                        <!-- Formato não suportado -->
+                        <div class="unsupported-format text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-file-alt text-secondary display-4"></i>
+                            </div>
+                            <h4>Formato não suportado para visualização</h4>
+                            <p class="text-muted">O formato {{ file_ext }} não pode ser visualizado diretamente.</p>
+                            <a href="{{ url_for('forms.view_form', file_path=file_path) }}" target="_blank" class="btn btn-outline-secondary mt-2">
+                                <i class="fas fa-download me-1"></i> Baixar arquivo
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna de edição de campos -->
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm animate-fade-in-up">
+                <div class="card-header bg-primary bg-gradient text-white d-flex align-items-center">
+                    <i class="fas fa-pencil-alt me-2"></i>
+                    <h5 class="mb-0">Campos Editáveis</h5>
+                </div>
+                <div class="card-body">
+                    <form id="interactive-form" action="{{ url_for('forms.download_filled_form', file_path=file_path) }}" method="post">
+                        {% if fields and fields|length > 0 %}
+                        <div class="mb-3 d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i class="fas fa-info-circle me-1"></i> {{ fields|length }} campos detectados.</span>
+                            <div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary me-2" id="clear-all-fields">
+                                    <i class="fas fa-eraser me-1"></i> Limpar Todos
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="save-preset-button">
+                                    <i class="fas fa-save me-1"></i> Salvar Preset
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="interactive-fields-container">
+                            {% for field in fields %}
+                            <div class="field-card mb-3 animate-fade-in" style="animation-delay: {{ (loop.index0 * 0.05) + 0.2 }}s">
+                                <div class="card shadow-sm border-left-primary">
+                                    <div class="card-body p-3">
+                                        <div class="form-floating">
+                                            {% if field.type == 'checkbox' %}
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input field-input" id="field_{{ field.id }}" name="field_{{ field.id }}" value="yes">
+                                                <label class="form-check-label" for="field_{{ field.id }}">{{ field.name }}</label>
+                                            </div>
+                                            {% elif field.type == 'select' %}
+                                            <select class="form-select field-input" id="field_{{ field.id }}" name="field_{{ field.id }}">
+                                                <option value="">Selecione...</option>
+                                                <option value="Sim">Sim</option>
+                                                <option value="Não">Não</option>
+                                                <option value="N/A">N/A</option>
+                                            </select>
+                                            <label for="field_{{ field.id }}">{{ field.name }}</label>
+                                            {% else %}
+                                            <input type="text" class="form-control field-input" id="field_{{ field.id }}" name="field_{{ field.id }}" 
+                                                   placeholder="{{ field.name }}" value="{{ field.value }}">
+                                            <label for="field_{{ field.id }}">{{ field.name }}</label>
+                                            {% endif %}
+                                        </div>
+                                        {% if field.location %}
+                                        <div class="text-muted mt-1 small">
+                                            <i class="fas fa-map-marker-alt me-1"></i> {{ field.location }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-file-download me-1"></i> Baixar Formulário Preenchido
+                            </button>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info shadow-sm">
+                            <div class="d-flex">
+                                <div class="me-3">
+                                    <i class="fas fa-info-circle fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5>Nenhum campo detectado</h5>
+                                    <p class="mb-0">Não foi possível detectar campos para preenchimento neste formulário. 
+                                    Tente outro formato ou entre em contato com o suporte.</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Salvar Preset -->
+<div class="modal fade" id="savePresetModal" tabindex="-1" aria-labelledby="savePresetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="savePresetModalLabel">Salvar Predefinição</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="preset-form">
+                    <div class="mb-3">
+                        <label for="preset-name" class="form-label">Nome da Predefinição</label>
+                        <input type="text" class="form-control" id="preset-name" required placeholder="Ex: Controle Mensal - Janeiro 2025">
+                    </div>
+                    <div class="mb-3">
+                        <label for="preset-description" class="form-label">Descrição (opcional)</label>
+                        <textarea class="form-control" id="preset-description" rows="3" placeholder="Descreva o propósito desta predefinição"></textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="preset-default">
+                        <label class="form-check-label" for="preset-default">Definir como padrão para este formulário</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="save-preset-confirm">Salvar Predefinição</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .document-preview-container {
+        height: 70vh;
+        overflow: auto;
+        border: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+    }
+    
+    .pdf-viewer {
+        border: none;
+    }
+    
+    .interactive-fields-container {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+    
+    .border-left-primary {
+        border-left: 4px solid #4e73df !important;
+    }
+    
+    .field-card:hover .card {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        transition: all 0.3s ease;
+    }
+    
+    .field-input:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+    }
+    
+    /* Estilos para scroll personalizado */
+    .interactive-fields-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .interactive-fields-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .interactive-fields-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+    }
+    
+    .interactive-fields-container::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Referências aos elementos principais
+        const interactiveForm = document.getElementById('interactive-form');
+        const clearAllBtn = document.getElementById('clear-all-fields');
+        const savePresetBtn = document.getElementById('save-preset-button');
+        const savePresetConfirmBtn = document.getElementById('save-preset-confirm');
+        const presetOptions = document.querySelectorAll('.preset-option');
+        const formFields = document.querySelectorAll('.field-input');
+        
+        // Modal de salvar preset
+        const savePresetModal = new bootstrap.Modal(document.getElementById('savePresetModal'));
+        
+        // Limpar todos os campos
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja limpar todos os campos?')) {
+                    document.querySelectorAll('.field-input').forEach(input => {
+                        if (input.type === 'checkbox') {
+                            input.checked = false;
+                        } else {
+                            input.value = '';
+                        }
+                    });
+                    
+                    // Animar o botão
+                    ZelopackAnimations.pulse(clearAllBtn);
+                }
+            });
+        }
+        
+        // Abrir modal para salvar preset
+        if (savePresetBtn) {
+            savePresetBtn.addEventListener('click', function() {
+                savePresetModal.show();
+            });
+        }
+        
+        // Salvar preset
+        if (savePresetConfirmBtn) {
+            savePresetConfirmBtn.addEventListener('click', function() {
+                const presetName = document.getElementById('preset-name').value;
+                const presetDescription = document.getElementById('preset-description').value;
+                const isDefault = document.getElementById('preset-default').checked;
+                
+                if (!presetName) {
+                    alert('Por favor, informe um nome para a predefinição.');
+                    return;
+                }
+                
+                // Coletar os valores dos campos
+                const formData = {};
+                document.querySelectorAll('.field-input').forEach(input => {
+                    const fieldId = input.id.replace('field_', '');
+                    if (input.type === 'checkbox') {
+                        formData[fieldId] = input.checked ? 'Sim' : 'Não';
+                    } else {
+                        formData[fieldId] = input.value;
+                    }
+                });
+                
+                // Mostrar carregamento
+                ZelopackAnimations.showLoading('Salvando predefinição...');
+                
+                // Enviar dados para o servidor via fetch
+                fetch('{{ url_for("forms.create_preset_ajax", file_path=file_path) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: presetName,
+                        description: presetDescription,
+                        is_default: isDefault,
+                        data: formData
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    ZelopackAnimations.hideLoading();
+                    
+                    if (data.success) {
+                        // Fechar o modal
+                        savePresetModal.hide();
+                        
+                        // Exibir mensagem de sucesso
+                        ZelopackAnimations.showMessage(data.message, 'success');
+                        
+                        // Recarregar a página após um breve atraso
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        // Exibir mensagem de erro
+                        ZelopackAnimations.showMessage(`Erro: ${data.message}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    ZelopackAnimations.hideLoading();
+                    console.error('Erro ao salvar predefinição:', error);
+                    ZelopackAnimations.showMessage('Erro ao salvar predefinição. Tente novamente.', 'error');
+                });
+            });
+        }
+        
+        // Aplicar presets
+        if (presetOptions.length > 0) {
+            presetOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const presetId = this.dataset.presetId;
+                    
+                    // Mostrar carregamento
+                    ZelopackAnimations.showLoading('Carregando predefinição...');
+                    
+                    // Buscar os dados da predefinição via AJAX
+                    fetch(`/forms/api/preset/${presetId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            ZelopackAnimations.hideLoading();
+                            
+                            if (data.success) {
+                                const preset = data.preset;
+                                
+                                // Aplicar os valores aos campos
+                                for (const [fieldId, value] of Object.entries(preset.data)) {
+                                    const fieldInput = document.getElementById(`field_${fieldId}`);
+                                    if (fieldInput) {
+                                        if (fieldInput.type === 'checkbox') {
+                                            fieldInput.checked = (value === 'Sim' || value === 'yes' || value === true);
+                                        } else {
+                                            fieldInput.value = value;
+                                        }
+                                        // Animar o campo preenchido
+                                        ZelopackAnimations.pulseElement(fieldInput);
+                                    }
+                                }
+                                
+                                // Mensagem de sucesso
+                                ZelopackAnimations.showMessage(`Predefinição "${preset.name}" aplicada com sucesso!`, 'success');
+                            } else {
+                                ZelopackAnimations.showMessage(`Erro: ${data.message}`, 'error');
+                            }
+                        })
+                        .catch(error => {
+                            ZelopackAnimations.hideLoading();
+                            console.error('Erro ao carregar predefinição:', error);
+                            ZelopackAnimations.showMessage('Erro ao carregar predefinição. Tente novamente.', 'error');
+                        });
+                });
+            });
+        }
+        
+        // Animação ao editar campos
+        formFields.forEach(field => {
+            field.addEventListener('focus', function() {
+                const fieldCard = this.closest('.field-card');
+                if (fieldCard) {
+                    fieldCard.classList.add('animate-pulse');
+                    setTimeout(() => {
+                        fieldCard.classList.remove('animate-pulse');
+                    }, 1000);
+                }
+            });
+        });
+        
+        // Envio do formulário com indicação visual
+        if (interactiveForm) {
+            interactiveForm.addEventListener('submit', function() {
+                ZelopackAnimations.showLoading('Gerando formulário preenchido...');
+            });
+        }
+    });
+</script>
+{% endblock %}

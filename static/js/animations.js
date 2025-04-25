@@ -398,10 +398,153 @@ function showFlashMessage(message, type = 'info') {
     return alert;
 }
 
+/**
+ * Mostra uma animação de carregamento global
+ * @param {string} message - Mensagem a ser exibida durante o carregamento
+ */
+function showLoading(message = 'Carregando...') {
+    // Verificar se já existe um overlay de carregamento
+    let loadingOverlay = document.getElementById('zelopack-loading-overlay');
+    
+    // Criar o overlay se não existir
+    if (!loadingOverlay) {
+        loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'zelopack-loading-overlay';
+        loadingOverlay.className = 'loading-overlay';
+        loadingOverlay.style.position = 'fixed';
+        loadingOverlay.style.top = '0';
+        loadingOverlay.style.left = '0';
+        loadingOverlay.style.width = '100%';
+        loadingOverlay.style.height = '100%';
+        loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.justifyContent = 'center';
+        loadingOverlay.style.alignItems = 'center';
+        loadingOverlay.style.zIndex = '9999';
+        
+        // Adicionar conteúdo do loading
+        loadingOverlay.innerHTML = `
+            <div class="loading-content text-center text-white">
+                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <h5 class="loading-message">${message}</h5>
+            </div>
+        `;
+        
+        document.body.appendChild(loadingOverlay);
+        
+        // Adicionar animação de entrada
+        setTimeout(() => {
+            loadingOverlay.style.opacity = '1';
+        }, 10);
+    } else {
+        // Atualizar a mensagem se já existir
+        const messageElement = loadingOverlay.querySelector('.loading-message');
+        if (messageElement) {
+            messageElement.textContent = message;
+        }
+    }
+}
+
+/**
+ * Esconde a animação de carregamento global
+ */
+function hideLoading() {
+    const loadingOverlay = document.getElementById('zelopack-loading-overlay');
+    
+    if (loadingOverlay) {
+        // Adicionar animação de saída
+        loadingOverlay.style.opacity = '0';
+        
+        // Remover após a animação
+        setTimeout(() => {
+            if (loadingOverlay.parentNode) {
+                loadingOverlay.parentNode.removeChild(loadingOverlay);
+            }
+        }, 300);
+    }
+}
+
+/**
+ * Aplica efeito de carregamento em um formulário ou card
+ * @param {HTMLElement} element - Elemento a receber o efeito
+ * @param {boolean} isLoading - Se deve mostrar ou esconder o carregamento
+ */
+function setFormLoading(element, isLoading) {
+    if (!element) return;
+    
+    if (isLoading) {
+        // Adicionar overlay de carregamento
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.className = 'form-loading-overlay';
+        loadingOverlay.style.position = 'absolute';
+        loadingOverlay.style.top = '0';
+        loadingOverlay.style.left = '0';
+        loadingOverlay.style.width = '100%';
+        loadingOverlay.style.height = '100%';
+        loadingOverlay.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.justifyContent = 'center';
+        loadingOverlay.style.alignItems = 'center';
+        loadingOverlay.style.zIndex = '10';
+        loadingOverlay.style.borderRadius = 'inherit';
+        
+        // Adicionar spinner
+        loadingOverlay.innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-2 text-primary">Carregando dados...</p>
+            </div>
+        `;
+        
+        // Garantir que o elemento tenha position relative para o absolute funcionar
+        const originalPosition = window.getComputedStyle(element).position;
+        if (originalPosition !== 'absolute' && originalPosition !== 'relative' && originalPosition !== 'fixed') {
+            element.style.position = 'relative';
+            element.dataset.originalPosition = originalPosition;
+        }
+        
+        element.appendChild(loadingOverlay);
+        
+        // Adicionar animação de entrada
+        setTimeout(() => {
+            loadingOverlay.style.opacity = '1';
+        }, 10);
+    } else {
+        // Remover overlay de carregamento
+        const loadingOverlay = element.querySelector('.form-loading-overlay');
+        
+        if (loadingOverlay) {
+            // Adicionar animação de saída
+            loadingOverlay.style.opacity = '0';
+            
+            // Remover após a animação
+            setTimeout(() => {
+                if (loadingOverlay.parentNode) {
+                    loadingOverlay.parentNode.removeChild(loadingOverlay);
+                    
+                    // Restaurar position original
+                    if (element.dataset.originalPosition) {
+                        element.style.position = element.dataset.originalPosition;
+                        delete element.dataset.originalPosition;
+                    }
+                }
+            }, 300);
+        }
+    }
+}
+
 // Exportar funções para uso global (se necessário)
 window.ZelopackAnimations = {
     shake: shakeElement,
     pulse: pulseElement,
     showMessage: showFlashMessage,
+    showLoading: showLoading,
+    hideLoading: hideLoading,
+    setFormLoading: setFormLoading,
+    pulseElement: pulseElement,
     reinitialize: initializeAnimations
 };
