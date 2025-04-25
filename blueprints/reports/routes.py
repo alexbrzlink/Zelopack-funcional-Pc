@@ -287,7 +287,15 @@ def upload():
         if hasattr(field, 'choices') and field.choices is None:
             field.choices = [('', f'Nenhuma opção disponível para {field.label.text}')]
     
+    # Adiciona debug para encontrar o problema
+    print(f"Formulário submetido - form.errors: {form.errors}")
+    current_app.logger.info(f"Formulário submetido - form.errors: {form.errors}")
+    
     if form.validate_on_submit():
+        # Se chegou aqui, o formulário foi validado com sucesso
+        print("Formulário validado com sucesso!")
+        current_app.logger.info("Formulário validado com sucesso!")
+        
         file = form.file.data
         
         if file and allowed_file(file.filename):
