@@ -10,7 +10,7 @@ from models import Report, Category, Supplier
 from utils.search import search_reports
 from utils.file_handler import save_file, allowed_file, get_file_size
 from blueprints.reports import reports_bp
-from blueprints.reports.forms import ReportUploadForm, SearchForm
+from blueprints.reports.forms import ReportUploadForm, SearchForm, SupplierForm
 
 @reports_bp.route('/')
 @login_required
@@ -71,7 +71,7 @@ def upload():
                 
                 # Categorização
                 category=form.category.data,
-                supplier=form.supplier.data,
+                supplier=form.supplier_manual.data if form.supplier_manual.data else form.supplier.data,
                 batch_number=form.batch_number.data,
                 raw_material_type=form.raw_material_type.data,
                 sample_code=form.sample_code.data,

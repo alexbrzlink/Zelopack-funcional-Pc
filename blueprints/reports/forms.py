@@ -11,8 +11,15 @@ class ReportUploadForm(FlaskForm):
     file = FileField('Arquivo', validators=[FileRequired()])
     
     # Campos para categorização
-    category = SelectField('Categoria', validators=[Optional()])
+    category = SelectField('Categoria', 
+                         choices=[('', 'Selecione uma categoria'),
+                                  ('materias_primas', 'Matérias Primas'),
+                                  ('acucar', 'Açúcar'),
+                                  ('embalagens', 'Embalagens'),
+                                  ('adocantes', 'Adoçantes')],
+                         validators=[Optional()])
     supplier = SelectField('Fornecedor', validators=[Optional()])
+    supplier_manual = StringField('Outro Fornecedor (digite se não estiver na lista)', validators=[Optional()])
     batch_number = StringField('Número do Lote', validators=[Optional()])
     raw_material_type = SelectField('Tipo de Matéria-Prima', 
                                    choices=[('', 'Selecione um tipo'), 
@@ -70,8 +77,32 @@ class ReportUploadForm(FlaskForm):
 class SearchForm(FlaskForm):
     """Formulário para pesquisa de laudos."""
     query = StringField('Termo de Pesquisa', validators=[Optional()])
-    category = SelectField('Categoria', validators=[Optional()])
+    category = SelectField('Categoria', 
+                         choices=[('', 'Todas as categorias'),
+                                  ('materias_primas', 'Matérias Primas'),
+                                  ('acucar', 'Açúcar'),
+                                  ('embalagens', 'Embalagens'),
+                                  ('adocantes', 'Adoçantes')],
+                         validators=[Optional()])
     supplier = SelectField('Fornecedor', validators=[Optional()])
     date_from = DateField('Data Inicial', validators=[Optional()], format='%Y-%m-%d')
     date_to = DateField('Data Final', validators=[Optional()], format='%Y-%m-%d')
     submit = SubmitField('Pesquisar')
+
+
+class SupplierForm(FlaskForm):
+    """Formulário para cadastro de fornecedores."""
+    name = StringField('Nome do Fornecedor', validators=[DataRequired()])
+    contact_name = StringField('Nome de Contato', validators=[Optional()])
+    email = StringField('Email', validators=[Optional()])
+    phone = StringField('Telefone', validators=[Optional()])
+    address = TextAreaField('Endereço', validators=[Optional()])
+    notes = TextAreaField('Observações', validators=[Optional()])
+    type = SelectField('Tipo', 
+                     choices=[('materias_primas', 'Fornecedor de Matérias Primas'),
+                              ('acucar', 'Fornecedor de Açúcar'),
+                              ('embalagens', 'Fornecedor de Embalagens'),
+                              ('adocantes', 'Fornecedor de Adoçantes'),
+                              ('outro', 'Outro')],
+                     validators=[DataRequired()])
+    submit = SubmitField('Salvar Fornecedor')
