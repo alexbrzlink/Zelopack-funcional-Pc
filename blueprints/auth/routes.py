@@ -19,7 +19,7 @@ def login():
     
     # Se o usuário já está autenticado, redirecionar para a página inicial
     if current_user.is_authenticated:
-        return redirect(url_for('reports.index'))
+        return redirect(url_for('dashboard.index'))
     
     # Verificar se existe pelo menos um usuário admin (para fins de teste/dev)
     if User.query.count() == 0:
@@ -72,7 +72,7 @@ def login():
                 admin_user.last_login = datetime.utcnow()
                 db.session.commit()
                 flash(f'Bem-vindo, {admin_user.name}! Login direto como admin realizado com sucesso.', 'success')
-                return redirect(url_for('reports.index'))
+                return redirect(url_for('dashboard.index'))
         
         # Processo normal de login
         user = User.query.filter_by(username=username).first()
