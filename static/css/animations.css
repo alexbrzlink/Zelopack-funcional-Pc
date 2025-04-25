@@ -1,336 +1,346 @@
-/* Animações de Carregamento para Zelopack
-   Biblioteca de animações para melhorar a experiência do usuário durante carregamentos */
+/* ZELOPACK - CSS de Animações Globais
+ * Este arquivo contém animações reutilizáveis em todo o sistema
+ */
 
-/* Overlay de carregamento */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.8);
-    z-index: 9999;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+/* Animações básicas */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.loading-overlay.active {
-    display: flex;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
-/* Textos de carregamento */
-.loading-text {
-    margin-top: 20px;
-    font-size: 1.2rem;
-    color: #333;
-    font-weight: 500;
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
-/* Spinner Estilo Zelopack */
-.spinner-zelopack {
-    width: 50px;
-    height: 50px;
-    border: 4px solid rgba(0, 123, 255, 0.1);
-    border-radius: 50%;
-    border-left-color: #0d6efd;
-    animation: spinner-rotate 1s linear infinite;
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-20px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
-@keyframes spinner-rotate {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Spinner de Fluxo */
-.spinner-flow {
-    width: 60px;
-    height: 60px;
-    position: relative;
-}
-
-.spinner-flow div {
-    box-sizing: border-box;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 8px solid transparent;
-    border-top-color: #0d6efd;
-    border-radius: 50%;
-    animation: spinner-flow 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-
-.spinner-flow div:nth-child(1) {
-    animation-delay: -0.45s;
-}
-
-.spinner-flow div:nth-child(2) {
-    animation-delay: -0.3s;
-}
-
-.spinner-flow div:nth-child(3) {
-    animation-delay: -0.15s;
-}
-
-@keyframes spinner-flow {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/* Animação para pulsar */
-.pulse {
-    display: inline-block;
-    animation: pulse 1.5s infinite ease-in-out;
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translate3d(20px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 
 @keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
-    }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-/* Animação tipo líquido */
-.liquid-loader {
-    width: 70px;
-    height: 70px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 50%;
-    box-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
-.liquid-loader:before {
-    content: "";
-    position: absolute;
-    top: -150%;
-    left: -25%;
-    width: 150%;
-    height: 150%;
-    background-color: #0d6efd;
-    border-radius: 40%;
-    animation: liquid-fill 6s linear infinite;
+@keyframes slideUp {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes liquid-fill {
-    0% {
-        transform: rotate(0deg);
-        top: -150%;
-    }
-    25% {
-        top: -10%;
-    }
-    50% {
-        top: 0%;
-    }
-    75% {
-        top: -10%;
-    }
-    100% {
-        transform: rotate(360deg);
-        top: -150%;
-    }
+@keyframes slideDown {
+  0% { transform: translateY(-10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
-/* Dots de carregamento */
-.loading-dots {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    text-align: center;
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.loading-dots div {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    margin: 0 5px;
-    background: #0d6efd;
-    border-radius: 50%;
-    animation: dots-bounce 1.4s infinite ease-in-out both;
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
-.loading-dots div:nth-child(1) {
-    animation-delay: -0.32s;
+/* Classes de animação */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.loading-dots div:nth-child(2) {
-    animation-delay: -0.16s;
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
 }
 
-@keyframes dots-bounce {
-    0%, 80%, 100% {
-        transform: scale(0);
-    }
-    40% {
-        transform: scale(1);
-    }
+.animate-fade-in-down {
+  animation: fadeInDown 0.4s ease-out;
 }
 
-/* Animação para Tabelas e Listas */
-.fadeIn {
-    animation: fadeIn 0.5s ease-in;
+.animate-fade-in-left {
+  animation: fadeInLeft 0.4s ease-out;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.animate-fade-in-right {
+  animation: fadeInRight 0.4s ease-out;
 }
 
-/* Animação para Botões */
-.btn-animated {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
+.animate-pulse {
+  animation: pulse 1.5s infinite;
 }
 
-.btn-animated:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 0;
-    border-radius: 100%;
-    transform: scale(1, 1) translate(-50%);
-    transform-origin: 50% 50%;
+.animate-shake {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
 }
 
-.btn-animated:hover:after {
-    animation: btn-ripple 1s ease-out;
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
 }
 
-@keyframes btn-ripple {
-    0% {
-        transform: scale(0, 0);
-        opacity: 1;
-    }
-    20% {
-        transform: scale(25, 25);
-        opacity: 0.8;
-    }
-    100% {
-        opacity: 0;
-        transform: scale(40, 40);
-    }
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
 }
 
-/* Animação para Formulários */
-.form-animated {
-    transition: all 0.3s ease;
+.animate-rotate {
+  animation: rotate 1s linear infinite;
 }
 
-.form-animated:focus {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2) !important;
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
 }
 
-/* Animações para entrada de formulários */
-@keyframes formInputFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* Animações para cards */
+.card {
+  transition: all 0.3s ease;
 }
 
-.form-animate-in .form-group,
-.form-animate-in .form-floating,
-.form-animate-in .mb-3 {
-    animation: formInputFadeIn 0.5s ease-out forwards;
-    opacity: 0;
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
 
-/* Definir delay de animação para cada campo em sequência */
-.form-animate-in > *:nth-child(1) { animation-delay: 0.1s; }
-.form-animate-in > *:nth-child(2) { animation-delay: 0.2s; }
-.form-animate-in > *:nth-child(3) { animation-delay: 0.3s; }
-.form-animate-in > *:nth-child(4) { animation-delay: 0.4s; }
-.form-animate-in > *:nth-child(5) { animation-delay: 0.5s; }
-.form-animate-in > *:nth-child(6) { animation-delay: 0.6s; }
-
-/* Animação para shake em caso de erro */
-@keyframes errorShake {
-    0%, 100% {transform: translateX(0);}
-    10%, 30%, 50%, 70%, 90% {transform: translateX(-5px);}
-    20%, 40%, 60%, 80% {transform: translateX(5px);}
+/* Animações para botões */
+.btn {
+  transition: all 0.2s ease;
 }
 
-.error-shake {
-    animation: errorShake 0.6s ease-in-out;
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Animação para fade out */
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Animação para Cards */
-.card-hover {
-    transition: all 0.3s ease;
+/* Animações para inputs */
+.form-control, .form-select {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+.form-control:focus, .form-select:focus {
+  transform: translateY(-1px);
 }
 
-/* Estilo específico para formulários Zelopack */
-.form-card.loading {
-    position: relative;
+/* Animações para links */
+a {
+  transition: color 0.2s ease;
 }
 
-.form-card.loading:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.7);
-    z-index: 10;
+/* Animação de carregamento */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  border-top-color: #0d6efd;
+  animation: rotate 1s linear infinite;
 }
 
-.form-card.loading:before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(0, 123, 255, 0.1);
-    border-radius: 50%;
-    border-left-color: #0d6efd;
-    animation: spinner-rotate 1s linear infinite;
-    z-index: 11;
+.loading-spinner.light {
+  border: 3px solid rgba(255,255,255,0.2);
+  border-top-color: #fff;
+}
+
+/* Animação para mensagens de alerta */
+.alert {
+  animation: fadeInDown 0.5s ease-out;
+}
+
+/* Animação para menus dropdown */
+.dropdown-menu {
+  animation: scaleIn 0.2s ease-out;
+  transform-origin: top center;
+}
+
+/* Delay para animações em sequência */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* Animações para elementos do dashboard */
+.dashboard-card {
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.stat-number {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.progress-bar {
+  transition: width 1s ease-in-out;
+}
+
+/* Animações para tabs e acordeões */
+.nav-tabs .nav-link {
+  transition: all 0.2s ease;
+}
+
+.nav-tabs .nav-link:hover {
+  transform: translateY(-2px);
+}
+
+.tab-pane {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.accordion-button {
+  transition: all 0.3s ease;
+}
+
+.accordion-collapse {
+  animation: fadeInDown 0.3s ease-out;
+}
+
+/* Animações para tabelas */
+.table-hover tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  z-index: 1;
+  position: relative;
+}
+
+/* Animações para badges */
+.badge {
+  transition: all 0.2s ease;
+}
+
+.badge:hover {
+  transform: scale(1.1);
+}
+
+/* Estilo para animações de backdrop (fundo escurecido) */
+.modal-backdrop {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Animação para modais */
+.modal .modal-dialog {
+  animation: fadeInDown 0.3s ease-out;
+}
+
+/* Animação para tooltips e popovers */
+.tooltip {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.popover {
+  animation: scaleIn 0.2s ease-out;
+}
+
+/* Animações específicas para formulários */
+.form-floating label {
+  transition: all 0.2s ease;
+}
+
+.form-check-input {
+  transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+  animation: pulse 0.3s ease-out;
+}
+
+/* Animações para listas */
+.list-group-item {
+  transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+  transform: translateX(3px);
+}
+
+/* Animações para notificações */
+.notification-badge {
+  animation: pulse 2s infinite;
+}
+
+/* Animação para sidebar e navegação */
+.sidebar {
+  transition: width 0.3s ease, transform 0.3s ease;
+}
+
+.nav-link {
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  transform: translateX(3px);
+}
+
+/* Animação para ícones */
+.icon-animation {
+  transition: all 0.3s ease;
+}
+
+.icon-animation:hover {
+  transform: scale(1.2);
+}
+
+/* Animações responsivas */
+@media (max-width: 768px) {
+  .animate-fade-in-up, 
+  .animate-fade-in-down,
+  .animate-fade-in-left,
+  .animate-fade-in-right {
+    animation-duration: 0.3s;
+  }
+  
+  .card:hover,
+  .dashboard-card:hover {
+    transform: translateY(-3px);
+  }
 }

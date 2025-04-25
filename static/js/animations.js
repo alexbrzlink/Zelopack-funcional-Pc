@@ -1,244 +1,407 @@
 /**
- * Sistema de Animações de Carregamento - Zelopack
- * Este arquivo implementa as funções para controlar as animações
- * de carregamento e melhorar a experiência do usuário.
+ * ZELOPACK - Animações Globais
+ * Este arquivo contém as animações JavaScript utilizadas em todo o sistema
  */
 
-// Namespace para as funções de animação
-const ZelopackAnimations = {
-    /**
-     * Inicializa os elementos de animação e adiciona os eventos necessários
-     */
-    init: function() {
-        // Adicionar overlay de carregamento ao DOM se não existir
-        if (!document.querySelector('.loading-overlay')) {
-            const overlay = document.createElement('div');
-            overlay.className = 'loading-overlay';
+// Inicialização quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Zelopack Animations: Inicializado com sucesso!');
+    
+    // Inicializar todas as animações
+    initializeAnimations();
+    
+    // Configurar observadores para conteúdo dinâmico
+    setupDynamicContentObservers();
+    
+    // Inicializar tooltips e popovers do Bootstrap (se disponível)
+    initializeBootstrapComponents();
+});
+
+/**
+ * Inicializa todas as animações principais
+ */
+function initializeAnimations() {
+    // Animações para cards
+    animateElementsOnScroll('.card', 'animate-fade-in-up');
+    
+    // Animações para elementos do dashboard
+    animateElementsOnScroll('.dashboard-card', 'animate-fade-in-up');
+    animateElementsOnScroll('.stat-number', 'animate-fade-in');
+    
+    // Configurar animações para alertas
+    setupAlertAnimations();
+    
+    // Configurar animações para formulários
+    setupFormAnimations();
+    
+    // Animações para tabelas
+    setupTableAnimations();
+    
+    // Animar elementos sequencialmente baseado na classe .delay-*
+    animateSequentially('[class*="animate-"]');
+}
+
+/**
+ * Configura animações para formulários
+ */
+function setupFormAnimations() {
+    // Animar labels de formulários quando o input for focado
+    const formInputs = document.querySelectorAll('.form-control, .form-select');
+    
+    formInputs.forEach(input => {
+        // Adicionar efeito de foco
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('input-focused');
             
-            // Criar o spinner padrão
-            const spinner = document.createElement('div');
-            spinner.className = 'spinner-zelopack';
+            // Encontrar o label associado (se existir) e animar
+            const label = this.parentElement.querySelector('label');
+            if (label) {
+                label.classList.add('animate-fade-in-up');
+            }
+        });
+        
+        // Remover efeito ao perder foco
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('input-focused');
             
-            // Criar o texto de carregamento
-            const loadingText = document.createElement('div');
-            loadingText.className = 'loading-text';
-            loadingText.textContent = 'Carregando...';
+            // Remover a animação do label
+            const label = this.parentElement.querySelector('label');
+            if (label) {
+                label.classList.remove('animate-fade-in-up');
+            }
+        });
+        
+        // Verificar se o campo está em estado de erro
+        input.addEventListener('invalid', function() {
+            this.classList.add('animate-shake');
             
-            overlay.appendChild(spinner);
-            overlay.appendChild(loadingText);
-            document.body.appendChild(overlay);
-        }
-        
-        // Adicionar animações em botões
-        document.querySelectorAll('.btn-primary, .btn-success, .btn-info').forEach(btn => {
-            btn.classList.add('btn-animated');
+            // Remover a classe após a animação
+            setTimeout(() => {
+                this.classList.remove('animate-shake');
+            }, 1000);
         });
-        
-        // Adicionar animações em campos de formulário
-        document.querySelectorAll('.form-control').forEach(input => {
-            input.classList.add('form-animated');
-        });
-        
-        // Adicionar animações em cards
-        document.querySelectorAll('.card').forEach(card => {
-            card.classList.add('card-hover');
-        });
-        
-        // Interceptar envios de formulários para mostrar loading
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                // Se o formulário não tiver a classe no-loading
-                if (!form.classList.contains('no-loading')) {
-                    ZelopackAnimations.showLoading('Processando seu formulário...');
-                }
-            });
-        });
-        
-        // Interceptar cliques em links específicos
-        document.querySelectorAll('a[href]:not([href^="#"]):not([target="_blank"]):not(.no-loading)').forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Se o link não tiver a classe no-loading
-                if (!link.classList.contains('no-loading') && !link.getAttribute('download')) {
-                    ZelopackAnimations.showLoading('Carregando página...');
-                }
-            });
-        });
-        
-        // Interceptar cliques em botões de submissão
-        document.querySelectorAll('button[type="submit"]:not(.no-loading)').forEach(button => {
-            button.addEventListener('click', function(e) {
-                // Verificar se o botão pertence a um formulário
-                const form = button.closest('form');
-                if (form && !form.classList.contains('no-loading')) {
-                    ZelopackAnimations.showLoading('Enviando dados...');
-                }
-            });
-        });
-        
-        // Adicionar animação nas tabelas
-        this.setupTableAnimations();
-        
-        console.log('Zelopack Animations: Inicializado com sucesso!');
-    },
+    });
     
-    /**
-     * Mostra a animação de carregamento com texto personalizado
-     * @param {string} text - Texto a ser mostrado durante o carregamento
-     * @param {string} type - Tipo de spinner (default, flow, dots, liquid)
-     */
-    showLoading: function(text, type = 'default') {
-        const overlay = document.querySelector('.loading-overlay');
-        if (!overlay) return;
-        
-        // Atualizar texto
-        const textElement = overlay.querySelector('.loading-text');
-        if (textElement) {
-            textElement.textContent = text || 'Carregando...';
-        }
-        
-        // Remover spinner atual
-        const currentSpinner = overlay.querySelector('.spinner-zelopack, .spinner-flow, .loading-dots, .liquid-loader');
-        if (currentSpinner) {
-            currentSpinner.remove();
-        }
-        
-        // Criar novo spinner baseado no tipo
-        let newSpinner;
-        
-        switch (type) {
-            case 'flow':
-                newSpinner = document.createElement('div');
-                newSpinner.className = 'spinner-flow';
-                for (let i = 0; i < 4; i++) {
-                    newSpinner.appendChild(document.createElement('div'));
-                }
-                break;
+    // Animar botões de submit em formulários
+    const submitButtons = document.querySelectorAll('button[type="submit"], input[type="submit"]');
+    
+    submitButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Adicionar efeito de loading nos botões de submit
+            if (!this.disabled && !this.classList.contains('no-animation')) {
+                const originalText = this.innerHTML;
+                this.disabled = true;
                 
-            case 'dots':
-                newSpinner = document.createElement('div');
-                newSpinner.className = 'loading-dots';
-                for (let i = 0; i < 3; i++) {
-                    newSpinner.appendChild(document.createElement('div'));
+                // Criar spinner
+                const spinner = document.createElement('span');
+                spinner.className = 'loading-spinner';
+                if (this.classList.contains('btn-light') || this.classList.contains('btn-outline-light')) {
+                    spinner.classList.add('dark');
+                } else {
+                    spinner.classList.add('light');
                 }
-                break;
                 
-            case 'liquid':
-                newSpinner = document.createElement('div');
-                newSpinner.className = 'liquid-loader';
-                break;
+                // Substituir texto pelo spinner
+                this.innerHTML = '';
+                this.appendChild(spinner);
                 
-            default:
-                newSpinner = document.createElement('div');
-                newSpinner.className = 'spinner-zelopack';
-                break;
+                // Adicionar texto "Processando..."
+                const processingText = document.createTextNode(' Processando...');
+                this.appendChild(processingText);
+                
+                // Restaurar o botão após 3 segundos (se o formulário não for submetido)
+                setTimeout(() => {
+                    if (this.disabled) {
+                        this.disabled = false;
+                        this.innerHTML = originalText;
+                    }
+                }, 3000);
+            }
+        });
+    });
+}
+
+/**
+ * Configura animações para alertas e mensagens
+ */
+function setupAlertAnimations() {
+    // Animar alertas ao aparecerem
+    const alerts = document.querySelectorAll('.alert');
+    
+    alerts.forEach(alert => {
+        if (!alert.classList.contains('animated')) {
+            alert.classList.add('animate-fade-in-down', 'animated');
+            
+            // Adicionar botão de fechamento se não existir
+            if (!alert.querySelector('.btn-close')) {
+                const closeButton = document.createElement('button');
+                closeButton.type = 'button';
+                closeButton.className = 'btn-close';
+                closeButton.setAttribute('data-bs-dismiss', 'alert');
+                closeButton.setAttribute('aria-label', 'Close');
+                
+                alert.appendChild(closeButton);
+            }
+            
+            // Auto-fechar alertas de sucesso após 5 segundos
+            if (alert.classList.contains('alert-success')) {
+                setTimeout(() => {
+                    // Adicionar animação de saída
+                    alert.classList.add('animate-fade-out');
+                    
+                    // Remover alerta após a animação
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 500);
+                }, 5000);
+            }
+        }
+    });
+}
+
+/**
+ * Configura animações para tabelas
+ */
+function setupTableAnimations() {
+    // Animar linhas de tabela quando são adicionadas
+    const tables = document.querySelectorAll('.table');
+    
+    tables.forEach(table => {
+        // Adicionar classe para efeitos de hover se ainda não tiver
+        if (!table.classList.contains('table-hover')) {
+            table.classList.add('table-hover');
         }
         
-        // Inserir novo spinner antes do texto
-        textElement.parentNode.insertBefore(newSpinner, textElement);
-        
-        // Mostrar overlay
-        overlay.classList.add('active');
-    },
-    
-    /**
-     * Esconde a animação de carregamento
-     */
-    hideLoading: function() {
-        const overlay = document.querySelector('.loading-overlay');
-        if (overlay) {
-            overlay.classList.remove('active');
-        }
-    },
-    
-    /**
-     * Configura animações para tabelas carregadas dinamicamente
-     */
-    setupTableAnimations: function() {
-        // Observar mudanças no DOM para animar novas tabelas
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes && mutation.addedNodes.length > 0) {
-                    // Para cada novo nó adicionado ao DOM
-                    mutation.addedNodes.forEach((node) => {
-                        // Verificar se é uma tabela ou contém tabelas
-                        if (node.nodeType === 1) { // ELEMENT_NODE
-                            // Se o próprio nó for uma tabela
-                            if (node.tagName === 'TABLE' && !node.classList.contains('fadeIn')) {
-                                node.classList.add('fadeIn');
-                            }
-                            
-                            // Se contiver tabelas
-                            const tables = node.querySelectorAll('table:not(.fadeIn)');
-                            tables.forEach(table => table.classList.add('fadeIn'));
-                            
-                            // Se contiver linhas de tabela
-                            const rows = node.querySelectorAll('tr:not(.fadeIn)');
-                            rows.forEach((row, index) => {
-                                row.classList.add('fadeIn');
-                                row.style.animationDelay = `${index * 0.05}s`;
-                            });
-                        }
-                    });
-                }
+        // Animar linhas existentes sequencialmente
+        if (!table.classList.contains('animated')) {
+            table.classList.add('animated');
+            
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach((row, index) => {
+                // Atraso crescente baseado no índice
+                const delay = 50 * index;
+                
+                setTimeout(() => {
+                    row.classList.add('animate-fade-in');
+                }, delay);
             });
-        });
-        
-        // Iniciar observação
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    },
-    
-    /**
-     * Anima um elemento específico com efeito de pulse
-     * @param {HTMLElement} element - Elemento a ser animado
-     */
-    pulseElement: function(element) {
-        if (!element) return;
-        
-        // Adicionar classe de animação
-        element.classList.add('pulse');
-        
-        // Remover depois de completar a animação
-        setTimeout(() => {
-            element.classList.remove('pulse');
-        }, 1500);
-    },
-    
-    /**
-     * Adiciona indicador de carregamento a um card/container específico
-     * @param {HTMLElement|string} element - Elemento ou seletor do elemento
-     * @param {boolean} isLoading - Se deve mostrar ou esconder o loading
-     */
-    setFormLoading: function(element, isLoading = true) {
-        // Permitir passar um seletor de string
-        if (typeof element === 'string') {
-            element = document.querySelector(element);
         }
-        
-        if (!element) return;
-        
-        if (isLoading) {
-            element.classList.add('loading');
-        } else {
-            element.classList.remove('loading');
+    });
+}
+
+/**
+ * Anima elementos quando eles aparecem na viewport durante scroll
+ */
+function animateElementsOnScroll(selector, animationClass) {
+    const elements = document.querySelectorAll(selector);
+    
+    if (!elements.length) return;
+    
+    // Função para verificar se elemento está visível na viewport
+    const isElementInViewport = (el) => {
+        const rect = el.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    };
+    
+    // Função para animar elementos visíveis
+    const animateVisibleElements = () => {
+        elements.forEach(element => {
+            if (isElementInViewport(element) && !element.classList.contains('animated')) {
+                element.classList.add(animationClass, 'animated');
+            }
+        });
+    };
+    
+    // Animar elementos já visíveis no carregamento
+    animateVisibleElements();
+    
+    // Animar elementos que se tornam visíveis durante o scroll
+    window.addEventListener('scroll', animateVisibleElements);
+}
+
+/**
+ * Anima elementos sequencialmente com pequeno atraso entre eles
+ */
+function animateSequentially(selector) {
+    const elements = document.querySelectorAll(selector);
+    
+    elements.forEach((element, index) => {
+        // Se o elemento já tem uma classe de delay, respeitamos
+        if (!element.className.includes('delay-')) {
+            // Adicionar atraso crescente baseado no índice
+            const delay = 100 * index;
+            element.style.animationDelay = `${delay}ms`;
         }
+    });
+}
+
+/**
+ * Configura observadores para animar conteúdo carregado dinamicamente
+ */
+function setupDynamicContentObservers() {
+    // Observar mudanças no DOM para animar conteúdo adicionado dinamicamente
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length) {
+                // Novas divs foram adicionadas, checar se precisamos animar
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) { // É um elemento
+                        // Reinicializar animações para este novo conteúdo
+                        initializeAnimations();
+                    }
+                });
+            }
+        });
+    });
+    
+    // Observar o corpo da página para adições de conteúdo
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
+/**
+ * Inicializa componentes Bootstrap que necessitam de JavaScript
+ */
+function initializeBootstrapComponents() {
+    // Verificar se o Bootstrap está disponível
+    if (typeof bootstrap !== 'undefined') {
+        // Inicializar tooltips
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        
+        // Inicializar popovers
+        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
     }
-};
+}
 
-// Inicializar quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', () => {
-    ZelopackAnimations.init();
-});
-
-// Executar quando a página estiver totalmente carregada
-window.addEventListener('load', () => {
-    // Ocultar qualquer animação de carregamento que possa estar ativa
+/**
+ * Adiciona efeito de shake em um elemento
+ * @param {HTMLElement} element - Elemento a ser animado
+ */
+function shakeElement(element) {
+    element.classList.add('animate-shake');
+    
+    // Remover classe após a animação terminar
     setTimeout(() => {
-        ZelopackAnimations.hideLoading();
-    }, 500);
-});
+        element.classList.remove('animate-shake');
+    }, 820); // 820ms é a duração da animação shake
+}
 
-// API pública
-window.ZelopackAnimations = ZelopackAnimations;
+/**
+ * Adiciona efeito de pulse em um elemento
+ * @param {HTMLElement} element - Elemento a ser animado
+ */
+function pulseElement(element) {
+    element.classList.add('animate-pulse');
+    
+    // Remover classe após a animação terminar
+    setTimeout(() => {
+        element.classList.remove('animate-pulse');
+    }, 1500); // 1500ms é a duração da animação pulse
+}
+
+/**
+ * Anime um flash message customizado
+ * @param {string} message - Mensagem a ser exibida
+ * @param {string} type - Tipo da mensagem (success, error, warning, info)
+ */
+function showFlashMessage(message, type = 'info') {
+    // Mapeamento de tipos para classes Bootstrap
+    const typeClasses = {
+        'success': 'alert-success',
+        'error': 'alert-danger',
+        'warning': 'alert-warning',
+        'info': 'alert-info'
+    };
+    
+    // Container para mensagens flash
+    let flashContainer = document.getElementById('flash-messages');
+    
+    // Criar o container se não existir
+    if (!flashContainer) {
+        flashContainer = document.createElement('div');
+        flashContainer.id = 'flash-messages';
+        flashContainer.className = 'flash-messages-container';
+        flashContainer.style.position = 'fixed';
+        flashContainer.style.top = '20px';
+        flashContainer.style.right = '20px';
+        flashContainer.style.zIndex = '9999';
+        document.body.appendChild(flashContainer);
+    }
+    
+    // Criar elemento de alerta
+    const alert = document.createElement('div');
+    alert.className = `alert ${typeClasses[type] || 'alert-info'} animate-fade-in-right`;
+    alert.role = 'alert';
+    
+    // Adicionar ícone baseado no tipo
+    let icon = '';
+    switch(type) {
+        case 'success':
+            icon = '<i class="fas fa-check-circle me-2"></i>';
+            break;
+        case 'error':
+            icon = '<i class="fas fa-exclamation-circle me-2"></i>';
+            break;
+        case 'warning':
+            icon = '<i class="fas fa-exclamation-triangle me-2"></i>';
+            break;
+        case 'info':
+            icon = '<i class="fas fa-info-circle me-2"></i>';
+            break;
+    }
+    
+    // Configurar conteúdo do alerta
+    alert.innerHTML = `
+        ${icon}
+        ${message}
+        <button type="button" class="btn-close" aria-label="Close"></button>
+    `;
+    
+    // Adicionar alerta ao container
+    flashContainer.appendChild(alert);
+    
+    // Configurar botão de fechar
+    const closeButton = alert.querySelector('.btn-close');
+    closeButton.addEventListener('click', function() {
+        alert.classList.remove('animate-fade-in-right');
+        alert.classList.add('animate-fade-out-right');
+        
+        // Remover após a animação
+        setTimeout(() => {
+            alert.remove();
+        }, 300);
+    });
+    
+    // Auto-remover após um tempo (exceto para erros)
+    if (type !== 'error') {
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.classList.remove('animate-fade-in-right');
+                alert.classList.add('animate-fade-out-right');
+                
+                // Remover após a animação
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.remove();
+                    }
+                }, 300);
+            }
+        }, 5000);
+    }
+    
+    return alert;
+}
+
+// Exportar funções para uso global (se necessário)
+window.ZelopackAnimations = {
+    shake: shakeElement,
+    pulse: pulseElement,
+    showMessage: showFlashMessage,
+    reinitialize: initializeAnimations
+};

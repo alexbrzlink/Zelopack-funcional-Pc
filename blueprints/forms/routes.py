@@ -482,82 +482,137 @@ def get_form_fields(file_path):
     
     try:
         if file_ext == '.xlsx' or file_ext == '.xls':
-            # Extrair campos de planilha Excel
-            workbook = openpyxl.load_workbook(file_path, data_only=True)
-            sheet = workbook.active
-            
-            if sheet is None:
-                flash('Não foi possível acessar a planilha.', 'warning')
-                return fields
+            try:
+                # Extrair campos de planilha Excel
+                workbook = openpyxl.load_workbook(file_path, data_only=True)
+                sheet = workbook.active
                 
-            # Obter o número máximo de linhas e colunas com segurança
-            max_row = sheet.max_row or 1
-            max_col = sheet.max_column or 1
-            
-            for row in range(1, max_row + 1):
-                for col in range(1, max_col + 1):
-                    cell = sheet.cell(row=row, column=col)
-                    if cell is None:
-                        continue
+                if sheet is None:
+                    flash('Não foi possível acessar a planilha.', 'warning')
+                    return fields
                     
-                    value = cell.value
-                    
-                    if value and isinstance(value, str) and ('___' in value or '____' in value):
-                        # Encontrou um campo para preenchimento (representado por sublinhados)
-                        field_id = f"cell_{row}_{col}"
-                        sheet_title = getattr(sheet, 'title', 'Planilha')
-                        fields.append({
-                            'id': field_id,
-                            'name': f"Campo em {sheet_title} ({get_column_letter(col)}{row})",
-                            'value': ''
-                        })
+                # Obter o número máximo de linhas e colunas com segurança
+                max_row = sheet.max_row or 1
+                max_col = sheet.max_column or 1
+                
+                for row in range(1, max_row + 1):
+                    for col in range(1, max_col + 1):
+                        try:
+                            cell = sheet.cell(row=row, column=col)
+                            if cell is None:
+                                continue
+                            
+                            value = cell.value
+                            
+                            if value and isinstance(value, str) and ('___' in value or '____' in value):
+                                # Encontrou um campo para preenchimento (representado por sublinhados)
+                                field_id = f"cell_{row}_{col}"
+                                sheet_title = getattr(sheet, 'title', 'Planilha')
+                                fields.append({
+                                    'id': field_id,
+                                    'name': f"Campo em {sheet_title} ({get_column_letter(col)}{row})",
+                                    'value': ''
+                                })
+                        except Exception as cell_error:
+                            print(f"Erro ao processar célula ({row},{col}): {cell_error}")
+                            continue
+            except Exception as excel_error:
+                print(f"Erro ao processar arquivo Excel: {excel_error}")
+                fields.append({
+                    'id': 'error_field',
+                    'name': 'Erro ao ler o arquivo Excel (clique para ver detalhes)',
+                    'value': str(excel_error)
+                })
             
         elif file_ext == '.docx':
-            # Extrair campos de documento Word
-            doc = docx.Document(file_path)
-            field_index = 0
-            
-            for para_index, para in enumerate(doc.paragraphs):
-                text = para.text
-                if '___' in text or '____' in text:
-                    # Encontrou um parágrafo com campos para preenchimento
-                    field_id = f"para_{para_index}"
-                    fields.append({
-                        'id': field_id,
-                        'name': f"Campo no parágrafo {para_index + 1}: {text[:30]}...",
-                        'value': ''
-                    })
+            try:
+                # Extrair campos de documento Word
+                doc = docx.Document(file_path)
+                
+                for para_index, para in enumerate(doc.paragraphs):
+                    try:
+                        text = para.text
+                        if '___' in text or '____' in text:
+                            # Encontrou um parágrafo com campos para preenchimento
+                            field_id = f"para_{para_index}"
+                            fields.append({
+                                'id': field_id,
+                                'name': f"Campo no parágrafo {para_index + 1}: {text[:30]}...",
+                                'value': ''
+                            })
+                    except Exception as para_error:
+                        print(f"Erro ao processar parágrafo {para_index}: {para_error}")
+                        continue
+            except Exception as docx_error:
+                print(f"Erro ao processar arquivo Word: {docx_error}")
+                fields.append({
+                    'id': 'error_field',
+                    'name': 'Erro ao ler o arquivo Word (clique para ver detalhes)',
+                    'value': str(docx_error)
+                })
             
         elif file_ext == '.pdf':
-            # Extrair campos de PDF (mais complexo)
-            # Implementação básica para detecção de campos
-            reader = PyPDF2.PdfReader(file_path)
-            form_fields = reader.get_fields()
-            
-            if form_fields:
-                # PDF tem campos de formulário
-                for field_name, field_value in form_fields.items():
-                    fields.append({
-                        'id': field_name,
-                        'name': field_name,
-                        'value': ''
-                    })
-            else:
-                # PDF não tem campos de formulário, tentar identificar por texto
-                for page_num in range(len(reader.pages)):
-                    page = reader.pages[page_num]
-                    text = page.extract_text()
-                    
-                    if text and ('___' in text or '____' in text):
-                        # Encontrou texto com campos potenciais
-                        field_id = f"pdf_page_{page_num}"
+            try:
+                # Extrair campos de PDF (mais complexo)
+                # Implementação básica para detecção de campos
+                reader = PyPDF2.PdfReader(file_path)
+                form_fields = reader.get_fields()
+                
+                if form_fields:
+                    # PDF tem campos de formulário
+                    for field_name, field_value in form_fields.items():
                         fields.append({
-                            'id': field_id,
-                            'name': f"Campo na página {page_num + 1}",
+                            'id': field_name,
+                            'name': field_name,
                             'value': ''
                         })
+                else:
+                    # PDF não tem campos de formulário, tentar identificar por texto
+                    for page_num in range(len(reader.pages)):
+                        try:
+                            page = reader.pages[page_num]
+                            text = page.extract_text()
+                            
+                            if text and ('___' in text or '____' in text):
+                                # Encontrou texto com campos potenciais
+                                field_id = f"pdf_page_{page_num}"
+                                fields.append({
+                                    'id': field_id,
+                                    'name': f"Campo na página {page_num + 1}",
+                                    'value': ''
+                                })
+                        except Exception as page_error:
+                            print(f"Erro ao processar página {page_num} do PDF: {page_error}")
+                            continue
+            except Exception as pdf_error:
+                print(f"Erro ao processar arquivo PDF: {pdf_error}")
+                fields.append({
+                    'id': 'error_field',
+                    'name': 'Erro ao ler o arquivo PDF (clique para ver detalhes)',
+                    'value': str(pdf_error)
+                })
+        else:
+            # Formato não suportado
+            fields.append({
+                'id': 'unsupported_format',
+                'name': f'Formato não suportado: {file_ext}',
+                'value': 'Este tipo de arquivo não pode ser processado automaticamente.'
+            })
     except Exception as e:
         print(f"Erro ao extrair campos do formulário: {e}")
+        fields.append({
+            'id': 'general_error',
+            'name': 'Erro ao processar o formulário (clique para ver detalhes)',
+            'value': str(e)
+        })
+    
+    # Se não encontrou nenhum campo, adicionar uma mensagem informativa
+    if not fields:
+        fields.append({
+            'id': 'no_fields',
+            'name': 'Nenhum campo detectado',
+            'value': 'O sistema não conseguiu detectar campos para preenchimento neste documento.'
+        })
     
     return fields
 
@@ -572,87 +627,131 @@ def fill_form_with_data(file_path, form_data):
     output_path = os.path.join(temp_dir, f'filled_{file_name}')
     
     try:
+        # Identificar e ignorar campos que não são para preenchimento de dados
+        valid_form_data = {}
+        for field_id, value in form_data.items():
+            if field_id in ['error_field', 'general_error', 'no_fields', 'unsupported_format']:
+                continue
+            valid_form_data[field_id] = value
+        
         if file_ext == '.xlsx' or file_ext == '.xls':
-            # Preencher planilha Excel
-            workbook = openpyxl.load_workbook(file_path)
-            sheet = workbook.active
-            
-            if sheet is None:
-                raise ValueError('Não foi possível acessar a planilha.')
-            
-            # Aplicar os dados aos campos identificados
-            for field_id, value in form_data.items():
-                if field_id.startswith('cell_'):
-                    _, row, col = field_id.split('_')
-                    row, col = int(row), int(col)
-                    
-                    try:
-                        cell = sheet.cell(row=row, column=col)
-                        if cell is None:
-                            continue
-                            
-                        cell.value = value
-                        
-                        # Aplicar estilo para destacar o campo preenchido
-                        cell.font = Font(bold=True, color="0000FF")
-                    except Exception as e:
-                        print(f"Erro ao preencher célula ({row},{col}): {e}")
-            
-            # Salvar a planilha preenchida
-            workbook.save(output_path)
+            try:
+                # Preencher planilha Excel
+                workbook = openpyxl.load_workbook(file_path)
+                sheet = workbook.active
+                
+                if sheet is None:
+                    raise ValueError('Não foi possível acessar a planilha.')
+                
+                # Aplicar os dados aos campos identificados
+                for field_id, value in valid_form_data.items():
+                    if field_id.startswith('cell_'):
+                        parts = field_id.split('_')
+                        if len(parts) >= 3:
+                            try:
+                                _, row, col = parts
+                                row, col = int(row), int(col)
+                                
+                                cell = sheet.cell(row=row, column=col)
+                                if cell is None:
+                                    continue
+                                
+                                # Verificar se é célula vazia ou tem marcadores de campo
+                                original_value = cell.value
+                                if original_value is None or (isinstance(original_value, str) and 
+                                                             ('___' in original_value or '____' in original_value)):
+                                    cell.value = value
+                                    
+                                    # Aplicar estilo para destacar o campo preenchido
+                                    cell.font = Font(bold=True, color="0000FF")
+                            except Exception as cell_error:
+                                print(f"Erro ao preencher célula ({field_id}): {cell_error}")
+                                continue
+                
+                # Salvar a planilha preenchida
+                workbook.save(output_path)
+            except Exception as excel_error:
+                print(f"Erro ao processar arquivo Excel para preenchimento: {excel_error}")
+                raise ValueError(f"Não foi possível preencher o formulário Excel: {str(excel_error)}")
             
         elif file_ext == '.docx':
-            # Preencher documento Word
-            doc = docx.Document(file_path)
-            
-            # Aplicar os dados aos campos identificados
-            for field_id, value in form_data.items():
-                if field_id.startswith('para_'):
-                    para_index = int(field_id.split('_')[1])
-                    if para_index < len(doc.paragraphs):
-                        para = doc.paragraphs[para_index]
-                        text = para.text
-                        
-                        # Substituir campos em branco pelo valor
-                        new_text = text.replace('_____', value).replace('____', value).replace('___', value)
-                        
-                        # Limpar o parágrafo e adicionar o texto substituído
-                        para.clear()
-                        para.add_run(new_text)
-            
-            # Salvar o documento preenchido
-            doc.save(output_path)
+            try:
+                # Preencher documento Word
+                doc = docx.Document(file_path)
+                
+                # Aplicar os dados aos campos identificados
+                for field_id, value in valid_form_data.items():
+                    if field_id.startswith('para_'):
+                        try:
+                            parts = field_id.split('_')
+                            if len(parts) >= 2:
+                                para_index = int(parts[1])
+                                if para_index < len(doc.paragraphs):
+                                    para = doc.paragraphs[para_index]
+                                    text = para.text
+                                    
+                                    # Substituir campos em branco pelo valor
+                                    new_text = text.replace('_____', value).replace('____', value).replace('___', value)
+                                    
+                                    # Limpar o parágrafo e adicionar o texto substituído
+                                    para.clear()
+                                    para.add_run(new_text)
+                        except Exception as para_error:
+                            print(f"Erro ao preencher parágrafo {field_id}: {para_error}")
+                            continue
+                
+                # Salvar o documento preenchido
+                doc.save(output_path)
+            except Exception as docx_error:
+                print(f"Erro ao processar arquivo Word para preenchimento: {docx_error}")
+                raise ValueError(f"Não foi possível preencher o documento Word: {str(docx_error)}")
             
         elif file_ext == '.pdf':
-            # Para PDFs, criamos um novo PDF com o texto sobreposto
-            # (abordagem simples, funcionalidade limitada)
-            reader = PyPDF2.PdfReader(file_path)
-            writer = PyPDF2.PdfWriter()
-            
-            for page_num in range(len(reader.pages)):
-                page = reader.pages[page_num]
-                writer.add_page(page)
-            
-            # Se o PDF tem campos de formulário
-            form_fields = reader.get_fields()
-            if form_fields:
-                # Preencher campos de formulário
-                for field_id, value in form_data.items():
-                    if field_id in form_fields:
-                        writer.update_page_form_field_values(0, {field_id: value})
-            
-            # Salvar o PDF preenchido
-            with open(output_path, 'wb') as output_file:
-                writer.write(output_file)
+            try:
+                # Para PDFs, criamos um novo PDF com o texto sobreposto
+                # (abordagem simples, funcionalidade limitada)
+                reader = PyPDF2.PdfReader(file_path)
+                writer = PyPDF2.PdfWriter()
+                
+                for page_num in range(len(reader.pages)):
+                    page = reader.pages[page_num]
+                    writer.add_page(page)
+                
+                # Se o PDF tem campos de formulário
+                form_fields = reader.get_fields()
+                if form_fields:
+                    # Preencher campos de formulário
+                    update_fields = {}
+                    for field_id, value in valid_form_data.items():
+                        if field_id in form_fields:
+                            update_fields[field_id] = value
+                    
+                    if update_fields:
+                        for page_num in range(len(reader.pages)):
+                            try:
+                                writer.update_page_form_field_values(page_num, update_fields)
+                            except Exception as page_error:
+                                print(f"Erro ao preencher página {page_num} do PDF: {page_error}")
+                                continue
+                
+                # Salvar o PDF preenchido
+                with open(output_path, 'wb') as output_file:
+                    writer.write(output_file)
+            except Exception as pdf_error:
+                print(f"Erro ao processar arquivo PDF para preenchimento: {pdf_error}")
+                raise ValueError(f"Não foi possível preencher o documento PDF: {str(pdf_error)}")
                 
         else:
             # Formato não suportado
-            shutil.rmtree(temp_dir)
-            return None
+            raise ValueError(f"Formato de arquivo não suportado: {file_ext}")
     
     except Exception as e:
         print(f"Erro ao preencher formulário: {e}")
-        shutil.rmtree(temp_dir)
+        try:
+            # Limpar recursos temporários
+            shutil.rmtree(temp_dir)
+        except:
+            pass
         return None
     
     return output_path
