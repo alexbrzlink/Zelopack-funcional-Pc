@@ -76,10 +76,23 @@ def upload():
                 raw_material_type=form.raw_material_type.data,
                 sample_code=form.sample_code.data,
                 
-                # Análises físico-químicas
+                # Análises físico-químicas do laudo
                 brix=form.brix.data,
                 ph=form.ph.data,
                 acidity=form.acidity.data,
+                
+                # Análises realizadas em laboratório
+                lab_brix=form.lab_brix.data,
+                lab_ph=form.lab_ph.data,
+                lab_acidity=form.lab_acidity.data,
+                
+                # Validação físico-química
+                physicochemical_validation=form.physicochemical_validation.data,
+                
+                # Campos adicionais de rastreabilidade
+                report_archived=form.report_archived.data,
+                microbiology_collected=form.microbiology_collected.data,
+                has_report_document=form.has_report_document.data,
                 
                 # Datas
                 report_date=report_date,
@@ -91,7 +104,8 @@ def upload():
                 ph_value=form.ph_value.data,
                 brix_value=form.brix_value.data,
                 acidity_value=form.acidity_value.data,
-                color_value=form.color_value.data
+                color_value=form.color_value.data,
+                density_value=form.density_value.data
             )
             
             db.session.add(new_report)
