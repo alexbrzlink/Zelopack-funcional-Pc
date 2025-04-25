@@ -287,9 +287,23 @@ def upload():
         if hasattr(field, 'choices') and field.choices is None:
             field.choices = [('', f'Nenhuma opção disponível para {field.label.text}')]
     
-    # Adiciona debug para encontrar o problema
+    # Adiciona debug mais detalhado para encontrar o problema
     print(f"Formulário submetido - form.errors: {form.errors}")
     current_app.logger.info(f"Formulário submetido - form.errors: {form.errors}")
+    
+    # Verifica se o formulário é válido sem considerar o CSRF
+    form_valid = form.validate()
+    current_app.logger.info(f"form.validate() = {form_valid}")
+    
+    # Verifica se foi enviado via POST
+    is_submitted = form.is_submitted()
+    current_app.logger.info(f"form.is_submitted() = {is_submitted}")
+    
+    # Mostra dados dos campos mais importantes
+    current_app.logger.info(f"Título: {form.title.data}")
+    current_app.logger.info(f"Arquivo: {form.file.data}")
+    current_app.logger.info(f"Categoria: {form.category.data}")
+    current_app.logger.info(f"Fornecedor: {form.supplier.data}")
     
     if form.validate_on_submit():
         # Se chegou aqui, o formulário foi validado com sucesso
@@ -319,60 +333,87 @@ def upload():
             expiration_date = form.expiration_date.data if form.expiration_date.data else None
             report_time = form.report_time.data if form.report_time.data else None
             
-            # Criar novo registro de laudo
-            new_report = Report(
-                title=form.title.data,
-                description=form.description.data,
-                filename=unique_filename,
-                original_filename=original_filename,
-                file_path=file_path,
-                file_type=file_extension[1:],  # Remover o ponto do início
-                file_size=file_size,
+            # Guardar valores em variáveis e fazer verificações antes de criar o objeto
+            title = form.title.data if form.title.data else "Laudo sem título"
+            category_value = form.category.data if form.category.data else ""
+            supplier_value = form.supplier_manual.data if form.supplier_manual.data else form.supplier.data
+            supplier_final = supplier_value if supplier_value else ""
+            
+            # Valores padrão para os campos de validação físico-química
+            phys_validation = form.physicochemical_validation.data
+            if not phys_validation:
+                phys_validation = "não verificado"
                 
-                # Categorização
-                category=form.category.data,
-                supplier=form.supplier_manual.data if form.supplier_manual.data else form.supplier.data,
-                batch_number=form.batch_number.data,
-                raw_material_type=form.raw_material_type.data,
-                sample_code=form.sample_code.data,
-                
-                # Análises físico-químicas do laudo
-                brix=form.brix.data,
-                ph=form.ph.data,
-                acidity=form.acidity.data,
-                
-                # Análises realizadas em laboratório
-                lab_brix=form.lab_brix.data,
-                lab_ph=form.lab_ph.data,
-                lab_acidity=form.lab_acidity.data,
-                
-                # Validação físico-química
-                physicochemical_validation=form.physicochemical_validation.data,
-                
-                # Campos adicionais de rastreabilidade
-                report_archived=form.report_archived.data,
-                microbiology_collected=form.microbiology_collected.data,
-                has_report_document=form.has_report_document.data,
-                
-                # Datas
-                report_date=report_date,
-                report_time=report_time,
-                manufacturing_date=manufacturing_date,
-                expiration_date=expiration_date,
-                
-                # Indicadores (mantidos para compatibilidade)
-                ph_value=form.ph_value.data,
-                brix_value=form.brix_value.data,
-                acidity_value=form.acidity_value.data,
-                color_value=form.color_value.data,
-                density_value=form.density_value.data
-            )
+            # Log detalhado
+            current_app.logger.info(f"Criando novo laudo com título: {title}")
+            current_app.logger.info(f"Categoria: {category_value}, Fornecedor: {supplier_final}")
+            
+            try:
+                # Criar novo registro de laudo com verificações para campos obrigatórios
+                new_report = Report(
+                    title=title,
+                    description=form.description.data,
+                    filename=unique_filename,
+                    original_filename=original_filename,
+                    file_path=file_path,
+                    file_type=file_extension[1:] if file_extension else "unknown",  # Remover o ponto do início
+                    file_size=file_size,
+                    
+                    # Categorização
+                    category=category_value,
+                    supplier=supplier_final,
+                    batch_number=form.batch_number.data,
+                    raw_material_type=form.raw_material_type.data,
+                    sample_code=form.sample_code.data,
+                    
+                    # Análises físico-químicas do laudo
+                    brix=form.brix.data,
+                    ph=form.ph.data,
+                    acidity=form.acidity.data,
+                    
+                    # Análises realizadas em laboratório
+                    lab_brix=form.lab_brix.data,
+                    lab_ph=form.lab_ph.data,
+                    lab_acidity=form.lab_acidity.data,
+                    
+                    # Validação físico-química
+                    physicochemical_validation=phys_validation,
+                    
+                    # Campos adicionais de rastreabilidade
+                    report_archived=form.report_archived.data if form.report_archived.data is not None else False,
+                    microbiology_collected=form.microbiology_collected.data if form.microbiology_collected.data is not None else False,
+                    has_report_document=form.has_report_document.data if form.has_report_document.data is not None else False,
+                    
+                    # Datas
+                    report_date=report_date,
+                    report_time=report_time,
+                    manufacturing_date=manufacturing_date,
+                    expiration_date=expiration_date,
+                    
+                    # Indicadores (mantidos para compatibilidade)
+                    ph_value=form.ph_value.data,
+                    brix_value=form.brix_value.data,
+                    acidity_value=form.acidity_value.data,
+                    color_value=form.color_value.data if form.color_value.data else "",
+                    density_value=form.density_value.data
+                )
+                current_app.logger.info("Objeto Report criado com sucesso!")
+            except Exception as e:
+                current_app.logger.error(f"Erro ao criar objeto Report: {str(e)}")
+                flash(f"Erro ao criar laudo: {str(e)}", "danger")
+                return render_template('reports/upload.html', form=form, title="Upload de Laudo")
             
             db.session.add(new_report)
             db.session.commit()
             
-            # Gerar versão para impressão do relatório
-            generate_print_version(new_report)
+            # Gerar versão para impressão do relatório - com tratamento de erros
+            try:
+                current_app.logger.info("Gerando versão para impressão do relatório...")
+                generate_print_version(new_report)
+                current_app.logger.info("Versão para impressão gerada com sucesso!")
+            except Exception as e:
+                current_app.logger.error(f"Erro ao gerar PDF: {str(e)}")
+                flash(f"Laudo salvo, mas houve um erro ao gerar o PDF: {str(e)}", "warning")
             
             flash('Laudo enviado com sucesso!', 'success')
             # Redirecionar para a página de impressão do relatório

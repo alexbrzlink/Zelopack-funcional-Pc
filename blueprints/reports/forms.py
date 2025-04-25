@@ -6,9 +6,9 @@ from wtforms.validators import DataRequired, Optional, NumberRange
 class ReportUploadForm(FlaskForm):
     """Formulário para upload de laudos."""
     # Informações básicas
-    title = StringField('Título', validators=[DataRequired()])
+    title = StringField('Título', validators=[Optional()])  # Alterado para Optional
     description = TextAreaField('Descrição', validators=[Optional()])
-    file = FileField('Arquivo', validators=[FileRequired()])
+    file = FileField('Arquivo', validators=[Optional()])  # Alterado para Optional
     
     # Campos para categorização
     category = SelectField('Categoria', 
