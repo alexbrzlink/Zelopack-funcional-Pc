@@ -4,40 +4,72 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="row mb-4">
+    <div class="row mb-4 animate-fade-in">
         <div class="col-md-8">
-            <h1 class="mb-3">Formulários Zelopack</h1>
+            <h1 class="mb-3"><i class="fas fa-file-signature me-2"></i>Formulários Zelopack</h1>
             <p class="lead text-muted">
                 Explore os formulários disponíveis organizados por categorias.
             </p>
         </div>
         <div class="col-md-4">
-            <div class="input-group mb-3 mt-2">
+            <div class="input-group mb-3 mt-2 shadow-sm">
                 <input type="text" id="search-input" class="form-control" placeholder="Pesquisar formulários..." aria-label="Pesquisar formulários">
-                <button class="btn btn-outline-secondary" type="button" id="search-button">
+                <button class="btn btn-primary" type="button" id="search-button">
                     <i class="fas fa-search"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="search-results" class="mb-4" style="display: none;">
-        <h3>Resultados da Pesquisa</h3>
-        <div class="list-group search-results-list">
+    <div id="search-results" class="mb-4 animate-fade-in" style="display: none;">
+        <div class="d-flex align-items-center mb-3">
+            <i class="fas fa-search me-2 text-primary fs-4"></i>
+            <h3 class="mb-0">Resultados da Pesquisa</h3>
+        </div>
+        <div class="list-group search-results-list shadow-sm">
             <!-- Os resultados da pesquisa serão exibidos aqui -->
         </div>
-        <button id="clear-search" class="btn btn-secondary mt-3">Limpar Pesquisa</button>
+        <button id="clear-search" class="btn btn-outline-secondary mt-3">
+            <i class="fas fa-times me-2"></i>Limpar Pesquisa
+        </button>
     </div>
 
-    <div id="categories-section">
+    <div id="categories-section" class="animate-fade-in">
+        <div class="row mb-3">
+            <div class="col">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-folder-open me-2 text-primary fs-4"></i>
+                    <h3 class="mb-0">Categorias de Formulários</h3>
+                </div>
+            </div>
+        </div>
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for category in categories %}
             <div class="col">
-                <div class="card h-100">
+                <div class="card h-100 shadow-sm animate-fade-in-up delay-{{ loop.index0 }}00">
                     <div class="card-body">
-                        <h5 class="card-title">{{ category }}</h5>
-                        <p class="card-text">Formulários da categoria {{ category }}</p>
-                        <a href="{{ url_for('forms.category', category=category) }}" class="btn btn-primary">Ver Formulários</a>
+                        <div class="d-flex align-items-center mb-3">
+                            {% if category == 'Produção' %}
+                                <i class="fas fa-industry me-2 text-primary"></i>
+                            {% elif category == 'Qualidade' %}
+                                <i class="fas fa-check-circle me-2 text-success"></i>
+                            {% elif category == 'Manutenção' %}
+                                <i class="fas fa-tools me-2 text-warning"></i>
+                            {% elif category == 'Segurança' %}
+                                <i class="fas fa-shield-alt me-2 text-danger"></i>
+                            {% elif category == 'Laboratório' %}
+                                <i class="fas fa-flask me-2 text-info"></i>
+                            {% elif category == 'Gerencial' %}
+                                <i class="fas fa-chart-line me-2 text-dark"></i>
+                            {% else %}
+                                <i class="fas fa-folder me-2 text-primary"></i>
+                            {% endif %}
+                            <h5 class="card-title mb-0">{{ category }}</h5>
+                        </div>
+                        <p class="card-text">Acesse todos os formulários da categoria {{ category }}</p>
+                        <a href="{{ url_for('forms.category', category=category) }}" class="btn btn-primary">
+                            <i class="fas fa-clipboard-list me-1"></i> Ver Formulários
+                        </a>
                     </div>
                 </div>
             </div>

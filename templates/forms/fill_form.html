@@ -4,99 +4,168 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Preencher Formulário</h1>
-        <a href="{{ url_for('forms.category', category=file_path.split('/')[0]) }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Voltar
+    <div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+        <div>
+            <h1 class="d-flex align-items-center">
+                <i class="fas fa-edit text-primary me-2"></i>
+                Preencher Formulário
+            </h1>
+            <p class="text-muted mb-0">Preencha os campos e gere um novo documento.</p>
+        </div>
+        <a href="{{ url_for('forms.category', category=file_path.split('/')[0]) }}" class="btn btn-outline-secondary animate-fade-in-left">
+            <i class="fas fa-arrow-left me-1"></i> Voltar para Categoria
         </a>
     </div>
 
-    <div class="card mb-4">
-        <div class="card-header">
+    <div class="card mb-4 shadow-sm animate-fade-in-up">
+        <div class="card-header bg-gradient d-flex align-items-center">
+            <i class="fas {% if file_ext.lower() == 'pdf' %}fa-file-pdf text-danger{% elif file_ext.lower() == 'docx' %}fa-file-word text-primary{% elif file_ext.lower() == 'xlsx' %}fa-file-excel text-success{% else %}fa-file-alt text-primary{% endif %} me-2"></i>
             <h5 class="mb-0">{{ file_name }}</h5>
         </div>
         <div class="card-body">
             <div class="row mb-4">
-                <div class="col-md-6">
-                    <h5>Informações do Formulário</h5>
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Tipo de arquivo</span>
-                            <span class="badge bg-primary rounded-pill">{{ file_ext.upper() }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Caminho</span>
-                            <span class="text-muted">{{ file_path }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>Campos detectados</span>
-                            <span class="badge bg-success rounded-pill">{{ fields|length }}</span>
-                        </li>
-                    </ul>
+                <div class="col-md-6 animate-fade-in delay-100">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0 d-flex align-items-center">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                Informações do Formulário
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center animate-fade-in delay-200">
+                                    <span><i class="fas fa-file-alt me-2 text-muted"></i>Tipo de arquivo</span>
+                                    <span class="badge bg-primary rounded-pill">{{ file_ext.upper() }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center animate-fade-in delay-300">
+                                    <span><i class="fas fa-folder-open me-2 text-muted"></i>Caminho</span>
+                                    <span class="badge bg-secondary">{{ file_path }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center animate-fade-in delay-400">
+                                    <span><i class="fas fa-list me-2 text-muted"></i>Campos detectados</span>
+                                    <span class="badge bg-success rounded-pill">{{ fields|length }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <h5>Opções</h5>
-                    <div class="d-grid gap-2">
-                        <a href="{{ url_for('forms.view_form', file_path=file_path) }}" class="btn btn-outline-primary" target="_blank">
-                            <i class="fas fa-eye"></i> Visualizar formulário original
-                        </a>
-                        <a href="{{ url_for('forms.list_presets', file_path=file_path) }}" class="btn btn-outline-info">
-                            <i class="fas fa-save"></i> Ver predefinições salvas
-                        </a>
-                        <a href="{{ url_for('forms.create_preset', file_path=file_path) }}" class="btn btn-outline-success">
-                            <i class="fas fa-plus"></i> Criar nova predefinição
-                        </a>
+                <div class="col-md-6 animate-fade-in delay-200">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0 d-flex align-items-center">
+                                <i class="fas fa-tools text-primary me-2"></i>
+                                Opções
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('forms.view_form', file_path=file_path) }}" class="btn btn-outline-primary animate-fade-in delay-300" target="_blank">
+                                    <i class="fas fa-eye me-2"></i> Visualizar formulário original
+                                </a>
+                                <a href="{{ url_for('forms.list_presets', file_path=file_path) }}" class="btn btn-outline-info animate-fade-in delay-400">
+                                    <i class="fas fa-save me-2"></i> Ver predefinições salvas
+                                </a>
+                                <a href="{{ url_for('forms.create_preset', file_path=file_path) }}" class="btn btn-outline-success animate-fade-in delay-500">
+                                    <i class="fas fa-plus me-2"></i> Criar nova predefinição
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <hr>
+            <hr class="animate-fade-in">
 
-            <h4>Preencher Formulário</h4>
+            <div class="d-flex align-items-center mb-3 animate-fade-in">
+                <i class="fas fa-pencil-alt text-primary me-2 fs-4"></i>
+                <h4 class="mb-0">Preencher Formulário</h4>
+            </div>
 
-            <form action="{{ url_for('forms.download_filled_form', file_path=file_path) }}" method="post">
+            <form action="{{ url_for('forms.download_filled_form', file_path=file_path) }}" method="post" class="animate-fade-in">
                 {% if presets and presets|length > 0 %}
-                <div class="mb-4">
-                    <label for="preset_id" class="form-label">Usar Predefinição</label>
-                    <div class="input-group">
-                        <select name="preset_id" id="preset_id" class="form-select">
-                            <option value="">Selecione uma predefinição</option>
-                            {% for preset in presets %}
-                            <option value="{{ preset.id }}" {% if preset.is_default %}selected{% endif %}>
-                                {{ preset.name }}
-                                {% if preset.is_default %}(Padrão){% endif %}
-                            </option>
-                            {% endfor %}
-                        </select>
-                        <button type="button" id="apply-preset" class="btn btn-outline-primary">Aplicar</button>
+                <div class="mb-4 card shadow-sm animate-fade-in delay-300">
+                    <div class="card-body">
+                        <label for="preset_id" class="form-label d-flex align-items-center">
+                            <i class="fas fa-bookmark text-primary me-2"></i>
+                            <strong>Usar Predefinição</strong>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-list"></i></span>
+                            <select name="preset_id" id="preset_id" class="form-select">
+                                <option value="">Selecione uma predefinição</option>
+                                {% for preset in presets %}
+                                <option value="{{ preset.id }}" {% if preset.is_default %}selected{% endif %}>
+                                    {{ preset.name }}
+                                    {% if preset.is_default %}<i class="fas fa-star"></i> (Padrão){% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button type="button" id="apply-preset" class="btn btn-primary">
+                                <i class="fas fa-check me-1"></i> Aplicar
+                            </button>
+                        </div>
+                        <div class="form-text mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Selecione uma predefinição para preencher automaticamente o formulário.
+                        </div>
                     </div>
-                    <div class="form-text">Selecione uma predefinição para preencher automaticamente o formulário.</div>
                 </div>
-                <hr>
+                <hr class="animate-fade-in">
                 {% endif %}
 
                 <div class="row">
                     {% for field in fields %}
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label for="field_{{ field.id }}" class="form-label">{{ field.name }}</label>
-                            <input type="text" class="form-control" id="field_{{ field.id }}" name="field_{{ field.id }}" value="{{ field.value }}">
+                    <div class="col-md-6 mb-3 animate-fade-in" style="animation-delay: {{ (loop.index0 * 0.05) + 0.3 }}s">
+                        <div class="form-floating position-relative">
+                            <input type="text" class="form-control" id="field_{{ field.id }}" name="field_{{ field.id }}" 
+                                   value="{{ field.value }}" placeholder="{{ field.name }}">
+                            <label for="field_{{ field.id }}">{{ field.name }}</label>
+                            {% if field.name and field.name.lower().find('data') >= 0 %}
+                                <i class="fas fa-calendar-alt input-icon"></i>
+                            {% elif field.name and field.name.lower().find('hora') >= 0 %}
+                                <i class="fas fa-clock input-icon"></i>
+                            {% elif field.name and field.name.lower().find('email') >= 0 %}
+                                <i class="fas fa-envelope input-icon"></i>
+                            {% elif field.name and field.name.lower().find('telefone') >= 0 or field.name.lower().find('fone') >= 0 %}
+                                <i class="fas fa-phone input-icon"></i>
+                            {% elif field.name and field.name.lower().find('nome') >= 0 %}
+                                <i class="fas fa-user input-icon"></i>
+                            {% elif field.name and field.name.lower().find('quantidade') >= 0 or field.name.lower().find('qtd') >= 0 %}
+                                <i class="fas fa-sort-amount-up input-icon"></i>
+                            {% elif field.name and field.name.lower().find('produto') >= 0 %}
+                                <i class="fas fa-box input-icon"></i>
+                            {% elif field.name and field.name.lower().find('observação') >= 0 or field.name.lower().find('obs') >= 0 %}
+                                <i class="fas fa-comment input-icon"></i>
+                            {% else %}
+                                <i class="fas fa-pencil-alt input-icon"></i>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
                 </div>
 
                 {% if not fields %}
-                <div class="alert alert-info">
-                    <h5><i class="fas fa-info-circle"></i> Nenhum campo detectado</h5>
-                    <p>Não foi possível detectar campos para preenchimento neste formulário. 
-                       Verifique se este formulário contém campos preenchíveis (indicados por sublinhados ou campos de formulário).</p>
+                <div class="alert alert-info animate-fade-in delay-300 shadow-sm">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-info-circle fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Nenhum campo detectado</h5>
+                            <p class="mb-0">Não foi possível detectar campos para preenchimento neste formulário. 
+                            Verifique se este formulário contém campos preenchíveis (indicados por sublinhados ou campos de formulário).</p>
+                        </div>
+                    </div>
                 </div>
                 {% endif %}
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-download"></i> Baixar Formulário Preenchido
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 animate-fade-in delay-500">
+                    <button type="reset" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-undo me-1"></i> Limpar
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-file-download me-1"></i> Baixar Formulário Preenchido
                     </button>
                 </div>
             </form>
