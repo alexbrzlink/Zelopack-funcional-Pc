@@ -21,9 +21,9 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
     
-    # Verificar se existe pelo menos um usuário admin (para fins de teste/dev)
-    if User.query.count() == 0:
-        # Criar usuário admin padrão para testes
+    # Garantir que exista um usuário admin
+    admin = User.query.filter_by(username='admin').first()
+    if not admin:
         admin_user = User(
             username='admin',
             email='admin@zelopack.com.br',
@@ -34,79 +34,48 @@ def login():
         admin_user.set_password('Alex')
         db.session.add(admin_user)
         db.session.commit()
-        print(f"ATENÇÃO: Usuário de teste criado! Login: admin")
-        flash('Usuário de teste criado com login "admin". Utilize suas credenciais para acesso.', 'info')
-    
-    # Verificar se o usuário admin existe e está com senha correta
-    admin = User.query.filter_by(username='admin').first()
-    if admin:
-        # Testar senha para garantir que está funcionando
-        test_password = 'Alex'
-        test_result = admin.check_password(test_password)
-        direct_test = check_password_hash(admin.password_hash, test_password)
-        
-        print(f"Verificação da senha 'Alex' para admin: {test_result}")
-        print(f"Verificação direta de hash para admin: {direct_test}")
-        
-        # Se a verificação da senha do admin falhar, redefinir
-        if not test_result:
-            print("ERRO: A senha do admin não está correta. Redefinindo...")
-            admin.set_password('Alex')
-            db.session.commit()
-            flash('A senha do usuário admin foi redefinida.', 'warning')
+        print("Usuário admin criado com sucesso!")
+        flash('Usuário admin criado. Use as credenciais: admin / Alex', 'info')
     
     form = LoginForm()
-    if form.validate_on_submit():
-        username = form.username.data if form.username.data else ""
-        password = form.password.data if form.password.data else ""
+    
+    # Verificar se é uma submissão de formulário POST
+    if request.method == 'POST':
+        username = request.form.get('username', '')
+        password = request.form.get('password', '')
+        remember = 'remember_me' in request.form
         
-        # Logging para debug
-        print(f"Tentativa de login: Usuário={username}, Senha={'*' * len(password)}")
-        
-        # Validação especial para admin
+        # Caso especial para admin (bypass para facilitar testes)
         if username.lower() == 'admin' and password == 'Alex':
-            # Login direto para admin
             admin_user = User.query.filter_by(username='admin').first()
             if admin_user:
                 login_user(admin_user, remember=True)
                 admin_user.last_login = datetime.utcnow()
                 db.session.commit()
-                flash(f'Bem-vindo, {admin_user.name}! Login direto como admin realizado com sucesso.', 'success')
+                flash(f'Bem-vindo, Administrador!', 'success')
                 return redirect(url_for('dashboard.index'))
         
-        # Processo normal de login
+        # Login padrão
         user = User.query.filter_by(username=username).first()
         
-        if user is None:
-            print(f"Erro de login: Usuário '{username}' não encontrado")
-            flash(f"O usuário '{username}' não está cadastrado. Verifique se digitou corretamente.", 'danger')
-            return render_template('auth/login.html', form=form, title='Login')
-            
-        if not user.check_password(password):
-            print(f"Erro de login: Senha incorreta para o usuário '{username}'")
-            # Mensagem genérica que não revela informações sobre a senha
-            flash("Credenciais inválidas. Por favor, verifique seu usuário e senha.", 'danger')
+        if not user or not user.check_password(password):
+            flash('Nome de usuário ou senha incorretos. Tente novamente.', 'danger')
             return render_template('auth/login.html', form=form, title='Login')
         
         if not user.is_active:
-            print(f"Erro de login: Usuário '{username}' está inativo")
-            flash(f"Esta conta ({username}) está desativada. Entre em contato com o administrador.", 'warning')
+            flash(f'Sua conta está desativada. Contate o administrador.', 'warning')
             return render_template('auth/login.html', form=form, title='Login')
         
-        login_user(user, remember=form.remember_me.data)
-        print(f"Login bem-sucedido para o usuário '{username}'")
-        
-        # Atualizar último login
+        # Login bem-sucedido
+        login_user(user, remember=remember)
         user.last_login = datetime.utcnow()
         db.session.commit()
         
-        # Redirecionar para a página que o usuário estava tentando acessar
-        next_page = request.args.get('next')
-        if not next_page or urlparse(next_page).netloc != '':
-            next_page = url_for('dashboard.index')
-            
+        print(f"Login bem-sucedido para: {user.username}")
         flash(f'Bem-vindo, {user.name}! Login realizado com sucesso.', 'success')
-        return redirect(next_page)
+        
+        # Sempre redirecionar para o dashboard após login
+        return redirect(url_for('dashboard.index'))
     
     return render_template('auth/login.html', title='Login', form=form)
 

@@ -52,16 +52,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const alerts = document.querySelectorAll('.alert');
     const loginMessages = document.getElementById('login-messages');
     
-    if (alerts.length > 0) {
+    if (alerts.length > 0 && loginMessages) {
         alerts.forEach(alert => {
             // Adicionar classe para animação
             alert.classList.add('animate-fade-in');
             
             // Adicionar ícone se não existir
             if (!alert.querySelector('i')) {
-                const alertType = alert.classList.contains('alert-danger') ? 'exclamation-circle' :
-                                alert.classList.contains('alert-success') ? 'check-circle' :
-                                alert.classList.contains('alert-warning') ? 'exclamation-triangle' : 'info-circle';
+                let alertType = 'info-circle';
+                
+                if (alert.classList.contains('alert-danger')) {
+                    alertType = 'exclamation-circle';
+                } else if (alert.classList.contains('alert-success')) {
+                    alertType = 'check-circle';
+                } else if (alert.classList.contains('alert-warning')) {
+                    alertType = 'exclamation-triangle';
+                }
                 
                 const icon = document.createElement('i');
                 icon.className = `fas fa-${alertType} me-2`;
@@ -80,25 +86,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 5000);
             }
             
-            // Adicionar botão para fechar o alerta se não existir
-            if (!alert.querySelector('.btn-close')) {
-                const closeButton = document.createElement('button');
-                closeButton.type = 'button';
-                closeButton.className = 'btn-close';
-                closeButton.setAttribute('data-bs-dismiss', 'alert');
-                closeButton.setAttribute('aria-label', 'Close');
-                
-                closeButton.addEventListener('click', function() {
-                    alert.style.animation = 'fadeOut 0.3s ease forwards';
-                    setTimeout(() => {
-                        if (alert.parentNode) {
-                            alert.parentNode.removeChild(alert);
-                        }
-                    }, 300);
-                });
-                
-                alert.appendChild(closeButton);
-            }
+            // Adicionar botão para fechar o alerta
+            const closeButton = document.createElement('button');
+            closeButton.type = 'button';
+            closeButton.className = 'btn-close';
+            closeButton.setAttribute('aria-label', 'Close');
+            
+            closeButton.addEventListener('click', function() {
+                alert.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 300);
+            });
+            
+            alert.appendChild(closeButton);
         });
     }
     
