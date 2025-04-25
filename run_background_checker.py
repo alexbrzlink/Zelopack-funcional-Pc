@@ -10,23 +10,61 @@ import sys
 def start_background_checker():
     """Inicia o verificador em segundo plano"""
     try:
-        # Inicia o processo em segundo plano
-        process = subprocess.Popen(
-            ["python", "background_checker.py"],
-            stdout=open("zelopack_background_checker.log", "a"),
-            stderr=open("zelopack_background_checker.log", "a"),
-            # Desvincula o processo do terminal
-            start_new_session=True
-        )
+        # Verificar se já está em execução
+        if os.path.exists(".background_checker_pid"):
+            try:
+                with open(".background_checker_pid", "r") as f:
+                    pid = int(f.read().strip())
+                
+                try:
+                    # Verifica se o processo ainda existe
+                    os.kill(pid, 0)
+                    print(f"Verificador automático já está em execução (PID: {pid})")
+                    return 0
+                except ProcessLookupError:
+                    # O processo não existe mais, podemos continuar
+                    os.remove(".background_checker_pid")
+                    print("Processo anterior não encontrado, iniciando novo processo...")
+            except Exception as e:
+                print(f"Erro ao verificar processo anterior: {str(e)}")
+                # Continua mesmo com erro
         
-        print(f"Verificador automático iniciado em segundo plano (PID: {process.pid})")
-        print("Log disponível em: zelopack_background_checker.log")
+        # Cria diretório para nohup.out se não existir
+        if not os.path.exists("logs"):
+            os.makedirs("logs")
+            
+        # Inicia o processo em segundo plano usando nohup para garantir que continue rodando
+        # mesmo após o terminal ser fechado
+        cmd = "nohup python background_checker.py > zelopack_background_checker.log 2>&1 &"
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process.wait()
         
-        # Salva o PID para referência futura
-        with open(".background_checker_pid", "w") as f:
-            f.write(str(process.pid))
-        
-        return 0
+        # Obtém o PID do processo em execução
+        try:
+            # Use pgrep para encontrar o PID
+            find_pid = subprocess.Popen(
+                ["pgrep", "-f", "python background_checker.py"],
+                stdout=subprocess.PIPE
+            )
+            pid_output = find_pid.communicate()[0].decode().strip()
+            
+            if pid_output:
+                pid = int(pid_output.split("\n")[0])  # Em caso de múltiplos PIDs, pegue o primeiro
+                print(f"Verificador automático iniciado em segundo plano (PID: {pid})")
+                print("Log disponível em: zelopack_background_checker.log")
+                
+                # Salva o PID para referência futura
+                with open(".background_checker_pid", "w") as f:
+                    f.write(str(pid))
+                
+                return 0
+            else:
+                print("Não foi possível determinar o PID do verificador automático")
+                return 1
+        except Exception as e:
+            print(f"Erro ao obter PID: {str(e)}")
+            return 1
+            
     except Exception as e:
         print(f"Erro ao iniciar verificador automático: {str(e)}")
         return 1
