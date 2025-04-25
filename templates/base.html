@@ -27,6 +27,9 @@
     <!-- Sistema de temas com modo escuro -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
     
+    <!-- Skeleton loading para melhor experiência durante carregamentos -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+    
     <style>
         /* Estilo para o item destacado no menu */
         .highlight-nav-item {
@@ -242,6 +245,9 @@
     
     <!-- Gerenciador de temas -->
     <script src="{{ url_for('static', filename='js/theme_manager.js') }}"></script>
+    
+    <!-- Skeleton loading para melhor experiência durante carregamentos -->
+    <script src="{{ url_for('static', filename='js/skeleton-loader.js') }}"></script>
     
     {% block extra_js %}{% endblock %}
 </body>
