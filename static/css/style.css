@@ -2,10 +2,11 @@
 
 :root {
   /* Paleta principal modernizada - com tons complementares */
-  --zelopack-primary: #0057a3; /* Azul principal mais profundo */
-  --zelopack-primary-light: #1a73e8; /* Azul mais claro para hover/destaque */
-  --zelopack-primary-dark: #004080; /* Azul escuro para elementos ativos */
-  --zelopack-primary-subtle: rgba(0, 87, 163, 0.1); /* Azul sutil para backgrounds */
+  --zelopack-primary: #00978D; /* Azul turquesa como solicitado */
+  --zelopack-primary-light: #20B2AA; /* Azul turquesa mais claro para hover/destaque */
+  --zelopack-primary-dark: #008B8B; /* Azul turquesa escuro para elementos ativos */
+  --zelopack-primary-subtle: rgba(0, 151, 141, 0.1); /* Azul turquesa sutil para backgrounds */
+  --zelopack-gradient-end: #09827B; /* Tom para gradiente */
   
   --zelopack-secondary: #2e9e41; /* Verde refinado */
   --zelopack-secondary-light: #4caf50; /* Verde claro para hover/destaque */
