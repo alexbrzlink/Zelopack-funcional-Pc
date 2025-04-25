@@ -745,7 +745,7 @@ class FormPreset(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
     form_type = db.Column(db.String(100), nullable=False)  # Tipo/nome do formulário
-    file_path = db.Column(db.String(255), nullable=False)  # Caminho relativo do arquivo no sistema
+    file_path = db.Column(db.String(255), nullable=True)  # Caminho relativo do arquivo no sistema
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
