@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('password');
     const loginBtn = document.getElementById('submit');
     const rememberMe = document.getElementById('remember_me');
-    const alerts = document.querySelectorAll('.alert');
     
     // Verificar e animar mensagens de erro existentes
     const invalidControls = document.querySelectorAll('.is-invalid');
