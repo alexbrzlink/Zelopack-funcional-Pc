@@ -232,11 +232,10 @@
                                 {% set analyst = efficiency_data.analyst_data.analysts[i] %}
                                 {% set reports = efficiency_data.analyst_data.report_counts[i] %}
                                 
-                                <!-- Simular métricas adicionais para visualização -->
-                                {% set approval_rate = range(75, 100)|random %}
-                                {% set random_factor = range(80, 120)|random / 100.0 %}
-                                {% set avg_time = (efficiency_data.avg_analysis_time * random_factor)|round(1) %}
-                                {% set performance_score = range(50, 100)|random %}
+                                <!-- Usar os dados de métricas gerados pelo controller -->
+                                {% set approval_rate = efficiency_data.analyst_data.approval_rates[loop.index0] %}
+                                {% set avg_time = efficiency_data.analyst_data.avg_times[loop.index0] %}
+                                {% set performance_score = efficiency_data.analyst_data.performance_scores[loop.index0] %}
                                 
                                 <tr>
                                     <td class="text-center">
