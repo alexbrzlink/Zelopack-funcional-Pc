@@ -42,7 +42,22 @@
                         {{ form.date_to(class="form-control", type="date") }}
                     </div>
                     
-                    <div class="col-md-6 d-flex align-items-end">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Ordenar por</label>
+                        <div class="btn-group w-100" role="group" aria-label="Ordenação">
+                            <input type="radio" class="btn-check" name="sort_by" id="sort_date" value="date" checked>
+                            <label class="btn btn-outline-primary" for="sort_date">
+                                <i class="fas fa-calendar-alt"></i> Data
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="sort_by" id="sort_title" value="title">
+                            <label class="btn btn-outline-primary" for="sort_title">
+                                <i class="fas fa-sort-alpha-down"></i> Título
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 d-flex align-items-end">
                         <div class="d-grid gap-2 d-md-flex">
                             <button type="button" id="resetSearch" class="btn btn-outline-secondary">
                                 <i class="fas fa-times"></i> Limpar
@@ -116,4 +131,33 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manipulador para o botão de limpar
+        document.getElementById('resetSearch').addEventListener('click', function() {
+            // Limpar todos os campos do formulário
+            document.getElementById('searchForm').reset();
+        });
+        
+        // Adicionar efeito de animação aos botões de ordenação
+        const sortButtons = document.querySelectorAll('input[name="sort_by"]');
+        sortButtons.forEach(function(button) {
+            button.addEventListener('change', function() {
+                if (this.checked) {
+                    // Adicionar classe de animação ao label correspondente
+                    const label = document.querySelector(`label[for="${this.id}"]`);
+                    label.classList.add('pulse-once');
+                    
+                    // Remover a classe após a animação
+                    setTimeout(function() {
+                        label.classList.remove('pulse-once');
+                    }, 500);
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

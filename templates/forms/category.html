@@ -13,11 +13,28 @@
 
     <div class="card mb-4 card-hover fadeIn">
         <div class="card-body">
-            <div class="input-group mb-3">
-                <input type="text" id="filter-table" class="form-control form-animated" placeholder="Filtrar formulários..." aria-label="Filtrar formulários">
-                <button class="btn btn-outline-secondary btn-animated" type="button" id="clear-filter">
-                    <i class="fas fa-times"></i>
-                </button>
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" id="filter-table" class="form-control form-animated" placeholder="Filtrar formulários..." aria-label="Filtrar formulários">
+                        <button class="btn btn-outline-secondary btn-animated" type="button" id="clear-filter">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="btn-group w-100" role="group" aria-label="Ordenação">
+                        <input type="radio" class="btn-check" name="sort_by" id="sort_alpha" value="alpha" checked>
+                        <label class="btn btn-outline-primary btn-animated" for="sort_alpha">
+                            <i class="fas fa-sort-alpha-down"></i> Alfabética
+                        </label>
+                        
+                        <input type="radio" class="btn-check" name="sort_by" id="sort_date" value="date">
+                        <label class="btn btn-outline-primary btn-animated" for="sort_date">
+                            <i class="fas fa-calendar-alt"></i> Data
+                        </label>
+                    </div>
+                </div>
             </div>
             
             <div class="table-responsive">
@@ -82,6 +99,72 @@
         
         // Animar entrada da tabela
         document.querySelector('table').classList.add('fadeIn');
+        
+        // Ordenação da tabela
+        const sortButtons = document.querySelectorAll('input[name="sort_by"]');
+        const tableBody = document.querySelector('tbody');
+        const tableRows = Array.from(document.querySelectorAll('.form-row'));
+        
+        // Adicionar atributo data-date com a data original
+        tableRows.forEach(row => {
+            // Usar o timestamp ou outro valor para ordenação por data
+            row.setAttribute('data-date', row.getAttribute('style').split('animation-delay:')[1].split('s')[0].trim());
+        });
+        
+        function sortTable(sortType) {
+            // Salvar todas as linhas em um array
+            const rows = Array.from(document.querySelectorAll('.form-row'));
+            
+            // Ordenar as linhas
+            rows.sort((a, b) => {
+                if (sortType === 'alpha') {
+                    // Ordenação alfabética pelo nome do arquivo
+                    const textA = a.querySelector('td:first-child').textContent.trim();
+                    const textB = b.querySelector('td:first-child').textContent.trim();
+                    return textA.localeCompare(textB);
+                } else {
+                    // Ordenação por data (usando os valores originais)
+                    const dateA = parseFloat(a.getAttribute('data-date'));
+                    const dateB = parseFloat(b.getAttribute('data-date'));
+                    return dateB - dateA; // Ordem decrescente (mais recente primeiro)
+                }
+            });
+            
+            // Remover todas as linhas
+            rows.forEach(row => row.remove());
+            
+            // Adicionar as linhas ordenadas de volta
+            rows.forEach((row, index) => {
+                // Atualizar o delay de animação
+                row.style.animationDelay = `${index * 0.05}s`;
+                tableBody.insertBefore(row, tableBody.firstChild);
+            });
+            
+            // Adicionar animação aos itens reordenados
+            rows.forEach(row => {
+                row.classList.add('pulse-once');
+                setTimeout(() => {
+                    row.classList.remove('pulse-once');
+                }, 500);
+            });
+        }
+        
+        // Evento para os botões de ordenação
+        sortButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                if (this.checked) {
+                    // Animação no botão selecionado
+                    const label = document.querySelector(`label[for="${this.id}"]`);
+                    label.classList.add('pulse-once');
+                    setTimeout(() => {
+                        label.classList.remove('pulse-once');
+                    }, 500);
+                    
+                    // Ordenar a tabela
+                    sortTable(this.value);
+                }
+            });
+        });
         
         // Função para filtrar a tabela
         function filterTable() {
