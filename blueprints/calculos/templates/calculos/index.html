@@ -1,0 +1,471 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+<style>
+    .calculator-container {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .calculator-container:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px);
+    }
+    
+    .calculator-title {
+        background-color: #0d6efd;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .calculator-title:hover {
+        background-color: #0b5ed7;
+    }
+    
+    .calculator-body {
+        display: none;
+        padding: 15px 10px;
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+    
+    .calculator-body.active {
+        display: block;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+    
+    .form-control {
+        border-radius: 4px;
+    }
+    
+    .btn-calculate {
+        background-color: #28a745;
+        border: none;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-calculate:hover {
+        background-color: #218838;
+    }
+    
+    .result-box {
+        margin-top: 15px;
+        padding: 15px;
+        background-color: #f0f8ff;
+        border: 1px solid #b8daff;
+        border-radius: 6px;
+        display: none;
+    }
+    
+    .result-value {
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: #0d6efd;
+    }
+    
+    .result-unit {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .calculation-description {
+        margin-bottom: 15px;
+        color: #495057;
+        font-style: italic;
+    }
+    
+    .category-header {
+        background-color: #343a40;
+        color: white;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin: 30px 0 20px;
+        font-size: 1.2rem;
+    }
+    
+    .calculator-icon {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+    
+    .error-message {
+        color: #dc3545;
+        margin-top: 5px;
+        font-size: 0.9rem;
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">Calculadora de Produção</h1>
+            <p class="lead">Utilize as calculadoras abaixo para realizar cálculos importantes para o processo de produção.</p>
+            
+            <div class="category-header">
+                <i class="fas fa-industry"></i> Cálculos de Produção e Peso
+            </div>
+            
+            <!-- Calculadora 1: Produção 200 -->
+            <div class="calculator-container">
+                <div class="calculator-title" onclick="toggleCalculator('producao200')">
+                    <span><i class="fas fa-balance-scale calculator-icon"></i> Produção 200</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="calculator-body" id="producao200">
+                    <div class="calculation-description">
+                        Determina o peso líquido de embalagens de 200g, subtraindo a tara (peso da embalagem) do peso bruto.
+                    </div>
+                    <form id="form-producao200">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="peso_bruto_200">Peso Bruto (g):</label>
+                                    <input type="number" class="form-control" id="peso_bruto_200" placeholder="Digite o peso bruto" step="0.01" required>
+                                    <div class="error-message" id="error-peso_bruto_200">Valor inválido</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="tara_200">Tara (g):</label>
+                                    <input type="number" class="form-control" id="tara_200" placeholder="Digite a tara" step="0.01" required>
+                                    <div class="error-message" id="error-tara_200">Valor inválido</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-calculate" onclick="calculate('producao_200')">
+                                <i class="fas fa-calculator"></i> Calcular
+                            </button>
+                        </div>
+                        <div class="result-box" id="result-producao_200">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <div class="result-label">Peso Líquido:</div>
+                                    <div class="result-value" id="result-value-producao_200">0</div>
+                                    <div class="result-unit">gramas</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Calculadora 2: Produção Litro -->
+            <div class="calculator-container">
+                <div class="calculator-title" onclick="toggleCalculator('producaoLitro')">
+                    <span><i class="fas fa-tint calculator-icon"></i> Produção Litro</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="calculator-body" id="producaoLitro">
+                    <div class="calculation-description">
+                        Calcula o volume final de produção com base no peso e densidade do produto.
+                    </div>
+                    <form id="form-producaoLitro">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="peso_total">Peso Total (kg):</label>
+                                    <input type="number" class="form-control" id="peso_total" placeholder="Digite o peso total" step="0.01" required>
+                                    <div class="error-message" id="error-peso_total">Valor inválido</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="densidade">Densidade (kg/L):</label>
+                                    <input type="number" class="form-control" id="densidade" placeholder="Digite a densidade" step="0.001" required>
+                                    <div class="error-message" id="error-densidade">Valor inválido</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-calculate" onclick="calculate('producao_litro')">
+                                <i class="fas fa-calculator"></i> Calcular
+                            </button>
+                        </div>
+                        <div class="result-box" id="result-producao_litro">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <div class="result-label">Volume Produzido:</div>
+                                    <div class="result-value" id="result-value-producao_litro">0</div>
+                                    <div class="result-unit">litros</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="category-header">
+                <i class="fas fa-flask"></i> Cálculos de Laboratório
+            </div>
+            
+            <!-- Calculadora 3: Abaixar Brix -->
+            <div class="calculator-container">
+                <div class="calculator-title" onclick="toggleCalculator('abaixarBrix')">
+                    <span><i class="fas fa-arrow-down calculator-icon"></i> Abaixar Brix</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="calculator-body" id="abaixarBrix">
+                    <div class="calculation-description">
+                        Estima quanto de água é necessário adicionar para reduzir o Brix de uma solução até o valor desejado.
+                    </div>
+                    <form id="form-abaixarBrix">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="brix_atual">Brix Atual:</label>
+                                    <input type="number" class="form-control" id="brix_atual" placeholder="Digite o Brix atual" step="0.1" required>
+                                    <div class="error-message" id="error-brix_atual">Valor inválido</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="brix_desejado">Brix Desejado:</label>
+                                    <input type="number" class="form-control" id="brix_desejado" placeholder="Digite o Brix desejado" step="0.1" required>
+                                    <div class="error-message" id="error-brix_desejado">Valor inválido</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="volume_inicial">Volume Inicial (L):</label>
+                                    <input type="number" class="form-control" id="volume_inicial" placeholder="Digite o volume inicial" step="0.1" required>
+                                    <div class="error-message" id="error-volume_inicial">Valor inválido</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-calculate" onclick="calculate('abaixar_brix')">
+                                <i class="fas fa-calculator"></i> Calcular
+                            </button>
+                        </div>
+                        <div class="result-box" id="result-abaixar_brix">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <div class="result-label">Água a Adicionar:</div>
+                                    <div class="result-value" id="result-value-abaixar_brix">0</div>
+                                    <div class="result-unit">litros</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Calculadora 4: Ratio -->
+            <div class="calculator-container">
+                <div class="calculator-title" onclick="toggleCalculator('ratio')">
+                    <span><i class="fas fa-divide calculator-icon"></i> Ratio (Brix/Acidez)</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="calculator-body" id="ratio">
+                    <div class="calculation-description">
+                        Relação simples entre Brix e Acidez, importante para controle de qualidade.
+                    </div>
+                    <form id="form-ratio">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="brix_ratio">Brix:</label>
+                                    <input type="number" class="form-control" id="brix_ratio" placeholder="Digite o Brix" step="0.1" required>
+                                    <div class="error-message" id="error-brix_ratio">Valor inválido</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="acidez_ratio">Acidez:</label>
+                                    <input type="number" class="form-control" id="acidez_ratio" placeholder="Digite a acidez" step="0.01" required>
+                                    <div class="error-message" id="error-acidez_ratio">Valor inválido</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-calculate" onclick="calculate('ratio')">
+                                <i class="fas fa-calculator"></i> Calcular
+                            </button>
+                        </div>
+                        <div class="result-box" id="result-ratio">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    <div class="result-label">Ratio:</div>
+                                    <div class="result-value" id="result-value-ratio">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Mais calculadoras podem ser adicionadas seguindo o mesmo padrão -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para alternar a visibilidade das calculadoras
+    function toggleCalculator(id) {
+        const element = document.getElementById(id);
+        const isActive = element.classList.contains('active');
+        
+        // Fechar todos os calculadores
+        document.querySelectorAll('.calculator-body').forEach(calc => {
+            calc.classList.remove('active');
+        });
+        
+        // Se não estava ativo, torná-lo ativo
+        if (!isActive) {
+            element.classList.add('active');
+        }
+        
+        // Atualizar ícones
+        document.querySelectorAll('.calculator-title i.fas.fa-chevron-down, .calculator-title i.fas.fa-chevron-up').forEach(icon => {
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        });
+        
+        if (!isActive) {
+            const title = element.previousElementSibling;
+            const icon = title.querySelector('i.fas.fa-chevron-down, i.fas.fa-chevron-up');
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        }
+    }
+    
+    // Função para validar formulários
+    function validateForm(formId) {
+        const form = document.getElementById(formId);
+        let isValid = true;
+        
+        // Verificar todos os campos necessários
+        const inputs = form.querySelectorAll('input[required]');
+        inputs.forEach(input => {
+            const errorElement = document.getElementById(`error-${input.id}`);
+            if (!input.value || isNaN(parseFloat(input.value))) {
+                if (errorElement) {
+                    errorElement.style.display = 'block';
+                }
+                isValid = false;
+            } else {
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            }
+        });
+        
+        return isValid;
+    }
+    
+    // Função para formatar resultado
+    function formatResult(value, decimals = 2) {
+        return parseFloat(value).toFixed(decimals);
+    }
+    
+    // Função para enviar solicitação de cálculo
+    function calculate(calculationType) {
+        // Mapear tipo de cálculo para ID do formulário
+        const formMappings = {
+            'producao_200': 'form-producao200',
+            'producao_litro': 'form-producaoLitro',
+            'abaixar_brix': 'form-abaixarBrix',
+            'ratio': 'form-ratio'
+            // Adicionar mais mapeamentos conforme necessário
+        };
+        
+        const formId = formMappings[calculationType];
+        
+        // Validar formulário primeiro
+        if (!validateForm(formId)) {
+            return;
+        }
+        
+        // Obter os dados conforme o tipo de cálculo
+        let data = {
+            tipo_calculo: calculationType
+        };
+        
+        switch (calculationType) {
+            case 'producao_200':
+                data.peso_bruto = parseFloat(document.getElementById('peso_bruto_200').value);
+                data.tara = parseFloat(document.getElementById('tara_200').value);
+                break;
+            case 'producao_litro':
+                data.peso = parseFloat(document.getElementById('peso_total').value);
+                data.densidade = parseFloat(document.getElementById('densidade').value);
+                break;
+            case 'abaixar_brix':
+                data.brix_atual = parseFloat(document.getElementById('brix_atual').value);
+                data.brix_desejado = parseFloat(document.getElementById('brix_desejado').value);
+                data.volume_inicial = parseFloat(document.getElementById('volume_inicial').value);
+                break;
+            case 'ratio':
+                data.brix = parseFloat(document.getElementById('brix_ratio').value);
+                data.acidez = parseFloat(document.getElementById('acidez_ratio').value);
+                break;
+            // Adicionar mais casos conforme necessário
+        }
+        
+        // Enviar a solicitação para o servidor
+        fetch('/calculos/api/calculate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Erro: ' + data.error);
+                return;
+            }
+            
+            // Mostrar resultado
+            const resultBox = document.getElementById(`result-${calculationType}`);
+            resultBox.style.display = 'block';
+            
+            const resultValueElement = document.getElementById(`result-value-${calculationType}`);
+            resultValueElement.textContent = formatResult(data.resultado);
+            
+            // Animar resultado
+            resultValueElement.classList.add('pulse');
+            setTimeout(() => {
+                resultValueElement.classList.remove('pulse');
+            }, 500);
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Ocorreu um erro ao processar o cálculo. Por favor, tente novamente.');
+        });
+    }
+    
+    // Inicializar primeira calculadora aberta ao carregar
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleCalculator('producao200');
+    });
+</script>
+{% endblock %}

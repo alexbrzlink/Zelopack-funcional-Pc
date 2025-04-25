@@ -522,6 +522,7 @@ from blueprints.auth import auth_bp
 from blueprints.templates import templates_bp
 from blueprints.documents import documents_bp
 from blueprints.forms import forms_bp
+from blueprints.calculos import calculos_bp
 
 app.register_blueprint(reports_bp)
 app.register_blueprint(dashboard_bp)
@@ -529,6 +530,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(templates_bp, url_prefix='/templates')
 app.register_blueprint(documents_bp, url_prefix='/documents')
 app.register_blueprint(forms_bp, url_prefix='/forms')
+app.register_blueprint(calculos_bp, url_prefix='/calculos')
 
 # Registrar blueprint do editor universal
 from blueprints.forms.routes_editor import editor_bp
