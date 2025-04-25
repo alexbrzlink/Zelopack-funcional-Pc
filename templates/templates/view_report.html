@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ title }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('templates.index') }}">Templates de Laudos</a></li>
+        <li class="breadcrumb-item active">Visualizar Laudo</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-file-alt me-1"></i>
+                        Detalhes do Laudo
+                    </div>
+                    <div>
+                        <a href="{{ url_for('templates.download_pdf', report_id=report.id) }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-file-pdf me-1"></i> Download PDF
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Informações Básicas</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th style="width: 30%">ID do Laudo:</th>
+                                    <td>{{ report.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Título:</th>
+                                    <td>{{ report.title }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Data do Laudo:</th>
+                                    <td>{{ report.report_date.strftime('%d/%m/%Y') if report.report_date else 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Template:</th>
+                                    <td>{{ template.name if template else 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td>
+                                        <span class="badge bg-{{ report.get_status_badge() }}">
+                                            {{ report.get_status_label() }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Criado por:</th>
+                                    <td>{{ report.creator_user.name if report.creator_user else 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Criado em:</th>
+                                    <td>{{ report.creation_date.strftime('%d/%m/%Y %H:%M') if report.creation_date else 'N/A' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Detalhes</h5>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th style="width: 30%">Cliente:</th>
+                                    <td>{{ report.client.name if report.client else 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Amostra:</th>
+                                    <td>{{ report.sample.code if report.sample else 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Prioridade:</th>
+                                    <td>
+                                        {% if report.priority == 'baixa' %}
+                                            <span class="badge bg-success">Baixa</span>
+                                        {% elif report.priority == 'normal' %}
+                                            <span class="badge bg-primary">Normal</span>
+                                        {% elif report.priority == 'alta' %}
+                                            <span class="badge bg-warning">Alta</span>
+                                        {% elif report.priority == 'urgente' %}
+                                            <span class="badge bg-danger">Urgente</span>
+                                        {% else %}
+                                            {{ report.priority }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Responsável:</th>
+                                    <td>{{ report.assigned_user.name if report.assigned_user else 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Prazo:</th>
+                                    <td>{{ report.due_date.strftime('%d/%m/%Y') if report.due_date else 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Aprovado por:</th>
+                                    <td>{{ report.approver_user.name if report.approver_user else 'N/A' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Aprovado em:</th>
+                                    <td>{{ report.signature_date.strftime('%d/%m/%Y') if report.signature_date else 'N/A' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    {% if report.description %}
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5>Descrição</h5>
+                            <div class="border rounded p-3 bg-light">
+                                {{ report.description|nl2br }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <h5>Resultados da Análise</h5>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Parâmetro</th>
+                                        <th>Valor</th>
+                                        <th>Unidade</th>
+                                        <th>Referência</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if report.ph_value is not none %}
+                                    <tr>
+                                        <td>pH</td>
+                                        <td>{{ "%.2f"|format(report.ph_value) }}</td>
+                                        <td></td>
+                                        <td>3.5 - 4.5</td>
+                                    </tr>
+                                    {% endif %}
+                                    
+                                    {% if report.brix_value is not none %}
+                                    <tr>
+                                        <td>Brix</td>
+                                        <td>{{ "%.1f"|format(report.brix_value) }}</td>
+                                        <td>°Bx</td>
+                                        <td>10.0 - 15.0</td>
+                                    </tr>
+                                    {% endif %}
+                                    
+                                    {% if report.acidity_value is not none %}
+                                    <tr>
+                                        <td>Acidez</td>
+                                        <td>{{ "%.2f"|format(report.acidity_value) }}</td>
+                                        <td>g/100mL</td>
+                                        <td>0.5 - 1.5</td>
+                                    </tr>
+                                    {% endif %}
+                                    
+                                    {% if report.color_value %}
+                                    <tr>
+                                        <td>Cor</td>
+                                        <td>{{ report.color_value }}</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    {% endif %}
+                                    
+                                    {% if report.density_value is not none %}
+                                    <tr>
+                                        <td>Densidade</td>
+                                        <td>{{ "%.4f"|format(report.density_value) }}</td>
+                                        <td>g/cm³</td>
+                                        <td></td>
+                                    </tr>
+                                    {% endif %}
+                                    
+                                    {% for key, value in additional_metrics.items() %}
+                                    <tr>
+                                        <td>{{ key }}</td>
+                                        <td>{{ value }}</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                    {% if not report.ph_value and not report.brix_value and not report.acidity_value and not report.color_value and not report.density_value and not additional_metrics %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">Não há dados de análise disponíveis.</td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-4">
+            {% if attachments %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-paperclip me-1"></i>
+                    Anexos ({{ attachments|length }})
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for attachment in attachments %}
+                        <a href="{{ url_for('reports.download_attachment', attachment_id=attachment.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                {% if attachment.file_type in ['pdf'] %}
+                                <i class="fas fa-file-pdf text-danger me-2"></i>
+                                {% elif attachment.file_type in ['doc', 'docx'] %}
+                                <i class="fas fa-file-word text-primary me-2"></i>
+                                {% elif attachment.file_type in ['xls', 'xlsx'] %}
+                                <i class="fas fa-file-excel text-success me-2"></i>
+                                {% elif attachment.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+                                <i class="fas fa-file-image text-info me-2"></i>
+                                {% else %}
+                                <i class="fas fa-file text-secondary me-2"></i>
+                                {% endif %}
+                                {{ attachment.original_filename }}
+                            </div>
+                            <span class="badge bg-primary rounded-pill">{{ (attachment.file_size / 1024)|round(1) }} KB</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-cogs me-1"></i>
+                    Ações
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('templates.download_pdf', report_id=report.id) }}" class="btn btn-primary">
+                            <i class="fas fa-file-pdf me-1"></i> Baixar PDF
+                        </a>
+                        {% if report.status == 'pendente' or report.status == 'revisao' %}
+                        <a href="#" class="btn btn-success">
+                            <i class="fas fa-check me-1"></i> Aprovar Laudo
+                        </a>
+                        {% endif %}
+                        <a href="{{ url_for('templates.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Voltar para Templates
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            {% if template %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Informações do Template
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Nome:</th>
+                            <td>{{ template.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Versão:</th>
+                            <td>{{ template.version }}</td>
+                        </tr>
+                        <tr>
+                            <th>Criado por:</th>
+                            <td>{{ template.creator.name if template.creator else 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Criado em:</th>
+                            <td>{{ template.created_at.strftime('%d/%m/%Y') if template.created_at else 'N/A' }}</td>
+                        </tr>
+                    </table>
+                    
+                    {% if template.description %}
+                    <div class="mt-2">
+                        <h6>Descrição:</h6>
+                        <p class="small">{{ template.description }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

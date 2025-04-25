@@ -37,6 +37,7 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 
 # Configurações para upload de arquivos
 app.config["UPLOAD_FOLDER"] = os.path.join(os.getcwd(), "uploads")
+app.config["ATTACHED_ASSETS_FOLDER"] = os.path.join(os.getcwd(), "attached_assets")
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB limite máximo
 app.config["ALLOWED_EXTENSIONS"] = {"pdf", "doc", "docx", "xls", "xlsx"}
 

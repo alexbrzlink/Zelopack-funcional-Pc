@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ title }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('templates.index') }}">Templates de Laudos</a></li>
+        <li class="breadcrumb-item active">Importar Formulário Zelopack</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-file-import me-1"></i>
+                    Formulário de Importação
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('templates.import_zelopack_form') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.name.label(class="form-label") }}
+                                    {{ form.name(class="form-control") }}
+                                    {% if form.name.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.category_id.label(class="form-label") }}
+                                    {{ form.category_id(class="form-select") }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=3) }}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.form_type.label(class="form-label") }}
+                                    {{ form.form_type(class="form-select", id="form_type") }}
+                                    {% if form.form_type.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.form_type.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.zelopack_form.label(class="form-label") }}
+                                    {{ form.zelopack_form(class="form-select", id="zelopack_form") }}
+                                    {% if form.zelopack_form.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.zelopack_form.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <div id="form-loading" class="mt-2 d-none">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                            <span class="visually-hidden">Carregando...</span>
+                                        </div>
+                                        <span class="small ms-1">Carregando formulários...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.version.label(class="form-label") }}
+                                    {{ form.version(class="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mt-4">
+                                    {{ form.is_active(class="form-check-input") }}
+                                    {{ form.is_active.label(class="form-check-label") }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            {{ form.auto_generate_fields(class="form-check-input") }}
+                            {{ form.auto_generate_fields.label(class="form-check-label") }}
+                            <div class="form-text">{{ form.auto_generate_fields.description }}</div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>{{ form.submit.label.text }}
+                            </button>
+                            <a href="{{ url_for('templates.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Informações
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-3">Como importar um formulário Zelopack:</h5>
+                    <ol>
+                        <li>Selecione o <strong>Tipo de Formulário</strong> que deseja importar.</li>
+                        <li>Selecione o <strong>Formulário Zelopack</strong> específico na lista.</li>
+                        <li>Dê um <strong>Nome</strong> descritivo ao template que será criado.</li>
+                        <li>Opcionalmente, adicione uma <strong>Descrição</strong> detalhada.</li>
+                        <li>Se desejar que os campos sejam detectados automaticamente, mantenha a opção <strong>Gerar campos automaticamente</strong> marcada.</li>
+                        <li>Clique em <strong>Importar Formulário</strong> para finalizar.</li>
+                    </ol>
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-lightbulb me-1"></i>
+                        <strong>Dica:</strong> Após importar o formulário, você poderá editar os campos e personalizá-lo conforme necessário.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formTypeSelect = document.getElementById('form_type');
+        const zelopackFormSelect = document.getElementById('zelopack_form');
+        const loadingIndicator = document.getElementById('form-loading');
+        
+        // Função para carregar formulários Zelopack com base no tipo selecionado
+        function loadZelopackForms(formType) {
+            if (!formType) return;
+            
+            // Mostrar indicador de carregamento
+            loadingIndicator.classList.remove('d-none');
+            
+            // Limpar opções atuais exceto a primeira
+            while (zelopackFormSelect.options.length > 1) {
+                zelopackFormSelect.remove(1);
+            }
+            
+            // Fazer requisição AJAX para obter formulários
+            fetch('/templates/obter-formularios-zelopack/' + formType)
+                .then(response => response.json())
+                .then(data => {
+                    // Adicionar as opções ao select
+                    data.forEach(item => {
+                        const option = new Option(item.label, item.value);
+                        zelopackFormSelect.add(option);
+                    });
+                    
+                    // Esconder indicador de carregamento
+                    loadingIndicator.classList.add('d-none');
+                    
+                    // Se não houver formulários, mostrar mensagem
+                    if (data.length === 0) {
+                        const option = new Option('Nenhum formulário encontrado', '');
+                        zelopackFormSelect.add(option);
+                        zelopackFormSelect.disabled = true;
+                    } else {
+                        zelopackFormSelect.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar formulários:', error);
+                    loadingIndicator.classList.add('d-none');
+                    const option = new Option('Erro ao carregar formulários', '');
+                    zelopackFormSelect.add(option);
+                });
+        }
+        
+        // Carregar formulários quando o tipo mudar
+        formTypeSelect.addEventListener('change', function() {
+            loadZelopackForms(this.value);
+        });
+        
+        // Carregar formulários iniciais se já tiver um tipo selecionado
+        if (formTypeSelect.value) {
+            loadZelopackForms(formTypeSelect.value);
+        }
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ title }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('templates.index') }}">Templates de Laudos</a></li>
+        <li class="breadcrumb-item active">Editar Template</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-edit me-1"></i>
+                    Editor de Template - {{ template.name }}
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('templates.edit_template', template_id=template.id) }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {{ form.name.label(class="form-label") }}
+                                    {{ form.name(class="form-control") }}
+                                    {% if form.name.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=3) }}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="template-editor" class="form-label">Estrutura do Template</label>
+                            <div id="template-editor" class="border rounded p-3" style="min-height: 400px;">
+                                <div id="field-container">
+                                    <!-- Os campos serão adicionados aqui dinamicamente -->
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <button type="button" id="add-field-btn" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-plus"></i> Adicionar Campo
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            {{ form.structure(id="structure-json") }}
+                            {% if form.structure.errors %}
+                                <div class="text-danger small">
+                                    {% for error in form.structure.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary" id="save-btn">
+                                <i class="fas fa-save me-1"></i>{{ form.submit.label.text }}
+                            </button>
+                            <a href="{{ url_for('templates.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Informações
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-3">Detalhes do Template:</h5>
+                    <table class="table table-sm">
+                        <tr>
+                            <th>ID:</th>
+                            <td>{{ template.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Versão:</th>
+                            <td>{{ template.version }}</td>
+                        </tr>
+                        <tr>
+                            <th>Criado por:</th>
+                            <td>{{ template.creator.name if template.creator else 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Criado em:</th>
+                            <td>{{ template.created_at.strftime('%d/%m/%Y') if template.created_at else 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Última atualização:</th>
+                            <td>{{ template.updated_at.strftime('%d/%m/%Y') if template.updated_at else 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td>
+                                <span class="badge {{ 'bg-success' if template.is_active else 'bg-danger' }}">
+                                    {{ 'Ativo' if template.is_active else 'Inativo' }}
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-lightbulb me-1"></i>
+                        <strong>Dica:</strong> Ao editar um template, você está modificando a estrutura para todas as novas instâncias. Os laudos já criados não serão afetados.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-code me-1"></i>
+                    Visualização JSON
+                </div>
+                <div class="card-body">
+                    <pre id="json-preview" class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">
+{
+    "fields": {}
+}
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fieldContainer = document.getElementById('field-container');
+        const addFieldBtn = document.getElementById('add-field-btn');
+        const structureJson = document.getElementById('structure-json');
+        const jsonPreview = document.getElementById('json-preview');
+        const saveBtn = document.getElementById('save-btn');
+        
+        // Estrutura de dados para o template
+        let templateStructure = {
+            fields: {}
+        };
+        
+        // Tipos de campos disponíveis
+        const fieldTypes = [
+            {value: 'text', label: 'Texto'},
+            {value: 'textarea', label: 'Área de Texto'},
+            {value: 'number', label: 'Número'},
+            {value: 'date', label: 'Data'},
+            {value: 'select', label: 'Seleção'},
+            {value: 'checkbox', label: 'Caixa de Seleção'},
+            {value: 'radio', label: 'Botão de Opção'}
+        ];
+        
+        // Função para criar um ID de campo
+        function createFieldId() {
+            return 'field_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+        }
+        
+        // Função para adicionar novo campo
+        function addField(fieldData = null) {
+            const fieldId = fieldData ? fieldData.id : createFieldId();
+            const fieldName = fieldData ? fieldData.name : '';
+            const fieldLabel = fieldData ? fieldData.label : '';
+            const fieldType = fieldData ? fieldData.type : 'text';
+            const fieldRequired = fieldData ? fieldData.required : false;
+            
+            const fieldElement = document.createElement('div');
+            fieldElement.className = 'field-item card mb-3';
+            fieldElement.dataset.fieldId = fieldId;
+            
+            fieldElement.innerHTML = `
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="field-title">${fieldLabel || 'Novo Campo'}</span>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary edit-field-btn">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-field-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label">Nome do Campo:</label>
+                                <input type="text" class="form-control field-name" value="${fieldName}" placeholder="nome_do_campo">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label">Rótulo:</label>
+                                <input type="text" class="form-control field-label" value="${fieldLabel}" placeholder="Rótulo do Campo">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label">Tipo:</label>
+                                <select class="form-select field-type">
+                                    ${fieldTypes.map(type => `
+                                        <option value="${type.value}" ${fieldType === type.value ? 'selected' : ''}>
+                                            ${type.label}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2 mt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input field-required" type="checkbox" ${fieldRequired ? 'checked' : ''}>
+                                    <label class="form-check-label">Obrigatório</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            fieldContainer.appendChild(fieldElement);
+            
+            // Adicionar o campo à estrutura
+            templateStructure.fields[fieldId] = {
+                name: fieldName,
+                label: fieldLabel || 'Novo Campo',
+                type: fieldType,
+                required: fieldRequired
+            };
+            
+            updateStructure();
+            
+            // Configurar listeners para o campo
+            setupFieldListeners(fieldElement);
+        }
+        
+        // Função para configurar listeners para um campo
+        function setupFieldListeners(fieldElement) {
+            const fieldId = fieldElement.dataset.fieldId;
+            
+            // Listener para botão de remover
+            fieldElement.querySelector('.remove-field-btn').addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja remover este campo?')) {
+                    fieldElement.remove();
+                    delete templateStructure.fields[fieldId];
+                    updateStructure();
+                }
+            });
+            
+            // Listener para alteração do nome
+            fieldElement.querySelector('.field-name').addEventListener('change', function() {
+                templateStructure.fields[fieldId].name = this.value;
+                updateStructure();
+            });
+            
+            // Listener para alteração do rótulo
+            fieldElement.querySelector('.field-label').addEventListener('change', function() {
+                templateStructure.fields[fieldId].label = this.value;
+                fieldElement.querySelector('.field-title').textContent = this.value || 'Campo sem rótulo';
+                updateStructure();
+            });
+            
+            // Listener para alteração do tipo
+            fieldElement.querySelector('.field-type').addEventListener('change', function() {
+                templateStructure.fields[fieldId].type = this.value;
+                updateStructure();
+            });
+            
+            // Listener para alteração da obrigatoriedade
+            fieldElement.querySelector('.field-required').addEventListener('change', function() {
+                templateStructure.fields[fieldId].required = this.checked;
+                updateStructure();
+            });
+        }
+        
+        // Função para atualizar a estrutura JSON
+        function updateStructure() {
+            structureJson.value = JSON.stringify(templateStructure);
+            jsonPreview.textContent = JSON.stringify(templateStructure, null, 2);
+        }
+        
+        // Listener para botão de adicionar campo
+        addFieldBtn.addEventListener('click', function() {
+            addField();
+        });
+        
+        // Inicializar o editor com campos existentes se houver
+        try {
+            const existingStructure = structureJson.value;
+            if (existingStructure) {
+                templateStructure = JSON.parse(existingStructure);
+                
+                if (templateStructure.fields) {
+                    for (const fieldId in templateStructure.fields) {
+                        const fieldData = templateStructure.fields[fieldId];
+                        fieldData.id = fieldId;
+                        addField(fieldData);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao carregar estrutura existente:', error);
+            updateStructure(); // Inicializar com estrutura padrão
+        }
+        
+        // Se não há estrutura inicial, atualizar para a estrutura padrão
+        if (structureJson.value === '') {
+            updateStructure();
+        }
+        
+        // Verificar estrutura antes de salvar
+        saveBtn.addEventListener('click', function(e) {
+            const fieldsCount = Object.keys(templateStructure.fields).length;
+            if (fieldsCount === 0) {
+                e.preventDefault();
+                alert('Por favor, adicione pelo menos um campo ao template.');
+                return false;
+            }
+            
+            // Verificar se todos os campos têm nome e rótulo
+            let hasError = false;
+            for (const fieldId in templateStructure.fields) {
+                const field = templateStructure.fields[fieldId];
+                if (!field.name || !field.label) {
+                    hasError = true;
+                    break;
+                }
+            }
+            
+            if (hasError) {
+                e.preventDefault();
+                alert('Todos os campos devem ter nome e rótulo preenchidos.');
+                return false;
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

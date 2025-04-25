@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ title }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('templates.index') }}">Templates de Laudos</a></li>
+        <li class="breadcrumb-item active">Preencher Laudo</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-clipboard-list me-1"></i>
+                    Formulário de Preenchimento - {{ template.name }}
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('templates.fill_report', template_id=template.id) }}" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    {{ form.title.label(class="form-label") }}
+                                    {{ form.title(class="form-control", id="title") }}
+                                    {% if form.title.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.title.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.report_date.label(class="form-label") }}
+                                    {{ form.report_date(class="form-control", type="date") }}
+                                    {% if form.report_date.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in form.report_date.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control", rows=3) }}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.client_id.label(class="form-label") }}
+                                    {{ form.client_id(class="form-select", id="client_id") }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.sample_id.label(class="form-label") }}
+                                    {{ form.sample_id(class="form-select", id="sample_id") }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.priority.label(class="form-label") }}
+                                    {{ form.priority(class="form-select") }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.assigned_to.label(class="form-label") }}
+                                    <select name="assigned_to" id="assigned_to" class="form-select">
+                                        <option value="">Selecione um responsável</option>
+                                        <!-- Opções serão adicionadas em versão futura -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.due_date.label(class="form-label") }}
+                                    {{ form.due_date(class="form-control", type="date") }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5 class="mt-4 mb-3">Dados da Análise</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.ph_value.label(class="form-label") }}
+                                    {{ form.ph_value(class="form-control", step="0.01") }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.brix_value.label(class="form-label") }}
+                                    {{ form.brix_value(class="form-control", step="0.1") }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ form.acidity_value.label(class="form-label") }}
+                                    {{ form.acidity_value(class="form-control", step="0.01") }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.color_value.label(class="form-label") }}
+                                    {{ form.color_value(class="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="density_value" class="form-label">Densidade (g/cm³)</label>
+                                    <input type="number" name="density_value" id="density_value" class="form-control" step="0.0001">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="template-fields" class="mb-3">
+                            <!-- Campos dinâmicos do template serão renderizados aqui via JavaScript -->
+                        </div>
+                        
+                        <!-- Campo oculto para armazenar métricas adicionais em JSON -->
+                        {{ form.additional_metrics(id="additional_metrics") }}
+                        
+                        <h5 class="mt-4 mb-3">Anexos</h5>
+                        <div class="form-group mb-3">
+                            {{ form.attachments.label(class="form-label") }}
+                            {{ form.attachments(class="form-control") }}
+                            <div class="form-text">Você pode anexar múltiplos arquivos como fotos, gráficos ou documentos complementares.</div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>{{ form.submit.label.text }}
+                            </button>
+                            <a href="{{ url_for('templates.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Informações do Template
+                </div>
+                <div class="card-body">
+                    <h5>{{ template.name }}</h5>
+                    {% if template.description %}
+                    <p>{{ template.description }}</p>
+                    {% endif %}
+                    
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Versão:</th>
+                            <td>{{ template.version }}</td>
+                        </tr>
+                        <tr>
+                            <th>Criado por:</th>
+                            <td>{{ template.creator.name if template.creator else 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Criado em:</th>
+                            <td>{{ template.created_at.strftime('%d/%m/%Y') if template.created_at else 'N/A' }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-question-circle me-1"></i>
+                    Ajuda
+                </div>
+                <div class="card-body">
+                    <h6>Como preencher o laudo:</h6>
+                    <ol class="small">
+                        <li>Preencha o <strong>Título</strong> do laudo e a <strong>Data</strong>.</li>
+                        <li>Se aplicável, selecione o <strong>Cliente</strong> e a <strong>Amostra</strong>.</li>
+                        <li>Preencha os valores da análise nos campos específicos.</li>
+                        <li>Adicione anexos se necessário.</li>
+                        <li>Clique em <strong>Gerar Laudo</strong> para finalizar.</li>
+                    </ol>
+                    <div class="alert alert-info mt-2 mb-0">
+                        <i class="fas fa-lightbulb"></i>
+                        <small>Ao selecionar uma amostra, alguns campos podem ser preenchidos automaticamente com base nas informações registradas.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const clientIdSelect = document.getElementById('client_id');
+        const sampleIdSelect = document.getElementById('sample_id');
+        const templateFieldsContainer = document.getElementById('template-fields');
+        const additionalMetricsInput = document.getElementById('additional_metrics');
+        
+        // Estrutura do template
+        const templateStructure = {{ template_structure|tojson }};
+        
+        // Métricas adicionais (começa vazio)
+        let additionalMetrics = {};
+        
+        // Renderizar campos do template se houver
+        if (templateStructure.fields) {
+            renderTemplateFields(templateStructure.fields);
+        }
+        
+        // Atualizar campo de métricas adicionais
+        function updateAdditionalMetrics() {
+            additionalMetricsInput.value = JSON.stringify(additionalMetrics);
+        }
+        
+        // Renderizar campos dinâmicos do template
+        function renderTemplateFields(fields) {
+            if (!fields || Object.keys(fields).length === 0) {
+                // Se não houver campos definidos no template
+                templateFieldsContainer.innerHTML = '<div class="alert alert-info">Este template não possui campos personalizados definidos.</div>';
+                return;
+            }
+            
+            let html = '<h5 class="mt-4 mb-3">Campos Específicos do Template</h5>';
+            html += '<div class="row">';
+            
+            for (const fieldId in fields) {
+                const field = fields[fieldId];
+                
+                html += `<div class="col-md-6 mb-3">
+                    <div class="form-group">
+                        <label for="template_${fieldId}" class="form-label">${field.label}${field.required ? ' *' : ''}</label>`;
+                
+                // Renderizar o campo de acordo com seu tipo
+                switch (field.type) {
+                    case 'text':
+                        html += `<input type="text" id="template_${fieldId}" class="form-control template-field" 
+                                 data-field-id="${fieldId}" data-field-type="${field.type}" ${field.required ? 'required' : ''}>`;
+                        break;
+                    case 'textarea':
+                        html += `<textarea id="template_${fieldId}" class="form-control template-field" 
+                                 data-field-id="${fieldId}" data-field-type="${field.type}" rows="3" ${field.required ? 'required' : ''}></textarea>`;
+                        break;
+                    case 'number':
+                        html += `<input type="number" id="template_${fieldId}" class="form-control template-field" 
+                                 data-field-id="${fieldId}" data-field-type="${field.type}" step="any" ${field.required ? 'required' : ''}>`;
+                        break;
+                    case 'date':
+                        html += `<input type="date" id="template_${fieldId}" class="form-control template-field" 
+                                 data-field-id="${fieldId}" data-field-type="${field.type}" ${field.required ? 'required' : ''}>`;
+                        break;
+                    case 'select':
+                        html += `<select id="template_${fieldId}" class="form-select template-field" 
+                                 data-field-id="${fieldId}" data-field-type="${field.type}" ${field.required ? 'required' : ''}>
+                                    <option value="">Selecione</option>`;
+                        
+                        // Adicionar opções se disponíveis
+                        if (field.options) {
+                            field.options.forEach(option => {
+                                html += `<option value="${option.value}">${option.label}</option>`;
+                            });
+                        }
+                        
+                        html += `</select>`;
+                        break;
+                    case 'checkbox':
+                        html += `<div class="form-check">
+                            <input type="checkbox" id="template_${fieldId}" class="form-check-input template-field" 
+                                   data-field-id="${fieldId}" data-field-type="${field.type}" ${field.required ? 'required' : ''}>
+                            <label for="template_${fieldId}" class="form-check-label">${field.label}</label>
+                        </div>`;
+                        break;
+                    default:
+                        html += `<input type="text" id="template_${fieldId}" class="form-control template-field" 
+                                 data-field-id="${fieldId}" data-field-type="${field.type}" ${field.required ? 'required' : ''}>`;
+                }
+                
+                html += `</div></div>`;
+            }
+            
+            html += '</div>';
+            templateFieldsContainer.innerHTML = html;
+            
+            // Adicionar listeners para os campos do template
+            document.querySelectorAll('.template-field').forEach(field => {
+                field.addEventListener('change', function() {
+                    const fieldId = this.dataset.fieldId;
+                    const fieldType = this.dataset.fieldType;
+                    
+                    // Capturar valor do campo
+                    let value;
+                    if (fieldType === 'checkbox') {
+                        value = this.checked;
+                    } else {
+                        value = this.value;
+                    }
+                    
+                    // Adicionar ao objeto de métricas adicionais
+                    if (value !== '' && value !== null && value !== undefined) {
+                        additionalMetrics[templateStructure.fields[fieldId].name || fieldId] = value;
+                    } else {
+                        delete additionalMetrics[templateStructure.fields[fieldId].name || fieldId];
+                    }
+                    
+                    updateAdditionalMetrics();
+                });
+            });
+        }
+        
+        // Carregar dados da amostra quando selecionada
+        sampleIdSelect.addEventListener('change', function() {
+            const sampleId = this.value;
+            if (!sampleId) return;
+            
+            fetch(`/templates/obter-dados-amostra/${sampleId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Preencher automaticamente o título se estiver vazio
+                    const titleInput = document.getElementById('title');
+                    if (!titleInput.value) {
+                        titleInput.value = `Laudo - Amostra ${data.code}`;
+                    }
+                    
+                    // Selecionar o cliente associado à amostra
+                    if (data.client_id) {
+                        clientIdSelect.value = data.client_id;
+                    }
+                    
+                    // Adicionar informações da amostra às métricas adicionais
+                    if (data.batch_number) {
+                        additionalMetrics['lote'] = data.batch_number;
+                    }
+                    if (data.material_type) {
+                        additionalMetrics['tipo_material'] = data.material_type;
+                    }
+                    
+                    updateAdditionalMetrics();
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar dados da amostra:', error);
+                });
+        });
+        
+        // Inicializar métricas adicionais
+        updateAdditionalMetrics();
+    });
+</script>
+{% endblock %}
+
+{% endblock %}
