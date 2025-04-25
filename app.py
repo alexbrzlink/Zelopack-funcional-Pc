@@ -75,6 +75,19 @@ def inject_variables():
         'current_year': datetime.now().year
     }
 
+# Rota para login de teste
+@app.route("/login-test")
+def login_test():
+    from models import User
+    user = User.query.filter_by(username='admin').first()
+    if user:
+        login_user(user)
+        flash('Login realizado com sucesso via rota de teste!', 'success')
+        return redirect(url_for('dashboard.index'))
+    else:
+        flash('Erro no login de teste: usuário não encontrado', 'danger')
+        return redirect(url_for('auth.login'))
+
 # Registrar blueprints
 from blueprints.reports import reports_bp
 from blueprints.dashboard import dashboard_bp
