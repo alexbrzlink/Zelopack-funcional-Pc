@@ -114,27 +114,57 @@
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label for="{{ form.ph.id }}" class="form-label">pH</label>
-                                    {{ form.ph(class="form-control", placeholder="Ex: 3.5") }}
+                                    <label for="{{ form.ph.id }}" class="form-label">
+                                        <i class="fas fa-tint"></i> pH
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-vial"></i></span>
+                                        {{ form.ph(class="form-control", placeholder="Ex: 3.5") }}
+                                    </div>
+                                    <small class="text-muted">Medida de acidez (0-14)</small>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="{{ form.brix.id }}" class="form-label">Brix (°Bx)</label>
-                                    {{ form.brix(class="form-control", placeholder="Ex: 12.5") }}
+                                    <label for="{{ form.brix.id }}" class="form-label">
+                                        <i class="fas fa-percentage"></i> Brix (°Bx)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-chart-line"></i></span>
+                                        {{ form.brix(class="form-control", placeholder="Ex: 12.5") }}
+                                    </div>
+                                    <small class="text-muted">Concentração de sólidos solúveis</small>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="{{ form.acidity.id }}" class="form-label">Acidez (g/100ml)</label>
-                                    {{ form.acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                    <label for="{{ form.acidity.id }}" class="form-label">
+                                        <i class="fas fa-flask"></i> Acidez (g/100ml)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-fill-drip"></i></span>
+                                        {{ form.acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                    </div>
+                                    <small class="text-muted">Concentração de ácidos</small>
                                 </div>
                             </div>
                             
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="{{ form.manufacturing_date.id }}" class="form-label">Data de Fabricação</label>
-                                    {{ form.manufacturing_date(class="form-control", type="date") }}
+                                    <label for="{{ form.manufacturing_date.id }}" class="form-label">
+                                        <i class="fas fa-calendar-plus"></i> Data de Fabricação
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-industry"></i></span>
+                                        {{ form.manufacturing_date(class="form-control", type="date") }}
+                                    </div>
+                                    <small class="text-muted">Data em que o produto foi fabricado</small>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="{{ form.expiration_date.id }}" class="form-label">Data de Validade</label>
-                                    {{ form.expiration_date(class="form-control", type="date") }}
+                                    <label for="{{ form.expiration_date.id }}" class="form-label">
+                                        <i class="fas fa-calendar-times"></i> Data de Validade
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-hourglass-end"></i></span>
+                                        {{ form.expiration_date(class="form-control", type="date") }}
+                                    </div>
+                                    <small class="text-muted">Data de vencimento do produto</small>
                                 </div>
                             </div>
                         </div>
@@ -148,27 +178,57 @@
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label for="{{ form.lab_ph.id }}" class="form-label">pH - Laboratório</label>
-                                    {{ form.lab_ph(class="form-control", placeholder="Ex: 3.5") }}
+                                    <label for="{{ form.lab_ph.id }}" class="form-label">
+                                        <i class="fas fa-tint"></i> pH - Laboratório
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-microscope"></i></span>
+                                        {{ form.lab_ph(class="form-control", placeholder="Ex: 3.5") }}
+                                    </div>
+                                    <small class="text-muted">Medido em laboratório</small>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="{{ form.lab_brix.id }}" class="form-label">Brix (°Bx) - Laboratório</label>
-                                    {{ form.lab_brix(class="form-control", placeholder="Ex: 12.5") }}
+                                    <label for="{{ form.lab_brix.id }}" class="form-label">
+                                        <i class="fas fa-percentage"></i> Brix (°Bx) - Laboratório
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-microscope"></i></span>
+                                        {{ form.lab_brix(class="form-control", placeholder="Ex: 12.5") }}
+                                    </div>
+                                    <small class="text-muted">Medido em laboratório</small>
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="{{ form.lab_acidity.id }}" class="form-label">Acidez (g/100ml) - Laboratório</label>
-                                    {{ form.lab_acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                    <label for="{{ form.lab_acidity.id }}" class="form-label">
+                                        <i class="fas fa-flask"></i> Acidez (g/100ml) - Lab.
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-microscope"></i></span>
+                                        {{ form.lab_acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                    </div>
+                                    <small class="text-muted">Medido em laboratório</small>
                                 </div>
                             </div>
                             
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="{{ form.physicochemical_validation.id }}" class="form-label">Validação Físico-Química</label>
-                                    {{ form.physicochemical_validation(class="form-select") }}
+                                    <label for="{{ form.physicochemical_validation.id }}" class="form-label">
+                                        <i class="fas fa-check-circle"></i> Validação Físico-Química
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-clipboard-check"></i></span>
+                                        {{ form.physicochemical_validation(class="form-select") }}
+                                    </div>
+                                    <small class="text-muted">Resultado da análise físico-química</small>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="{{ form.report_time.id }}" class="form-label">Hora do Laudo</label>
-                                    {{ form.report_time(class="form-control", type="time") }}
+                                    <label for="{{ form.report_time.id }}" class="form-label">
+                                        <i class="fas fa-clock"></i> Hora do Laudo
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-hourglass-half"></i></span>
+                                        {{ form.report_time(class="form-control", type="time") }}
+                                    </div>
+                                    <small class="text-muted">Horário em que o laudo foi emitido</small>
                                 </div>
                             </div>
                         </div>
@@ -182,27 +242,42 @@
                         <div class="card-body">
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <div class="form-check">
-                                        {{ form.report_archived(class="form-check-input") }}
-                                        <label class="form-check-label" for="{{ form.report_archived.id }}">
-                                            Laudo Arquivado
-                                        </label>
+                                    <div class="card h-100 border-light">
+                                        <div class="card-body text-center">
+                                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-2">
+                                                {{ form.report_archived(class="form-check-input me-2", style="height: 1.5rem; width: 3rem;") }}
+                                                <label class="form-check-label" for="{{ form.report_archived.id }}">
+                                                    <i class="fas fa-archive text-primary me-2"></i> Laudo Arquivado
+                                                </label>
+                                            </div>
+                                            <small class="text-muted">O laudo foi arquivado fisicamente</small>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-check">
-                                        {{ form.microbiology_collected(class="form-check-input") }}
-                                        <label class="form-check-label" for="{{ form.microbiology_collected.id }}">
-                                            Microbiologia Coletada
-                                        </label>
+                                    <div class="card h-100 border-light">
+                                        <div class="card-body text-center">
+                                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-2">
+                                                {{ form.microbiology_collected(class="form-check-input me-2", style="height: 1.5rem; width: 3rem;") }}
+                                                <label class="form-check-label" for="{{ form.microbiology_collected.id }}">
+                                                    <i class="fas fa-bacteria text-danger me-2"></i> Microbiologia
+                                                </label>
+                                            </div>
+                                            <small class="text-muted">Amostra para microbiologia coletada</small>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-check">
-                                        {{ form.has_report_document(class="form-check-input") }}
-                                        <label class="form-check-label" for="{{ form.has_report_document.id }}">
-                                            Possui Documento do Laudo
-                                        </label>
+                                    <div class="card h-100 border-light">
+                                        <div class="card-body text-center">
+                                            <div class="form-check form-switch d-flex justify-content-center align-items-center mb-2">
+                                                {{ form.has_report_document(class="form-check-input me-2", style="height: 1.5rem; width: 3rem;") }}
+                                                <label class="form-check-label" for="{{ form.has_report_document.id }}">
+                                                    <i class="fas fa-file-alt text-success me-2"></i> Documento
+                                                </label>
+                                            </div>
+                                            <small class="text-muted">Possui documento físico original</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
