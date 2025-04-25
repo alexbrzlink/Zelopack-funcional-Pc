@@ -319,7 +319,55 @@
             <h2><i class="fas fa-calculator"></i> Ratio</h2>
             
             <div class="calculo-description">
-                <p>Cálculo da relação entre Brix e Acidez, um importante indicador do perfil sensorial do produto. Um ratio mais elevado indica maior doçura relativa.</p>
+                <p>Cálculo da relação entre Brix e Acidez, um importante indicador do perfil sensorial do produto. Um ratio mais elevado indica um produto mais doce em relação à acidez.</p>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ratio_brix">
+                                Brix
+                                <span class="unit">(°Bx)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Teor de sólidos solúveis"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="ratio_brix" step="0.1" placeholder="0.0">
+                                <span class="input-unit">°Bx</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ratio_acidez">
+                                Acidez
+                                <span class="unit">(g/100mL)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Acidez expressa em ácido cítrico"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="ratio_acidez" step="0.001" placeholder="0.000">
+                                <span class="input-unit">g/100mL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calculaRatio">
+                    <i class="fas fa-calculator"></i> Calcular Ratio
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparRatio">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarRatio">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-ratio" style="display:none;">
+                <!-- Preenchido via JavaScript -->
+            </div>maior doçura relativa.</p>
             </div>
             
             <div class="calculo-form">
@@ -668,252 +716,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Inicializando cálculos...");
-    
-    // Função para mostrar/esconder áreas de cálculo
-    function showCalculo(targetId) {
-        // Ocultar todas as áreas de cálculo
-        document.querySelectorAll('.calculo-area').forEach(function(area) {
-            area.classList.remove('active');
-        });
-        
-        // Mostrar a área selecionada
-        const targetArea = document.getElementById(targetId + '-area');
-        if (targetArea) {
-            targetArea.classList.add('active');
-        }
-        
-        // Atualizar os itens ativos no menu
-        document.querySelectorAll('.calculo-item').forEach(function(item) {
-            item.classList.remove('active');
-        });
-        
-        // Destacar o item de menu selecionado
-        const menuItem = document.querySelector(`.calculo-item[data-target="${targetId}"]`);
-        if (menuItem) {
-            menuItem.classList.add('active');
-        }
-    }
-    
-    // Adicionar eventos de clique nos itens de menu
-    document.querySelectorAll('.calculo-item').forEach(function(item) {
-        item.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
-            showCalculo(targetId);
-        });
-    });
-    
-    // Eventos para cálculo de produção 200g
-    const btnCalculaPeso = document.getElementById('calculaPeso200g');
-    if (btnCalculaPeso) {
-        btnCalculaPeso.addEventListener('click', function() {
-            const pesoBruto = parseFloat(document.getElementById('peso_bruto').value) || 0;
-            const pesoTara = parseFloat(document.getElementById('peso_tara').value) || 0;
-            const pesoEspecificado = parseFloat(document.getElementById('peso_especificado').value) || 200;
-            const tolerancia = parseFloat(document.getElementById('tolerancia').value) || 2.5;
-            
-            // Cálculo do peso líquido
-            const pesoLiquido = pesoBruto - pesoTara;
-            
-            // Mostrar resultado
-            document.getElementById('valor-peso-liquido').textContent = pesoLiquido.toFixed(2) + ' g';
-            
-            // Cálculo de tolerâncias
-            const limiteInferior = pesoEspecificado * (1 - tolerancia/100);
-            const limiteSuperior = pesoEspecificado * (1 + tolerancia/100);
-            const diferencaAbsoluta = pesoLiquido - pesoEspecificado;
-            const desvioPercentual = (diferencaAbsoluta / pesoEspecificado) * 100;
-            
-            // Verificação do status
-            let status = '';
-            if (pesoLiquido >= limiteInferior && pesoLiquido <= limiteSuperior) {
-                status = 'Dentro da tolerância';
-                document.querySelector('.peso-status').className = 'alert alert-success peso-status';
-            } else if (pesoLiquido < limiteInferior) {
-                status = 'Abaixo da tolerância';
-                document.querySelector('.peso-status').className = 'alert alert-danger peso-status';
-            } else {
-                status = 'Acima da tolerância';
-                document.querySelector('.peso-status').className = 'alert alert-danger peso-status';
-            }
-            
-            // Atualizar todos os elementos
-            document.getElementById('status-peso').textContent = status;
-            document.getElementById('desvio-peso').textContent = desvioPercentual.toFixed(2) + '%';
-            document.getElementById('formula-bruto').textContent = pesoBruto.toFixed(2);
-            document.getElementById('formula-tara').textContent = pesoTara.toFixed(2);
-            document.getElementById('formula-liquido').textContent = pesoLiquido.toFixed(2);
-            document.getElementById('tolerancia-min').textContent = limiteInferior.toFixed(2) + ' g';
-            document.getElementById('tolerancia-max').textContent = limiteSuperior.toFixed(2) + ' g';
-            document.getElementById('diferenca-abs').textContent = diferencaAbsoluta.toFixed(2) + ' g';
-            
-            // Mostrar a área de resultado
-            document.getElementById('resultado-peso200g').style.display = 'block';
-        });
-    }
-    
-    // Implementação para Densidade
-    const btnCalculaDensidade = document.getElementById('calculaDensidade');
-    if (btnCalculaDensidade) {
-        btnCalculaDensidade.addEventListener('click', function() {
-            const massa = parseFloat(document.getElementById('densidade_massa').value) || 0;
-            const volume = parseFloat(document.getElementById('densidade_volume').value) || 0;
-            
-            if (volume === 0) {
-                alert('O volume não pode ser zero!');
-                return;
-            }
-            
-            const densidade = massa / volume;
-            
-            // Criar área de resultado se não existir
-            let resultadoArea = document.getElementById('resultado-densidade');
-            resultadoArea.innerHTML = `
-                <div class="resultado-header">
-                    <h4><i class="fas fa-atom"></i> Resultado do Cálculo</h4>
-                </div>
-                <div class="resultado-value">${densidade.toFixed(4)} g/mL</div>
-                <div class="resultado-formula">
-                    <div>Densidade = Massa / Volume</div>
-                    <div>Densidade = ${massa.toFixed(2)} g / ${volume.toFixed(2)} mL = ${densidade.toFixed(4)} g/mL</div>
-                </div>
-            `;
-            
-            // Mostrar a área de resultado
-            resultadoArea.style.display = 'block';
-        });
-    }
-    
-    // Implementação para Ratio
-    const btnCalculaRatio = document.getElementById('calculaRatio');
-    if (btnCalculaRatio) {
-        btnCalculaRatio.addEventListener('click', function() {
-            const brix = parseFloat(document.getElementById('ratio_brix').value) || 0;
-            const acidez = parseFloat(document.getElementById('ratio_acidez').value) || 0;
-            
-            if (acidez === 0) {
-                alert('A acidez não pode ser zero!');
-                return;
-            }
-            
-            const ratio = brix / acidez;
-            
-            // Criar área de resultado
-            let resultadoArea = document.getElementById('resultado-ratio');
-            if (!resultadoArea) {
-                resultadoArea = document.createElement('div');
-                resultadoArea.id = 'resultado-ratio';
-                resultadoArea.className = 'resultado-area';
-                document.getElementById('ratio-area').appendChild(resultadoArea);
-            }
-            
-            resultadoArea.innerHTML = `
-                <div class="resultado-header">
-                    <h4><i class="fas fa-calculator"></i> Resultado do Cálculo</h4>
-                </div>
-                <div class="resultado-value">${ratio.toFixed(2)}</div>
-                <div class="resultado-formula">
-                    <div>Ratio = Brix / Acidez</div>
-                    <div>Ratio = ${brix.toFixed(2)} / ${acidez.toFixed(3)} = ${ratio.toFixed(2)}</div>
-                </div>
-            `;
-            
-            // Mostrar a área de resultado
-            resultadoArea.style.display = 'block';
-        });
-    }
-    
-    // Implementação para Acidez
-    const btnCalculaAcidez = document.getElementById('calculaAcidez');
-    if (btnCalculaAcidez) {
-        btnCalculaAcidez.addEventListener('click', function() {
-            const volume = parseFloat(document.getElementById('acidez_volume').value) || 0;
-            const naohGasto = parseFloat(document.getElementById('acidez_naoh').value) || 0;
-            const fatorCorrecao = parseFloat(document.getElementById('acidez_fator').value) || 1;
-            const meq = parseFloat(document.getElementById('acidez_meq').value) || 0.064;
-            
-            if (volume === 0) {
-                alert('O volume da amostra não pode ser zero!');
-                return;
-            }
-            
-            const acidez = (naohGasto * fatorCorrecao * meq * 100) / volume;
-            
-            // Criar área de resultado
-            let resultadoArea = document.getElementById('resultado_area_acidez');
-            if (!resultadoArea) {
-                resultadoArea = document.createElement('div');
-                resultadoArea.id = 'resultado_area_acidez';
-                resultadoArea.className = 'resultado-area';
-                document.getElementById('acidez-area').appendChild(resultadoArea);
-            }
-            
-            resultadoArea.innerHTML = `
-                <div class="resultado-header">
-                    <h4><i class="fas fa-eye-dropper"></i> Resultado do Cálculo</h4>
-                </div>
-                <div class="resultado-value">${acidez.toFixed(3)} g/100mL</div>
-                <div class="resultado-formula">
-                    <div>Acidez = (V<sub>NaOH</sub> × F × meq × 100) / V<sub>amostra</sub></div>
-                    <div>Acidez = (${naohGasto.toFixed(2)} mL × ${fatorCorrecao.toFixed(4)} × ${meq} × 100) / ${volume.toFixed(2)} mL = ${acidez.toFixed(3)} g/100mL</div>
-                </div>
-            `;
-            
-            // Mostrar a área de resultado
-            resultadoArea.style.display = 'block';
-        });
-    }
-    
-    // Expandir/colapsar categorias
-    document.querySelectorAll('.calculo-category').forEach(function(category) {
-        category.addEventListener('click', function() {
-            this.classList.toggle('collapsed');
-            
-            // Encontrar todos os itens de cálculo após esta categoria até a próxima categoria
-            let nextElement = this.nextElementSibling;
-            while (nextElement && !nextElement.classList.contains('calculo-category')) {
-                nextElement.classList.toggle('hidden');
-                nextElement = nextElement.nextElementSibling;
-            }
-            
-            // Alternar o ícone
-            const icon = this.querySelector('i.fas.fa-chevron-down, i.fas.fa-chevron-right');
-            if (icon) {
-                if (icon.classList.contains('fa-chevron-down')) {
-                    icon.classList.remove('fa-chevron-down');
-                    icon.classList.add('fa-chevron-right');
-                } else {
-                    icon.classList.remove('fa-chevron-right');
-                    icon.classList.add('fa-chevron-down');
-                }
-            }
-        });
-    });
-    
-    // Botões para limpar formulários
-    document.querySelectorAll('.btn-clear').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            // Encontrar o formulário pai
-            const area = this.closest('.calculo-area');
-            if (area) {
-                // Limpar todos os inputs
-                area.querySelectorAll('input').forEach(function(input) {
-                    if (input.type === 'number' || input.type === 'text') {
-                        input.value = '';
-                    }
-                });
-                
-                // Esconder áreas de resultado
-                area.querySelectorAll('.resultado-area').forEach(function(resultArea) {
-                    resultArea.style.display = 'none';
-                });
-            }
-        });
-    });
-    
-    console.log("Cálculos inicializados com sucesso!");
-});
-</script>
+<script src="{{ url_for('static', filename='js/calculos_v2.js') }}"></script>
 {% endblock %}
