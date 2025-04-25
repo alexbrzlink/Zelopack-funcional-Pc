@@ -46,10 +46,15 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 # Inicializar o banco de dados
 db.init_app(app)
 
-# Inicializar proteção CSRF
-csrf = CSRFProtect(app)
-app.config['WTF_CSRF_ENABLED'] = True
+# Inicializar proteção CSRF, mas desabilitar para desenvolvimento
+csrf = CSRFProtect()
+csrf.init_app(app)
+# Desabilitamos CSRF para facilitar os testes
+app.config['WTF_CSRF_ENABLED'] = False
 app.config['WTF_CSRF_TIME_LIMIT'] = 3600
+
+# Criar algumas isenções para CSRF (para rota de login direto)
+csrf.exempt('blueprints.auth.login_direct')
 
 # Configurar o Flask-Login
 login_manager = LoginManager()

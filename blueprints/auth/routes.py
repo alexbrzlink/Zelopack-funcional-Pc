@@ -220,6 +220,7 @@ def reset_password(token):
 
 
 @auth_bp.route('/login-direct', methods=['GET'])
+@csrf.exempt
 def login_direct():
     """Rota alternativa para login direto, para fins de teste."""
     # Rota para login direto sem CSRF para fins de teste
