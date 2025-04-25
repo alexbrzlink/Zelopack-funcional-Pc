@@ -3,7 +3,7 @@ from datetime import datetime
 
 from models import Report
 
-def search_reports(query='', category='', supplier='', date_from=None, date_to=None):
+def search_reports(query=None, category=None, supplier=None, date_from=None, date_to=None):
     """
     Realiza busca flexível de laudos com suporte a termos parciais.
     
@@ -21,7 +21,7 @@ def search_reports(query='', category='', supplier='', date_from=None, date_to=N
     search_query = Report.query
     
     # Aplicar filtro de texto (busca flexível)
-    if query:
+    if query and isinstance(query, str) and query.strip():
         # Limpar query para busca parcial
         search_term = f"%{query}%"
         
@@ -36,11 +36,11 @@ def search_reports(query='', category='', supplier='', date_from=None, date_to=N
         )
     
     # Filtrar por categoria se fornecida
-    if category:
+    if category and isinstance(category, str) and category.strip():
         search_query = search_query.filter(Report.category == category)
     
     # Filtrar por fornecedor se fornecido
-    if supplier:
+    if supplier and isinstance(supplier, str) and supplier.strip():
         search_query = search_query.filter(Report.supplier == supplier)
     
     # Filtrar por data de início se fornecida

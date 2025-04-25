@@ -56,7 +56,7 @@
                             </td>
                             <td>
                                 {% if user.last_login %}
-                                <small>{{ user.last_login.strftime('%d/%m/%Y %H:%M') }}</small>
+                                <small>{{ user.last_login }}</small>
                                 {% else %}
                                 <small class="text-muted">Nunca acessou</small>
                                 {% endif %}

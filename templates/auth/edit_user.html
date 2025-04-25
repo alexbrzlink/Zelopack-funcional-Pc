@@ -63,7 +63,7 @@
                         <small class="text-muted">
                             <strong>Nome de usuário:</strong> {{ user.username }}
                             {% if user.last_login %}
-                            <br><strong>Último login:</strong> {{ user.last_login.strftime('%d/%m/%Y %H:%M') }}
+                            <br><strong>Último login:</strong> {{ user.last_login }}
                             {% endif %}
                         </small>
                         <a href="{{ url_for('auth.change_password') }}" class="btn btn-outline-secondary btn-sm">

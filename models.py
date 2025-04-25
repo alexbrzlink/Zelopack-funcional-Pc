@@ -98,5 +98,5 @@ class User(UserMixin, db.Model):
             'role': self.role,
             'is_active': self.is_active,
             'last_login': self.last_login.strftime('%d/%m/%Y %H:%M') if self.last_login else None,
-            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M')
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M') if self.created_at else None
         }
