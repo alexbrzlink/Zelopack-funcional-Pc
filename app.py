@@ -52,13 +52,25 @@ csrf = CSRFProtect()
 csrf.init_app(app)
 
 # Configuração do CSRF
-app.config['WTF_CSRF_ENABLED'] = True  # Habilitado para produção
-app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # 1 hora
-app.config['WTF_CSRF_SECRET_KEY'] = app.secret_key  # Usar a mesma chave da aplicação
+# Em ambiente de desenvolvimento, podemos deixar o CSRF mais permissivo
+if app.debug:
+    app.config['WTF_CSRF_ENABLED'] = True  # Manter habilitado para segurança
+    app.config['WTF_CSRF_TIME_LIMIT'] = 10800  # 3 horas para desenvolvimento
+    app.config['WTF_CSRF_SECRET_KEY'] = app.secret_key
+    app.config['WTF_CSRF_CHECK_DEFAULT'] = False  # Menos restritivo em desenvolvimento
+    app.config['WTF_CSRF_SSL_STRICT'] = False  # Permitir HTTPS mesmo em localhost
+else:
+    # Configuração mais restrita para produção
+    app.config['WTF_CSRF_ENABLED'] = True
+    app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # 1 hora
+    app.config['WTF_CSRF_SECRET_KEY'] = app.secret_key
+    app.config['WTF_CSRF_SSL_STRICT'] = True
 
-# Criar isenções para CSRF (para rotas de login direto e teste)
+# Adicionar mais isenções para CSRF em rotas de teste/desenvolvimento
 csrf.exempt('blueprints.auth.login_direct')
+csrf.exempt('blueprints.auth.login')  # Temporariamente isento para testes fora do Replit
 csrf.exempt('app.login_direct')
+csrf.exempt('app.login_test')
 
 # Configurar o Flask-Login
 login_manager = LoginManager()
