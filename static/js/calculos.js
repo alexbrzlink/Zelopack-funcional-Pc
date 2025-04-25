@@ -9,6 +9,77 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('ZeloCalc: Inicializando módulo de cálculos técnicos 2.0...');
     
+    // Funções auxiliares de interface
+    function setupCalculoNavigation() {
+        // Expandir/colapsar categorias
+        document.querySelectorAll('.calculo-category').forEach(category => {
+            category.addEventListener('click', function() {
+                const items = document.querySelectorAll('.calculo-item[data-target^="' + this.dataset.category + '"]');
+                items.forEach(item => {
+                    item.classList.toggle('collapsed');
+                });
+                this.querySelector('.fa-chevron-down').classList.toggle('fa-rotate-180');
+            });
+        });
+        
+        // Troca de cálculos ao clicar
+        document.querySelectorAll('.calculo-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remover classe ativa de todos os itens
+                document.querySelectorAll('.calculo-item').forEach(i => i.classList.remove('active'));
+                // Adicionar classe ativa ao item clicado
+                this.classList.add('active');
+                
+                // Esconder todas as áreas de cálculo
+                document.querySelectorAll('.calculo-area').forEach(area => area.classList.remove('active'));
+                
+                // Mostrar a área correspondente ao item clicado
+                const targetArea = document.getElementById(this.dataset.target + '-area');
+                if (targetArea) {
+                    targetArea.classList.add('active');
+                } else {
+                    console.warn('Área de cálculo não encontrada para: ' + this.dataset.target);
+                    // Fallback para empty state
+                    document.getElementById('calculo-empty-state').classList.add('active');
+                }
+            });
+        });
+        
+        // Busca de cálculos
+        const searchInput = document.getElementById('searchCalculo');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                
+                document.querySelectorAll('.calculo-item').forEach(item => {
+                    const name = item.textContent.toLowerCase();
+                    if (name.includes(query)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // Mostrar todas as categorias se a busca estiver vazia
+                if (query === '') {
+                    document.querySelectorAll('.calculo-category').forEach(cat => {
+                        cat.style.display = '';
+                    });
+                } else {
+                    // Esconder categorias que não têm itens visíveis
+                    document.querySelectorAll('.calculo-category').forEach(category => {
+                        const categoryName = category.dataset.category;
+                        const hasVisibleItems = Array.from(
+                            document.querySelectorAll(`.calculo-item[data-target^="${categoryName}"]`)
+                        ).some(item => item.style.display !== 'none');
+                        
+                        category.style.display = hasVisibleItems ? '' : 'none';
+                    });
+                }
+            });
+        }
+    }
+    
     // Catálogo de todos os cálculos disponíveis para busca
     const calculosDisponiveis = [
         { 
@@ -244,6 +315,86 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     };
+    
+    // Inicializa a navegação e os cálculos
+    setupCalculoNavigation();
+    setupEventHandlers();
+    
+    // Carrega os tooltips do Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+    
+    // Setup dos handlers de eventos para os cálculos
+    function setupEventHandlers() {
+        // Produção 200g
+        const btnCalculaPeso200g = document.getElementById('calculaPeso200g');
+        if (btnCalculaPeso200g) {
+            btnCalculaPeso200g.addEventListener('click', function() {
+                const pesoBruto = parseFloat(document.getElementById('peso_bruto').value) || 0;
+                const tara = parseFloat(document.getElementById('peso_tara').value) || 0;
+                const pesoEspecificado = parseFloat(document.getElementById('peso_especificado').value) || 200;
+                const tolerancia = parseFloat(document.getElementById('tolerancia').value) || 2.5;
+                
+                if (pesoBruto <= 0 || tara <= 0) {
+                    alert('Por favor, preencha o peso bruto e a tara corretamente.');
+                    return;
+                }
+                
+                // Calcula o peso líquido
+                const pesoLiquido = window.calculoProducao200g.calcularPesoLiquido(pesoBruto, tara);
+                
+                // Verifica a tolerância
+                const resultado = window.calculoProducao200g.verificarTolerancia(pesoLiquido, pesoEspecificado, tolerancia);
+                
+                // Exibe os resultados
+                document.getElementById('valor-peso-liquido').textContent = pesoLiquido.toFixed(2) + ' g';
+                document.getElementById('status-peso').textContent = resultado.status;
+                document.getElementById('desvio-peso').textContent = resultado.desvio.toFixed(2) + '%';
+                
+                // Atualiza a fórmula
+                document.getElementById('formula-bruto').textContent = pesoBruto.toFixed(2);
+                document.getElementById('formula-tara').textContent = tara.toFixed(2);
+                document.getElementById('formula-liquido').textContent = pesoLiquido.toFixed(2);
+                
+                // Atualiza os detalhes
+                document.getElementById('tolerancia-min').textContent = resultado.limiteInferior.toFixed(2) + ' g';
+                document.getElementById('tolerancia-max').textContent = resultado.limiteSuperior.toFixed(2) + ' g';
+                document.getElementById('diferenca-abs').textContent = resultado.diferencaAbsoluta.toFixed(2) + ' g';
+                
+                // Exibe a área de resultado
+                document.getElementById('resultado-peso200g').style.display = 'block';
+                
+                // Aplica estilo conforme status
+                const pesoStatus = document.querySelector('.peso-status');
+                pesoStatus.className = 'alert peso-status';
+                pesoStatus.classList.add(resultado.statusClass);
+            });
+        }
+        
+        // Botões para limpar formulários
+        document.querySelectorAll('.btn-clear').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const area = this.closest('.calculo-area');
+                const inputs = area.querySelectorAll('input:not([type="hidden"])');
+                inputs.forEach(input => {
+                    if (input.classList.contains('preserve-on-clear')) {
+                        return;
+                    }
+                    input.value = '';
+                });
+                
+                // Esconde o resultado
+                const resultadoArea = area.querySelector('.resultado-area');
+                if (resultadoArea) {
+                    resultadoArea.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    console.log('ZeloCalc: Módulo de cálculos técnicos carregado com sucesso!');
     
     /**
      * Funções para cálculo de produção 200g
