@@ -3,73 +3,211 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4 animate-fade-in">
-        <div class="col-md-8">
-            <h1 class="mb-3"><i class="fas fa-file-signature me-2"></i>Formulários Zelopack</h1>
-            <p class="lead text-muted">
-                Explore os formulários disponíveis organizados por categorias.
-            </p>
-        </div>
-        <div class="col-md-4">
-            <div class="input-group mb-3 mt-2 shadow-sm">
-                <input type="text" id="search-input" class="form-control" placeholder="Pesquisar formulários..." aria-label="Pesquisar formulários">
-                <button class="btn btn-primary" type="button" id="search-button">
-                    <i class="fas fa-search"></i>
-                </button>
+<div class="container-fluid py-4">
+    <!-- Cabeçalho com imagem de fundo gradiente -->
+    <div class="forms-header rounded-lg mb-5 p-4 animate-fade-in">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h1 class="display-5 text-white fw-bold mb-2">
+                    <i class="fas fa-clipboard-check me-3 header-icon"></i>Formulários Zelopack
+                </h1>
+                <p class="lead text-white-50 mb-0">
+                    Acesse, preencha e organize todos os documentos da empresa em um único lugar
+                </p>
+            </div>
+            <div class="col-md-5">
+                <div class="search-container p-2 rounded-pill shadow">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-0 text-white">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            class="form-control form-control-lg bg-transparent border-0 text-white" 
+                            placeholder="Pesquisar formulários..." 
+                            aria-label="Pesquisar formulários"
+                        >
+                        <button class="btn btn-search rounded-circle" type="button" id="search-button">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="search-results" class="mb-4 animate-fade-in" style="display: none;">
-        <div class="d-flex align-items-center mb-3">
-            <i class="fas fa-search me-2 text-primary fs-4"></i>
-            <h3 class="mb-0">Resultados da Pesquisa</h3>
+    <!-- Estatísticas rápidas -->
+    <div class="row mb-5 animate-fade-in-up">
+        <div class="col-md-3">
+            <div class="stat-card bg-gradient-primary text-white rounded-lg p-3 shadow">
+                <div class="stat-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Formulários</h3>
+                    <p class="stat-value">{{ categories|length }} Categorias</p>
+                </div>
+                <div class="stat-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
         </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-gradient-success text-white rounded-lg p-3 shadow">
+                <div class="stat-icon">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Qualidade</h3>
+                    <p class="stat-value">Padrões ISO</p>
+                </div>
+                <div class="stat-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-gradient-warning text-white rounded-lg p-3 shadow">
+                <div class="stat-icon">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Produção</h3>
+                    <p class="stat-value">Processos e TQs</p>
+                </div>
+                <div class="stat-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-gradient-info text-white rounded-lg p-3 shadow">
+                <div class="stat-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Laboratório</h3>
+                    <p class="stat-value">Resultados e Análises</p>
+                </div>
+                <div class="stat-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resultados da pesquisa com visual moderno -->
+    <div id="search-results" class="mb-4 animate-fade-in" style="display: none;">
+        <div class="section-header d-flex align-items-center mb-4">
+            <div class="section-icon bg-primary text-white rounded-circle me-3">
+                <i class="fas fa-search"></i>
+            </div>
+            <h2 class="section-title mb-0">Resultados da Pesquisa</h2>
+        </div>
+        
         <div class="list-group search-results-list shadow-sm">
             <!-- Os resultados da pesquisa serão exibidos aqui -->
         </div>
-        <button id="clear-search" class="btn btn-outline-secondary mt-3">
+        
+        <button id="clear-search" class="btn btn-lg btn-outline-secondary mt-4 rounded-pill px-4">
             <i class="fas fa-times me-2"></i>Limpar Pesquisa
         </button>
     </div>
 
+    <!-- Lista de categorias com cards modernos e interativos -->
     <div id="categories-section" class="animate-fade-in">
-        <div class="row mb-3">
-            <div class="col">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-folder-open me-2 text-primary fs-4"></i>
-                    <h3 class="mb-0">Categorias de Formulários</h3>
-                </div>
+        <div class="section-header d-flex align-items-center mb-4">
+            <div class="section-icon bg-primary text-white rounded-circle me-3">
+                <i class="fas fa-folder-open"></i>
             </div>
+            <h2 class="section-title mb-0">Categorias de Formulários</h2>
         </div>
+        
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for category in categories %}
             <div class="col">
-                <div class="card h-100 shadow-sm animate-fade-in-up delay-{{ loop.index0 }}00">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            {% if category == 'Produção' %}
-                                <i class="fas fa-industry me-2 text-primary"></i>
-                            {% elif category == 'Qualidade' %}
-                                <i class="fas fa-check-circle me-2 text-success"></i>
-                            {% elif category == 'Manutenção' %}
-                                <i class="fas fa-tools me-2 text-warning"></i>
-                            {% elif category == 'Segurança' %}
-                                <i class="fas fa-shield-alt me-2 text-danger"></i>
-                            {% elif category == 'Laboratório' %}
-                                <i class="fas fa-flask me-2 text-info"></i>
-                            {% elif category == 'Gerencial' %}
-                                <i class="fas fa-chart-line me-2 text-dark"></i>
+                <div class="category-card h-100 rounded-lg shadow animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 }}s;"
+                     data-category="{{ category }}">
+                    <div class="category-bg-wrapper">
+                        <div class="category-bg 
+                        {% if category == 'Produção' or 'PRODUCAO' in category %}bg-gradient-primary
+                        {% elif category == 'Qualidade' or 'QUALIDADE' in category %}bg-gradient-success
+                        {% elif category == 'Manutenção' or 'MANUTENCAO' in category %}bg-gradient-warning
+                        {% elif category == 'Segurança' or 'SEGURANCA' in category %}bg-gradient-danger
+                        {% elif category == 'Laboratório' or 'LABORATORIO' in category %}bg-gradient-info
+                        {% elif category == 'Gerencial' or 'GERENCIAL' in category %}bg-gradient-dark
+                        {% else %}bg-gradient-custom-{{ loop.index0 % 5 }}{% endif %}"></div>
+                    </div>
+                    
+                    <div class="category-content p-4">
+                        <div class="category-icon rounded-circle shadow-sm 
+                            {% if category == 'Produção' or 'PRODUCAO' in category %}bg-primary
+                            {% elif category == 'Qualidade' or 'QUALIDADE' in category %}bg-success
+                            {% elif category == 'Manutenção' or 'MANUTENCAO' in category %}bg-warning
+                            {% elif category == 'Segurança' or 'SEGURANCA' in category %}bg-danger
+                            {% elif category == 'Laboratório' or 'LABORATORIO' in category %}bg-info
+                            {% elif category == 'Gerencial' or 'GERENCIAL' in category %}bg-dark
+                            {% else %}bg-primary{% endif %}">
+                            {% if category == 'Produção' or 'PRODUCAO' in category %}
+                                <i class="fas fa-industry"></i>
+                            {% elif category == 'Qualidade' or 'QUALIDADE' in category %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif category == 'Manutenção' or 'MANUTENCAO' in category %}
+                                <i class="fas fa-tools"></i>
+                            {% elif category == 'Segurança' or 'SEGURANCA' in category %}
+                                <i class="fas fa-shield-alt"></i>
+                            {% elif category == 'Laboratório' or 'LABORATORIO' in category %}
+                                <i class="fas fa-flask"></i>
+                            {% elif category == 'Gerencial' or 'GERENCIAL' in category %}
+                                <i class="fas fa-chart-line"></i>
+                            {% elif 'FORMULARIOS' in category %}
+                                <i class="fas fa-file-signature"></i>
+                            {% elif 'PRD' in category %}
+                                <i class="fas fa-cogs"></i>
+                            {% elif 'QLD' in category %}
+                                <i class="fas fa-clipboard-check"></i>
+                            {% elif 'TQ' in category or 'TBA' in category %}
+                                <i class="fas fa-cubes"></i>
                             {% else %}
-                                <i class="fas fa-folder me-2 text-primary"></i>
+                                <i class="fas fa-folder-open"></i>
                             {% endif %}
-                            <h5 class="card-title mb-0">{{ category }}</h5>
                         </div>
-                        <p class="card-text">Acesse todos os formulários da categoria {{ category }}</p>
-                        <a href="{{ url_for('forms.category', category=category) }}" class="btn btn-primary">
-                            <i class="fas fa-clipboard-list me-1"></i> Ver Formulários
-                        </a>
+                        
+                        <h3 class="category-title mt-4">{{ category }}</h3>
+                        <p class="category-description text-muted">
+                            {% if category == 'Produção' or 'PRODUCAO' in category %}
+                                Formulários para controle e monitoramento dos processos produtivos
+                            {% elif category == 'Qualidade' or 'QUALIDADE' in category %}
+                                Documentos para garantia da qualidade e atendimento de normas
+                            {% elif category == 'Manutenção' or 'MANUTENCAO' in category %}
+                                Checklists e relatórios de manutenção de equipamentos
+                            {% elif category == 'Segurança' or 'SEGURANCA' in category %}
+                                Protocolos de segurança e documentação de conformidade
+                            {% elif category == 'Laboratório' or 'LABORATORIO' in category %}
+                                Relatórios de análises e medições laboratoriais
+                            {% elif category == 'Gerencial' or 'GERENCIAL' in category %}
+                                Documentos para gestão e acompanhamento gerencial
+                            {% elif 'FORMULARIOS' in category %}
+                                Coleção de documentos e formulários padronizados
+                            {% elif 'QLD' in category %}
+                                Documentação relacionada à qualidade dos produtos e processos
+                            {% elif 'PRD' in category %}
+                                Formulários e checklists do setor de produção
+                            {% elif 'TQ' in category or 'TBA' in category %}
+                                Documentos relacionados aos tanques e equipamentos TBA
+                            {% else %}
+                                Acesse todos os formulários desta categoria
+                            {% endif %}
+                        </p>
+                        
+                        <div class="category-footer mt-4">
+                            <div class="d-grid">
+                                <a href="{{ url_for('forms.category', category=category) }}" class="btn btn-dark rounded-pill">
+                                    <i class="fas fa-clipboard-list me-2"></i> Explorar Formulários
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -77,6 +215,304 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos para o cabeçalho com gradiente */
+    .forms-header {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(78, 115, 223, 0.15);
+    }
+    
+    .forms-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.3;
+    }
+    
+    .header-icon {
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    /* Barra de pesquisa estilizada */
+    .search-container {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+    
+    .search-container .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .search-container .form-control:focus {
+        box-shadow: none;
+    }
+    
+    .btn-search {
+        width: 38px;
+        height: 38px;
+        background-color: #fff;
+        color: #4e73df;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-search:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Cards de estatística */
+    .stat-card {
+        display: flex;
+        align-items: center;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+        margin-right: 15px;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .stat-content {
+        flex-grow: 1;
+    }
+    
+    .stat-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        opacity: 0.8;
+    }
+    
+    .stat-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .stat-arrow {
+        margin-left: 10px;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover .stat-arrow {
+        opacity: 1;
+        transform: translateX(5px);
+    }
+    
+    /* Ícones de seção */
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+    
+    .section-title {
+        font-weight: 600;
+    }
+    
+    /* Cards de categoria */
+    .category-card {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+    }
+    
+    .category-bg-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 120px;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .category-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transform: scale(1.1);
+        transition: all 0.5s ease;
+        opacity: 0.9;
+    }
+    
+    .category-card:hover .category-bg {
+        transform: scale(1);
+        opacity: 1;
+    }
+    
+    .category-content {
+        position: relative;
+        z-index: 2;
+        background: #fff;
+        border-radius: 15px;
+        padding-top: 50px;
+        margin-top: 40px;
+        height: calc(100% - 40px);
+    }
+    
+    .category-icon {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: white;
+        position: absolute;
+        top: -35px;
+        left: 30px;
+        transition: all 0.3s ease;
+    }
+    
+    .category-card:hover .category-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    .category-title {
+        font-weight: 600;
+        font-size: 1.4rem;
+    }
+    
+    .category-description {
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        height: 40px;
+        overflow: hidden;
+    }
+    
+    .category-footer {
+        margin-top: auto;
+    }
+    
+    /* Gradientes personalizados */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    }
+    
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+    }
+    
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);
+    }
+    
+    .bg-gradient-danger {
+        background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%);
+    }
+    
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #36b9cc 0%, #258391 100%);
+    }
+    
+    .bg-gradient-dark {
+        background: linear-gradient(135deg, #5a5c69 0%, #373840 100%);
+    }
+    
+    .bg-gradient-custom-0 {
+        background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%);
+    }
+    
+    .bg-gradient-custom-1 {
+        background: linear-gradient(135deg, #f953c6 0%, #b91d73 100%);
+    }
+    
+    .bg-gradient-custom-2 {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+    
+    .bg-gradient-custom-3 {
+        background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+    }
+    
+    .bg-gradient-custom-4 {
+        background: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%);
+    }
+    
+    /* Animações */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .fadeIn {
+        animation: fadeIn 0.5s ease forwards;
+    }
+    
+    /* Layout responsivo */
+    @media (max-width: 768px) {
+        .forms-header {
+            padding: 2rem 1rem;
+        }
+        
+        .search-container {
+            margin-top: 1.5rem;
+        }
+        
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+    }
+    
+    /* Botões arredondados */
+    .rounded-lg {
+        border-radius: 15px;
+    }
+    
+    /* Melhorias para acessibilidade */
+    .form-control:focus, .btn:focus {
+        box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+    }
+</style>
 {% endblock %}
 
 {% block extra_js %}
@@ -88,54 +524,76 @@
         const searchResultsList = document.querySelector('.search-results-list');
         const categoriesSection = document.getElementById('categories-section');
         const clearSearchButton = document.getElementById('clear-search');
+        const categoryCards = document.querySelectorAll('.category-card');
 
-        // Adicionar animação aos cards de categoria
-        document.querySelectorAll('.card').forEach((card, index) => {
-            card.classList.add('card-hover');
+        // Adicionar interatividade aos cards de categoria
+        categoryCards.forEach(card => {
+            // Detectar categoria para personalização
+            const category = card.dataset.category;
             
-            // Efeito de aparecimento com delay baseado no índice
-            card.style.opacity = "0";
-            card.style.transform = "translateY(20px)";
-            card.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+            // Efeito de clique para o card inteiro
+            card.addEventListener('click', function(e) {
+                // Se o clique não foi no botão (para evitar interferência)
+                if (!e.target.closest('a.btn')) {
+                    const link = this.querySelector('a.btn');
+                    if (link) {
+                        // Efeito visual antes do redirecionamento
+                        this.classList.add('pulse-animation');
+                        setTimeout(() => {
+                            window.location.href = link.href;
+                        }, 300);
+                    }
+                }
+            });
             
-            setTimeout(() => {
-                card.style.opacity = "1";
-                card.style.transform = "translateY(0)";
-            }, 100 * index); // Delay escalonado para cada card
+            // Efeito visual ao passar o mouse
+            card.addEventListener('mouseenter', function() {
+                ZelopackAnimations.elementHoverIn(this);
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                ZelopackAnimations.elementHoverOut(this);
+            });
+        });
+        
+        // Também adicionar interatividade aos cards de estatística
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', function() {
+                ZelopackAnimations.pulse(this);
+                
+                // Exibir diferentes mensagens informativas com base no tipo de estatística
+                const title = this.querySelector('.stat-title').textContent;
+                let message = '';
+                
+                if (title.includes('Formulários')) {
+                    message = 'Explore todas as categorias de formulários disponíveis.';
+                } else if (title.includes('Qualidade')) {
+                    message = 'Acesse os documentos de qualidade e conformidade com padrões ISO.';
+                } else if (title.includes('Produção')) {
+                    message = 'Visualize formulários relacionados aos processos produtivos e TQs.';
+                } else if (title.includes('Laboratório')) {
+                    message = 'Consulte resultados de análises e relatórios de laboratório.';
+                }
+                
+                if (message) {
+                    ZelopackAnimations.showTooltip(this, message);
+                }
+            });
         });
 
-        // Função para pesquisar formulários com animações
+        // Função para pesquisar formulários com animações aprimoradas
         function searchForms() {
             const query = searchInput.value.trim();
             
             if (query.length < 3) {
                 // Toast em vez de alert
-                const toast = document.createElement('div');
-                toast.className = 'toast align-items-center text-white bg-warning border-0 position-fixed bottom-0 end-0 m-3';
-                toast.setAttribute('role', 'alert');
-                toast.setAttribute('aria-live', 'assertive');
-                toast.setAttribute('aria-atomic', 'true');
-                toast.innerHTML = `
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            <i class="fas fa-exclamation-triangle me-2"></i> Por favor, digite pelo menos 3 caracteres para pesquisar.
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                `;
-                document.body.appendChild(toast);
-                
-                // Inicializar e mostrar o toast
-                const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: 3000 });
-                bsToast.show();
-                
-                // Remover o toast do DOM após ser escondido
-                toast.addEventListener('hidden.bs.toast', function() {
-                    document.body.removeChild(toast);
-                });
-                
+                ZelopackAnimations.showMessage('Por favor, digite pelo menos 3 caracteres para pesquisar.', 'warning');
+                ZelopackAnimations.shake(searchInput);
                 return;
             }
+            
+            // Efeito visual no botão de pesquisa
+            ZelopackAnimations.pulse(searchButton);
             
             // Mostrar animação de carregamento
             ZelopackAnimations.showLoading('Pesquisando formulários...', 'dots');
@@ -147,47 +605,145 @@
                     // Esconder animação de carregamento
                     ZelopackAnimations.hideLoading();
                     
+                    // Limpar e preencher resultados com animação escalonada
                     searchResultsList.innerHTML = '';
                     
                     if (data.length === 0) {
-                        searchResultsList.innerHTML = '<div class="alert alert-info fadeIn"><i class="fas fa-info-circle me-2"></i> Nenhum formulário encontrado para a pesquisa.</div>';
+                        const noResults = document.createElement('div');
+                        noResults.className = 'alert alert-info fadeIn p-4 d-flex align-items-center';
+                        noResults.innerHTML = `
+                            <div class="alert-icon me-3">
+                                <i class="fas fa-info-circle fa-2x text-info"></i>
+                            </div>
+                            <div>
+                                <h5>Nenhum resultado encontrado</h5>
+                                <p class="mb-0">Não encontramos formulários correspondentes à pesquisa "${query}". Tente outros termos.</p>
+                            </div>
+                        `;
+                        searchResultsList.appendChild(noResults);
                     } else {
+                        // Criar cabeçalho de resultados
+                        const resultsHeader = document.createElement('div');
+                        resultsHeader.className = 'results-header mb-3 fadeIn';
+                        resultsHeader.innerHTML = `
+                            <div class="alert alert-success p-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="fas fa-check-circle fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-1">Encontramos ${data.length} formulário(s)</h5>
+                                        <p class="mb-0">Resultados para: "${query}"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        searchResultsList.appendChild(resultsHeader);
+                        
+                        // Adicionar resultados com animação escalonada
                         data.forEach((form, index) => {
-                            const item = document.createElement('a');
-                            item.className = 'list-group-item list-group-item-action fadeIn';
-                            item.href = `/forms/view/${encodeURIComponent(form.path)}`;
-                            item.style.animationDelay = `${index * 0.1}s`;
-                            item.innerHTML = `
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h5 class="mb-1">
-                                        <i class="fas ${form.icon} me-2"></i> ${form.name}
-                                    </h5>
-                                    <small>${form.category}</small>
-                                </div>
-                                <div class="mt-2">
-                                    <a href="/forms/fill/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-primary btn-animated">
-                                        <i class="fas fa-edit"></i> Preencher
-                                    </a>
-                                    <a href="/forms/download/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-secondary btn-animated">
-                                        <i class="fas fa-download"></i> Baixar
-                                    </a>
-                                </div>
-                            `;
-                            searchResultsList.appendChild(item);
+                            setTimeout(() => {
+                                const item = document.createElement('div');
+                                item.className = 'search-result-item card mb-3 shadow-sm';
+                                item.style.opacity = '0';
+                                item.style.transform = 'translateY(20px)';
+                                item.style.transition = 'all 0.3s ease';
+                                
+                                // Definir cor de destaque baseado no tipo de arquivo
+                                let accentColor = 'primary';
+                                if (form.icon.includes('pdf')) accentColor = 'danger';
+                                else if (form.icon.includes('word')) accentColor = 'primary';
+                                else if (form.icon.includes('excel')) accentColor = 'success';
+                                else if (form.icon.includes('powerpoint')) accentColor = 'warning';
+                                
+                                item.innerHTML = `
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="search-result-icon me-3 rounded-circle bg-${accentColor} text-white p-3">
+                                                <i class="fas ${form.icon} fa-lg"></i>
+                                            </div>
+                                            <div class="search-result-content flex-grow-1">
+                                                <h5 class="mb-1">${form.name}</h5>
+                                                <p class="text-muted mb-2">
+                                                    <i class="fas fa-folder-open me-1"></i> ${form.category}
+                                                </p>
+                                                <div class="d-flex mt-3 action-buttons">
+                                                    <a href="/forms/view/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-secondary me-2">
+                                                        <i class="fas fa-eye me-1"></i> Visualizar
+                                                    </a>
+                                                    <a href="/forms/interactive/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-${accentColor} me-2">
+                                                        <i class="fas fa-edit me-1"></i> Preencher Interativo
+                                                    </a>
+                                                    <a href="/forms/download/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-dark">
+                                                        <i class="fas fa-download me-1"></i> Baixar
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="search-result-actions ms-2">
+                                                <button class="btn btn-sm btn-icon rounded-circle btn-light preview-button" 
+                                                        data-path="${form.path}" data-bs-toggle="tooltip" title="Visualização rápida">
+                                                    <i class="fas fa-search-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                searchResultsList.appendChild(item);
+                                
+                                // Aparecer com animação
+                                setTimeout(() => {
+                                    item.style.opacity = '1';
+                                    item.style.transform = 'translateY(0)';
+                                }, 50);
+                                
+                                // Adicionar evento para botão de visualização rápida
+                                const previewBtn = item.querySelector('.preview-button');
+                                if (previewBtn) {
+                                    previewBtn.addEventListener('click', function() {
+                                        ZelopackAnimations.pulse(this);
+                                        const path = this.dataset.path;
+                                        // Aqui poderia abrir uma modal com preview do documento
+                                        ZelopackAnimations.showMessage(`Visualização rápida em desenvolvimento`, 'info');
+                                    });
+                                    
+                                    // Inicializar tooltips
+                                    new bootstrap.Tooltip(previewBtn);
+                                }
+                                
+                                // Adicionar efeito hover aos botões
+                                item.querySelectorAll('.btn').forEach(btn => {
+                                    btn.addEventListener('mouseenter', function() {
+                                        ZelopackAnimations.elementHoverIn(this);
+                                    });
+                                    
+                                    btn.addEventListener('mouseleave', function() {
+                                        ZelopackAnimations.elementHoverOut(this);
+                                    });
+                                });
+                            }, index * 100); // Delay escalonado
                         });
                     }
                     
                     // Mostrar resultados e ocultar categorias com animação
-                    searchResults.style.display = 'block';
-                    searchResults.classList.add('fadeIn');
-                    
-                    // Esconder categorias com fade out
                     categoriesSection.style.opacity = "1";
-                    categoriesSection.style.transition = "opacity 0.3s ease";
+                    categoriesSection.style.transition = "all 0.5s ease";
                     categoriesSection.style.opacity = "0";
+                    categoriesSection.style.transform = "translateY(20px)";
                     
                     setTimeout(() => {
                         categoriesSection.style.display = 'none';
+                        
+                        // Mostrar resultados
+                        searchResults.style.display = 'block';
+                        searchResults.style.opacity = "0";
+                        searchResults.style.transform = "translateY(20px)";
+                        
+                        setTimeout(() => {
+                            searchResults.style.opacity = "1";
+                            searchResults.style.transform = "translateY(0)";
+                            searchResults.style.transition = "all 0.5s ease";
+                        }, 50);
                     }, 300);
                 })
                 .catch(error => {
@@ -195,22 +751,23 @@
                     ZelopackAnimations.hideLoading();
                     
                     console.error('Erro ao pesquisar formulários:', error);
-                    searchResultsList.innerHTML = '<div class="alert alert-danger fadeIn"><i class="fas fa-exclamation-circle me-2"></i> Erro ao realizar a pesquisa. Tente novamente.</div>';
-                    
-                    // Mostrar resultados
-                    searchResults.style.display = 'block';
-                    searchResults.classList.add('fadeIn');
+                    ZelopackAnimations.showMessage('Erro ao realizar a pesquisa. Tente novamente.', 'error');
                 });
         }
 
-        // Função para limpar pesquisa com animações
+        // Função para limpar pesquisa com animações melhoradas
         function clearSearch() {
+            // Efeito visual no botão
+            ZelopackAnimations.pulse(clearSearchButton);
+            
+            // Limpar campo
             searchInput.value = '';
             
             // Esconder resultados com animação
             searchResults.style.opacity = "1";
-            searchResults.style.transition = "opacity 0.3s ease";
+            searchResults.style.transition = "all 0.4s ease";
             searchResults.style.opacity = "0";
+            searchResults.style.transform = "translateY(20px)";
             
             setTimeout(() => {
                 searchResults.style.display = 'none';
@@ -218,19 +775,15 @@
                 // Mostrar categorias com animação
                 categoriesSection.style.display = 'block';
                 categoriesSection.style.opacity = "0";
+                categoriesSection.style.transform = "translateY(20px)";
                 
                 setTimeout(() => {
                     categoriesSection.style.opacity = "1";
+                    categoriesSection.style.transform = "translateY(0)";
+                    categoriesSection.style.transition = "all 0.4s ease";
                 }, 50);
-            }, 300);
+            }, 400);
         }
-
-        // Adicionar efeito de hover aos botões
-        searchButton.classList.add('btn-animated');
-        clearSearchButton.classList.add('btn-animated');
-        
-        // Adicionar animação ao campo de pesquisa
-        searchInput.classList.add('form-animated');
         
         // Eventos
         searchButton.addEventListener('click', searchForms);
@@ -241,6 +794,21 @@
             if (e.key === 'Enter') {
                 searchForms();
             }
+        });
+        
+        // Efeito no campo de pesquisa
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('search-focus');
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('search-focus');
+        });
+        
+        // Inicializar tooltips do Bootstrap
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
         });
     });
 </script>
