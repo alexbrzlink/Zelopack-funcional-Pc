@@ -1,330 +1,197 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema de gerenciamento de laudos técnicos da Zelopack Indústria de Sucos">
-    <meta name="theme-color" content="#0057a3">
-    <title>{% if title %}{{ title }} - {% endif %}ZELOPACK Gerenciamento de Laudos</title>
+    <title>{% block title %}ZeloPack - Sistema de Gerenciamento{% endblock %}</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Fontes modernas -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome para ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
-    <!-- Estilo personalizado com redesign 2025 -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
-    <!-- Animações personalizadas -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
-    
-    <!-- Sistema de temas com modo escuro -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
-    
-    <!-- Skeleton loading para melhor experiência durante carregamentos -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
-    
-    <style>
-        /* Estilo para o item destacado no menu */
-        .highlight-nav-item {
-            position: relative;
-            background-color: rgba(13, 110, 253, 0.05);
-            border-radius: 6px;
-            animation: pulse-light 2s infinite;
-        }
-        
-        .highlight-nav-item .badge {
-            font-size: 0.65rem;
-            padding: 0.2rem 0.5rem;
-            vertical-align: 1px;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes pulse-light {
-            0% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.2); }
-            70% { box-shadow: 0 0 0 8px rgba(13, 110, 253, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-3px); }
-            60% { transform: translateY(-1px); }
-        }
-    </style>
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Header e Navegação -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <!-- Barra de navegação -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('reports.index') }}">
-                <span style="font-size: 1.5rem; font-weight: bold; color: #0d6efd;">ZELOPACK</span>
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-flask me-2"></i>
+                ZeloPack
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            
+            <div class="collapse navbar-collapse" id="navbarMain">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('reports.index') }}">
-                            <i class="fas fa-home"></i> Início
+                        <a class="nav-link" id="nav-home" href="{{ url_for('index') }}">
+                            <i class="fas fa-home me-1"></i> Início
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('reports.upload') }}">
-                            <i class="fas fa-upload"></i> Enviar Laudo
+                        <a class="nav-link" id="nav-reports" href="{{ url_for('reports.index') }}">
+                            <i class="fas fa-file-alt me-1"></i> Laudos
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('reports.view_all') }}">
-                            <i class="fas fa-file-alt"></i> Todos os Laudos
+                        <a class="nav-link" id="nav-calculos" href="{{ url_for('calculos.index') }}">
+                            <i class="fas fa-calculator me-1"></i> Cálculos
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('reports.search') }}">
-                            <i class="fas fa-search"></i> Busca Avançada
+                        <a class="nav-link" id="nav-documents" href="{{ url_for('documents.index') }}">
+                            <i class="fas fa-folder me-1"></i> Documentos
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard.index') }}">
-                            <i class="fas fa-chart-bar"></i> Dashboard
+                        <a class="nav-link" id="nav-forms" href="{{ url_for('forms.index') }}">
+                            <i class="fas fa-edit me-1"></i> Formulários
                         </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="formsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-file-signature"></i> Formulários
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="formsDropdown">
-                            <li><a class="dropdown-item" href="{{ url_for('forms.index') }}">Gerenciar Formulários</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('editor.index') }}">Editor Universal</a></li>
-                        </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link highlight-nav-item" href="{{ url_for('calculos.index') }}">
-                            <i class="fas fa-calculator"></i> Cálculos <span class="badge bg-primary">Novo</span>
+                        <a class="nav-link" id="nav-dashboard" href="{{ url_for('dashboard.index') }}">
+                            <i class="fas fa-chart-line me-1"></i> Dashboard
                         </a>
                     </li>
                 </ul>
                 
-                <!-- Botão de Alternar Tema -->
-                <button class="btn btn-outline-secondary me-2 theme-toggle" title="Alternar tema claro/escuro">
-                    <i class="fas fa-moon"></i>
-                </button>
-
-                <!-- Busca Rápida -->
-                <div class="position-relative d-none d-lg-block me-3">
-                    <input type="text" id="quickSearch" class="form-control" placeholder="Busca rápida..." aria-label="Busca rápida">
-                    <div id="quickSearchResults" class="quick-search-results d-none">
-                        <!-- Resultados serão adicionados via JavaScript -->
-                    </div>
-                </div>
-
-                <!-- Menu de Usuário -->
-                {% if current_user.is_authenticated %}
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user"></i> {{ current_user.name }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li>
-                            <a class="dropdown-item" href="{{ url_for('auth.edit_user', id=current_user.id) }}">
-                                <i class="fas fa-user-edit"></i> Meu Perfil
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{{ url_for('auth.change_password') }}">
-                                <i class="fas fa-key"></i> Alterar Senha
-                            </a>
-                        </li>
-                        {% if current_user.role == 'admin' %}
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{{ url_for('auth.users') }}">
-                                <i class="fas fa-users-cog"></i> Gerenciar Usuários
-                            </a>
-                        </li>
-                        {% endif %}
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
-                                <i class="fas fa-sign-out-alt"></i> Sair
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                {% else %}
-                <a href="{{ url_for('auth.login') }}" class="btn btn-primary">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </a>
-                {% endif %}
+                <!-- Menu de usuário e tema -->
+                <ul class="navbar-nav ms-auto">
+                    <!-- Alternador de tema -->
+                    <li class="nav-item">
+                        <button class="nav-link btn theme-toggle" id="theme-toggle">
+                            <i class="fas fa-sun me-1" id="theme-icon"></i>
+                            <span id="theme-text">Tema Claro</span>
+                        </button>
+                    </li>
+                    
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            {{ current_user.name or current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('auth.profile') }}">
+                                    <i class="fas fa-id-card me-1"></i> Perfil
+                                </a>
+                            </li>
+                            {% if current_user.is_admin %}
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('auth.admin') }}">
+                                    <i class="fas fa-tools me-1"></i> Administração
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                    <i class="fas fa-sign-out-alt me-1"></i> Sair
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">
+                            <i class="fas fa-sign-in-alt me-1"></i> Entrar
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </nav>
     
-    <!-- Mensagens Flash -->
-    <div class="container mt-3">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
-    
-    <!-- Conteúdo Principal -->
-    <main class="container py-4">
-        {% if title %}
-            <h1 class="mb-4">{{ title }}</h1>
-        {% endif %}
+    <!-- Conteúdo principal -->
+    <main class="py-4">
+        <!-- Mensagens flash -->
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
         
+        <!-- Conteúdo da página -->
         {% block content %}{% endblock %}
     </main>
     
-    <!-- Rodapé Moderno -->
-    <footer class="footer">
-        <div class="footer-wave"></div>
-        <div class="container footer-container">
+    <!-- Rodapé -->
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container">
             <div class="row">
-                <!-- Coluna da marca e descrição -->
-                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
-                    <div class="footer-brand">
-                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--zelopack-primary);">ZELOPACK</span>
-                    </div>
-                    <p class="footer-description">
-                        Sistema integrado para gerenciamento de laudos técnicos e cálculos laboratoriais otimizados para a indústria de sucos.
+                <div class="col-md-6">
+                    <h5 class="text-primary">ZeloPack</h5>
+                    <p class="text-muted">
+                        Sistema de gerenciamento de laudos e cálculos para indústria de sucos.
                     </p>
-                    
-                    <!-- Redes sociais -->
-                    <div class="footer-social">
-                        <a href="#" class="footer-social-link facebook" title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="footer-social-link instagram" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="footer-social-link linkedin" title="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#" class="footer-social-link" title="WhatsApp">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
                 </div>
-                
-                <!-- Coluna de links úteis -->
-                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
-                    <h5 class="footer-title">Módulos</h5>
-                    <ul class="footer-links">
-                        <li><a href="{{ url_for('reports.index') }}"><i class="fas fa-home"></i> Início</a></li>
-                        <li><a href="{{ url_for('reports.upload') }}"><i class="fas fa-upload"></i> Laudos</a></li>
-                        <li><a href="{{ url_for('dashboard.index') }}"><i class="fas fa-chart-bar"></i> Dashboard</a></li>
-                        <li><a href="{{ url_for('forms.index') }}"><i class="fas fa-file-signature"></i> Formulários</a></li>
-                        <li><a href="{{ url_for('calculos.index') }}"><i class="fas fa-calculator"></i> Cálculos</a></li>
+                <div class="col-md-3">
+                    <h5 class="text-primary">Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('index') }}" class="text-decoration-none">Início</a></li>
+                        <li><a href="{{ url_for('reports.index') }}" class="text-decoration-none">Laudos</a></li>
+                        <li><a href="{{ url_for('calculos.index') }}" class="text-decoration-none">Cálculos</a></li>
                     </ul>
                 </div>
-                
-                <!-- Coluna de recursos -->
-                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
-                    <h5 class="footer-title">Recursos</h5>
-                    <ul class="footer-links">
-                        <li><a href="#"><i class="fas fa-book"></i> Manual do sistema</a></li>
-                        <li><a href="#"><i class="fas fa-question-circle"></i> Suporte</a></li>
-                        <li><a href="#"><i class="fas fa-exclamation-triangle"></i> Reportar problema</a></li>
-                        <li><a href="#"><i class="fas fa-sync"></i> Verificar atualizações</a></li>
-                        <li><a href="#"><i class="fas fa-download"></i> Aplicativo desktop</a></li>
+                <div class="col-md-3">
+                    <h5 class="text-primary">Contato</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> suporte@zelopack.com.br</li>
+                        <li><i class="fas fa-phone me-2"></i> (11) 5555-1234</li>
                     </ul>
-                </div>
-                
-                <!-- Coluna de contato -->
-                <div class="col-lg-4 col-md-6">
-                    <h5 class="footer-title">Contato</h5>
-                    <div class="footer-contact-item">
-                        <div class="footer-contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <div>Av. Tecnologia, 1500<br>Distrito Industrial<br>São Paulo - SP, Brasil</div>
-                    </div>
-                    <div class="footer-contact-item">
-                        <div class="footer-contact-icon"><i class="fas fa-envelope"></i></div>
-                        <div>contato@zelopack.com.br<br>suporte@zelopack.com.br</div>
-                    </div>
-                    <div class="footer-contact-item">
-                        <div class="footer-contact-icon"><i class="fas fa-phone-alt"></i></div>
-                        <div>+55 (11) 3000-5000<br>+55 (11) 98765-4321</div>
-                    </div>
                 </div>
             </div>
-            
-            <!-- Divisor -->
-            <div class="footer-divider"></div>
-            
-            <!-- Rodapé inferior -->
-            <div class="footer-bottom">
-                <div class="footer-copyright">
-                    © {{ current_year }} ZELOPACK. Todos os direitos reservados.
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2025 ZeloPack. Todos os direitos reservados.</p>
                 </div>
-                <div class="footer-legal-links">
-                    <a href="#">Termos de Uso</a>
-                    <a href="#">Política de Privacidade</a>
-                    <a href="#">Cookies</a>
-                    <a href="#">Licenças</a>
+                <div class="col-md-6 text-md-end">
+                    <div class="btn-group" role="group">
+                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
     
-    <!-- Bootstrap 5 JS com Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-        
-        // Your web app's Firebase configuration
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-        const firebaseConfig = {
-          apiKey: "AIzaSyBFT3jOKSyR_xeJO0rIymMPVFmGsAQ83F0",
-          authDomain: "zelopack-industria.firebaseapp.com",
-          projectId: "zelopack-industria",
-          storageBucket: "zelopack-industria.firebasestorage.app",
-          messagingSenderId: "993227513134",
-          appId: "1:993227513134:web:f03edbada0110b07fa6ebf",
-          measurementId: "G-42RS8TZHZH"
-        };
-        
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        
-        // Disponibilizar globalmente se necessário
-        window.firebaseApp = app;
-        window.firebaseAnalytics = analytics;
-    </script>
-    
-    <!-- Scripts personalizados -->
-    <!-- Scripts principais do sistema -->
+    <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
-    
-    <!-- Gerenciador de temas -->
     <script src="{{ url_for('static', filename='js/theme_manager.js') }}"></script>
-    
-    <!-- Skeleton loading para melhor experiência durante carregamentos -->
     <script src="{{ url_for('static', filename='js/skeleton-loader.js') }}"></script>
     
-    {% block extra_js %}{% endblock %}
+    {% block scripts %}{% endblock %}
 </body>
 </html>

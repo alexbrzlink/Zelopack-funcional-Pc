@@ -1,191 +1,60 @@
 /**
- * Script principal para funcionalidades gerais do sistema Zelopack
+ * Scripts principais para o ZeloPack
+ * Contém funções de uso comum em todo o sistema
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar tooltips do Bootstrap
-    let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    // Ativa tooltips do Bootstrap em toda a aplicação
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
     
-    // Inicializar popovers do Bootstrap
-    let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-    let popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    // Ativa popovers do Bootstrap em toda a aplicação
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
         return new bootstrap.Popover(popoverTriggerEl);
     });
     
-    // Formatação de datas para o formato brasileiro
-    formatDates();
-    
-    // Inicializar elementos de arquivo customizados
-    setupFileInputs();
-    
-    // Animação para mensagens flash
-    animateFlashMessages();
-    
-    // Confirmação para exclusão
-    setupDeleteConfirmations();
-    
-    // Efeito de scroll na barra de navegação
-    setupScrollNavbar();
-    
-    // Adicionar classe active ao link atual
-    highlightCurrentNavLink();
-    
-    // Configurar efeito de ripple em botões
-    setupRippleEffect();
-    
-    // Inicializar contadores animados
-    setupAnimatedCounters();
-});
-
-/**
- * Formata elementos de data para formato brasileiro
- */
-function formatDates() {
-    document.querySelectorAll('.date-br').forEach(function(element) {
-        const date = new Date(element.getAttribute('data-date'));
-        if (!isNaN(date)) {
-            const options = { 
-                year: 'numeric', 
-                month: '2-digit', 
-                day: '2-digit'
-            };
-            element.textContent = date.toLocaleDateString('pt-BR', options);
-        }
-    });
-    
-    document.querySelectorAll('.datetime-br').forEach(function(element) {
-        const date = new Date(element.getAttribute('data-date'));
-        if (!isNaN(date)) {
-            const options = { 
-                year: 'numeric', 
-                month: '2-digit', 
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-            element.textContent = date.toLocaleDateString('pt-BR', options) + 
-                ' ' + date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-        }
-    });
-}
-
-/**
- * Configura inputs de arquivo para mostrar nome do arquivo selecionado
- * e adiciona barra de progresso para uploads
- */
-function setupFileInputs() {
-    // Para inputs com classe custom-file-input (Bootstrap 4)
-    document.querySelectorAll('.custom-file-input').forEach(function(input) {
-        input.addEventListener('change', function(e) {
-            const fileName = this.files[0]?.name;
-            const label = this.nextElementSibling;
-            
-            if (label && fileName) {
-                label.textContent = fileName;
+    // Função para mostrar/esconder senha em campos de formulário
+    const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+    togglePasswordButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const passwordField = document.querySelector(this.dataset.target);
+            if (passwordField) {
+                // Alterar o tipo do campo
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                // Atualizar o ícone
+                const icon = this.querySelector('i');
+                if (icon) {
+                    if (type === 'password') {
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    } else {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    }
+                }
             }
         });
     });
     
-    // Para inputs de arquivo padrão (Bootstrap 5)
-    document.querySelectorAll('input[type="file"]').forEach(function(input) {
-        input.addEventListener('change', function(e) {
-            if (this.files.length > 0) {
-                const fileName = this.files[0].name;
-                const fileSize = formatFileSize(this.files[0].size);
-                
-                // Mostrar nome do arquivo próximo ao input
-                const fileInfo = this.parentElement.querySelector('.file-info') || 
-                                document.createElement('div');
-                
-                if (!this.parentElement.querySelector('.file-info')) {
-                    fileInfo.className = 'file-info mt-2 small text-muted';
-                    this.parentElement.appendChild(fileInfo);
-                }
-                
-                fileInfo.innerHTML = `<strong>Arquivo selecionado:</strong> ${fileName} (${fileSize})`;
-            }
+    // Inicializar DataTables nas tabelas com a classe .datatable
+    if (typeof $.fn.DataTable !== 'undefined') {
+        $('.datatable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json'
+            },
+            responsive: true,
+            processing: true
         });
-    });
-    
-    // Configurar formulário de upload para mostrar progresso
-    const uploadForm = document.querySelector('form[enctype="multipart/form-data"]');
-    if (uploadForm) {
-        const progressContainer = document.createElement('div');
-        progressContainer.className = 'progress mt-3 d-none';
-        progressContainer.style.height = '25px';
-        progressContainer.innerHTML = `
-            <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                 role="progressbar" aria-valuenow="0" aria-valuemin="0" 
-                 aria-valuemax="100" style="width: 0%">0%</div>
-        `;
-        
-        // Inserir depois do input de arquivo
-        const fileInput = uploadForm.querySelector('input[type="file"]');
-        if (fileInput) {
-            fileInput.parentElement.appendChild(progressContainer);
-            
-            uploadForm.addEventListener('submit', function(e) {
-                const fileInput = this.querySelector('input[type="file"]');
-                if (fileInput && fileInput.files.length > 0) {
-                    progressContainer.classList.remove('d-none');
-                    // Simulação de progresso para feedback visual
-                    // (numa implementação real, isso seria feito com XMLHttpRequest ou fetch)
-                    simulateProgress(progressContainer.querySelector('.progress-bar'));
-                }
-            });
-        }
     }
-}
-
-/**
- * Simula progresso de upload para melhor feedback ao usuário
- * @param {HTMLElement} progressBar - Elemento da barra de progresso
- */
-function simulateProgress(progressBar) {
-    let progress = 0;
-    const interval = setInterval(function() {
-        progress += Math.floor(Math.random() * 10) + 1;
-        
-        if (progress >= 100) {
-            clearInterval(interval);
-            progress = 100;
-            progressBar.classList.remove('progress-bar-animated');
-        }
-        
-        progressBar.style.width = progress + '%';
-        progressBar.setAttribute('aria-valuenow', progress);
-        progressBar.textContent = progress + '%';
-    }, 200);
-}
-
-/**
- * Anima mensagens flash para desaparecer após alguns segundos
- */
-function animateFlashMessages() {
-    const flashMessages = document.querySelectorAll('.alert:not(.alert-permanent)');
     
-    flashMessages.forEach(function(flash) {
-        setTimeout(function() {
-            // Adicionar fade-out
-            flash.style.transition = 'opacity 1s';
-            flash.style.opacity = '0';
-            
-            // Remover elemento após a animação
-            setTimeout(function() {
-                flash.remove();
-            }, 1000);
-        }, 5000); // 5 segundos antes de iniciar o fade
-    });
-}
-
-/**
- * Configura confirmações para ações de exclusão
- */
-function setupDeleteConfirmations() {
-    document.querySelectorAll('.delete-confirm').forEach(function(button) {
+    // Configurar confirmações de deleção
+    const deleteButtons = document.querySelectorAll('.btn-delete-confirm');
+    deleteButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             if (!confirm('Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.')) {
                 e.preventDefault();
@@ -193,197 +62,149 @@ function setupDeleteConfirmations() {
             }
         });
     });
-}
+    
+    // Configurar máscaras de entrada para campos específicos
+    setupInputMasks();
+    
+    // Inicializar calendários e seletores de data
+    setupDatepickers();
+    
+    // Configurar redimensionamento automático para textareas
+    setupAutoResizeTextareas();
+});
 
 /**
- * Formata tamanho de arquivo em bytes para formato legível (KB, MB, etc)
- * @param {number} bytes - Tamanho em bytes
- * @return {string} Tamanho formatado
+ * Configura máscaras de entrada para campos específicos
  */
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-/**
- * Configura efeito de scroll para a barra de navegação
- */
-function setupScrollNavbar() {
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        const handleScroll = () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        };
+function setupInputMasks() {
+    // Se o plugin inputmask estiver disponível
+    if (typeof Inputmask !== 'undefined') {
+        // Máscara para CPF
+        Inputmask('999.999.999-99').mask(document.querySelectorAll('.mask-cpf'));
         
-        // Verificar posição inicial no carregamento
-        handleScroll();
+        // Máscara para CNPJ
+        Inputmask('99.999.999/9999-99').mask(document.querySelectorAll('.mask-cnpj'));
         
-        // Adicionar listener de scroll
-        window.addEventListener('scroll', handleScroll);
+        // Máscara para telefone
+        Inputmask('(99) 99999-9999').mask(document.querySelectorAll('.mask-phone'));
+        
+        // Máscara para CEP
+        Inputmask('99999-999').mask(document.querySelectorAll('.mask-cep'));
+        
+        // Máscara para data
+        Inputmask('99/99/9999').mask(document.querySelectorAll('.mask-date'));
+        
+        // Máscara para valores monetários
+        Inputmask('currency', {
+            radixPoint: ',',
+            groupSeparator: '.',
+            digits: 2,
+            autoGroup: true,
+            prefix: 'R$ ',
+            rightAlign: false
+        }).mask(document.querySelectorAll('.mask-currency'));
     }
 }
 
 /**
- * Destaca o link de navegação atual
+ * Configura calendários e seletores de data
  */
-function highlightCurrentNavLink() {
-    const currentPath = window.location.pathname;
-    document.querySelectorAll('.nav-link').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && (href === currentPath || (currentPath.includes(href) && href !== '/'))) {
-            link.classList.add('active');
-            
-            // Se estiver dentro de dropdown, ativar o dropdown também
-            const dropdownParent = link.closest('.dropdown-menu');
-            if (dropdownParent) {
-                const dropdownToggle = dropdownParent.previousElementSibling;
-                if (dropdownToggle && dropdownToggle.classList.contains('dropdown-toggle')) {
-                    dropdownToggle.classList.add('active');
-                }
-            }
-        }
-    });
-}
-
-/**
- * Configura efeito de ripple em elementos interativos
- */
-function setupRippleEffect() {
-    // Adicionar estilo de ripple ao head se ainda não existir
-    if (!document.getElementById('ripple-style')) {
-        const style = document.createElement('style');
-        style.id = 'ripple-style';
-        style.textContent = `
-            .ripple {
-                position: absolute;
-                background: rgba(255, 255, 255, 0.3);
-                border-radius: 50%;
-                transform: scale(0);
-                animation: ripple-animation 0.6s linear;
-                pointer-events: none;
-            }
-            
-            @keyframes ripple-animation {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Adicionar efeito a botões e cards interativos
-    const interactiveElements = document.querySelectorAll('.btn, .card-interactive, .nav-link');
-    interactiveElements.forEach(element => {
-        // Verificar se já tem o listener configurado
-        if (!element.hasAttribute('data-ripple-configured')) {
-            element.setAttribute('data-ripple-configured', 'true');
-            element.style.position = element.style.position || 'relative';
-            element.style.overflow = element.style.overflow || 'hidden';
-            
-            element.addEventListener('click', function(e) {
-                const rect = element.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const circle = document.createElement('span');
-                circle.classList.add('ripple');
-                
-                const diameter = Math.max(rect.width, rect.height);
-                circle.style.width = circle.style.height = `${diameter}px`;
-                circle.style.left = `${x - diameter/2}px`;
-                circle.style.top = `${y - diameter/2}px`;
-                
-                element.appendChild(circle);
-                
-                // Remover após animação
-                setTimeout(() => {
-                    if (circle.parentElement === element) {
-                        element.removeChild(circle);
-                    }
-                }, 600);
-            });
-        }
-    });
-}
-
-/**
- * Configura contadores com animação
- */
-function setupAnimatedCounters() {
-    const counters = document.querySelectorAll('.counter-value');
-    
-    // Se não encontrar contadores, não fazer nada
-    if (!counters.length) return;
-    
-    // Verificar se IntersectionObserver é suportado
-    if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const counter = entry.target;
-                    const target = parseInt(counter.getAttribute('data-target'), 10);
-                    const duration = parseInt(counter.getAttribute('data-duration') || '2000', 10);
-                    const formatter = counter.getAttribute('data-formatter');
-                    
-                    let start = 0;
-                    const startTime = performance.now();
-                    
-                    function updateCounter(timestamp) {
-                        const elapsed = timestamp - startTime;
-                        const progress = Math.min(elapsed / duration, 1);
-                        
-                        // Usar easeOutQuad para animação mais natural
-                        const easeProgress = 1 - Math.pow(1 - progress, 2);
-                        const currentValue = Math.floor(easeProgress * target);
-                        
-                        if (formatter === 'currency') {
-                            counter.textContent = currentValue.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                            });
-                        } else {
-                            counter.textContent = currentValue.toLocaleString('pt-BR');
-                        }
-                        
-                        if (progress < 1) {
-                            requestAnimationFrame(updateCounter);
-                        }
-                    }
-                    
-                    requestAnimationFrame(updateCounter);
-                    observer.unobserve(counter);
-                }
-            });
-        }, { threshold: 0.1 });
-        
-        counters.forEach(counter => {
-            observer.observe(counter);
+function setupDatepickers() {
+    // Se o plugin flatpickr estiver disponível
+    if (typeof flatpickr !== 'undefined') {
+        flatpickr('.datepicker', {
+            locale: 'pt',
+            dateFormat: 'd/m/Y',
+            altInput: true,
+            altFormat: 'd/m/Y',
+            allowInput: true
         });
+        
+        flatpickr('.datetimepicker', {
+            locale: 'pt',
+            dateFormat: 'd/m/Y H:i',
+            enableTime: true,
+            time_24hr: true,
+            altInput: true,
+            altFormat: 'd/m/Y H:i',
+            allowInput: true
+        });
+    }
+}
+
+/**
+ * Configura redimensionamento automático para textareas
+ */
+function setupAutoResizeTextareas() {
+    const autoResizeTextareas = document.querySelectorAll('textarea.auto-resize');
+    
+    function resizeTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+    }
+    
+    autoResizeTextareas.forEach(textarea => {
+        resizeTextarea(textarea);
+        textarea.addEventListener('input', function() {
+            resizeTextarea(this);
+        });
+    });
+}
+
+/**
+ * Formata uma data JS para string no formato brasileiro
+ * @param {Date} date - A data a ser formatada
+ * @returns {string} Data formatada DD/MM/YYYY
+ */
+function formatDateBr(date) {
+    if (!(date instanceof Date)) {
+        date = new Date(date);
+    }
+    
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${day}/${month}/${year}`;
+}
+
+/**
+ * Formata um valor para o formato de moeda brasileira
+ * @param {number} value - O valor a ser formatado
+ * @param {boolean} withSymbol - Se deve incluir o símbolo R$
+ * @returns {string} Valor formatado
+ */
+function formatCurrencyBr(value, withSymbol = true) {
+    const formatted = new Intl.NumberFormat('pt-BR', {
+        style: withSymbol ? 'currency' : 'decimal',
+        currency: 'BRL',
+        minimumFractionDigits: 2
+    }).format(value);
+    
+    return formatted;
+}
+
+/**
+ * Envia uma notificação para o usuário
+ * @param {string} message - Mensagem a ser exibida
+ * @param {string} type - Tipo de notificação (success, error, warning, info)
+ * @param {number} duration - Duração em ms
+ */
+function notify(message, type = 'info', duration = 5000) {
+    // Se o Toastify ou similar estiver disponível
+    if (typeof Toastify !== 'undefined') {
+        Toastify({
+            text: message,
+            duration: duration,
+            close: true,
+            gravity: 'top',
+            position: 'right',
+            backgroundColor: type === 'success' ? '#198754' : 
+                             type === 'error' ? '#dc3545' : 
+                             type === 'warning' ? '#ffc107' : '#0dcaf0'
+        }).showToast();
     } else {
-        // Fallback para navegadores sem suporte a IntersectionObserver
-        counters.forEach(counter => {
-            const target = parseInt(counter.getAttribute('data-target'), 10);
-            const formatter = counter.getAttribute('data-formatter');
-            
-            if (formatter === 'currency') {
-                counter.textContent = target.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                });
-            } else {
-                counter.textContent = target.toLocaleString('pt-BR');
-            }
-        });
+        // Fallback para alert
+        alert(message);
     }
 }

@@ -1,209 +1,199 @@
 /**
- * Zelopack - Skeleton Loading
- * Implementa estados de carregamento esqueleto para melhorar a experiência do usuário
- * durante o carregamento de dados.
+ * Sistema de Skeleton Loading do ZeloPack
+ * 
+ * Este script gerencia os elementos de skeleton (placeholders) durante o carregamento
+ * dos dados, melhorando a experiência do usuário e reduzindo a sensação de espera.
  */
 
-(function() {
-    'use strict';
-
-    // Classes CSS para controlar a visibilidade
-    const SKELETON_CLASS = 'skeleton-loading';
-    const SKELETON_HIDDEN_CLASS = 'skeleton-hidden';
-    const CONTENT_HIDDEN_CLASS = 'content-hidden';
-
-    // Configurações padrão do skeleton loader
-    const DEFAULT_CONFIG = {
-        fadeDelay: 300,     // Tempo de delay antes de iniciar o fade
-        fadeDuration: 400,  // Duração da animação de fade
-        minDisplayTime: 700 // Tempo mínimo para exibir o skeleton (evita flashes)
-    };
-    
+class SkeletonLoader {
     /**
-     * Inicializa um skeleton loader para um container específico
-     * @param {string|HTMLElement} container - Seletor ou elemento container 
-     * @param {Object} options - Opções de configuração
+     * Inicializa o gerenciador de skeleton loading
      */
-    function initSkeletonLoader(container, options = {}) {
-        // Mesclar configurações padrão com as opções fornecidas
-        const config = { ...DEFAULT_CONFIG, ...options };
-        
-        // Obter o container como elemento DOM
-        const containerEl = typeof container === 'string' 
-            ? document.querySelector(container) 
-            : container;
-            
-        if (!containerEl) {
-            console.warn('Skeleton Loader: Container não encontrado', container);
-            return;
-        }
-        
-        // Verificar se o container tem esqueletos e conteúdo
-        const skeletons = containerEl.querySelectorAll(`.${SKELETON_CLASS}`);
-        const contents = containerEl.querySelectorAll('[data-skeleton-content]');
-        
-        if (!skeletons.length || !contents.length) {
-            console.warn('Skeleton Loader: Esqueletos ou conteúdos não encontrados no container', container);
-            return;
-        }
-        
-        // Ocultar o conteúdo inicialmente
-        contents.forEach(content => {
-            content.classList.add(CONTENT_HIDDEN_CLASS);
-        });
-        
-        // Exibir esqueletos
-        skeletons.forEach(skeleton => {
-            skeleton.classList.remove(SKELETON_HIDDEN_CLASS);
-        });
-        
-        // Registrar o tempo de início
-        const startTime = Date.now();
-        
-        // Função para ocultar esqueletos e mostrar conteúdo
-        const showContent = () => {
-            // Garantir tempo mínimo de exibição
-            const elapsed = Date.now() - startTime;
-            const remainingTime = Math.max(0, config.minDisplayTime - elapsed);
-            
-            setTimeout(() => {
-                // Ocultar esqueletos com fade-out
-                skeletons.forEach(skeleton => {
-                    skeleton.style.transition = `opacity ${config.fadeDuration}ms ease-in-out`;
-                    skeleton.style.opacity = '0';
-                    
-                    setTimeout(() => {
-                        skeleton.classList.add(SKELETON_HIDDEN_CLASS);
-                    }, config.fadeDuration);
-                });
-                
-                // Mostrar conteúdo com fade-in
-                contents.forEach(content => {
-                    content.style.transition = `opacity ${config.fadeDuration}ms ease-in-out`;
-                    content.style.opacity = '0';
-                    content.classList.remove(CONTENT_HIDDEN_CLASS);
-                    
-                    // Usar setTimeout para garantir que a transição aplique
-                    setTimeout(() => {
-                        content.style.opacity = '1';
-                    }, 50);
-                });
-                
-                // Disparar evento de conteúdo carregado
-                containerEl.dispatchEvent(new CustomEvent('content-loaded'));
-                
-            }, config.fadeDelay + remainingTime);
-        };
-        
-        return {
-            show: showContent,
-            container: containerEl
-        };
+    constructor() {
+        this.loadingContainers = document.querySelectorAll('[data-skeleton]');
+        this.init();
     }
     
     /**
-     * Carrega dados via AJAX e inicializa o skeleton loader
-     * @param {string|HTMLElement} container - Seletor ou elemento container
-     * @param {string} url - URL para carregar os dados
-     * @param {Function} renderCallback - Função de callback para renderizar os dados
-     * @param {Object} options - Opções de configuração
+     * Inicializa o sistema, configurando os skeletons e event listeners
      */
-    function loadWithSkeleton(container, url, renderCallback, options = {}) {
-        // Inicializar o loader
-        const loader = initSkeletonLoader(container, options);
+    init() {
+        // Processa todos os containers marcados para skeleton loading
+        this.loadingContainers.forEach(container => {
+            const skeletonType = container.dataset.skeleton;
+            const count = parseInt(container.dataset.skeletonCount || '1');
+            
+            // Esconde o container original durante o carregamento
+            container.style.display = 'none';
+            
+            // Cria o container do skeleton
+            const skeletonContainer = document.createElement('div');
+            skeletonContainer.className = 'skeleton-container';
+            skeletonContainer.dataset.for = container.id || Date.now();
+            
+            // Adiciona o número especificado de skeletons
+            for (let i = 0; i < count; i++) {
+                const skeleton = this._createSkeleton(skeletonType);
+                skeletonContainer.appendChild(skeleton);
+            }
+            
+            // Insere o skeleton antes do container original
+            container.parentNode.insertBefore(skeletonContainer, container);
+        });
         
-        if (!loader) return;
+        // Adiciona listener para eventos de carregamento de conteúdo
+        document.addEventListener('content-loaded', this.hideSkeletons.bind(this));
         
-        // Carregar dados
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Renderizar os dados
-                renderCallback(data, loader.container);
-                
-                // Mostrar o conteúdo
-                loader.show();
-            })
-            .catch(error => {
-                console.error('Erro ao carregar dados:', error);
-                
-                // Exibir mensagem de erro no conteúdo
-                const errorTemplate = `
-                    <div class="skeleton-error">
-                        <div class="skeleton-error-icon">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="skeleton-error-message">
-                            <h5>Erro ao carregar dados</h5>
-                            <p>${error.message || 'Ocorreu um erro inesperado.'}</p>
-                        </div>
-                        <button class="btn btn-outline-primary btn-sm skeleton-retry-btn">
-                            <i class="fas fa-redo-alt"></i> Tentar novamente
-                        </button>
+        // Esconde skeletons automaticamente após timeout (para casos de falha)
+        setTimeout(() => {
+            this.hideAllSkeletons();
+        }, 10000); // 10 segundos de timeout
+    }
+    
+    /**
+     * Cria um elemento skeleton baseado no tipo especificado
+     * @param {string} type - Tipo de skeleton (table, card, list, etc)
+     * @returns {HTMLElement} Elemento do skeleton
+     */
+    _createSkeleton(type) {
+        const skeletonElem = document.createElement('div');
+        skeletonElem.className = 'skeleton-item';
+        
+        // Configuração baseada no tipo
+        switch(type) {
+            case 'table-row':
+                skeletonElem.innerHTML = `
+                    <div class="skeleton-table-row">
+                        <div class="skeleton-table-cell skeleton-loading"></div>
+                        <div class="skeleton-table-cell skeleton-loading"></div>
+                        <div class="skeleton-table-cell skeleton-loading"></div>
+                        <div class="skeleton-table-cell skeleton-loading"></div>
                     </div>
                 `;
+                break;
                 
-                // Adicionar opção de retry
-                loader.container.innerHTML += errorTemplate;
-                const retryBtn = loader.container.querySelector('.skeleton-retry-btn');
+            case 'list-item':
+                skeletonElem.innerHTML = `
+                    <div class="skeleton-list-item">
+                        <div class="skeleton-avatar skeleton-loading"></div>
+                        <div style="flex: 1">
+                            <div class="skeleton-text skeleton-loading skeleton-text-lg"></div>
+                            <div class="skeleton-text skeleton-loading skeleton-text-sm"></div>
+                        </div>
+                    </div>
+                `;
+                break;
                 
-                if (retryBtn) {
-                    retryBtn.addEventListener('click', () => {
-                        // Remover mensagem de erro
-                        loader.container.querySelector('.skeleton-error').remove();
-                        
-                        // Tentar novamente
-                        loadWithSkeleton(container, url, renderCallback, options);
-                    });
-                }
+            case 'card':
+                skeletonElem.innerHTML = `
+                    <div class="card mb-3">
+                        <div class="skeleton-thumbnail skeleton-loading"></div>
+                        <div class="card-body">
+                            <div class="skeleton-text skeleton-loading skeleton-text-lg"></div>
+                            <div class="skeleton-text skeleton-loading"></div>
+                            <div class="skeleton-text skeleton-loading"></div>
+                            <div class="skeleton-text skeleton-loading skeleton-text-sm"></div>
+                        </div>
+                    </div>
+                `;
+                break;
                 
-                // Ocultar esqueletos mesmo em caso de erro
-                loader.show();
-            });
+            case 'form':
+                skeletonElem.innerHTML = `
+                    <div class="mb-3">
+                        <div class="skeleton-text skeleton-loading skeleton-text-sm"></div>
+                        <div class="skeleton-loading" style="height: 38px"></div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="skeleton-text skeleton-loading skeleton-text-sm"></div>
+                        <div class="skeleton-loading" style="height: 38px"></div>
+                    </div>
+                    <div class="skeleton-button skeleton-loading mt-3"></div>
+                `;
+                break;
+                
+            default:
+                skeletonElem.innerHTML = `
+                    <div class="skeleton-card skeleton-loading"></div>
+                `;
+        }
+        
+        return skeletonElem;
     }
     
-    // Expor API pública
-    window.ZelopackSkeletonLoader = {
-        init: initSkeletonLoader,
-        load: loadWithSkeleton
+    /**
+     * Esconde os skeletons para um container específico e mostra o conteúdo real
+     * @param {string} containerId - ID do container cujo conteúdo foi carregado
+     */
+    hideSkeletons(event) {
+        const containerId = event.detail?.containerId || event.target?.id;
+        if (!containerId) return;
+        
+        const skeletonContainer = document.querySelector(`.skeleton-container[data-for="${containerId}"]`);
+        const contentContainer = document.getElementById(containerId);
+        
+        if (skeletonContainer && contentContainer) {
+            // Esconde o skeleton
+            skeletonContainer.style.display = 'none';
+            
+            // Mostra o conteúdo real
+            contentContainer.style.display = '';
+            
+            // Evento personalizado para componentes que precisam se ajustar após mostrar conteúdo
+            const revealEvent = new CustomEvent('content-revealed', {
+                bubbles: true,
+                detail: { containerId }
+            });
+            contentContainer.dispatchEvent(revealEvent);
+        }
+    }
+    
+    /**
+     * Esconde todos os skeletons e mostra o conteúdo real
+     * Usado como fallback ou quando todos os conteúdos foram carregados
+     */
+    hideAllSkeletons() {
+        document.querySelectorAll('.skeleton-container').forEach(skeleton => {
+            skeleton.style.display = 'none';
+        });
+        
+        this.loadingContainers.forEach(container => {
+            container.style.display = '';
+        });
+    }
+    
+    /**
+     * Aciona evento de carregamento manual para um container específico
+     * @param {string} containerId - ID do container que terminou de carregar
+     */
+    notifyContentLoaded(containerId) {
+        if (!containerId) return;
+        
+        const event = new CustomEvent('content-loaded', {
+            bubbles: true,
+            detail: { containerId }
+        });
+        document.dispatchEvent(event);
+    }
+}
+
+// Inicializa o sistema quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', () => {
+    window.skeletonLoader = new SkeletonLoader();
+    
+    // Adiciona a API ao objeto global window para uso em outros scripts
+    window.showSkeleton = (containerId) => {
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.style.display = 'none';
+            const skeletonContainer = document.querySelector(`.skeleton-container[data-for="${containerId}"]`);
+            if (skeletonContainer) {
+                skeletonContainer.style.display = '';
+            }
+        }
     };
     
-    // Inicializar automaticamente esqueletos com data-skeleton-auto="true"
-    document.addEventListener('DOMContentLoaded', () => {
-        const autoSkeletons = document.querySelectorAll('[data-skeleton-auto="true"]');
-        
-        autoSkeletons.forEach(container => {
-            const url = container.getAttribute('data-skeleton-url');
-            const templateId = container.getAttribute('data-skeleton-template');
-            
-            if (url && templateId) {
-                const template = document.getElementById(templateId);
-                
-                if (template) {
-                    loadWithSkeleton(
-                        container, 
-                        url, 
-                        (data, container) => {
-                            // Renderizar usando a template
-                            const templateFn = new Function('data', 'return `' + template.innerHTML + '`');
-                            container.querySelector('[data-skeleton-content]').innerHTML = templateFn(data);
-                        }
-                    );
-                }
-            } else {
-                // Apenas inicializar o skeleton
-                const loader = initSkeletonLoader(container);
-                
-                // Mostrar conteúdo após um tempo simulado de carregamento (apenas para demonstração)
-                setTimeout(() => {
-                    if (loader) loader.show();
-                }, 1500);
-            }
-        });
-    });
-})();
+    window.hideSkeleton = (containerId) => {
+        window.skeletonLoader.notifyContentLoaded(containerId);
+    };
+});
