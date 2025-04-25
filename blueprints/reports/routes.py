@@ -62,9 +62,28 @@ def generate_print_version(report):
     # Elementos do PDF
     elements = []
     
-    # Cabeçalho
-    elements.append(Paragraph("ZELOPACK INDÚSTRIA", title_style))
-    elements.append(Paragraph("LAUDO TÉCNICO DE ANÁLISE", header_style))
+    # Verificar se existe um logo da empresa (caso não exista, apenas usar texto)
+    logo_path = os.path.join(current_app.static_folder, 'img', 'logo.png')
+    
+    # Cabeçalho com logo (se disponível)
+    if os.path.exists(logo_path):
+        # Adicionar logo e texto lado a lado
+        logo_data = [
+            [Image(logo_path, width=4*cm, height=2*cm), 
+             Paragraph("ZELOPACK INDÚSTRIA<br/>LAUDO TÉCNICO DE ANÁLISE", header_style)]
+        ]
+        logo_table = Table(logo_data, colWidths=[4*cm, 11*cm])
+        logo_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (0, 0), 'LEFT'),
+            ('ALIGN', (1, 0), (1, 0), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        elements.append(logo_table)
+    else:
+        # Usar apenas texto se logo não estiver disponível
+        elements.append(Paragraph("ZELOPACK INDÚSTRIA", title_style))
+        elements.append(Paragraph("LAUDO TÉCNICO DE ANÁLISE", header_style))
+    
     elements.append(Spacer(1, 0.5*cm))
     
     # Informações principais
@@ -183,11 +202,42 @@ def generate_print_version(report):
     
     # Rodapé
     elements.append(Spacer(1, 2*cm))
-    elements.append(Paragraph(f"Documento gerado em {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", normal_style))
-    elements.append(Paragraph("© ZELOPACK INDÚSTRIA - Sistema de Laudos", normal_style))
     
-    # Gerar o PDF
-    doc.build(elements)
+    # Criar uma tabela para o rodapé com uma linha separadora acima
+    footer_data = [
+        [Paragraph(f"Documento gerado em {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", normal_style)],
+        [Paragraph("© ZELOPACK INDÚSTRIA - Sistema de Gerenciamento de Laudos", normal_style)]
+    ]
+    
+    footer_table = Table(footer_data, colWidths=[15*cm])
+    footer_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (0, -1), 'CENTER'),
+        ('LINEABOVE', (0, 0), (0, 0), 1, colors.gray),
+        ('TOPPADDING', (0, 0), (0, 0), 10),
+    ]))
+    elements.append(footer_table)
+    
+    # Criar função para adicionar numeração de páginas e outros elementos ao cabeçalho/rodapé de cada página
+    def add_page_number(canvas, doc):
+        canvas.saveState()
+        # Adicionar número de página ao rodapé
+        page_num = canvas.getPageNumber()
+        text = f"Página {page_num}"
+        canvas.setFont("Helvetica", 9)
+        canvas.drawRightString(A4[0] - 2*cm, 1*cm, text)
+        
+        # Adicionar uma linha separadora no topo da página (exceto na primeira página)
+        if page_num > 1:
+            canvas.setStrokeColor(colors.gray)
+            canvas.line(2*cm, A4[1] - 1*cm, A4[0] - 2*cm, A4[1] - 1*cm)
+            # Adicionar texto de continuação no topo das páginas adicionais
+            canvas.setFont("Helvetica", 9)
+            canvas.drawString(2*cm, A4[1] - 1.5*cm, f"Laudo Nº {report.id} - Continuação")
+        
+        canvas.restoreState()
+    
+    # Gerar o PDF com a função para cabeçalho/rodapé
+    doc.build(elements, onFirstPage=add_page_number, onLaterPages=add_page_number)
     
     # Atualizar o relatório com o caminho do PDF gerado
     report.has_print_version = True
