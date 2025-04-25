@@ -10,6 +10,7 @@ from app import db
 from models import FormPreset
 import openpyxl
 from openpyxl.styles import Font, PatternFill
+from openpyxl.utils import get_column_letter
 import PyPDF2
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -485,17 +486,29 @@ def get_form_fields(file_path):
             workbook = openpyxl.load_workbook(file_path, data_only=True)
             sheet = workbook.active
             
-            for row in range(1, sheet.max_row + 1):
-                for col in range(1, sheet.max_column + 1):
+            if sheet is None:
+                flash('Não foi possível acessar a planilha.', 'warning')
+                return fields
+                
+            # Obter o número máximo de linhas e colunas com segurança
+            max_row = sheet.max_row or 1
+            max_col = sheet.max_column or 1
+            
+            for row in range(1, max_row + 1):
+                for col in range(1, max_col + 1):
                     cell = sheet.cell(row=row, column=col)
+                    if cell is None:
+                        continue
+                    
                     value = cell.value
                     
                     if value and isinstance(value, str) and ('___' in value or '____' in value):
                         # Encontrou um campo para preenchimento (representado por sublinhados)
                         field_id = f"cell_{row}_{col}"
+                        sheet_title = getattr(sheet, 'title', 'Planilha')
                         fields.append({
                             'id': field_id,
-                            'name': f"Campo em {sheet.title} ({get_column_letter(col)}{row})",
+                            'name': f"Campo em {sheet_title} ({get_column_letter(col)}{row})",
                             'value': ''
                         })
             
@@ -564,17 +577,26 @@ def fill_form_with_data(file_path, form_data):
             workbook = openpyxl.load_workbook(file_path)
             sheet = workbook.active
             
+            if sheet is None:
+                raise ValueError('Não foi possível acessar a planilha.')
+            
             # Aplicar os dados aos campos identificados
             for field_id, value in form_data.items():
                 if field_id.startswith('cell_'):
                     _, row, col = field_id.split('_')
                     row, col = int(row), int(col)
                     
-                    cell = sheet.cell(row=row, column=col)
-                    cell.value = value
-                    
-                    # Aplicar estilo para destacar o campo preenchido
-                    cell.font = Font(bold=True, color="0000FF")
+                    try:
+                        cell = sheet.cell(row=row, column=col)
+                        if cell is None:
+                            continue
+                            
+                        cell.value = value
+                        
+                        # Aplicar estilo para destacar o campo preenchido
+                        cell.font = Font(bold=True, color="0000FF")
+                    except Exception as e:
+                        print(f"Erro ao preencher célula ({row},{col}): {e}")
             
             # Salvar a planilha preenchida
             workbook.save(output_path)
@@ -636,10 +658,4 @@ def fill_form_with_data(file_path, form_data):
     return output_path
 
 
-def get_column_letter(column_index):
-    """Converte o índice da coluna para letra (1=A, 2=B, etc.)."""
-    result = ""
-    while column_index > 0:
-        column_index, remainder = divmod(column_index - 1, 26)
-        result = chr(65 + remainder) + result
-    return result
+# A função get_column_letter já está importada de openpyxl.utils
