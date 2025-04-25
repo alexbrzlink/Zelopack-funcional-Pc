@@ -312,7 +312,84 @@ def upload():
         
         file = form.file.data
         
-        if file and allowed_file(file.filename):
+        # Se não tiver arquivo, criar um laudo sem arquivo
+        if not file:
+            current_app.logger.info("Criando laudo sem arquivo anexado...")
+            
+            # Valores padrão para campos obrigatórios
+            title = form.title.data if form.title.data else "Laudo sem título"
+            category_value = form.category.data if form.category.data else ""
+            supplier_value = form.supplier_manual.data if form.supplier_manual.data else form.supplier.data
+            supplier_final = supplier_value if supplier_value else ""
+            
+            # Preparar datas do laudo
+            report_date = form.report_date.data if form.report_date.data else None
+            manufacturing_date = form.manufacturing_date.data if form.manufacturing_date.data else None
+            expiration_date = form.expiration_date.data if form.expiration_date.data else None
+            report_time = form.report_time.data if form.report_time.data else None
+                
+            try:
+                # Criar novo registro de laudo sem arquivo
+                new_report = Report(
+                    title=title,
+                    description=form.description.data,
+                    filename="sem_arquivo.txt",
+                    original_filename="sem_arquivo.txt",
+                    file_path="",
+                    file_type="txt",
+                    file_size=0,
+                    
+                    # Categorização
+                    category=category_value,
+                    supplier=supplier_final,
+                    batch_number=form.batch_number.data,
+                    raw_material_type=form.raw_material_type.data,
+                    sample_code=form.sample_code.data,
+                    
+                    # Análises físico-químicas do laudo
+                    brix=form.brix.data,
+                    ph=form.ph.data,
+                    acidity=form.acidity.data,
+                    
+                    # Análises realizadas em laboratório
+                    lab_brix=form.lab_brix.data,
+                    lab_ph=form.lab_ph.data,
+                    lab_acidity=form.lab_acidity.data,
+                    
+                    # Validação físico-química
+                    physicochemical_validation=form.physicochemical_validation.data if form.physicochemical_validation.data else "não verificado",
+                    
+                    # Campos adicionais de rastreabilidade
+                    report_archived=form.report_archived.data if form.report_archived.data is not None else False,
+                    microbiology_collected=form.microbiology_collected.data if form.microbiology_collected.data is not None else False,
+                    has_report_document=form.has_report_document.data if form.has_report_document.data is not None else False,
+                    
+                    # Datas
+                    report_date=report_date,
+                    report_time=report_time,
+                    manufacturing_date=manufacturing_date,
+                    expiration_date=expiration_date,
+                    
+                    # Indicadores (mantidos para compatibilidade)
+                    ph_value=form.ph_value.data,
+                    brix_value=form.brix_value.data,
+                    acidity_value=form.acidity_value.data,
+                    color_value=form.color_value.data if form.color_value.data else "",
+                    density_value=form.density_value.data
+                )
+                
+                db.session.add(new_report)
+                db.session.commit()
+                
+                flash('Laudo salvo com sucesso (sem arquivo)!', 'success')
+                return redirect(url_for('reports.view', id=new_report.id))
+                
+            except Exception as e:
+                current_app.logger.error(f"Erro ao criar laudo sem arquivo: {str(e)}")
+                flash(f"Erro ao criar laudo: {str(e)}", "danger")
+                return render_template('reports/upload.html', form=form, title="Upload de Laudo")
+        
+        elif file and allowed_file(file.filename):
             # Gerar nome seguro para o arquivo
             original_filename = file.filename
             file_extension = os.path.splitext(original_filename)[1]
