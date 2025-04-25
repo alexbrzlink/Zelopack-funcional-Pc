@@ -105,11 +105,12 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const presetSelect = document.getElementById('preset_id');
         const applyPresetBtn = document.getElementById('apply-preset');
+        const formCard = document.querySelector('.card');
         
         if (applyPresetBtn) {
             applyPresetBtn.addEventListener('click', function() {
@@ -120,30 +121,82 @@
                     return;
                 }
                 
+                // Mostrar carregamento no card
+                ZelopackAnimations.setFormLoading(formCard, true);
+                
                 // Buscar os dados da predefinição via AJAX
                 fetch(`/forms/api/preset/${presetId}`)
                     .then(response => response.json())
                     .then(data => {
+                        // Ocultar carregamento
+                        ZelopackAnimations.setFormLoading(formCard, false);
+                        
                         if (data.success) {
                             const preset = data.preset;
                             
-                            // Aplicar os valores da predefinição aos campos
+                            // Aplicar os valores da predefinição aos campos com animação
                             for (const [fieldId, value] of Object.entries(preset.data)) {
                                 const fieldInput = document.getElementById(`field_${fieldId}`);
                                 if (fieldInput) {
+                                    // Aplicar o valor
                                     fieldInput.value = value;
+                                    
+                                    // Animar o campo preenchido
+                                    ZelopackAnimations.pulseElement(fieldInput);
                                 }
                             }
                             
-                            alert('Predefinição aplicada com sucesso!');
+                            // Toast em vez de alert
+                            const toast = document.createElement('div');
+                            toast.className = 'toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-3';
+                            toast.setAttribute('role', 'alert');
+                            toast.setAttribute('aria-live', 'assertive');
+                            toast.setAttribute('aria-atomic', 'true');
+                            toast.innerHTML = `
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        <i class="fas fa-check-circle me-2"></i> Predefinição aplicada com sucesso!
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            `;
+                            document.body.appendChild(toast);
+                            
+                            // Inicializar e mostrar o toast
+                            const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: 3000 });
+                            bsToast.show();
+                            
+                            // Remover o toast do DOM após ser escondido
+                            toast.addEventListener('hidden.bs.toast', function() {
+                                document.body.removeChild(toast);
+                            });
                         } else {
                             alert(`Erro ao carregar predefinição: ${data.message}`);
                         }
                     })
                     .catch(error => {
+                        // Ocultar carregamento em caso de erro
+                        ZelopackAnimations.setFormLoading(formCard, false);
+                        
                         console.error('Erro ao carregar predefinição:', error);
                         alert('Ocorreu um erro ao carregar a predefinição. Tente novamente.');
                     });
+            });
+        }
+        
+        // Adicionar animação de hover nos campos do formulário
+        document.querySelectorAll('input.form-control').forEach(input => {
+            input.classList.add('form-animated');
+        });
+        
+        // Animar o botão de download
+        const downloadBtn = document.querySelector('button[type="submit"]');
+        if (downloadBtn) {
+            downloadBtn.classList.add('btn-animated');
+            
+            downloadBtn.addEventListener('click', function() {
+                // Mostrar animação de carregamento ao baixar
+                ZelopackAnimations.showLoading('Gerando formulário preenchido...');
             });
         }
     });
