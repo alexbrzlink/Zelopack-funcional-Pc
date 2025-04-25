@@ -7,6 +7,81 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Função para criar áreas de cálculo dinamicamente
+    function createCalcArea(calculoId, title, iconClass) {
+        // Verificar se a área já existe
+        if (document.getElementById(calculoId + '-area')) {
+            return; // Já existe, não precisa criar
+        }
+        
+        // Criar a área de cálculo
+        const area = document.createElement('div');
+        area.id = calculoId + '-area';
+        area.className = 'calculo-area';
+        
+        // Título e ícone
+        const h2 = document.createElement('h2');
+        const icon = document.createElement('i');
+        icon.className = iconClass;
+        h2.appendChild(icon);
+        h2.appendChild(document.createTextNode(' ' + title));
+        
+        // Descrição (placeholder)
+        const desc = document.createElement('div');
+        desc.className = 'calculo-description';
+        const descP = document.createElement('p');
+        descP.textContent = 'Calculadora para ' + title;
+        desc.appendChild(descP);
+        
+        // Formulário (placeholder)
+        const form = document.createElement('div');
+        form.className = 'calculo-form';
+        form.innerHTML = `
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Esta calculadora está sendo carregada...
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Botões
+        const buttons = document.createElement('div');
+        buttons.className = 'actions-row';
+        buttons.innerHTML = `
+            <button class="btn btn-calculate" id="calcula${calculoId.replace(/-/g, '_')}">
+                <i class="fas fa-calculator"></i> Calcular
+            </button>
+            <button class="btn btn-secondary btn-clear" id="limpar${calculoId.replace(/-/g, '_')}">
+                <i class="fas fa-eraser"></i> Limpar
+            </button>
+        `;
+        
+        // Área de resultado
+        const resultado = document.createElement('div');
+        resultado.className = 'resultado-area';
+        resultado.id = 'resultado-' + calculoId;
+        resultado.style.display = 'none';
+        
+        // Montar a área completa
+        area.appendChild(h2);
+        area.appendChild(desc);
+        area.appendChild(form);
+        area.appendChild(buttons);
+        area.appendChild(resultado);
+        
+        // Adicionar ao DOM
+        document.querySelector('.content-calculos').appendChild(area);
+    }
+    
+    // Criar dinamicamente áreas para todos os cálculos do menu
+    document.querySelectorAll('.calculo-item').forEach(function(item) {
+        const targetId = item.getAttribute('data-target');
+        const title = item.textContent.trim();
+        const iconClass = item.querySelector('i').className;
+        createCalcArea(targetId, title, iconClass);
+    });
     console.log('ZeloCalc: Inicializando módulo de cálculos técnicos 2.0...');
     
     // Funções auxiliares de interface
