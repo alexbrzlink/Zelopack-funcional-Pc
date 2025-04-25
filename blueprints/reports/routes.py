@@ -20,6 +20,7 @@ def index():
     return render_template('reports/view.html', reports=recent_reports, title="Laudos Recentes")
 
 @reports_bp.route('/upload', methods=['GET', 'POST'])
+@login_required
 def upload():
     """Upload de novos laudos."""
     form = ReportUploadForm()
@@ -83,6 +84,7 @@ def upload():
     return render_template('reports/upload.html', form=form, title="Upload de Laudo")
 
 @reports_bp.route('/view')
+@login_required
 def view_all():
     """Visualizar todos os laudos."""
     page = request.args.get('page', 1, type=int)
@@ -90,12 +92,14 @@ def view_all():
     return render_template('reports/view.html', reports=reports, title="Todos os Laudos")
 
 @reports_bp.route('/view/<int:id>')
+@login_required
 def view(id):
     """Visualizar um laudo específico."""
     report = Report.query.get_or_404(id)
     return render_template('reports/view.html', report=report, single_view=True, title=report.title)
 
 @reports_bp.route('/download/<int:id>')
+@login_required
 def download(id):
     """Download do arquivo de laudo."""
     report = Report.query.get_or_404(id)
@@ -107,6 +111,7 @@ def download(id):
     )
 
 @reports_bp.route('/search', methods=['GET', 'POST'])
+@login_required
 def search():
     """Busca de laudos."""
     form = SearchForm()
@@ -136,6 +141,7 @@ def search():
     return render_template('reports/search.html', form=form, results=results, title="Buscar Laudos")
 
 @reports_bp.route('/api/search')
+@login_required
 def api_search():
     """API para busca de laudos (AJAX)."""
     query = request.args.get('query', '')
@@ -164,6 +170,7 @@ def api_search():
     return jsonify([r.to_dict() for r in results])
 
 @reports_bp.route('/delete/<int:id>', methods=['POST'])
+@login_required
 def delete(id):
     """Excluir um laudo."""
     report = Report.query.get_or_404(id)

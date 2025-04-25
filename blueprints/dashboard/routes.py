@@ -1,4 +1,5 @@
 from flask import render_template
+from flask_login import login_required
 from sqlalchemy import func
 from datetime import datetime, timedelta
 
@@ -7,6 +8,7 @@ from models import Report, Category, Supplier
 from blueprints.dashboard import dashboard_bp
 
 @dashboard_bp.route('/')
+@login_required
 def index():
     """Dashboard principal com visão geral."""
     # Contagem total de laudos
