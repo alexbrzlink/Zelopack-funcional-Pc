@@ -20,7 +20,9 @@ db = SQLAlchemy(model_class=Base)
 
 # Criar aplicação Flask
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "zelopack-dev-key")
+# Uso de variável de ambiente para secret_key com geração de chave segura caso não definida
+import secrets
+app.secret_key = os.environ.get("SESSION_SECRET") or secrets.token_hex(32)
 
 # Configurar banco de dados
 database_url = os.environ.get("DATABASE_URL")

@@ -56,19 +56,41 @@ def calculate():
         data = request.json
         tipo_calculo = data.get('tipo_calculo')
         
+        if not tipo_calculo:
+            return jsonify({'error': 'Tipo de cálculo não especificado!'}), 400
+            
+        # Importar módulo de tratamento de erros
+        from utils.error_handler import handle_calculation_error, api_error_response
+        
         # Carregar fatores de conversão
         factors = load_conversion_factors()
         
         if tipo_calculo == 'producao_200':
-            peso_bruto = float(data.get('peso_bruto', 0))
-            tara = float(data.get('tara', 0))
-            
-            # Verificar se as unidades estão corretas (ambos em gramas)
-            if peso_bruto < tara:
-                return jsonify({'error': 'O peso bruto deve ser maior que a tara!'})
+            try:
+                # Conversão segura dos valores
+                try:
+                    peso_bruto = float(data.get('peso_bruto', 0))
+                    tara = float(data.get('tara', 0))
+                except ValueError:
+                    return api_error_response('Valores de peso inválidos. Verifique se são números válidos.', 400)
                 
-            peso_liquido = peso_bruto - tara
-            return jsonify({'resultado': peso_liquido})
+                # Validação de regras de negócio
+                if peso_bruto <= 0:
+                    return api_error_response('O peso bruto deve ser maior que zero!', 400)
+                
+                if tara < 0:
+                    return api_error_response('A tara não pode ser negativa!', 400)
+                    
+                # Verificar se as unidades estão corretas (ambos em gramas)
+                if peso_bruto < tara:
+                    return api_error_response('O peso bruto deve ser maior que a tara!', 400)
+                    
+                peso_liquido = peso_bruto - tara
+                return jsonify({'resultado': peso_liquido, 'success': True}), 200
+            except Exception as e:
+                # Log detalhado do erro
+                error_msg = handle_calculation_error(e, 'producao_200', {'peso_bruto': data.get('peso_bruto'), 'tara': data.get('tara')})
+                return api_error_response(str(e), 500)
             
         elif tipo_calculo == 'producao_litro':
             peso = float(data.get('peso', 0))
