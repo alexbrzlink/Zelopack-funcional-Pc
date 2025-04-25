@@ -1,75 +1,152 @@
-/* Esquema de cores ZeloPack - Baseado na identidade visual turquesa */
+/* Esquema de cores ZeloPack 2025 - Cor azul turquesa */
 
 :root {
-    --zelopack-primary: #00A19A;  /* Turquesa/Verde-azulado */
-    --zelopack-primary-dark: #008e88;
-    --zelopack-primary-light: #33b5af;
+    --zelopack-primary: #00958D;  /* Cor turquesa/azul-esverdeado */
+    --zelopack-primary-dark: #00817A;
+    --zelopack-primary-light: #33AAA3;
     --zelopack-secondary: #f8f9fa;
     --zelopack-text: #333333;
     --zelopack-text-light: #ffffff;
     --zelopack-accent: #FF9500;
+    --zelopack-gradient-start: #00958D;
+    --zelopack-gradient-end: #007C75;
 }
 
-/* Estilo do logo */
-.zelopack-logo {
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 1.5em;
-    letter-spacing: 0.5px;
-    font-family: 'Inter', sans-serif;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+/* Estilos 2025 - Design moderno e arrojado */
+body {
+    font-family: 'Inter', 'Poppins', sans-serif;
+    color: var(--zelopack-text);
+    background-color: #f9f9fb;
 }
 
-/* Barra de navegação - Esquema turquesa */
-.navbar-dark.bg-primary {
-    background-color: var(--zelopack-primary) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+/* Barra de navegação redesenhada */
+.navbar-dark {
+    background: linear-gradient(135deg, var(--zelopack-primary) 0%, var(--zelopack-gradient-end) 100%) !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1) !important;
+    padding: 0.75rem 0;
 }
 
-.navbar-dark .navbar-brand {
+/* Logo ZELOPACK */
+.brand-zelopack {
     color: var(--zelopack-text-light) !important;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem;
+    position: relative;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Hover efeito no logo */
+.brand-zelopack::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 16px;
+    width: 0;
+    height: 2px;
+    background-color: #ffffff;
+    transition: width 0.3s ease;
+}
+
+.brand-zelopack:hover::after {
+    width: calc(100% - 32px);
 }
 
 .navbar-dark .navbar-nav .nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
     font-weight: 500;
     padding: 0.75rem 1rem;
-    border-radius: 4px;
+    border-radius: 6px;
+    margin: 0 0.15rem;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.navbar-dark .navbar-nav .nav-link:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    transform: scale(0.8);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover:before,
+.navbar-dark .navbar-nav .nav-link.active:before {
+    transform: scale(1);
+    opacity: 1;
 }
 
 .navbar-dark .navbar-nav .nav-link:hover,
 .navbar-dark .navbar-nav .nav-link.active {
     color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Tema alternador */
+/* Tema alternador - Design atualizado */
 .theme-toggle {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.15);
     border: none;
     padding: 0.5rem 0.75rem;
     transition: all 0.3s ease;
+    border-radius: 6px;
+    color: #ffffff !important;
 }
 
 .theme-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
 }
 
-/* Rodapé - Esquema turquesa */
+/* Rodapé - Design 2025 */
 .footer {
-    background-color: var(--zelopack-primary) !important;
+    background: linear-gradient(135deg, var(--zelopack-primary) 0%, var(--zelopack-gradient-end) 100%) !important;
     color: var(--zelopack-text-light) !important;
-    padding-top: 2rem !important;
-    padding-bottom: 1.5rem !important;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05) !important;
+    padding-top: 3rem !important;
+    padding-bottom: 2rem !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
 }
 
 .footer h5 {
     color: #ffffff !important;
-    font-weight: 600;
-    margin-bottom: 1rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    position: relative;
+    display: inline-block;
+}
+
+.footer h5:after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.footer p {
+    color: rgba(255, 255, 255, 0.9) !important;
+    line-height: 1.7;
 }
 
 .footer .text-primary {
@@ -77,60 +154,255 @@
 }
 
 .footer .text-muted {
-    color: rgba(255, 255, 255, 0.8) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
 }
 
 .footer a {
     color: #ffffff !important;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+    padding: 3px 0;
+}
+
+.footer a:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: #ffffff;
+    transition: width 0.3s ease;
+}
+
+.footer a:hover:after {
+    width: 100%;
 }
 
 .footer a:hover {
-    color: rgba(255, 255, 255, 0.7) !important;
-    text-decoration: underline !important;
+    color: #ffffff !important;
+    transform: translateX(3px);
 }
 
 .footer hr {
-    border-color: rgba(255, 255, 255, 0.2);
-    margin: 1.5rem 0;
+    border-color: rgba(255, 255, 255, 0.15);
+    margin: 2rem 0;
 }
 
-.footer .btn-outline-secondary {
+.footer .btn-group .btn {
     color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.5);
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
     transition: all 0.3s ease;
 }
 
-.footer .btn-outline-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: #ffffff;
+.footer .btn-group .btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
 }
 
-/* Estilo geral de cards e painéis - similar à página de login */
+/* Estilo geral de cards e painéis - Tendências 2025 */
 .card {
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 149, 141, 0.06);
     border: none;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    overflow: hidden;
+    background: #ffffff;
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 149, 141, 0.1);
+}
+
+.card-header {
+    background-color: rgba(0, 149, 141, 0.03);
+    border-bottom: 1px solid rgba(0, 149, 141, 0.08);
+    padding: 1.25rem 1.5rem;
+}
+
+.card-header h5 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    background-color: rgba(0, 149, 141, 0.02);
+    border-top: 1px solid rgba(0, 149, 141, 0.08);
+    padding: 1.25rem 1.5rem;
+}
+
+/* Botões modernos 2025 */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn:hover:after {
+    opacity: 1;
 }
 
 .btn-primary {
-    background-color: var(--zelopack-primary) !important;
-    border-color: var(--zelopack-primary) !important;
+    background: linear-gradient(135deg, var(--zelopack-primary) 0%, var(--zelopack-gradient-end) 100%) !important;
+    border: none !important;
 }
 
 .btn-primary:hover {
-    background-color: var(--zelopack-primary-dark) !important;
-    border-color: var(--zelopack-primary-dark) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 149, 141, 0.2);
 }
 
+.btn-primary:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(0, 149, 141, 0.2);
+}
+
+.btn-outline-primary {
+    color: var(--zelopack-primary) !important;
+    border-color: var(--zelopack-primary) !important;
+}
+
+.btn-outline-primary:hover {
+    color: #ffffff !important;
+    background-color: var(--zelopack-primary) !important;
+    transform: translateY(-2px);
+}
+
+/* Cores de texto */
 .text-primary {
     color: var(--zelopack-primary) !important;
+}
+
+/* Estilos adicionais para inputs e forms */
+.form-control, .form-select {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(0, 149, 141, 0.15);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: rgba(0, 149, 141, 0.6);
+    box-shadow: 0 0 0 4px rgba(0, 149, 141, 0.1);
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--zelopack-primary);
+    opacity: 0.8;
+}
+
+/* Estilos de painéis e elementos interativos */
+.alert {
+    border-radius: 10px;
+    border: none;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.alert-primary {
+    background-color: rgba(0, 149, 141, 0.1);
+    color: var(--zelopack-primary-dark);
+}
+
+/* Animações sutis para elementos */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container:not(.footer .container) {
+    animation: slideIn 0.6s ease forwards;
+}
+
+/* Estilos para tabelas */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.table thead th {
+    background-color: rgba(0, 149, 141, 0.05);
+    border-bottom: 2px solid rgba(0, 149, 141, 0.1);
+    color: var(--zelopack-primary-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 149, 141, 0.03);
+}
+
+/* Badges estilizados */
+.badge {
+    padding: 0.35em 0.65em;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+.badge-primary {
+    background-color: var(--zelopack-primary);
+}
+
+/* Tooltips modernos */
+.tooltip .tooltip-inner {
+    border-radius: 6px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0.75rem;
+}
+
+/* Responsive ajustes */
+@media (max-width: 768px) {
+    .navbar-dark .navbar-brand {
+        font-size: 1.3rem;
+    }
+    
+    .footer {
+        padding-top: 2rem !important;
+        padding-bottom: 1.5rem !important;
+    }
 }
