@@ -1,32 +1,16 @@
 /* Melhorias nas cores - Ajustes sutis para melhor legibilidade */
 
 /* Estilo do logo */
-.logo-container {
-    display: inline-flex;
-    align-items: center;
-    position: relative;
-}
-
-.logo-container i.fas {
-    position: relative;
-    font-size: 1.2em;
-}
-
-.logo-container i.fas.fa-vial {
-    transform: rotate(-15deg);
-    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.7));
-}
-
-.logo-container i.fas.fa-flask {
-    transform: rotate(15deg);
-    margin-left: -8px;
-    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.7));
-}
-
-.logo-container strong {
-    font-weight: 700;
+.zelopack-logo {
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.5em;
     letter-spacing: 0.5px;
-    font-size: 1.3em;
+    font-family: 'Inter', sans-serif;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    background: -webkit-linear-gradient(#ffffff, #cceeff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* Barra de navegação - melhorias leves */
