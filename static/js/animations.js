@@ -47,7 +47,41 @@ window.ZelopackAnimations = {
     
     // Outros efeitos visuais
     showMessage: function(message, type = 'info') {
-        return showFlashMessage(message, type);
+        if (typeof showFlashMessage === 'function') {
+            return showFlashMessage(message, type);
+        } else {
+            // Implementação de fallback
+            const alertClass = {
+                'success': 'alert-success',
+                'error': 'alert-danger',
+                'warning': 'alert-warning',
+                'info': 'alert-info'
+            }[type] || 'alert-info';
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${alertClass} alert-dismissible fade show`;
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            // Adicionar ao topo da página
+            const container = document.querySelector('.container');
+            if (container) {
+                container.insertBefore(alertDiv, container.firstChild);
+            } else {
+                document.body.insertBefore(alertDiv, document.body.firstChild);
+            }
+            
+            // Auto-remover após 5 segundos
+            setTimeout(() => {
+                alertDiv.classList.add('fade');
+                setTimeout(() => alertDiv.remove(), 500);
+            }, 5000);
+            
+            return alertDiv;
+        }
     },
     
     showLoading: function(message = 'Carregando...', type = 'spinner') {
@@ -114,6 +148,62 @@ function elementHoverOut(element) {
 
 function showTooltip(element, message) {
     window.ZelopackAnimations.showTooltip(element, message);
+}
+
+// Função global para mostrar mensagens flash
+function showFlashMessage(message, type = 'info') {
+    return window.ZelopackAnimations.showMessage(message, type);
+}
+
+// Funções globais para loading
+function showLoading(message = 'Carregando...', type = 'spinner') {
+    // Criar overlay de loading
+    let loadingOverlay = document.getElementById('loading-overlay');
+    if (!loadingOverlay) {
+        loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'loading-overlay';
+        loadingOverlay.style.position = 'fixed';
+        loadingOverlay.style.top = '0';
+        loadingOverlay.style.left = '0';
+        loadingOverlay.style.width = '100%';
+        loadingOverlay.style.height = '100%';
+        loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        loadingOverlay.style.zIndex = '9999';
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.justifyContent = 'center';
+        loadingOverlay.style.alignItems = 'center';
+        loadingOverlay.style.flexDirection = 'column';
+        loadingOverlay.style.color = 'white';
+        
+        const spinnerDiv = document.createElement('div');
+        spinnerDiv.className = 'spinner-border text-light';
+        spinnerDiv.setAttribute('role', 'status');
+        spinnerDiv.style.width = '3rem';
+        spinnerDiv.style.height = '3rem';
+        spinnerDiv.innerHTML = '<span class="visually-hidden">Carregando...</span>';
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'loading-message mt-2';
+        messageDiv.textContent = message;
+        
+        loadingOverlay.appendChild(spinnerDiv);
+        loadingOverlay.appendChild(messageDiv);
+        
+        document.body.appendChild(loadingOverlay);
+    } else {
+        const messageDiv = loadingOverlay.querySelector('.loading-message');
+        if (messageDiv) {
+            messageDiv.textContent = message;
+        }
+        loadingOverlay.style.display = 'flex';
+    }
+}
+
+function hideLoading() {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+    }
 }
 
 // Para garantir retrocompatibilidade
