@@ -88,15 +88,14 @@
                             <i class="fas fa-chart-bar"></i> Dashboard
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('forms.index') }}">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="formsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-file-signature"></i> Formulários
                         </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('editor.index') }}">
-                            <i class="fas fa-edit"></i> Editor Universal
-                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="formsDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('forms.index') }}">Gerenciar Formulários</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('editor.index') }}">Editor Universal</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link highlight-nav-item" href="{{ url_for('calculos.index') }}">
