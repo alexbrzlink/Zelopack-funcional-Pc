@@ -25,10 +25,23 @@ class Report(db.Model):
     raw_material_type = db.Column(db.String(100), nullable=True)  # Tipo de matéria-prima (laranja, maçã, etc)
     sample_code = db.Column(db.String(50), nullable=True)  # Código de rastreio da amostra
     
-    # Campos para análises físico-químicas
+    # Campos para análises citadas no laudo (informadas pelo fornecedor)
     brix = db.Column(db.Float, nullable=True)  # Sólidos solúveis (°Brix)
     ph = db.Column(db.Float, nullable=True)  # pH da amostra
     acidity = db.Column(db.Float, nullable=True)  # Acidez (g/100ml)
+    
+    # Campos para análises realizadas em laboratório
+    lab_brix = db.Column(db.Float, nullable=True)  # Sólidos solúveis medidos em laboratório (°Brix)
+    lab_ph = db.Column(db.Float, nullable=True)  # pH medido em laboratório
+    lab_acidity = db.Column(db.Float, nullable=True)  # Acidez medida em laboratório (g/100ml)
+    
+    # Validação físico-química
+    physicochemical_validation = db.Column(db.String(20), default='não verificado')  # 'ok', 'não padrão', 'não verificado'
+    
+    # Campos adicionais de rastreabilidade
+    report_archived = db.Column(db.Boolean, default=False)  # Laudo arquivado (sim/não)
+    microbiology_collected = db.Column(db.Boolean, default=False)  # Microbiologia coletada (sim/não)
+    has_report_document = db.Column(db.Boolean, default=False)  # Possui documento do laudo (sim/não)
     
     # Campos adicionais de datas
     manufacturing_date = db.Column(db.Date, nullable=True)  # Data de fabricação
@@ -134,10 +147,23 @@ class Report(db.Model):
             'raw_material_type': self.raw_material_type,
             'sample_code': self.sample_code,
             
-            # Análises físico-químicas
+            # Análises citadas no laudo (informadas pelo fornecedor)
             'brix': self.brix,
             'ph': self.ph,
             'acidity': self.acidity,
+            
+            # Análises realizadas em laboratório
+            'lab_brix': self.lab_brix,
+            'lab_ph': self.lab_ph,
+            'lab_acidity': self.lab_acidity,
+            
+            # Validação físico-química
+            'physicochemical_validation': self.physicochemical_validation,
+            
+            # Campos adicionais de rastreabilidade
+            'report_archived': self.report_archived,
+            'microbiology_collected': self.microbiology_collected,
+            'has_report_document': self.has_report_document,
             
             # Datas
             'report_date': self.report_date.strftime('%d/%m/%Y') if self.report_date else None,
