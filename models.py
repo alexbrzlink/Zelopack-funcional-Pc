@@ -869,6 +869,7 @@ class FormPreset(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     data = db.Column(db.Text, nullable=False, default='{}')  # Campos e valores predefinidos em formato JSON
+    fields_json = db.Column(db.Text, nullable=True)  # Novo campo para compatibilidade com a API de autofill
     is_default = db.Column(db.Boolean, default=False)  # Se é a predefinição padrão para este formulário
     is_active = db.Column(db.Boolean, default=True)
     use_standard_fields = db.Column(db.Boolean, default=True)  # Se deve usar campos padronizados
@@ -888,6 +889,11 @@ class FormPreset(db.Model):
         except (json.JSONDecodeError, TypeError):
             data_dict = {}
             
+        try:
+            fields_dict = json.loads(self.fields_json) if self.fields_json else {}
+        except (json.JSONDecodeError, TypeError):
+            fields_dict = {}
+            
         return {
             'id': self.id,
             'name': self.name,
@@ -900,6 +906,7 @@ class FormPreset(db.Model):
             'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
             'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
             'data': data_dict,
+            'fields': fields_dict,
             'is_default': self.is_default,
             'is_active': self.is_active,
             'use_standard_fields': self.use_standard_fields,

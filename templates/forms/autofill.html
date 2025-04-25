@@ -1,439 +1,237 @@
 {% extends "base.html" %}
 
-{% block title %}Preenchimento Automático - Zelopack{% endblock %}
+{% block title %}Preenchimento Automático de Formulários | Zelopack{% endblock %}
 
-{% block extra_css %}
+{% block custom_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/autofill.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="autofill-container">
-    <!-- Cabeçalho do módulo -->
-    <div class="autofill-header">
-        <h2><i class="fas fa-magic"></i> Preenchimento Automático</h2>
-        <p>Preencha formulários rapidamente usando modelos predefinidos e padrões de campo personalizados.</p>
-    </div>
-    
-    <!-- Seção de campos comuns -->
-    <div class="autofill-section slide-in-up" style="animation-delay: 0.1s;">
-        <h3><i class="fas fa-clipboard-list"></i> Campos Padrão</h3>
-        
-        <div class="dynamic-form">
-            <!-- Campos da empresa -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-building"></i>
-                    Empresa
-                </label>
-                <input type="text" class="custom-field-input" id="empresa" name="empresa" placeholder="Nome da empresa">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="Zelopack" title="Usar sugestão: Zelopack"></i>
-            </div>
-            
-            <!-- Produto -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-box"></i>
-                    Produto
-                </label>
-                <input type="text" class="custom-field-input" id="produto" name="produto" placeholder="Nome do produto">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="Suco Natural" title="Usar sugestão: Suco Natural"></i>
-            </div>
-            
-            <!-- Marca -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-tag"></i>
-                    Marca
-                </label>
-                <input type="text" class="custom-field-input" id="marca" name="marca" placeholder="Marca do produto">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="ZeloPack Premium" title="Usar sugestão: ZeloPack Premium"></i>
-            </div>
-            
-            <!-- Lote -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-barcode"></i>
-                    Lote
-                </label>
-                <input type="text" class="custom-field-input" id="lote" name="lote" placeholder="Número do lote">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="L-2025-04-25" title="Usar sugestão: L-2025-04-25"></i>
-            </div>
-            
-            <!-- Data de fabricação -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-calendar-alt"></i>
-                    Data de Fabricação
-                </label>
-                <input type="date" class="custom-field-input" id="data_fabricacao" name="data_fabricacao">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="{{ hoje }}" title="Usar data atual"></i>
-            </div>
-            
-            <!-- Data de validade -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-hourglass-end"></i>
-                    Data de Validade
-                </label>
-                <input type="date" class="custom-field-input" id="data_validade" name="data_validade">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="{{ validade_padrao }}" title="Usar data padrão (hoje + 1 ano)"></i>
-            </div>
-            
-            <!-- Responsável -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-user-tie"></i>
-                    Responsável
-                </label>
-                <input type="text" class="custom-field-input" id="responsavel" name="responsavel" placeholder="Nome do responsável">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="{{ usuario_atual.name }}" title="Usar seu nome"></i>
-            </div>
-            
-            <!-- Departamento -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-sitemap"></i>
-                    Departamento
-                </label>
-                <select class="custom-field-input custom-field-select" id="departamento" name="departamento">
-                    <option value="">Selecione um departamento</option>
-                    <option value="Laboratório">Laboratório</option>
-                    <option value="Controle de Qualidade">Controle de Qualidade</option>
-                    <option value="Produção">Produção</option>
-                    <option value="P&D">P&D</option>
-                    <option value="Administrativo">Administrativo</option>
-                </select>
-            </div>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Preenchimento Automático</h2>
+            <p class="text-muted">Preencha formulários rapidamente com templates predefinidos</p>
+        </div>
+        <div>
+            <a href="{{ url_for('forms.list_forms') }}" class="btn btn-outline-primary d-flex align-items-center gap-2">
+                <i class="fas fa-list"></i>
+                <span>Ver Lista de Formulários</span>
+            </a>
         </div>
     </div>
-    
-    <!-- Seção de valores técnicos -->
-    <div class="autofill-section slide-in-up" style="animation-delay: 0.2s; border-left-color: #2E86C1;">
-        <h3><i class="fas fa-flask"></i> Valores Técnicos</h3>
-        
-        <div class="dynamic-form">
-            <!-- Brix -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-tint"></i>
-                    Brix
-                </label>
-                <input type="number" step="0.1" class="custom-field-input" id="brix" name="brix" placeholder="0.0">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="11.2" title="Usar valor padrão: 11.2"></i>
-            </div>
-            
-            <!-- pH -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-thermometer-half"></i>
-                    pH
-                </label>
-                <input type="number" step="0.01" class="custom-field-input" id="ph" name="ph" placeholder="0.00">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="3.85" title="Usar valor padrão: 3.85"></i>
-            </div>
-            
-            <!-- Acidez -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-eye-dropper"></i>
-                    Acidez (g/100mL)
-                </label>
-                <input type="number" step="0.01" class="custom-field-input" id="acidez" name="acidez" placeholder="0.00">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="0.32" title="Usar valor padrão: 0.32"></i>
-            </div>
-            
-            <!-- Temperatura -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-temperature-high"></i>
-                    Temperatura (°C)
-                </label>
-                <input type="number" step="0.1" class="custom-field-input" id="temperatura" name="temperatura" placeholder="0.0">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="20.0" title="Usar valor padrão: 20.0"></i>
-            </div>
-            
-            <!-- Densidade -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-weight"></i>
-                    Densidade (g/mL)
-                </label>
-                <input type="number" step="0.001" class="custom-field-input" id="densidade" name="densidade" placeholder="0.000">
-                <i class="fas fa-lightbulb field-suggestion" data-suggestion="1.045" title="Usar valor padrão: 1.045"></i>
-            </div>
-            
-            <!-- Volume -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-fill-drip"></i>
-                    Volume (L)
-                </label>
-                <input type="number" step="0.1" class="custom-field-input" id="volume" name="volume" placeholder="0.0">
-            </div>
-        </div>
-    </div>
-    
-    <!-- Seção de resultados e observações -->
-    <div class="autofill-section slide-in-up" style="animation-delay: 0.3s; border-left-color: #28B463;">
-        <h3><i class="fas fa-clipboard-check"></i> Resultados e Observações</h3>
-        
-        <div class="dynamic-form">
-            <!-- Status -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-check-circle"></i>
-                    Status
-                </label>
-                <select class="custom-field-input custom-field-select" id="status" name="status">
-                    <option value="">Selecione um status</option>
-                    <option value="Aprovado">Aprovado</option>
-                    <option value="Reprovado">Reprovado</option>
-                    <option value="Em análise">Em análise</option>
-                    <option value="Pendente">Pendente</option>
-                </select>
-            </div>
-            
-            <!-- Conformidade -->
-            <div class="custom-field">
-                <label>
-                    <i class="field-icon fas fa-balance-scale"></i>
-                    Conformidade
-                </label>
-                <select class="custom-field-input custom-field-select" id="conformidade" name="conformidade">
-                    <option value="">Selecione a conformidade</option>
-                    <option value="Conforme">Conforme</option>
-                    <option value="Não conforme">Não conforme</option>
-                    <option value="Parcialmente conforme">Parcialmente conforme</option>
-                </select>
-            </div>
-            
-            <!-- Observações -->
-            <div class="custom-field" style="grid-column: 1 / -1;">
-                <label>
-                    <i class="field-icon fas fa-comment-alt"></i>
-                    Observações
-                </label>
-                <textarea class="custom-field-input custom-field-textarea" id="observacoes" name="observacoes" placeholder="Insira observações relevantes aqui..."></textarea>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Templates salvos -->
-    <div class="autofill-section templates-section slide-in-up" style="animation-delay: 0.4s;">
-        <h3><i class="fas fa-bookmark"></i> Templates Salvos</h3>
-        
-        <div class="templates-list">
-            <!-- Template padrão -->
-            <div class="template-card template-default" data-template-id="1">
-                <div class="template-actions">
-                    <button class="template-action-btn" title="Editar" data-template-action="edit">
-                        <i class="fas fa-pencil-alt"></i>
-                    </button>
-                    <button class="template-action-btn" title="Definir como padrão" data-template-action="default">
-                        <i class="fas fa-star"></i>
-                    </button>
-                </div>
-                <div class="template-name">
-                    <i class="fas fa-star"></i> Template Padrão
-                </div>
-                <div class="template-description">
-                    Valores básicos para preenchimento de laudos e formulários
-                </div>
-                <div class="template-meta">
-                    <span><i class="fas fa-calendar-alt me-1"></i> 25/04/2025</span>
-                    <span><i class="fas fa-user me-1"></i> Admin</span>
-                </div>
-            </div>
-            
-            <!-- Template suco de laranja -->
-            <div class="template-card" data-template-id="2">
-                <div class="template-actions">
-                    <button class="template-action-btn" title="Editar" data-template-action="edit">
-                        <i class="fas fa-pencil-alt"></i>
-                    </button>
-                    <button class="template-action-btn" title="Definir como padrão" data-template-action="default">
-                        <i class="fas fa-star"></i>
-                    </button>
-                </div>
-                <div class="template-name">
-                    <i class="fas fa-tint"></i> Suco de Laranja
-                </div>
-                <div class="template-description">
-                    Parâmetros específicos para análise de suco de laranja
-                </div>
-                <div class="template-meta">
-                    <span><i class="fas fa-calendar-alt me-1"></i> 24/04/2025</span>
-                    <span><i class="fas fa-user me-1"></i> Lab</span>
-                </div>
-            </div>
-            
-            <!-- Adicionar novo template -->
-            <div class="template-card" id="add-template" style="border-style: dashed; justify-content: center; align-items: center; text-align: center; height: 120px;">
-                <i class="fas fa-plus-circle" style="font-size: 2rem; color: var(--zelopack-primary); margin-bottom: 0.5rem;"></i>
-                <div style="font-weight: 500;">Adicionar Template</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Botões de ação -->
-    <div class="autofill-actions">
-        <button class="btn-action btn-primary-action" id="apply-fields">
-            <i class="fas fa-check"></i> Aplicar ao Formulário
-        </button>
-        <button class="btn-action btn-secondary-action" id="save-as-template">
-            <i class="fas fa-bookmark"></i> Salvar como Template
-        </button>
-        <button class="btn-action btn-secondary-action" id="clear-all">
-            <i class="fas fa-eraser"></i> Limpar Campos
-        </button>
-    </div>
-</div>
 
-<!-- Toast para sugestões -->
-<div class="suggestion-toast" id="suggestion-toast">
-    <div class="suggestion-toast-icon">
-        <i class="fas fa-lightbulb"></i>
+    <div class="autofill-container section-slide-in">
+        <!-- Seção de Templates Salvos -->
+        <div class="autofill-section">
+            <h4>
+                <i class="fas fa-save me-2"></i>
+                Templates Salvos
+            </h4>
+            
+            <div class="templates-container">
+                {% for preset in presets %}
+                <div class="template-card staggered-item" data-template-id="{{ preset.id }}" style="animation-delay: {{ loop.index0 * 0.1 }}s">
+                    {% if preset.is_default %}
+                    <div class="template-default-badge">Padrão</div>
+                    {% endif %}
+                    <h5>{{ preset.name }}</h5>
+                    <p class="template-description">{{ preset.description or 'Sem descrição' }}</p>
+                    <div class="template-meta">
+                        <span>Criado em {{ preset.created_at.strftime('%d/%m/%Y') }}</span>
+                    </div>
+                    <div class="template-actions">
+                        <button class="template-action-btn" data-template-action="edit" title="Editar Template">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button class="template-action-btn" data-template-action="default" title="Definir como Padrão">
+                            <i class="fas fa-star"></i>
+                        </button>
+                        <button class="template-action-btn" data-template-action="delete" title="Excluir Template">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="template-card add-template staggered-item" id="add-template" style="animation-delay: {{ (presets|length) * 0.1 }}s">
+                    <div class="add-template-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <span>Adicionar Novo Template</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção de Campos Personalizados -->
+        <div class="autofill-section">
+            <h4>
+                <i class="fas fa-edit me-2"></i>
+                Campos do Formulário
+            </h4>
+            
+            <div class="row">
+                <!-- Informações Básicas -->
+                <div class="col-md-6">
+                    <h5 class="mb-3">Informações Básicas</h5>
+                    
+                    <div class="form-field-row">
+                        <label for="empresa" class="form-label">Empresa</label>
+                        <input type="text" id="empresa" name="empresa" class="form-control custom-field-input" value="Zelopack">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-field-row">
+                        <label for="produto" class="form-label">Produto</label>
+                        <input type="text" id="produto" name="produto" class="form-control custom-field-input">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-field-row">
+                        <label for="marca" class="form-label">Marca</label>
+                        <input type="text" id="marca" name="marca" class="form-control custom-field-input">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-field-row">
+                        <label for="lote" class="form-label">Lote</label>
+                        <input type="text" id="lote" name="lote" class="form-control custom-field-input">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Datas e Responsável -->
+                <div class="col-md-6">
+                    <h5 class="mb-3">Datas e Responsável</h5>
+                    
+                    <div class="form-field-row">
+                        <label for="data_fabricacao" class="form-label">Data de Fabricação</label>
+                        <input type="date" id="data_fabricacao" name="data_fabricacao" class="form-control custom-field-input" value="{{ hoje }}">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-field-row">
+                        <label for="data_validade" class="form-label">Data de Validade</label>
+                        <input type="date" id="data_validade" name="data_validade" class="form-control custom-field-input" value="{{ validade_padrao }}">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-field-row">
+                        <label for="responsavel" class="form-label">Responsável</label>
+                        <input type="text" id="responsavel" name="responsavel" class="form-control custom-field-input" value="{{ usuario_atual.name }}">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-field-row">
+                        <label for="departamento" class="form-label">Departamento</label>
+                        <input type="text" id="departamento" name="departamento" class="form-control custom-field-input">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Segunda linha - Valores de Análise -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h5 class="mb-3">Valores de Análise</h5>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="form-field-row">
+                        <label for="brix" class="form-label">°Brix</label>
+                        <input type="number" id="brix" name="brix" step="0.1" class="form-control custom-field-input">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="form-field-row">
+                        <label for="ph" class="form-label">pH</label>
+                        <input type="number" id="ph" name="ph" step="0.01" class="form-control custom-field-input">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="form-field-row">
+                        <label for="acidez" class="form-label">Acidez (g/100mL)</label>
+                        <input type="number" id="acidez" name="acidez" step="0.01" class="form-control custom-field-input">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="form-field-row">
+                        <label for="densidade" class="form-label">Densidade (g/mL)</label>
+                        <input type="number" id="densidade" name="densidade" step="0.001" class="form-control custom-field-input">
+                        <button type="button" class="field-suggestion" title="Ver sugestão">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ações para os campos -->
+            <div class="form-actions">
+                <div>
+                    <button id="clear-all" class="btn btn-outline-secondary action-button">
+                        <i class="fas fa-eraser"></i>
+                        <span>Limpar Campos</span>
+                    </button>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button id="save-as-template" class="btn btn-outline-primary action-button">
+                        <i class="fas fa-save"></i>
+                        <span>Salvar como Template</span>
+                    </button>
+                    
+                    <button id="apply-fields" class="btn btn-primary action-button">
+                        <i class="fas fa-check"></i>
+                        <span>Aplicar ao Formulário</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="suggestion-toast-content">
-        <div class="suggestion-toast-title">Sugestão de Valor</div>
-        <div class="suggestion-toast-text">Deseja usar o valor sugerido para este campo?</div>
+    
+    <!-- Toast para sugestões -->
+    <div class="suggestion-toast" id="suggestion-toast">
+        <div class="suggestion-toast-header">
+            <div class="suggestion-toast-title">Sugestão de Preenchimento</div>
+            <button type="button" class="btn-close suggestion-toast-btn-dismiss" aria-label="Fechar"></button>
+        </div>
+        <div class="suggestion-toast-text"></div>
         <div class="suggestion-toast-actions">
-            <button class="suggestion-toast-btn suggestion-toast-btn-accept">Aceitar</button>
-            <button class="suggestion-toast-btn suggestion-toast-btn-dismiss">Não, obrigado</button>
+            <button type="button" class="suggestion-toast-btn suggestion-toast-btn-dismiss">Ignorar</button>
+            <button type="button" class="suggestion-toast-btn suggestion-toast-btn-accept">Aplicar</button>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Adicionar classe ativa no item de menu correspondente
-        document.querySelector('#nav-forms').classList.add('active');
-        
-        // Configuração das sugestões
-        const suggestionButtons = document.querySelectorAll('.field-suggestion');
-        const suggestionToast = document.getElementById('suggestion-toast');
-        let currentSuggestionField = null;
-        let currentSuggestionValue = null;
-        
-        suggestionButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const suggestion = this.getAttribute('data-suggestion');
-                const field = this.previousElementSibling;
-                
-                // Mostrar toast de sugestão
-                currentSuggestionField = field;
-                currentSuggestionValue = suggestion;
-                
-                const toastText = document.querySelector('.suggestion-toast-text');
-                toastText.textContent = `Deseja usar "${suggestion}" para o campo ${field.name}?`;
-                
-                suggestionToast.classList.add('show');
-                
-                // Auto-ocultar depois de 5 segundos
-                setTimeout(() => {
-                    suggestionToast.classList.remove('show');
-                }, 5000);
-            });
-        });
-        
-        // Lidar com aceitação de sugestão
-        document.querySelector('.suggestion-toast-btn-accept').addEventListener('click', function() {
-            if (currentSuggestionField && currentSuggestionValue) {
-                currentSuggestionField.value = currentSuggestionValue;
-                suggestionToast.classList.remove('show');
-            }
-        });
-        
-        // Lidar com rejeição de sugestão
-        document.querySelector('.suggestion-toast-btn-dismiss').addEventListener('click', function() {
-            suggestionToast.classList.remove('show');
-        });
-        
-        // Selecionar template
-        const templateCards = document.querySelectorAll('.template-card:not(#add-template)');
-        templateCards.forEach(card => {
-            card.addEventListener('click', function(e) {
-                if (!e.target.classList.contains('template-action-btn')) {
-                    const templateId = this.getAttribute('data-template-id');
-                    // Aplicar valores do template (simulado)
-                    if (templateId === '1') {
-                        document.getElementById('empresa').value = 'Zelopack';
-                        document.getElementById('marca').value = 'ZeloPack Premium';
-                        document.getElementById('departamento').value = 'Laboratório';
-                        document.getElementById('brix').value = '11.2';
-                        document.getElementById('ph').value = '3.85';
-                        document.getElementById('acidez').value = '0.32';
-                        document.getElementById('densidade').value = '1.045';
-                    } else if (templateId === '2') {
-                        document.getElementById('empresa').value = 'Zelopack';
-                        document.getElementById('produto').value = 'Suco de Laranja';
-                        document.getElementById('marca').value = 'ZeloPack Premium';
-                        document.getElementById('departamento').value = 'Laboratório';
-                        document.getElementById('brix').value = '10.8';
-                        document.getElementById('ph').value = '3.60';
-                        document.getElementById('acidez').value = '0.65';
-                        document.getElementById('densidade').value = '1.042';
-                    }
-                    
-                    // Feedback visual
-                    this.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 300);
-                    
-                    // Exibir mensagem
-                    showMessage('Template aplicado com sucesso!');
-                }
-            });
-        });
-        
-        // Limpar todos os campos
-        document.getElementById('clear-all').addEventListener('click', function() {
-            const inputs = document.querySelectorAll('.custom-field-input');
-            inputs.forEach(input => {
-                input.value = '';
-            });
-            
-            showMessage('Todos os campos foram limpos!');
-        });
-        
-        // Aplicar ao formulário (simulado)
-        document.getElementById('apply-fields').addEventListener('click', function() {
-            showMessage('Campos aplicados ao formulário com sucesso!');
-            
-            // Simulação de redirecionamento após 2 segundos
-            setTimeout(() => {
-                window.location.href = '/forms';
-            }, 2000);
-        });
-        
-        // Função para exibir mensagem temporária
-        function showMessage(message) {
-            const alertHtml = `
-                <div class="alert alert-success alert-dismissible fade show">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-            
-            // Adicionar alerta ao DOM
-            const container = document.querySelector('.autofill-container');
-            const firstChild = container.firstChild;
-            const alertDiv = document.createElement('div');
-            alertDiv.innerHTML = alertHtml;
-            container.insertBefore(alertDiv.firstChild, firstChild);
-            
-            // Auto-remover depois de 3 segundos
-            setTimeout(() => {
-                const alerts = document.querySelectorAll('.alert');
-                alerts.forEach(alert => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                });
-            }, 3000);
-        }
-    });
-</script>
+<script src="{{ url_for('static', filename='js/autofill.js') }}"></script>
 {% endblock %}
