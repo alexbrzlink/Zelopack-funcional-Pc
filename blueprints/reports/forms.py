@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
-from wtforms import StringField, TextAreaField, SelectField, DateField, SubmitField, DecimalField
-from wtforms.validators import DataRequired, Optional
+from wtforms import StringField, TextAreaField, SelectField, DateField, TimeField, SubmitField, DecimalField
+from wtforms.validators import DataRequired, Optional, NumberRange
 
 class ReportUploadForm(FlaskForm):
     """Formulário para upload de laudos."""
@@ -48,10 +48,20 @@ class ReportUploadForm(FlaskForm):
     # Atribuição
     assigned_to = SelectField('Atribuir para', validators=[Optional()])
     
-    # Indicadores técnicos
-    ph_value = DecimalField('Valor de pH', validators=[Optional()])
-    brix_value = DecimalField('Valor Brix', validators=[Optional()])
-    acidity_value = DecimalField('Acidez', validators=[Optional()])
+    # Análises físico-químicas
+    ph = DecimalField('pH', validators=[Optional(), NumberRange(min=0, max=14)])
+    brix = DecimalField('Brix (°Bx)', validators=[Optional(), NumberRange(min=0, max=100)])
+    acidity = DecimalField('Acidez (g/100ml)', validators=[Optional(), NumberRange(min=0)])
+    
+    # Datas adicionais
+    manufacturing_date = DateField('Data de Fabricação', validators=[Optional()], format='%Y-%m-%d')
+    expiration_date = DateField('Data de Validade', validators=[Optional()], format='%Y-%m-%d')
+    report_time = TimeField('Hora do Laudo', validators=[Optional()], format='%H:%M')
+    
+    # Indicadores técnicos (mantidos para compatibilidade)
+    ph_value = DecimalField('Valor de pH (antigo)', validators=[Optional()])
+    brix_value = DecimalField('Valor Brix (antigo)', validators=[Optional()])
+    acidity_value = DecimalField('Acidez (antigo)', validators=[Optional()])
     color_value = StringField('Cor', validators=[Optional()])
     density_value = DecimalField('Densidade', validators=[Optional()])
     

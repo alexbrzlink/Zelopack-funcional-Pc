@@ -53,10 +53,11 @@ def upload():
             # Obter o tamanho do arquivo
             file_size = get_file_size(file_path)
             
-            # Preparar data do laudo
-            report_date = None
-            if form.report_date.data:
-                report_date = form.report_date.data
+            # Preparar datas do laudo
+            report_date = form.report_date.data if form.report_date.data else None
+            manufacturing_date = form.manufacturing_date.data if form.manufacturing_date.data else None
+            expiration_date = form.expiration_date.data if form.expiration_date.data else None
+            report_time = form.report_time.data if form.report_time.data else None
             
             # Criar novo registro de laudo
             new_report = Report(
@@ -67,10 +68,30 @@ def upload():
                 file_path=file_path,
                 file_type=file_extension[1:],  # Remover o ponto do início
                 file_size=file_size,
+                
+                # Categorização
                 category=form.category.data,
                 supplier=form.supplier.data,
                 batch_number=form.batch_number.data,
-                report_date=report_date
+                raw_material_type=form.raw_material_type.data,
+                sample_code=form.sample_code.data,
+                
+                # Análises físico-químicas
+                brix=form.brix.data,
+                ph=form.ph.data,
+                acidity=form.acidity.data,
+                
+                # Datas
+                report_date=report_date,
+                report_time=report_time,
+                manufacturing_date=manufacturing_date,
+                expiration_date=expiration_date,
+                
+                # Indicadores (mantidos para compatibilidade)
+                ph_value=form.ph_value.data,
+                brix_value=form.brix_value.data,
+                acidity_value=form.acidity_value.data,
+                color_value=form.color_value.data
             )
             
             db.session.add(new_report)

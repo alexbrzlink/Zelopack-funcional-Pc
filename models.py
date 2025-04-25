@@ -25,6 +25,16 @@ class Report(db.Model):
     raw_material_type = db.Column(db.String(100), nullable=True)  # Tipo de matéria-prima (laranja, maçã, etc)
     sample_code = db.Column(db.String(50), nullable=True)  # Código de rastreio da amostra
     
+    # Campos para análises físico-químicas
+    brix = db.Column(db.Float, nullable=True)  # Sólidos solúveis (°Brix)
+    ph = db.Column(db.Float, nullable=True)  # pH da amostra
+    acidity = db.Column(db.Float, nullable=True)  # Acidez (g/100ml)
+    
+    # Campos adicionais de datas
+    manufacturing_date = db.Column(db.Date, nullable=True)  # Data de fabricação
+    expiration_date = db.Column(db.Date, nullable=True)  # Data de validade
+    report_time = db.Column(db.Time, nullable=True)  # Hora do laudo
+    
     # Novos campos para os módulos avançados
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=True)
     sample_id = db.Column(db.Integer, db.ForeignKey('sample.id'), nullable=True)
@@ -124,8 +134,16 @@ class Report(db.Model):
             'raw_material_type': self.raw_material_type,
             'sample_code': self.sample_code,
             
+            # Análises físico-químicas
+            'brix': self.brix,
+            'ph': self.ph,
+            'acidity': self.acidity,
+            
             # Datas
             'report_date': self.report_date.strftime('%d/%m/%Y') if self.report_date else None,
+            'report_time': self.report_time.strftime('%H:%M') if self.report_time else None,
+            'manufacturing_date': self.manufacturing_date.strftime('%d/%m/%Y') if self.manufacturing_date else None,
+            'expiration_date': self.expiration_date.strftime('%d/%m/%Y') if self.expiration_date else None,
             'upload_date': self.upload_date.strftime('%d/%m/%Y %H:%M'),
             'updated_date': self.updated_date.strftime('%d/%m/%Y %H:%M'),
             'due_date': self.due_date.strftime('%d/%m/%Y') if self.due_date else None,
