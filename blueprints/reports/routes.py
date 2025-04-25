@@ -276,6 +276,16 @@ def upload():
         form.supplier.choices.insert(0, ('', 'Selecione um fornecedor'))
     else:
         form.supplier.choices = [('', 'Nenhum fornecedor disponível')]
+        
+    # Garantir que outros campos select também tenham opções válidas
+    # O campo assigned_to precisa de initialização
+    if not hasattr(form.assigned_to, 'choices') or form.assigned_to.choices is None:
+        form.assigned_to.choices = [('', 'Nenhum usuário disponível')]
+    
+    # Garantir que todos os SelectFields tenham choices inicializados
+    for field in form:
+        if hasattr(field, 'choices') and field.choices is None:
+            field.choices = [('', f'Nenhuma opção disponível para {field.label.text}')]
     
     if form.validate_on_submit():
         file = form.file.data
