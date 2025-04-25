@@ -743,7 +743,7 @@ class ZelopackAutoCheck:
         logger.debug(f"\n{Colors.BOLD}Relatório completo:{Colors.END}")
         logger.debug(f"  • Salvo em: {self.report_file}")
         logger.debug("=" * 70)
-        logger.debug()
+        logger.debug("Fim da verificação")
 
 def watch_changes(seconds=5):
     """Monitora alterações nos arquivos e executa verificações automaticamente"""

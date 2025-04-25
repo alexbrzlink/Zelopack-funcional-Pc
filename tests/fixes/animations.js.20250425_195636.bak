@@ -88,7 +88,7 @@ window.ZelopackAnimations = {
         if (typeof showLoading === 'function') {
             showLoading(message, type);
         } else {
-            // // // console.log('Loading: ' + message);
+            // // console.log('Loading: ' + message);
         }
     },
     
@@ -239,7 +239,7 @@ if (typeof window.ZelopackAnimations === 'undefined') {
             if (typeof showLoading === 'function') {
                 showLoading(message, type);
             } else {
-                // // // console.log(message);
+                // // console.log(message);
             }
         },
         hideLoading: function() {
@@ -252,7 +252,7 @@ if (typeof window.ZelopackAnimations === 'undefined') {
 
 // Inicialização quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function() {
-    // // // console.log('Zelopack Animations: Inicializado com sucesso!');
+    // // console.log('Zelopack Animations: Inicializado com sucesso!');
     
     // Inicializar todas as animações
     initializeAnimations();

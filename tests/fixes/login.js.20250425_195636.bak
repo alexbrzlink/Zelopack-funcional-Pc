@@ -242,6 +242,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     } catch (e) {
-        // // // console.log('Particles.js não carregado. Ignorando efeito de partículas.');
+        // // console.log('Particles.js não carregado. Ignorando efeito de partículas.');
     }
 });
