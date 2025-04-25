@@ -263,11 +263,19 @@ def upload():
     categories = Category.query.order_by(Category.name).all()
     suppliers = Supplier.query.order_by(Supplier.name).all()
     
-    form.category.choices = [(c.name, c.name) for c in categories]
-    form.category.choices.insert(0, ('', 'Selecione uma categoria'))
+    # Verificar se há categorias para evitar o erro "Choices cannot be None"
+    if categories:
+        form.category.choices = [(c.name, c.name) for c in categories]
+        form.category.choices.insert(0, ('', 'Selecione uma categoria'))
+    else:
+        form.category.choices = [('', 'Nenhuma categoria disponível')]
     
-    form.supplier.choices = [(s.name, s.name) for s in suppliers]
-    form.supplier.choices.insert(0, ('', 'Selecione um fornecedor'))
+    # Verificar se há fornecedores para evitar o erro "Choices cannot be None"
+    if suppliers:
+        form.supplier.choices = [(s.name, s.name) for s in suppliers]
+        form.supplier.choices.insert(0, ('', 'Selecione um fornecedor'))
+    else:
+        form.supplier.choices = [('', 'Nenhum fornecedor disponível')]
     
     if form.validate_on_submit():
         file = form.file.data
@@ -393,11 +401,19 @@ def search():
     categories = Category.query.order_by(Category.name).all()
     suppliers = Supplier.query.order_by(Supplier.name).all()
     
-    form.category.choices = [(c.name, c.name) for c in categories]
-    form.category.choices.insert(0, ('', 'Todas as categorias'))
+    # Verificar se há categorias para evitar o erro "Choices cannot be None"
+    if categories:
+        form.category.choices = [(c.name, c.name) for c in categories]
+        form.category.choices.insert(0, ('', 'Todas as categorias'))
+    else:
+        form.category.choices = [('', 'Todas as categorias')]
     
-    form.supplier.choices = [(s.name, s.name) for s in suppliers]
-    form.supplier.choices.insert(0, ('', 'Todos os fornecedores'))
+    # Verificar se há fornecedores para evitar o erro "Choices cannot be None"
+    if suppliers:
+        form.supplier.choices = [(s.name, s.name) for s in suppliers]
+        form.supplier.choices.insert(0, ('', 'Todos os fornecedores'))
+    else:
+        form.supplier.choices = [('', 'Todos os fornecedores')]
     
     results = []
     
