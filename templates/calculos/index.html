@@ -492,10 +492,173 @@
             </div>
         </div>
         
+        <!-- Área de Cálculo: Densidade -->
+        <div class="calculo-area" id="densidade-area">
+            <h2><i class="fas fa-atom"></i> Densidade</h2>
+            
+            <div class="calculo-description">
+                <p>Calcula a densidade com base na razão entre massa e volume.</p>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="massa_densidade">
+                                Massa
+                                <span class="unit">(g)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="massa_densidade" step="0.01" placeholder="0.00">
+                                <span class="input-unit">g</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="volume_densidade">
+                                Volume
+                                <span class="unit">(mL)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="volume_densidade" step="0.01" placeholder="0.00">
+                                <span class="input-unit">mL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calcularDensidade">
+                    <i class="fas fa-calculator"></i> Calcular Densidade
+                </button>
+                <button class="btn btn-secondary btn-clear">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado_area_densidade" style="display:none;">
+                <!-- Preenchido via JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Área de Cálculo: Ratio -->
+        <div class="calculo-area" id="ratio-area">
+            <h2><i class="fas fa-calculator"></i> Ratio</h2>
+            
+            <div class="calculo-description">
+                <p>Relação simples entre Brix e Acidez. Importante indicador de qualidade e maturação de sucos cítricos.</p>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="brix_ratio">
+                                Brix
+                                <span class="unit">(°Bx)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="brix_ratio" step="0.1" placeholder="0.0">
+                                <span class="input-unit">°Bx</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="acidez_ratio">
+                                Acidez
+                                <span class="unit">(%)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="acidez_ratio" step="0.01" placeholder="0.00">
+                                <span class="input-unit">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calcularRatio">
+                    <i class="fas fa-calculator"></i> Calcular Ratio
+                </button>
+                <button class="btn btn-secondary btn-clear">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado_area_ratio" style="display:none;">
+                <!-- Preenchido via JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Área de Cálculo: Acidez -->
+        <div class="calculo-area" id="acidez-area">
+            <h2><i class="fas fa-eye-dropper"></i> Acidez</h2>
+            
+            <div class="calculo-description">
+                <p>Cálculo padrão da acidez de um produto baseado na titulação com NaOH.</p>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="volume_amostra_acidez">
+                                Volume da Amostra
+                                <span class="unit">(mL)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="volume_amostra_acidez" step="0.1" placeholder="0.0">
+                                <span class="input-unit">mL</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="fator_naoh">
+                                Fator NaOH
+                            </label>
+                            <input type="number" class="form-control" id="fator_naoh" step="0.001" placeholder="0.000">
+                            <div class="form-text">Fator de correção do NaOH</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="volume_naoh">
+                                Volume NaOH
+                                <span class="unit">(mL)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="volume_naoh" step="0.1" placeholder="0.0">
+                                <span class="input-unit">mL</span>
+                            </div>
+                            <div class="form-text">Volume gasto na titulação</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calcularAcidez">
+                    <i class="fas fa-calculator"></i> Calcular Acidez
+                </button>
+                <button class="btn btn-secondary btn-clear">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado_area_acidez" style="display:none;">
+                <!-- Preenchido via JavaScript -->
+            </div>
+        </div>
+        
         <!-- Espaço reservado para outros cálculos -->
         <div class="empty-state" id="calculo-empty-state">
             <div>
-                <i class="fas fa-calculator-alt fa-3x mb-3"></i>
+                <i class="fas fa-calculator fa-3x mb-3"></i>
                 <h4>Selecione um cálculo</h4>
                 <p>Escolha um dos cálculos disponíveis no menu lateral para começar.</p>
             </div>
