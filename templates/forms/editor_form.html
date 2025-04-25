@@ -1,0 +1,1659 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Cabeçalho personalizado com gradiente -->
+    <div class="editor-header rounded-lg mb-4 p-4 animate-fade-in">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="text-white fw-bold mb-1 d-flex align-items-center">
+                    <i class="fas {% if file_ext == '.pdf' %}fa-file-pdf{% elif file_ext == '.docx' %}fa-file-word{% elif file_ext == '.xlsx' or file_ext == '.xls' %}fa-file-excel{% else %}fa-file-alt{% endif %} me-3 header-icon"></i>
+                    Editor Universal
+                </h1>
+                <p class="text-white-50 mb-0">
+                    {{ file_name }} - Edite todos os campos sem necessidade de download
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('editor.category', category=file_path.split('/')[0]) }}" class="btn btn-outline-light btn-rounded me-2 animate-fade-in-left">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar
+                </a>
+                
+                {% if standard_fields and standard_fields|length > 0 %}
+                <div class="btn-group animate-fade-in-left me-2" role="group">
+                    <button type="button" class="btn btn-glass dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-magic me-1"></i> Campos Padrão
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end custom-dropdown">
+                        <li><h6 class="dropdown-header">Selecione o conjunto de campos</h6></li>
+                        {% for std_field in standard_fields %}
+                        <li>
+                            <button class="dropdown-item standard-fields-option" data-fields-id="{{ std_field.id }}">
+                                {% if std_field.is_default %}
+                                <i class="fas fa-star text-warning me-1"></i>
+                                {% else %}
+                                <i class="fas fa-sliders-h text-primary me-1"></i>
+                                {% endif %}
+                                {{ std_field.name }}
+                            </button>
+                        </li>
+                        {% endfor %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('forms.standard_fields_list') }}">
+                                <i class="fas fa-cog me-1"></i> Gerenciar Campos Padrão
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if presets and presets|length > 0 %}
+                <div class="btn-group animate-fade-in-left" role="group">
+                    <button type="button" class="btn btn-glass preset-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bookmark me-1"></i> Aplicar Preset
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end custom-dropdown">
+                        <li><h6 class="dropdown-header">Predefinições salvas</h6></li>
+                        {% for preset in presets %}
+                        <li>
+                            <button class="dropdown-item preset-option" data-preset-id="{{ preset.id }}">
+                                {% if preset.is_default %}
+                                <i class="fas fa-star text-warning me-1"></i>
+                                {% else %}
+                                <i class="fas fa-bookmark text-primary me-1"></i>
+                                {% endif %}
+                                {{ preset.name }}
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Coluna de visualização do documento -->
+        <div class="col-lg-7 mb-4">
+            <div class="document-card animate-fade-in-up" style="animation-delay: 0.1s;">
+                <div class="document-header">
+                    <div class="doc-icon-wrapper">
+                        <i class="fas {% if file_ext == '.pdf' %}fa-file-pdf{% elif file_ext == '.docx' %}fa-file-word{% elif file_ext == '.xlsx' or file_ext == '.xls' %}fa-file-excel{% else %}fa-file-alt{% endif %}"></i>
+                    </div>
+                    <div class="document-title">
+                        <h5 class="mb-0">Visualização do Documento</h5>
+                        <p class="text-white-50 mb-0 small">
+                            <i class="fas fa-clock me-1"></i> Atualização em tempo real
+                        </p>
+                    </div>
+                    <div class="document-actions">
+                        <button type="button" class="btn-action btn-light" id="toggle-fullscreen" title="Tela cheia">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <a href="{{ url_for('forms.view_form', file_path=file_path) }}" target="_blank" class="btn-action btn-light" title="Abrir em nova aba">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="document-body">
+                    <!-- Container do documento com visualização -->
+                    <div class="document-preview-container" id="document-preview">
+                        <!-- A visualização do documento será carregada via JavaScript -->
+                        <div class="document-loading text-center p-5">
+                            <div class="spinner-border text-primary mb-3" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <h5>Carregando documento...</h5>
+                            <p class="text-muted">Por favor, aguarde enquanto preparamos o documento para edição.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna de edição de campos -->
+        <div class="col-lg-5 mb-4">
+            <div class="form-editor-card animate-fade-in-up" style="animation-delay: 0.2s;">
+                <div class="form-editor-header">
+                    <div class="editor-icon-wrapper">
+                        <i class="fas fa-pencil-alt"></i>
+                    </div>
+                    <div class="editor-title">
+                        <h5 class="mb-0">Campos para Preenchimento</h5>
+                        <p class="text-white-50 mb-0 small">
+                            <i class="fas fa-lightbulb me-1"></i> Edite para ver o resultado em tempo real
+                        </p>
+                    </div>
+                    <div class="editor-actions">
+                        <button type="button" class="btn-action btn-light" id="autofill-button" title="Auto preenchimento">
+                            <i class="fas fa-magic"></i>
+                        </button>
+                        <button type="button" class="btn-action btn-light" id="clear-all-fields" title="Limpar campos">
+                            <i class="fas fa-eraser"></i>
+                        </button>
+                        <button type="button" class="btn-action btn-light" id="save-fields-button" title="Salvar alterações">
+                            <i class="fas fa-save"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-editor-body">
+                    <form id="editor-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="file_path" value="{{ file_path }}">
+                        <input type="hidden" name="standard_fields_id" id="standard_fields_id" value="">
+                        
+                        <!-- Ferramentas de edição -->
+                        <div class="form-tools mb-3">
+                            <div class="form-tools-container">
+                                <div class="search-box">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input type="text" id="field-search" class="form-control form-sm" placeholder="Pesquisar campos...">
+                                    <button type="button" class="btn-clear-search" id="clear-search">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="field-counter">
+                                    <span class="counter-badge" id="field-count">0</span>
+                                    <span class="counter-text">campos</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions mt-2">
+                                <div class="field-categories">
+                                    <span class="category-badge active" data-category="all">Todos</span>
+                                    <span class="category-badge" data-category="filled">Preenchidos</span>
+                                    <span class="category-badge" data-category="empty">Vazios</span>
+                                </div>
+                                
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="save-preset-button">
+                                    <i class="fas fa-save me-1"></i> Salvar Preset
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Lista de campos para edição -->
+                        <div class="fields-container" id="fields-container">
+                            <!-- Os campos serão carregados dinamicamente via JavaScript -->
+                            <div class="fields-loading text-center p-4">
+                                <div class="spinner-border text-primary mb-3" role="status">
+                                    <span class="visually-hidden">Carregando...</span>
+                                </div>
+                                <h5>Carregando campos...</h5>
+                                <p class="text-muted">Identificando os campos editáveis do documento.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Botões de ação -->
+                        <div class="form-buttons mt-4">
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <button type="button" id="download-btn" class="btn btn-primary w-100">
+                                        <i class="fas fa-download me-1"></i> Baixar Preenchido
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" id="save-template-btn" class="btn btn-outline-secondary w-100">
+                                        <i class="fas fa-bookmark me-1"></i> Salvar Template
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modais -->
+    <!-- Modal de Preenchimento Automático -->
+    <div class="modal fade" id="autofill-modal" tabindex="-1" aria-labelledby="autofill-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="autofill-modal-label">
+                        <i class="fas fa-magic me-2 text-primary"></i> Preenchimento Automático
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-4">Preencha os campos padrão que serão aplicados ao documento.</p>
+                    
+                    <div class="mb-3">
+                        <label for="auto-empresa" class="form-label">Empresa</label>
+                        <input type="text" class="form-control" id="auto-empresa" placeholder="Nome da empresa">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="auto-marca" class="form-label">Marca</label>
+                        <input type="text" class="form-control" id="auto-marca" placeholder="Marca do produto">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="auto-produto" class="form-label">Produto</label>
+                        <input type="text" class="form-control" id="auto-produto" placeholder="Nome do produto">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="auto-lote" class="form-label">Lote</label>
+                        <input type="text" class="form-control" id="auto-lote" placeholder="Número do lote">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="auto-data" class="form-label">Data</label>
+                        <input type="date" class="form-control" id="auto-data">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="auto-responsavel" class="form-label">Responsável</label>
+                        <input type="text" class="form-control" id="auto-responsavel" placeholder="Nome do responsável">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="apply-autofill">
+                        <i class="fas fa-check me-1"></i> Aplicar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Salvar Preset -->
+    <div class="modal fade" id="save-preset-modal" tabindex="-1" aria-labelledby="save-preset-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="save-preset-modal-label">
+                        <i class="fas fa-bookmark me-2 text-primary"></i> Salvar Predefinição
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-4">Salve os campos preenchidos como uma predefinição para uso futuro.</p>
+                    
+                    <div class="mb-3">
+                        <label for="preset-name" class="form-label">Nome da Predefinição</label>
+                        <input type="text" class="form-control" id="preset-name" placeholder="Ex: Produto ABC - Lote 123">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="preset-description" class="form-label">Descrição (opcional)</label>
+                        <textarea class="form-control" id="preset-description" rows="3" placeholder="Descreva esta predefinição..."></textarea>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="preset-is-default">
+                        <label class="form-check-label" for="preset-is-default">
+                            Definir como padrão para este formulário
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirm-save-preset">
+                        <i class="fas fa-save me-1"></i> Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos para o editor universal */
+    .editor-header {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(78, 115, 223, 0.15);
+    }
+    
+    .editor-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.3;
+    }
+    
+    .header-icon {
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+    
+    /* Botões modernos com efeitos de vidro */
+    .btn-glass {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 50px;
+        padding: 0.6rem 1.2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-glass:hover {
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    .btn-outline-light {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Dropdown personalizado */
+    .custom-dropdown {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        padding: 0.5rem 0;
+        min-width: 220px;
+    }
+    
+    .custom-dropdown .dropdown-header {
+        font-weight: 600;
+        color: #6c757d;
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .custom-dropdown .dropdown-item {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+    
+    .custom-dropdown .dropdown-item:hover {
+        background-color: rgba(78, 115, 223, 0.1);
+        transform: translateX(5px);
+    }
+    
+    .custom-dropdown .dropdown-divider {
+        margin: 0.5rem 0;
+    }
+    
+    /* Card do documento */
+    .document-card {
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .document-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+        color: white;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .doc-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    
+    .document-title {
+        flex-grow: 1;
+    }
+    
+    .document-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-action:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .document-body {
+        flex-grow: 1;
+        position: relative;
+    }
+    
+    .document-preview-container {
+        height: 600px;
+        overflow: auto;
+        position: relative;
+        background-color: #f8f9fa;
+    }
+    
+    /* Card do editor de formulários */
+    .form-editor-card {
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .form-editor-header {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        color: white;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .editor-icon-wrapper {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    
+    .editor-title {
+        flex-grow: 1;
+    }
+    
+    .editor-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .form-editor-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        height: calc(600px - 84px); /* Altura total menos a altura do header */
+    }
+    
+    /* Ferramentas do formulário */
+    .form-tools {
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        padding: 1rem;
+    }
+    
+    .form-tools-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .search-box {
+        position: relative;
+        flex-grow: 1;
+        margin-right: 1rem;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+    
+    .search-box input {
+        padding-left: 2.25rem;
+        border-radius: 50px;
+        border: 1px solid #ced4da;
+        font-size: 0.875rem;
+    }
+    
+    .btn-clear-search {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: all 0.2s ease;
+        padding: 0;
+    }
+    
+    .btn-clear-search:hover {
+        opacity: 1;
+    }
+    
+    .field-counter {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .counter-badge {
+        background-color: #2563eb;
+        color: white;
+        border-radius: 50px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .counter-text {
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+    
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .field-categories {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .category-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        background-color: #e9ecef;
+        color: #6c757d;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .category-badge:hover {
+        background-color: #dee2e6;
+    }
+    
+    .category-badge.active {
+        background-color: #2563eb;
+        color: white;
+    }
+    
+    /* Container de campos */
+    .fields-container {
+        margin-top: 1rem;
+        max-height: 350px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+    
+    /* Estilos para os campos de edição */
+    .field-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+        margin-bottom: 0.75rem;
+    }
+    
+    .field-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+    
+    .field-wrapper {
+        padding: 1rem;
+    }
+    
+    .field-wrapper.autofield {
+        background-color: #f0f9ff;
+        border-left: 3px solid #2563eb;
+    }
+    
+    .field-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .field-icon-container {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background-color: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+    }
+    
+    .field-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0;
+    }
+    
+    .field-input {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .field-input input, .field-input textarea, .field-input select {
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        flex-grow: 1;
+    }
+    
+    .field-input input:focus, .field-input textarea:focus, .field-input select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+    
+    .field-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .field-action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f3f4f6;
+        color: #6b7280;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .field-action-btn:hover {
+        background-color: #e5e7eb;
+        color: #374151;
+    }
+    
+    /* Estilo para visualização de Excel */
+    .excel-view {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    .excel-view th, .excel-view td {
+        border: 1px solid #e5e7eb;
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .excel-view th {
+        background-color: #f3f4f6;
+        font-weight: 600;
+        text-align: center;
+    }
+    
+    .excel-view td {
+        text-align: left;
+    }
+    
+    .excel-view .highlight-cell {
+        background-color: #f0f9ff;
+        border: 2px solid #2563eb;
+    }
+    
+    /* Estilo para visualização de Word */
+    .word-view {
+        padding: 2rem;
+        font-family: 'Calibri', sans-serif;
+        line-height: 1.5;
+    }
+    
+    .word-paragraph {
+        margin-bottom: 1rem;
+    }
+    
+    .word-table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .word-table th, .word-table td {
+        border: 1px solid #d1d5db;
+        padding: 0.5rem;
+    }
+    
+    .word-field {
+        background-color: #f0f9ff;
+        border-bottom: 1px dashed #2563eb;
+        padding: 0 0.25rem;
+    }
+    
+    /* Estilo para visualização de PDF */
+    .pdf-container {
+        width: 100%;
+        height: 100%;
+    }
+    
+    /* Animações */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .animate-fade-in {
+        animation: fadeIn 0.8s ease-in-out;
+    }
+    
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-in-out;
+    }
+    
+    .animate-fade-in-left {
+        animation: fadeInLeft 0.8s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes fadeInUp {
+        from { 
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInLeft {
+        from { 
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elementos do DOM
+        const documentPreview = document.getElementById('document-preview');
+        const fieldsContainer = document.getElementById('fields-container');
+        const fieldCountElement = document.getElementById('field-count');
+        const fieldSearchInput = document.getElementById('field-search');
+        const clearSearchButton = document.getElementById('clear-search');
+        const categoryBadges = document.querySelectorAll('.category-badge');
+        const autofillButton = document.getElementById('autofill-button');
+        const clearAllFieldsButton = document.getElementById('clear-all-fields');
+        const saveFieldsButton = document.getElementById('save-fields-button');
+        const downloadButton = document.getElementById('download-btn');
+        const saveTemplateButton = document.getElementById('save-template-btn');
+        const savePresetButton = document.getElementById('save-preset-button');
+        const standardFieldsOptions = document.querySelectorAll('.standard-fields-option');
+        const presetOptions = document.querySelectorAll('.preset-option');
+        
+        // Bootstrap modals
+        const autofillModal = new bootstrap.Modal(document.getElementById('autofill-modal'));
+        const savePresetModal = new bootstrap.Modal(document.getElementById('save-preset-modal'));
+        
+        // Dados do documento e campos
+        let documentData = null;
+        let editedFields = {};
+        
+        // Carregar conteúdo do documento
+        loadDocumentContent();
+        
+        // Função para carregar conteúdo do documento e campos
+        function loadDocumentContent() {
+            // Mostrar animação de carregamento
+            if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showLoading) {
+                ZelopackAnimations.showLoading('Carregando documento...');
+            }
+            
+            // Fazer requisição AJAX para carregar o conteúdo
+            fetch('{{ url_for("editor.api_load_content", file_path=file_path) }}')
+                .then(response => response.json())
+                .then(data => {
+                    // Esconder animação de carregamento
+                    if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                        ZelopackAnimations.hideLoading();
+                    }
+                    
+                    if (data.success) {
+                        // Guardar dados do documento
+                        documentData = data;
+                        
+                        // Renderizar visualização do documento
+                        renderDocumentPreview(data);
+                        
+                        // Renderizar campos para edição
+                        renderFieldsForEditing(data);
+                    } else {
+                        // Mostrar erro
+                        showError('Erro ao carregar documento', data.message);
+                    }
+                })
+                .catch(error => {
+                    // Esconder animação de carregamento
+                    if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                        ZelopackAnimations.hideLoading();
+                    }
+                    
+                    // Mostrar erro
+                    showError('Erro ao carregar documento', error.message);
+                });
+        }
+        
+        // Função para renderizar visualização do documento
+        function renderDocumentPreview(data) {
+            documentPreview.innerHTML = '';
+            
+            if (data.content_type === 'excel') {
+                renderExcelPreview(data);
+            } else if (data.content_type === 'docx') {
+                renderDocxPreview(data);
+            } else if (data.content_type === 'pdf') {
+                renderPdfPreview(data);
+            } else {
+                // Formato não suportado
+                documentPreview.innerHTML = `
+                    <div class="unsupported-format text-center p-5">
+                        <div class="mb-3">
+                            <i class="fas fa-file-alt text-secondary display-4"></i>
+                        </div>
+                        <h4>Formato não suportado para visualização</h4>
+                        <p class="text-muted">O formato deste arquivo não pode ser visualizado diretamente.</p>
+                        <div class="mt-4">
+                            <a href="{{ url_for('forms.view_form', file_path=file_path) }}" target="_blank" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt me-1"></i> Abrir em Nova Aba
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Função para renderizar visualização de Excel
+        function renderExcelPreview(data) {
+            // Determinar qual aba mostrar inicialmente
+            const activeSheet = data.active_sheet;
+            const sheetData = data.sheets[activeSheet];
+            
+            // Criar seletor de abas
+            const tabsHtml = Object.keys(data.sheets).map(sheetName => {
+                const isActive = sheetName === activeSheet;
+                return `<button class="excel-tab-btn ${isActive ? 'active' : ''}" data-sheet="${sheetName}">${sheetName}</button>`;
+            }).join('');
+            
+            // Criar container para visualização de Excel
+            const excelContainer = document.createElement('div');
+            excelContainer.className = 'excel-container p-3';
+            excelContainer.innerHTML = `
+                <div class="excel-tabs mb-3">${tabsHtml}</div>
+                <div class="excel-sheet-container" id="excel-sheet-container"></div>
+            `;
+            
+            documentPreview.appendChild(excelContainer);
+            
+            // Renderizar a aba ativa
+            renderExcelSheet(activeSheet, sheetData);
+            
+            // Adicionar eventos aos botões de aba
+            document.querySelectorAll('.excel-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Atualizar aparência dos botões
+                    document.querySelectorAll('.excel-tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Renderizar a aba selecionada
+                    const sheetName = this.getAttribute('data-sheet');
+                    renderExcelSheet(sheetName, data.sheets[sheetName]);
+                });
+            });
+        }
+        
+        // Função para renderizar uma aba do Excel
+        function renderExcelSheet(sheetName, sheetData) {
+            const container = document.getElementById('excel-sheet-container');
+            
+            // Criar tabela para visualização
+            const tableHtml = `
+                <table class="excel-view">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            ${sheetData.columns.map((col, index) => `<th>${String.fromCharCode(65 + index)}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sheetData.data.map((row, rowIndex) => `
+                            <tr>
+                                <th>${rowIndex + 1}</th>
+                                ${row.map((cell, colIndex) => `
+                                    <td class="${cell.is_field ? 'highlight-cell' : ''}"
+                                        data-row="${cell.row}" 
+                                        data-col="${cell.col}">
+                                        ${cell.value}
+                                    </td>
+                                `).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = tableHtml;
+        }
+        
+        // Função para renderizar visualização de Word
+        function renderDocxPreview(data) {
+            // Criar container para visualização de Word
+            const wordContainer = document.createElement('div');
+            wordContainer.className = 'word-view';
+            
+            // Renderizar parágrafos
+            const paragraphsHtml = data.paragraphs.map(para => {
+                if (para.is_field) {
+                    return `<div class="word-paragraph word-field" data-paragraph-index="${para.paragraph_index}">${para.text}</div>`;
+                } else {
+                    return `<div class="word-paragraph">${para.text}</div>`;
+                }
+            }).join('');
+            
+            // Renderizar tabelas
+            const tablesHtml = data.tables.map(table => {
+                return `
+                    <table class="word-table" data-table-index="${table.table_index}">
+                        <tbody>
+                            ${table.data.map((row, rowIndex) => `
+                                <tr>
+                                    ${row.map((cell, colIndex) => `
+                                        <td class="${cell.is_field ? 'word-field' : ''}"
+                                            data-row-index="${cell.row_index}" 
+                                            data-col-index="${cell.col_index}">
+                                            ${cell.text}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }).join('');
+            
+            wordContainer.innerHTML = paragraphsHtml + tablesHtml;
+            documentPreview.appendChild(wordContainer);
+        }
+        
+        // Função para renderizar visualização de PDF
+        function renderPdfPreview(data) {
+            // Usar base64 para exibir o PDF
+            const pdfContainer = document.createElement('div');
+            pdfContainer.className = 'pdf-container';
+            
+            if (data.pdf_base64) {
+                // Criar iframe para visualização inline do PDF
+                pdfContainer.innerHTML = `
+                    <iframe 
+                        src="data:application/pdf;base64,${data.pdf_base64}" 
+                        width="100%" 
+                        height="100%" 
+                        style="border: none;">
+                    </iframe>
+                `;
+            } else {
+                // Alternativa se não tiver base64
+                pdfContainer.innerHTML = `
+                    <iframe 
+                        src="{{ url_for('forms.view_form', file_path=file_path) }}" 
+                        width="100%" 
+                        height="100%" 
+                        style="border: none;">
+                    </iframe>
+                `;
+            }
+            
+            documentPreview.appendChild(pdfContainer);
+        }
+        
+        // Função para renderizar campos para edição
+        function renderFieldsForEditing(data) {
+            // Limpar container
+            fieldsContainer.innerHTML = '';
+            
+            // Verificar se há campos
+            const fields = data.fields || [];
+            fieldCountElement.textContent = fields.length;
+            
+            if (fields.length === 0) {
+                fieldsContainer.innerHTML = `
+                    <div class="empty-fields text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-info-circle text-info display-4"></i>
+                        </div>
+                        <h5>Nenhum campo detectado</h5>
+                        <p class="text-muted">Este documento não possui campos editáveis detectados.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Adicionar os campos
+            fields.forEach((field, index) => {
+                const cardElement = createFieldCard(field, index);
+                fieldsContainer.appendChild(cardElement);
+            });
+        }
+        
+        // Função para criar card de um campo
+        function createFieldCard(field, index) {
+            // Definir ícone baseado no nome do campo
+            let fieldIcon = 'fa-pen';
+            if (field.id.includes('empresa') || field.id.includes('compan')) fieldIcon = 'fa-building';
+            else if (field.id.includes('produto') || field.id.includes('product')) fieldIcon = 'fa-box';
+            else if (field.id.includes('marca') || field.id.includes('brand')) fieldIcon = 'fa-tag';
+            else if (field.id.includes('lote') || field.id.includes('lot')) fieldIcon = 'fa-barcode';
+            else if (field.id.includes('data') || field.id.includes('date')) fieldIcon = 'fa-calendar-alt';
+            else if (field.id.includes('hora') || field.id.includes('time')) fieldIcon = 'fa-clock';
+            else if (field.id.includes('usuario') || field.id.includes('user')) fieldIcon = 'fa-user';
+            else if (field.id.includes('responsavel')) fieldIcon = 'fa-user-tie';
+            else if (field.id.includes('departamento')) fieldIcon = 'fa-sitemap';
+            
+            // Verificar se é um campo automático
+            const isAutoField = ['empresa', 'produto', 'marca', 'lote', 'responsavel', 'departamento', 'data'].some(key => 
+                field.id.toLowerCase().includes(key)
+            );
+            
+            // Criar elemento do card
+            const cardElement = document.createElement('div');
+            cardElement.className = 'field-card animate-fade-in';
+            cardElement.style.animationDelay = `${(index * 0.05) + 0.1}s`;
+            cardElement.setAttribute('data-field-id', field.id);
+            
+            cardElement.innerHTML = `
+                <div class="field-wrapper ${isAutoField ? 'autofield' : ''}">
+                    <div class="field-header">
+                        <div class="field-icon-container">
+                            <i class="fas ${fieldIcon}"></i>
+                        </div>
+                        <label class="field-label" for="field_${field.id}">
+                            ${field.name}
+                            ${isAutoField ? '<span class="badge bg-info badge-sm ms-1" title="Campo com preenchimento automático">Auto</span>' : ''}
+                        </label>
+                    </div>
+                    <div class="field-input">
+                        <input 
+                            type="text" 
+                            id="field_${field.id}" 
+                            name="field_${field.id}" 
+                            class="form-control field-value" 
+                            value="${field.value || ''}" 
+                            placeholder="Digite o valor..."
+                            data-field-id="${field.id}"
+                        >
+                        <button type="button" class="field-action-btn clear-field-btn" title="Limpar campo">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Adicionar evento para atualizar o valor editado
+            const inputElement = cardElement.querySelector('.field-value');
+            inputElement.addEventListener('input', function() {
+                // Atualizar valor nos dados editados
+                const fieldId = this.getAttribute('data-field-id');
+                editedFields[fieldId] = this.value;
+                
+                // Atualizar visualização se possível (não implementado neste exemplo)
+                updateDocumentPreview(fieldId, this.value);
+            });
+            
+            // Adicionar evento para limpar o campo
+            const clearButton = cardElement.querySelector('.clear-field-btn');
+            clearButton.addEventListener('click', function() {
+                const input = this.parentElement.querySelector('.field-value');
+                input.value = '';
+                
+                // Disparar evento de input para atualizar visualização
+                const event = new Event('input', { bubbles: true });
+                input.dispatchEvent(event);
+            });
+            
+            return cardElement;
+        }
+        
+        // Função para atualizar a visualização do documento com o novo valor
+        function updateDocumentPreview(fieldId, value) {
+            // Esta função seria usada para atualizar a visualização do documento
+            // Não implementada completamente neste exemplo, pois requer manipulação DOM específica
+            // por tipo de documento
+            
+            // Exemplo básico para Excel
+            if (documentData && documentData.content_type === 'excel') {
+                // Encontrar a célula correspondente ao campo
+                const field = documentData.fields.find(f => f.id === fieldId);
+                if (field && field.sheet && field.row && field.col) {
+                    const cell = document.querySelector(`.excel-view td[data-row="${field.row}"][data-col="${field.col}"]`);
+                    if (cell) {
+                        // Atualizar valor da célula na visualização
+                        cell.textContent = value;
+                    }
+                }
+            }
+            
+            // Para Word e PDF, a atualização em tempo real é mais complexa
+            // e pode exigir renderização completa do documento
+        }
+        
+        // Filtro para campos
+        fieldSearchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const fieldCards = document.querySelectorAll('.field-card');
+            
+            fieldCards.forEach(card => {
+                const fieldLabel = card.querySelector('.field-label').textContent.toLowerCase();
+                const fieldValue = card.querySelector('.field-value').value.toLowerCase();
+                
+                if (fieldLabel.includes(query) || fieldValue.includes(query)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Limpar pesquisa
+        clearSearchButton.addEventListener('click', function() {
+            fieldSearchInput.value = '';
+            
+            // Disparar evento de input para atualizar filtro
+            const event = new Event('input', { bubbles: true });
+            fieldSearchInput.dispatchEvent(event);
+        });
+        
+        // Filtro por categoria (todos, preenchidos, vazios)
+        categoryBadges.forEach(badge => {
+            badge.addEventListener('click', function() {
+                // Atualizar aparência dos badges
+                categoryBadges.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Aplicar filtro
+                const category = this.getAttribute('data-category');
+                const fieldCards = document.querySelectorAll('.field-card');
+                
+                fieldCards.forEach(card => {
+                    const input = card.querySelector('.field-value');
+                    const isEmpty = !input.value.trim();
+                    
+                    if (category === 'all' || 
+                        (category === 'filled' && !isEmpty) || 
+                        (category === 'empty' && isEmpty)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Botão de preenchimento automático
+        autofillButton.addEventListener('click', function() {
+            // Exibir o modal
+            autofillModal.show();
+        });
+        
+        // Botão para aplicar preenchimento automático
+        document.getElementById('apply-autofill').addEventListener('click', function() {
+            // Obter valores do modal
+            const empresa = document.getElementById('auto-empresa').value;
+            const marca = document.getElementById('auto-marca').value;
+            const produto = document.getElementById('auto-produto').value;
+            const lote = document.getElementById('auto-lote').value;
+            const data = document.getElementById('auto-data').value;
+            const responsavel = document.getElementById('auto-responsavel').value;
+            
+            // Formatar data se necessário
+            let formattedDate = data;
+            if (data) {
+                const dateObj = new Date(data);
+                formattedDate = dateObj.toLocaleDateString('pt-BR');
+            }
+            
+            // Preencher os campos
+            const fieldInputs = document.querySelectorAll('.field-value');
+            fieldInputs.forEach(input => {
+                const fieldId = input.getAttribute('data-field-id').toLowerCase();
+                
+                if (fieldId.includes('empresa') && empresa) {
+                    input.value = empresa;
+                } else if (fieldId.includes('marca') && marca) {
+                    input.value = marca;
+                } else if (fieldId.includes('produto') && produto) {
+                    input.value = produto;
+                } else if (fieldId.includes('lote') && lote) {
+                    input.value = lote;
+                } else if (fieldId.includes('data') && formattedDate) {
+                    input.value = formattedDate;
+                } else if (fieldId.includes('responsavel') && responsavel) {
+                    input.value = responsavel;
+                }
+                
+                // Disparar evento de input para atualizar os dados editados
+                const event = new Event('input', { bubbles: true });
+                input.dispatchEvent(event);
+            });
+            
+            // Fechar o modal
+            autofillModal.hide();
+            
+            // Mostrar mensagem de sucesso
+            if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showMessage) {
+                ZelopackAnimations.showMessage('Preenchimento automático aplicado com sucesso!', 'success');
+            }
+        });
+        
+        // Botão para limpar todos os campos
+        clearAllFieldsButton.addEventListener('click', function() {
+            // Confirmar antes de limpar
+            if (confirm('Tem certeza de que deseja limpar todos os campos?')) {
+                // Limpar todos os campos
+                const fieldInputs = document.querySelectorAll('.field-value');
+                fieldInputs.forEach(input => {
+                    input.value = '';
+                    
+                    // Disparar evento de input para atualizar os dados editados
+                    const event = new Event('input', { bubbles: true });
+                    input.dispatchEvent(event);
+                });
+                
+                // Mostrar mensagem de sucesso
+                if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showMessage) {
+                    ZelopackAnimations.showMessage('Todos os campos foram limpos!', 'info');
+                }
+            }
+        });
+        
+        // Botão para salvar alterações
+        saveFieldsButton.addEventListener('click', function() {
+            // Coletar todos os valores dos campos
+            const fieldInputs = document.querySelectorAll('.field-value');
+            const formData = {};
+            
+            fieldInputs.forEach(input => {
+                const fieldId = input.getAttribute('data-field-id');
+                formData[fieldId] = input.value;
+            });
+            
+            // Salvar os dados e baixar o arquivo
+            saveAndDownload(formData);
+        });
+        
+        // Botão para baixar formulário preenchido
+        downloadButton.addEventListener('click', function() {
+            // Coletar todos os valores dos campos
+            const fieldInputs = document.querySelectorAll('.field-value');
+            const formData = {};
+            
+            fieldInputs.forEach(input => {
+                const fieldId = input.getAttribute('data-field-id');
+                formData[fieldId] = input.value;
+            });
+            
+            // Salvar os dados e baixar o arquivo
+            saveAndDownload(formData);
+        });
+        
+        // Botão para salvar um template
+        saveTemplateButton.addEventListener('click', function() {
+            // Exibir o modal
+            savePresetModal.show();
+        });
+        
+        // Botão para salvar um preset
+        savePresetButton.addEventListener('click', function() {
+            // Exibir o modal
+            savePresetModal.show();
+        });
+        
+        // Botão para confirmar salvamento de preset
+        document.getElementById('confirm-save-preset').addEventListener('click', function() {
+            // Obter valores do modal
+            const presetName = document.getElementById('preset-name').value;
+            const presetDescription = document.getElementById('preset-description').value;
+            const isDefault = document.getElementById('preset-is-default').checked;
+            
+            if (!presetName) {
+                alert('Por favor, informe um nome para a predefinição!');
+                return;
+            }
+            
+            // Coletar todos os valores dos campos
+            const fieldInputs = document.querySelectorAll('.field-value');
+            const presetData = {};
+            
+            fieldInputs.forEach(input => {
+                const fieldId = input.getAttribute('data-field-id');
+                if (input.value) {
+                    presetData[fieldId] = input.value;
+                }
+            });
+            
+            // Enviar dados para o servidor
+            savePreset(presetName, presetDescription, isDefault, presetData);
+        });
+        
+        // Aplicar predefinição selecionada
+        presetOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const presetId = this.getAttribute('data-preset-id');
+                applyPreset(presetId);
+            });
+        });
+        
+        // Aplicar campos padronizados selecionado
+        standardFieldsOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const fieldsId = this.getAttribute('data-fields-id');
+                applyStandardFields(fieldsId);
+            });
+        });
+        
+        // Função para salvar e baixar arquivo com campos preenchidos
+        function saveAndDownload(formData) {
+            // Mostrar animação de carregamento
+            if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showLoading) {
+                ZelopackAnimations.showLoading('Salvando formulário...');
+            }
+            
+            // Preparar dados para envio
+            const dataToSend = {
+                fields: documentData.fields.map(field => {
+                    return {
+                        ...field,
+                        edited_value: formData[field.id] || ''
+                    };
+                })
+            };
+            
+            // Enviar dados para o servidor
+            fetch('{{ url_for("editor.api_save_content", file_path=file_path) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Esconder animação de carregamento
+                if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                    ZelopackAnimations.hideLoading();
+                }
+                
+                if (data.success) {
+                    // Iniciar download do arquivo salvo
+                    window.location.href = '{{ url_for("editor.api_download_edited") }}';
+                    
+                    // Mostrar mensagem de sucesso
+                    if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showMessage) {
+                        ZelopackAnimations.showMessage('Formulário salvo com sucesso!', 'success');
+                    }
+                } else {
+                    // Mostrar erro
+                    showError('Erro ao salvar formulário', data.message);
+                }
+            })
+            .catch(error => {
+                // Esconder animação de carregamento
+                if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                    ZelopackAnimations.hideLoading();
+                }
+                
+                // Mostrar erro
+                showError('Erro ao salvar formulário', error.message);
+            });
+        }
+        
+        // Função para salvar preset
+        function savePreset(name, description, isDefault, presetData) {
+            // Mostrar animação de carregamento
+            if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showLoading) {
+                ZelopackAnimations.showLoading('Salvando predefinição...');
+            }
+            
+            // Preparar dados para envio
+            const dataToSend = {
+                name: name,
+                description: description,
+                is_default: isDefault,
+                data: presetData
+            };
+            
+            // Enviar dados para o servidor
+            fetch('{{ url_for("editor.api_create_preset", file_path=file_path) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Esconder animação de carregamento
+                if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                    ZelopackAnimations.hideLoading();
+                }
+                
+                if (data.success) {
+                    // Fechar o modal
+                    savePresetModal.hide();
+                    
+                    // Limpar campos do modal
+                    document.getElementById('preset-name').value = '';
+                    document.getElementById('preset-description').value = '';
+                    document.getElementById('preset-is-default').checked = false;
+                    
+                    // Mostrar mensagem de sucesso
+                    if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showMessage) {
+                        ZelopackAnimations.showMessage('Predefinição salva com sucesso!', 'success');
+                    }
+                    
+                    // Recarregar a página para atualizar a lista de predefinições
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    // Mostrar erro
+                    showError('Erro ao salvar predefinição', data.message);
+                }
+            })
+            .catch(error => {
+                // Esconder animação de carregamento
+                if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                    ZelopackAnimations.hideLoading();
+                }
+                
+                // Mostrar erro
+                showError('Erro ao salvar predefinição', error.message);
+            });
+        }
+        
+        // Função para aplicar predefinição
+        function applyPreset(presetId) {
+            // Mostrar animação de carregamento
+            if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showLoading) {
+                ZelopackAnimations.showLoading('Aplicando predefinição...');
+            }
+            
+            // Buscar dados da predefinição
+            fetch('{{ url_for("editor.api_get_preset", preset_id="") }}' + presetId)
+                .then(response => response.json())
+                .then(data => {
+                    // Esconder animação de carregamento
+                    if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                        ZelopackAnimations.hideLoading();
+                    }
+                    
+                    if (data.success) {
+                        // Aplicar valores da predefinição aos campos
+                        const presetData = data.preset.data;
+                        
+                        const fieldInputs = document.querySelectorAll('.field-value');
+                        fieldInputs.forEach(input => {
+                            const fieldId = input.getAttribute('data-field-id');
+                            if (presetData[fieldId]) {
+                                input.value = presetData[fieldId];
+                                
+                                // Disparar evento de input para atualizar os dados editados
+                                const event = new Event('input', { bubbles: true });
+                                input.dispatchEvent(event);
+                            }
+                        });
+                        
+                        // Mostrar mensagem de sucesso
+                        if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showMessage) {
+                            ZelopackAnimations.showMessage('Predefinição aplicada com sucesso!', 'success');
+                        }
+                    } else {
+                        // Mostrar erro
+                        showError('Erro ao aplicar predefinição', data.message);
+                    }
+                })
+                .catch(error => {
+                    // Esconder animação de carregamento
+                    if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                        ZelopackAnimations.hideLoading();
+                    }
+                    
+                    // Mostrar erro
+                    showError('Erro ao aplicar predefinição', error.message);
+                });
+        }
+        
+        // Função para aplicar campos padronizados
+        function applyStandardFields(fieldsId) {
+            // Mostrar animação de carregamento
+            if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showLoading) {
+                ZelopackAnimations.showLoading('Aplicando campos padronizados...');
+            }
+            
+            // Buscar dados dos campos padronizados
+            fetch('{{ url_for("editor.api_get_standard_fields", fields_id="") }}' + fieldsId)
+                .then(response => response.json())
+                .then(data => {
+                    // Esconder animação de carregamento
+                    if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                        ZelopackAnimations.hideLoading();
+                    }
+                    
+                    if (data.success) {
+                        // Aplicar valores dos campos padronizados
+                        const fieldsData = data.standard_fields.data;
+                        
+                        // Preencher os campos correspondentes
+                        const fieldInputs = document.querySelectorAll('.field-value');
+                        fieldInputs.forEach(input => {
+                            const fieldId = input.getAttribute('data-field-id').toLowerCase();
+                            
+                            // Procurar por correspondências nos nomes dos campos
+                            Object.entries(fieldsData).forEach(([key, value]) => {
+                                if (fieldId.includes(key.toLowerCase()) && value) {
+                                    input.value = value;
+                                    
+                                    // Disparar evento de input para atualizar os dados editados
+                                    const event = new Event('input', { bubbles: true });
+                                    input.dispatchEvent(event);
+                                }
+                            });
+                        });
+                        
+                        // Registrar o ID dos campos padronizados usados
+                        document.getElementById('standard_fields_id').value = fieldsId;
+                        
+                        // Mostrar mensagem de sucesso
+                        if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showMessage) {
+                            ZelopackAnimations.showMessage('Campos padronizados aplicados com sucesso!', 'success');
+                        }
+                    } else {
+                        // Mostrar erro
+                        showError('Erro ao aplicar campos padronizados', data.message);
+                    }
+                })
+                .catch(error => {
+                    // Esconder animação de carregamento
+                    if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.hideLoading) {
+                        ZelopackAnimations.hideLoading();
+                    }
+                    
+                    // Mostrar erro
+                    showError('Erro ao aplicar campos padronizados', error.message);
+                });
+        }
+        
+        // Função para mostrar erro
+        function showError(title, message) {
+            if (typeof ZelopackAnimations !== 'undefined' && ZelopackAnimations.showMessage) {
+                ZelopackAnimations.showMessage(`${title}: ${message}`, 'error');
+            } else {
+                alert(`${title}: ${message}`);
+            }
+        }
+    });
+</script>
+{% endblock %}
