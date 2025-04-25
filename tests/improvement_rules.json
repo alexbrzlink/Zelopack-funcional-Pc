@@ -1,0 +1,93 @@
+{
+    "js": {
+        "patterns": [
+            {
+                "pattern": "console\\.log\\(",
+                "message": "Remover console.log em produ\u00e7\u00e3o",
+                "severity": "warning"
+            },
+            {
+                "pattern": "function\\s*\\(\\)\\s*{",
+                "message": "Usar arrow functions para express\u00f5es simples",
+                "severity": "suggestion"
+            },
+            {
+                "pattern": "var\\s+",
+                "message": "Substituir 'var' por 'const' ou 'let'",
+                "severity": "warning"
+            },
+            {
+                "pattern": "\\.forEach\\(\\s*function",
+                "message": "Usar arrow function com forEach",
+                "severity": "suggestion"
+            },
+            {
+                "pattern": "setTimeout\\s*\\(\\s*function",
+                "message": "Usar arrow function com setTimeout",
+                "severity": "suggestion"
+            }
+        ]
+    },
+    "css": {
+        "patterns": [
+            {
+                "pattern": "!important",
+                "message": "Evitar uso de !important",
+                "severity": "warning"
+            },
+            {
+                "pattern": "rgba?\\(",
+                "message": "Considerar usar vari\u00e1veis CSS para cores",
+                "severity": "suggestion"
+            },
+            {
+                "pattern": "@media\\s+screen",
+                "message": "Usar pontos de quebra consistentes para responsividade",
+                "severity": "info"
+            }
+        ]
+    },
+    "html": {
+        "patterns": [
+            {
+                "pattern": "<img[^>]+(?!alt=)[^>]*>",
+                "message": "Adicionar atributo alt em imagens",
+                "severity": "warning"
+            },
+            {
+                "pattern": "<table",
+                "message": "Garantir que tabelas s\u00e3o responsivas com .table-responsive",
+                "severity": "suggestion"
+            },
+            {
+                "pattern": "style=\\\"",
+                "message": "Evitar estilos inline",
+                "severity": "warning"
+            }
+        ]
+    },
+    "py": {
+        "patterns": [
+            {
+                "pattern": "print\\(",
+                "message": "Substituir print por logger em c\u00f3digo de produ\u00e7\u00e3o",
+                "severity": "warning"
+            },
+            {
+                "pattern": "except\\s*:",
+                "message": "Evitar captura gen\u00e9rica de exce\u00e7\u00f5es",
+                "severity": "warning"
+            },
+            {
+                "pattern": "\\.execute\\([\\\"']",
+                "message": "Risco de inje\u00e7\u00e3o SQL, usar par\u00e2metros",
+                "severity": "critical"
+            },
+            {
+                "pattern": "os\\.system\\(",
+                "message": "Evitar os.system, usar subprocess",
+                "severity": "warning"
+            }
+        ]
+    }
+}

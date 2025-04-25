@@ -1,0 +1,1325 @@
+=== RELATÓRIO DE MONITORAMENTO ZELOPACK ===
+Data: 2025-04-25_19-13-15
+
+=== RESUMO ===
+Testes: FALHOU
+Problemas críticos: 0
+Avisos: 327
+Sugestões: 282
+Problemas de performance: 8
+
+=== RESULTADOS DOS TESTES ===
+Status: FALHA
+Código de retorno: 1
+
+=== AVISOS ===
+Arquivo: static/js/login.js, Linha: 245
+Mensagem: Remover console.log em produção
+Contexto: console.log('Particles.js não carregado. Ignorando efeito de partículas.');
+
+Arquivo: static/js/login.js, Linha: 118
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: // para preservar o token CSRF e o processamento do servidor
+
+Arquivo: static/js/animations.js, Linha: 91
+Mensagem: Remover console.log em produção
+Contexto: console.log('Loading: ' + message);
+
+Arquivo: static/js/animations.js, Linha: 242
+Mensagem: Remover console.log em produção
+Contexto: console.log(message);
+
+Arquivo: static/js/animations.js, Linha: 255
+Mensagem: Remover console.log em produção
+Contexto: console.log('Zelopack Animations: Inicializado com sucesso!');
+
+Arquivo: static/js/animations.js, Linha: 494
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: // Observar mudanças no DOM para animar conteúdo adicionado dinamicamente
+
+Arquivo: static/js/animations.js, Linha: 509
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: // Observar o corpo da página para adições de conteúdo
+
+Arquivo: static/js/calculos.js, Linha: 8
+Mensagem: Remover console.log em produção
+Contexto: console.log('ZeloCalc: Inicializando módulo de cálculos técnicos 2.0...');
+
+Arquivo: static/js/calculos.js, Linha: 82
+Mensagem: Remover console.log em produção
+Contexto: console.log('ZeloCalc: Módulo inicializado com sucesso!');
+
+Arquivo: static/js/calculos.js, Linha: 558
+Mensagem: Remover console.log em produção
+Contexto: console.log(`Mostrando calculadoras da categoria: ${categoria}`);
+
+Arquivo: static/js/calculos.js, Linha: 724
+Mensagem: Remover console.log em produção
+Contexto: console.log(`Calculando: ${calculatorType}`);
+
+Arquivo: static/js/calculos.js, Linha: 135
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: // Salvar na lista de favoritos
+
+Arquivo: static/js/calculos.js, Linha: 173
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: // Ativar o passo 2 (fórmula)
+
+Arquivo: static/js/calculos.js, Linha: 220
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: // Botão Salvar Resultado
+
+Arquivo: static/js/calculos.js, Linha: 242
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: // Salvar o resultado no histórico
+
+Arquivo: static/js/calculos_ultra.js, Linha: 7
+Mensagem: Remover console.log em produção
+Contexto: console.log("ZeloPack Ultra Calcs 2025 - Inicializado!");
+
+Arquivo: static/js/calculos_ultra.js, Linha: 185
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: // Salvar preferência (opcional)
+
+Arquivo: static/js/main.js, Linha: 7
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+
+Arquivo: static/js/main.js, Linha: 8
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+
+Arquivo: static/js/main.js, Linha: 13
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+
+Arquivo: static/js/main.js, Linha: 14
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+
+Arquivo: static/js/main.js, Linha: 245
+Mensagem: Substituir 'var' por 'const' ou 'let'
+Contexto: // Se estiver dentro de dropdown, ativar o dropdown também
+
+Arquivo: static/css/login.css, Linha: 216
+Mensagem: Evitar uso de !important
+Contexto: padding-left: 40px !important;
+
+Arquivo: static/css/tba_form.css, Linha: 376
+Mensagem: Evitar uso de !important
+Contexto: display: none !important;
+
+Arquivo: static/css/tba_form.css, Linha: 380
+Mensagem: Evitar uso de !important
+Contexto: background-color: #f2f2f2 !important;
+
+Arquivo: static/css/tba_form.css, Linha: 381
+Mensagem: Evitar uso de !important
+Contexto: color: #333 !important;
+
+Arquivo: static/css/theme.css, Linha: 185
+Mensagem: Evitar uso de !important
+Contexto: transition: none !important;
+
+Arquivo: static/css/theme.css, Linha: 186
+Mensagem: Evitar uso de !important
+Contexto: animation: none !important;
+
+Arquivo: static/css/theme.css, Linha: 200
+Mensagem: Evitar uso de !important
+Contexto: color: #9da9b7 !important;
+
+Arquivo: static/css/skeleton.css, Linha: 12
+Mensagem: Evitar uso de !important
+Contexto: display: none !important;
+
+Arquivo: static/css/skeleton.css, Linha: 16
+Mensagem: Evitar uso de !important
+Contexto: display: none !important;
+
+Arquivo: static/css/style.css, Linha: 131
+Mensagem: Evitar uso de !important
+Contexto: color: var(--zelopack-gray-700) !important;
+
+Arquivo: static/css/style.css, Linha: 133
+Mensagem: Evitar uso de !important
+Contexto: padding: 0.75rem 1rem !important;
+
+Arquivo: static/css/style.css, Linha: 149
+Mensagem: Evitar uso de !important
+Contexto: color: var(--zelopack-primary) !important;
+
+Arquivo: static/css/style.css, Linha: 159
+Mensagem: Evitar uso de !important
+Contexto: color: var(--zelopack-primary) !important;
+
+Arquivo: static/css/style.css, Linha: 790
+Mensagem: Evitar uso de !important
+Contexto: background-color: var(--zelopack-primary) !important;
+
+Arquivo: static/css/style.css, Linha: 801
+Mensagem: Evitar uso de !important
+Contexto: background-color: var(--zelopack-gray-600) !important;
+
+Arquivo: static/css/style.css, Linha: 812
+Mensagem: Evitar uso de !important
+Contexto: background-color: var(--zelopack-secondary) !important;
+
+Arquivo: static/css/style.css, Linha: 823
+Mensagem: Evitar uso de !important
+Contexto: background-color: var(--zelopack-warning) !important;
+
+Arquivo: static/css/style.css, Linha: 834
+Mensagem: Evitar uso de !important
+Contexto: background-color: var(--zelopack-error) !important;
+
+Arquivo: static/css/style.css, Linha: 845
+Mensagem: Evitar uso de !important
+Contexto: background-color: var(--zelopack-info) !important;
+
+Arquivo: static/css/style.css, Linha: 856
+Mensagem: Evitar uso de !important
+Contexto: background-color: var(--zelopack-accent) !important;
+
+Arquivo: templates/base.html, Linha: 69
+Mensagem: Evitar estilos inline
+Contexto: <span style="font-size: 1.5rem; font-weight: bold; color: #0d6efd;">ZELOPACK</span>
+
+Arquivo: templates/base.html, Linha: 203
+Mensagem: Evitar estilos inline
+Contexto: <span style="font-size: 1.8rem; font-weight: 700; color: var(--zelopack-primary);">ZELOPACK</span>
+
+Arquivo: templates/reports/upload.html, Linha: 397
+Mensagem: Evitar estilos inline
+Contexto: {{ form.report_archived(class="form-check-input me-2", style="height: 1.5rem; width: 3rem;") }}
+
+Arquivo: templates/reports/upload.html, Linha: 413
+Mensagem: Evitar estilos inline
+Contexto: {{ form.microbiology_collected(class="form-check-input me-2", style="height: 1.5rem; width: 3rem;") }}
+
+Arquivo: templates/reports/upload.html, Linha: 429
+Mensagem: Evitar estilos inline
+Contexto: {{ form.has_report_document(class="form-check-input me-2", style="height: 1.5rem; width: 3rem;") }}
+
+Arquivo: templates/reports/upload.html, Linha: 460
+Mensagem: Evitar estilos inline
+Contexto: <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+
+Arquivo: templates/reports/print.html, Linha: 94
+Mensagem: Evitar estilos inline
+Contexto: <th style="width: 30%">Título</th>
+
+Arquivo: templates/reports/view.html, Linha: 46
+Mensagem: Evitar estilos inline
+Contexto: <th style="width: 30%">Número do Lote</th>
+
+Arquivo: templates/dashboard/overview.html, Linha: 157
+Mensagem: Adicionar atributo alt em imagens
+Contexto: <img src="data:image/png;base64,{{ status_chart }}" class="img-fluid" alt="Gráfico de status">
+
+Arquivo: templates/dashboard/overview.html, Linha: 171
+Mensagem: Adicionar atributo alt em imagens
+Contexto: <img src="data:image/png;base64,{{ material_chart }}" class="img-fluid" alt="Gráfico por tipo de matéria-prima">
+
+Arquivo: templates/dashboard/overview.html, Linha: 189
+Mensagem: Adicionar atributo alt em imagens
+Contexto: <img src="data:image/png;base64,{{ quality_chart }}" class="img-fluid" alt="Gráfico de indicadores de qualidade">
+
+Arquivo: templates/dashboard/overview.html, Linha: 244
+Mensagem: Adicionar atributo alt em imagens
+Contexto: <img src="data:image/png;base64,{{ efficiency_chart }}" class="img-fluid" alt="Gráfico de eficiência">
+
+Arquivo: templates/dashboard/overview.html, Linha: 258
+Mensagem: Adicionar atributo alt em imagens
+Contexto: <img src="data:image/png;base64,{{ sla_chart }}" class="img-fluid" alt="Gráfico de SLA">
+
+Arquivo: templates/dashboard/quality.html, Linha: 236
+Mensagem: Adicionar atributo alt em imagens
+Contexto: <img src="data:image/png;base64,{{ quality_chart }}" class="img-fluid" alt="Gráfico de indicadores de qualidade">
+
+Arquivo: templates/dashboard/activities.html, Linha: 271
+Mensagem: Evitar estilos inline
+Contexto: <div class="progress flex-grow-1 me-2" style="height: 8px;">
+
+Arquivo: templates/dashboard/activities.html, Linha: 272
+Mensagem: Evitar estilos inline
+Contexto: <div class="progress-bar" role="progressbar" style="width: {{ percentage }}%"
+
+Arquivo: templates/dashboard/activities.html, Linha: 331
+Mensagem: Evitar estilos inline
+Contexto: <div class="progress flex-grow-1 me-2" style="height: 8px;">
+
+Arquivo: templates/dashboard/activities.html, Linha: 336
+Mensagem: Evitar estilos inline
+Contexto: role="progressbar" style="width: {{ percentage }}%"
+
+Arquivo: templates/dashboard/efficiency.html, Linha: 189
+Mensagem: Adicionar atributo alt em imagens
+Contexto: <img src="data:image/png;base64,{{ efficiency_chart }}" class="img-fluid" alt="Gráfico de volume de análises">
+
+Arquivo: templates/dashboard/efficiency.html, Linha: 203
+Mensagem: Adicionar atributo alt em imagens
+Contexto: <img src="data:image/png;base64,{{ sla_chart }}" class="img-fluid" alt="Gráfico de SLA">
+
+Arquivo: templates/dashboard/efficiency.html, Linha: 251
+Mensagem: Evitar estilos inline
+Contexto: <div class="progress-bar bg-success" role="progressbar" style="width: {{ approval_rate }}%"
+
+Arquivo: templates/dashboard/efficiency.html, Linha: 261
+Mensagem: Evitar estilos inline
+Contexto: role="progressbar" style="width: {{ performance_score }}%"
+
+Arquivo: templates/templates/create_template.html, Linha: 48
+Mensagem: Evitar estilos inline
+Contexto: <div id="template-editor" class="border rounded p-3" style="min-height: 400px;">
+
+Arquivo: templates/templates/create_template.html, Linha: 111
+Mensagem: Evitar estilos inline
+Contexto: <pre id="json-preview" class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">
+
+Arquivo: templates/templates/view_report.html, Linha: 34
+Mensagem: Evitar estilos inline
+Contexto: <th style="width: 30%">ID do Laudo:</th>
+
+Arquivo: templates/templates/view_report.html, Linha: 71
+Mensagem: Evitar estilos inline
+Contexto: <th style="width: 30%">Cliente:</th>
+
+Arquivo: templates/templates/edit_template.html, Linha: 48
+Mensagem: Evitar estilos inline
+Contexto: <div id="template-editor" class="border rounded p-3" style="min-height: 400px;">
+
+Arquivo: templates/templates/edit_template.html, Linha: 135
+Mensagem: Evitar estilos inline
+Contexto: <pre id="json-preview" class="bg-light p-3 rounded" style="max-height: 300px; overflow-y: auto;">
+
+Arquivo: templates/forms/fill_form.html, Linha: 119
+Mensagem: Evitar estilos inline
+Contexto: <div class="col-md-6 mb-3 animate-fade-in" style="animation-delay: {{ (loop.index0 * 0.05) + 0.3 }}s">
+
+Arquivo: templates/forms/index.html, Linha: 101
+Mensagem: Evitar estilos inline
+Contexto: <div id="search-results" class="mb-4 animate-fade-in" style="display: none;">
+
+Arquivo: templates/forms/index.html, Linha: 130
+Mensagem: Evitar estilos inline
+Contexto: <div class="category-card h-100 rounded-lg shadow animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 }}s;"
+
+Arquivo: templates/forms/standard_fields_list.html, Linha: 245
+Mensagem: Evitar estilos inline
+Contexto: <div class="alert alert-info fade-in-up" style="animation-delay: 0.1s;">
+
+Arquivo: templates/forms/standard_fields_list.html, Linha: 262
+Mensagem: Evitar estilos inline
+Contexto: <div class="card standard-fields-card fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 + 0.2 }}s;">
+
+Arquivo: templates/forms/create_standard_fields.html, Linha: 238
+Mensagem: Evitar estilos inline
+Contexto: <div class="card card-form fade-in-up" style="animation-delay: 0.1s;">
+
+Arquivo: templates/forms/interactive_form.html, Linha: 81
+Mensagem: Evitar estilos inline
+Contexto: <div class="document-card animate-fade-in-up" style="animation-delay: 0.1s;">
+
+Arquivo: templates/forms/interactive_form.html, Linha: 157
+Mensagem: Evitar estilos inline
+Contexto: <div class="form-editor-card animate-fade-in-up" style="animation-delay: 0.2s;">
+
+Arquivo: templates/forms/interactive_form.html, Linha: 214
+Mensagem: Evitar estilos inline
+Contexto: <div class="field-card mb-3 animate-fade-in" style="animation-delay: {{ (loop.index0 * 0.05) + 0.2 }}s" data-field-id="{{ field.id }}">
+
+Arquivo: templates/forms/category.html, Linha: 33
+Mensagem: Evitar estilos inline
+Contexto: <div class="card shadow-sm mb-4 animate-fade-in-up" style="animation-delay: 0.1s;">
+
+Arquivo: templates/forms/category.html, Linha: 72
+Mensagem: Evitar estilos inline
+Contexto: <div class="card shadow-sm mb-4 animate-fade-in-up" style="animation-delay: 0.2s;">
+
+Arquivo: templates/forms/category.html, Linha: 103
+Mensagem: Evitar estilos inline
+Contexto: <tr class="form-row animate-fade-in" style="animation-delay: {{ loop.index0 * 0.05 }}s" data-label="{{ form.name }}">
+
+Arquivo: templates/forms/category.html, Linha: 138
+Mensagem: Evitar estilos inline
+Contexto: <tr id="no-results" style="display: none;">
+
+Arquivo: templates/forms/editor_index.html, Linha: 32
+Mensagem: Evitar estilos inline
+Contexto: <div class="category-card animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+
+Arquivo: templates/forms/editor_index.html, Linha: 60
+Mensagem: Evitar estilos inline
+Contexto: <div class="card instruction-card mt-4 animate-fade-in" style="animation-delay: 0.5s;">
+
+Arquivo: templates/forms/editor_category.html, Linha: 28
+Mensagem: Evitar estilos inline
+Contexto: <div class="search-filter-container mb-4 animate-fade-in" style="animation-delay: 0.2s;">
+
+Arquivo: templates/forms/editor_category.html, Linha: 64
+Mensagem: Evitar estilos inline
+Contexto: <div id="files-container" class="files-grid animate-fade-in" style="animation-delay: 0.3s;">
+
+Arquivo: templates/forms/editor_category.html, Linha: 71
+Mensagem: Evitar estilos inline
+Contexto: <div class="file-card animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+
+Arquivo: templates/forms/editor_category.html, Linha: 95
+Mensagem: Evitar estilos inline
+Contexto: <div id="list-view" style="display: none;">
+
+Arquivo: templates/forms/editor_form.html, Linha: 82
+Mensagem: Evitar estilos inline
+Contexto: <div class="document-card animate-fade-in-up" style="animation-delay: 0.1s;">
+
+Arquivo: templates/forms/editor_form.html, Linha: 120
+Mensagem: Evitar estilos inline
+Contexto: <div class="form-editor-card animate-fade-in-up" style="animation-delay: 0.2s;">
+
+Arquivo: templates/forms/editor_form.html, Linha: 1055
+Mensagem: Evitar estilos inline
+Contexto: style="border: none;">
+
+Arquivo: templates/forms/editor_form.html, Linha: 1065
+Mensagem: Evitar estilos inline
+Contexto: style="border: none;">
+
+Arquivo: reset_report_table.py, Linha: 99
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Iniciando reset da tabela report...")
+
+Arquivo: reset_report_table.py, Linha: 103
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Reset concluído com sucesso!")
+
+Arquivo: reset_report_table.py, Linha: 106
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Ocorreram erros durante o reset. Verifique os logs.")
+
+Arquivo: generate_icon.py, Linha: 60
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Ícone gerado: {icon_path}")
+
+Arquivo: generate_icon.py, Linha: 65
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Ícone PNG gerado: {png_path}")
+
+Arquivo: generate_icon.py, Linha: 71
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Ícone salvo em: {icon_path}")
+
+Arquivo: create_installer_images.py, Linha: 69
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Imagem da barra lateral do instalador gerada: {sidebar_path}")
+
+Arquivo: create_installer_images.py, Linha: 103
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Imagem do cabeçalho do instalador gerada: {header_path}")
+
+Arquivo: create_installer_images.py, Linha: 141
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Arquivo de licença gerado: {license_path}")
+
+Arquivo: create_installer_images.py, Linha: 149
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Todas as imagens e arquivos do instalador foram gerados.")
+
+Arquivo: package_all.py, Linha: 30
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Executando: {command}")
+
+Arquivo: package_all.py, Linha: 49
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(output.strip())
+
+Arquivo: package_all.py, Linha: 53
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao executar comando: {e}")
+
+Arquivo: package_all.py, Linha: 58
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\n=== Gerando ícones e imagens ===")
+
+Arquivo: package_all.py, Linha: 63
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\n=== Compilando executável ===")
+
+Arquivo: package_all.py, Linha: 67
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Limpando pasta dist anterior...")
+
+Arquivo: package_all.py, Linha: 79
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\n=== Criando instalador ===")
+
+Arquivo: package_all.py, Linha: 92
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("AVISO: NSIS não encontrado. O instalador Windows não será criado.")
+
+Arquivo: package_all.py, Linha: 93
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Para criar o instalador, instale o NSIS de https://nsis.sourceforge.io/")
+
+Arquivo: package_all.py, Linha: 108
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\n=== Executando aplicativo para teste ===")
+
+Arquivo: package_all.py, Linha: 126
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Executável não encontrado para teste.")
+
+Arquivo: package_all.py, Linha: 131
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\n=================================================")
+
+Arquivo: package_all.py, Linha: 132
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"ZELOPACK - CRIAÇÃO DE PACOTE PARA {self.platform.upper()}")
+
+Arquivo: package_all.py, Linha: 133
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("=================================================\n")
+
+Arquivo: package_all.py, Linha: 137
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("ERRO: Falha ao gerar assets.")
+
+Arquivo: package_all.py, Linha: 142
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("ERRO: Falha ao compilar executável.")
+
+Arquivo: package_all.py, Linha: 147
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("AVISO: Falha ao criar instalador.")
+
+Arquivo: package_all.py, Linha: 153
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("AVISO: Falha ao executar o aplicativo para teste.")
+
+Arquivo: package_all.py, Linha: 155
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\n=================================================")
+
+Arquivo: package_all.py, Linha: 156
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"ZELOPACK - EMPACOTAMENTO CONCLUÍDO")
+
+Arquivo: package_all.py, Linha: 157
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("=================================================\n")
+
+Arquivo: package_all.py, Linha: 160
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Arquivos gerados:")
+
+Arquivo: package_all.py, Linha: 163
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"\nExecutável: {self.dist_dir}")
+
+Arquivo: package_all.py, Linha: 165
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"  - {item}")
+
+Arquivo: package_all.py, Linha: 168
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"\nInstaladores: {self.installers_dir}")
+
+Arquivo: package_all.py, Linha: 170
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"  - {item}")
+
+Arquivo: package_all.py, Linha: 86
+Mensagem: Evitar captura genérica de exceções
+Contexto: except:
+
+Arquivo: zelopack_app.py, Linha: 33
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Aviso: Não foi possível importar o módulo 'main'.")
+
+Arquivo: zelopack_app.py, Linha: 66
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Abrindo navegador em: {url}")
+
+Arquivo: zelopack_app.py, Linha: 72
+Mensagem: Substituir print por logger em código de produção
+Contexto: print('\nEncerrando aplicação ZELOPACK...')
+
+Arquivo: zelopack_app.py, Linha: 84
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("=" * 60)
+
+Arquivo: zelopack_app.py, Linha: 85
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("ZELOPACK - Sistema de Gerenciamento de Laudos")
+
+Arquivo: zelopack_app.py, Linha: 86
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("=" * 60)
+
+Arquivo: zelopack_app.py, Linha: 87
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Iniciando servidor em http://localhost:{port}")
+
+Arquivo: zelopack_app.py, Linha: 88
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Pressione Ctrl+C para encerrar a aplicação")
+
+Arquivo: zelopack_app.py, Linha: 89
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("=" * 60)
+
+Arquivo: check_admin.py, Linha: 6
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f'Usuário admin existe: {user is not None}')
+
+Arquivo: check_admin.py, Linha: 8
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f'Senha válida: {user.check_password("Alex")}')
+
+Arquivo: check_admin.py, Linha: 9
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f'Nome: {user.name}')
+
+Arquivo: check_admin.py, Linha: 10
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f'Email: {user.email}')
+
+Arquivo: check_admin.py, Linha: 11
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f'Ativo: {user.is_active}')
+
+Arquivo: check_alex.py, Linha: 13
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Usuário Alex já existe (ID: {user_by_username.id})")
+
+Arquivo: check_alex.py, Linha: 14
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Email: {user_by_username.email}")
+
+Arquivo: check_alex.py, Linha: 15
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Função: {user_by_username.role}")
+
+Arquivo: check_alex.py, Linha: 16
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Ativo: {user_by_username.is_active}")
+
+Arquivo: check_alex.py, Linha: 20
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Senha atualizada para 'Alex123'")
+
+Arquivo: check_alex.py, Linha: 22
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Usuário com email alex@zelopack.com.br já existe (username: {user_by_email.username})")
+
+Arquivo: check_alex.py, Linha: 23
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"ID: {user_by_email.id}")
+
+Arquivo: check_alex.py, Linha: 24
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Função: {user_by_email.role}")
+
+Arquivo: check_alex.py, Linha: 25
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Ativo: {user_by_email.is_active}")
+
+Arquivo: check_alex.py, Linha: 27
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Alterando username de '{user_by_email.username}' para 'Alex'")
+
+Arquivo: check_alex.py, Linha: 31
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário atualizado com sucesso!")
+
+Arquivo: check_alex.py, Linha: 33
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário Alex não existe. Criando novo usuário...")
+
+Arquivo: check_alex.py, Linha: 47
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário Alex criado com sucesso!")
+
+Arquivo: login_as_alex.py, Linha: 11
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Usuário Alex encontrado (ID: {user.id})")
+
+Arquivo: login_as_alex.py, Linha: 12
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Email: {user.email}")
+
+Arquivo: login_as_alex.py, Linha: 13
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Função: {user.role}")
+
+Arquivo: login_as_alex.py, Linha: 14
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Ativo: {user.is_active}")
+
+Arquivo: login_as_alex.py, Linha: 22
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário Alex não encontrado!")
+
+Arquivo: login_as_alex.py, Linha: 43
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Adicionando nova rota de login para Alex")
+
+Arquivo: test_full_system.py, Linha: 326
+Mensagem: Evitar captura genérica de exceções
+Contexto: except:
+
+Arquivo: update_db_schema.py, Linha: 18
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Verificando esquema atual do banco de dados...")
+
+Arquivo: update_db_schema.py, Linha: 34
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Adicionando coluna {column} ({dtype})...")
+
+Arquivo: update_db_schema.py, Linha: 39
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Migração concluída com sucesso!")
+
+Arquivo: update_db_schema.py, Linha: 43
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro durante a migração: {str(e)}")
+
+Arquivo: update_report_schema.py, Linha: 20
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Executando: {sql}")
+
+Arquivo: update_report_schema.py, Linha: 23
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Comando executado com sucesso.")
+
+Arquivo: update_report_schema.py, Linha: 26
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao executar comando: {e}")
+
+Arquivo: update_report_schema.py, Linha: 40
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao verificar coluna {column}: {e}")
+
+Arquivo: update_report_schema.py, Linha: 44
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Iniciando atualização do esquema do banco de dados...")
+
+Arquivo: update_report_schema.py, Linha: 91
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Atualização do esquema concluída.")
+
+Arquivo: update_report_schema.py, Linha: 96
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Script finalizado.")
+
+Arquivo: fix_db.py, Linha: 5
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Tentando restaurar a sessão do banco de dados...")
+
+Arquivo: fix_db.py, Linha: 9
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Sessão do banco de dados restaurada com sucesso!")
+
+Arquivo: fix_db.py, Linha: 11
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao restaurar a sessão: {e}")
+
+Arquivo: extract_excel.py, Linha: 30
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Tentando abrir o arquivo: {excel_path}")
+
+Arquivo: extract_excel.py, Linha: 34
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro: O arquivo {excel_path} não existe.")
+
+Arquivo: extract_excel.py, Linha: 42
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Planilhas encontradas: {sheet_names}")
+
+Arquivo: extract_excel.py, Linha: 51
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"\nProcessando planilha: {sheet_name}")
+
+Arquivo: extract_excel.py, Linha: 113
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao converter dados para JSON: {str(e)}")
+
+Arquivo: extract_excel.py, Linha: 133
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar o arquivo Excel: {str(e)}")
+
+Arquivo: extract_excel.py, Linha: 141
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Dados salvos em {output_path}")
+
+Arquivo: extract_excel.py, Linha: 144
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao salvar JSON: {str(e)}")
+
+Arquivo: extract_excel.py, Linha: 151
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Iniciando extração de dados do Excel...")
+
+Arquivo: extract_excel.py, Linha: 155
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\nSalvando os dados extraídos em JSON...")
+
+Arquivo: extract_excel.py, Linha: 157
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\nProcesso concluído.")
+
+Arquivo: extract_excel.py, Linha: 159
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\nFalha na extração de dados.")
+
+Arquivo: extract_excel.py, Linha: 22
+Mensagem: Evitar captura genérica de exceções
+Contexto: except:
+
+Arquivo: create_tables.py, Linha: 86
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Iniciando criação das tabelas do banco de dados...")
+
+Arquivo: create_tables.py, Linha: 90
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Processo concluído com sucesso!")
+
+Arquivo: create_tables.py, Linha: 93
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Ocorreram erros durante o processo. Verifique os logs.")
+
+Arquivo: sync_database.py, Linha: 184
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Iniciando sincronização do banco de dados...")
+
+Arquivo: sync_database.py, Linha: 188
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Sincronização concluída com sucesso!")
+
+Arquivo: sync_database.py, Linha: 191
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Ocorreram erros durante a sincronização. Verifique os logs.")
+
+Arquivo: app.py, Linha: 230
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário admin criado com sucesso!")
+
+Arquivo: app.py, Linha: 238
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário admin foi ativado")
+
+Arquivo: app.py, Linha: 250
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("ACESSANDO ROTA DE LOGIN AUTOMÁTICO")
+
+Arquivo: app.py, Linha: 257
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Total de usuários no sistema: {total_users}")
+
+Arquivo: app.py, Linha: 261
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Nenhum usuário encontrado. Criando usuário admin padrão...")
+
+Arquivo: app.py, Linha: 272
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário admin criado com sucesso!")
+
+Arquivo: app.py, Linha: 278
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(msg)
+
+Arquivo: app.py, Linha: 284
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(msg)
+
+Arquivo: app.py, Linha: 287
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário admin foi ativado automaticamente.")
+
+Arquivo: app.py, Linha: 295
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"ERRO: A senha do usuário admin não está validando corretamente. Redefinindo...")
+
+Arquivo: app.py, Linha: 301
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("ERRO CRÍTICO: A senha não pôde ser redefinida corretamente!")
+
+Arquivo: app.py, Linha: 305
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Senha redefinida com sucesso!")
+
+Arquivo: app.py, Linha: 309
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Login automático para usuário: {user.username}")
+
+Arquivo: app.py, Linha: 310
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Nome do usuário: {user.name}")
+
+Arquivo: app.py, Linha: 311
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"E-mail do usuário: {user.email}")
+
+Arquivo: app.py, Linha: 312
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Função do usuário: {user.role}")
+
+Arquivo: app.py, Linha: 313
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Status de ativação: {user.is_active}")
+
+Arquivo: app.py, Linha: 319
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Login automático bem-sucedido! Redirecionando para o dashboard...")
+
+Arquivo: app.py, Linha: 532
+Mensagem: Substituir print por logger em código de produção
+Contexto: app.register_blueprint(reports_bp)
+
+Arquivo: app.py, Linha: 533
+Mensagem: Substituir print por logger em código de produção
+Contexto: app.register_blueprint(dashboard_bp)
+
+Arquivo: app.py, Linha: 534
+Mensagem: Substituir print por logger em código de produção
+Contexto: app.register_blueprint(auth_bp)
+
+Arquivo: app.py, Linha: 535
+Mensagem: Substituir print por logger em código de produção
+Contexto: app.register_blueprint(templates_bp, url_prefix='/templates')
+
+Arquivo: app.py, Linha: 536
+Mensagem: Substituir print por logger em código de produção
+Contexto: app.register_blueprint(documents_bp, url_prefix='/documents')
+
+Arquivo: app.py, Linha: 537
+Mensagem: Substituir print por logger em código de produção
+Contexto: app.register_blueprint(forms_bp, url_prefix='/forms')
+
+Arquivo: app.py, Linha: 538
+Mensagem: Substituir print por logger em código de produção
+Contexto: app.register_blueprint(calculos_bp, url_prefix='/calculos')
+
+Arquivo: app.py, Linha: 542
+Mensagem: Substituir print por logger em código de produção
+Contexto: app.register_blueprint(editor_bp)
+
+Arquivo: app.py, Linha: 566
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Categorias padrão adicionadas.")
+
+Arquivo: app.py, Linha: 569
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao adicionar categorias: {error_info['user_message']}")
+
+Arquivo: app.py, Linha: 582
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Fornecedores padrão adicionados.")
+
+Arquivo: app.py, Linha: 585
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao adicionar fornecedores: {error_info['user_message']}")
+
+Arquivo: app.py, Linha: 602
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Fornecedores padrão adicionados.")
+
+Arquivo: app.py, Linha: 604
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao adicionar fornecedores: {e}")
+
+Arquivo: app.py, Linha: 620
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário administrador padrão criado.")
+
+Arquivo: app.py, Linha: 622
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao criar usuário admin: {e}")
+
+Arquivo: run_tests.py, Linha: 30
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Este script requer Python 3.6 ou superior")
+
+Arquivo: run_tests.py, Linha: 55
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"\n{TermColors.HEADER}{TermColors.BOLD}{'=' * 60}{TermColors.END}")
+
+Arquivo: run_tests.py, Linha: 56
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"{TermColors.HEADER}{TermColors.BOLD}{text.center(60)}{TermColors.END}")
+
+Arquivo: run_tests.py, Linha: 57
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"{TermColors.HEADER}{TermColors.BOLD}{'=' * 60}{TermColors.END}\n")
+
+Arquivo: run_tests.py, Linha: 61
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"{TermColors.GREEN}{TermColors.BOLD}✓ {text}{TermColors.END}")
+
+Arquivo: run_tests.py, Linha: 65
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"{TermColors.RED}{TermColors.BOLD}✗ {text}{TermColors.END}")
+
+Arquivo: run_tests.py, Linha: 69
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"{TermColors.YELLOW}{TermColors.BOLD}⚠ {text}{TermColors.END}")
+
+Arquivo: run_tests.py, Linha: 73
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"{TermColors.BLUE}ℹ {text}{TermColors.END}")
+
+Arquivo: run_tests.py, Linha: 92
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"  - {script}")
+
+Arquivo: run_tests.py, Linha: 115
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\nSaída do teste:")
+
+Arquivo: run_tests.py, Linha: 116
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("-" * 60)
+
+Arquivo: run_tests.py, Linha: 117
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(result.stdout + result.stderr)
+
+Arquivo: run_tests.py, Linha: 118
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("-" * 60)
+
+Arquivo: run_tests.py, Linha: 139
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\nResultados da análise:")
+
+Arquivo: run_tests.py, Linha: 140
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("-" * 60)
+
+Arquivo: run_tests.py, Linha: 141
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(result.stdout)
+
+Arquivo: run_tests.py, Linha: 142
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("-" * 60)
+
+Arquivo: run_tests.py, Linha: 218
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\nPrincipais sugestões:")
+
+Arquivo: run_tests.py, Linha: 219
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("-" * 60)
+
+Arquivo: run_tests.py, Linha: 228
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"SUGESTÃO #{i}")
+
+Arquivo: run_tests.py, Linha: 230
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(line)
+
+Arquivo: run_tests.py, Linha: 231
+Mensagem: Substituir print por logger em código de produção
+Contexto: print()
+
+Arquivo: run_tests.py, Linha: 233
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("-" * 60)
+
+Arquivo: run_tests.py, Linha: 279
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\nResultados das correções:")
+
+Arquivo: run_tests.py, Linha: 280
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("-" * 60)
+
+Arquivo: run_tests.py, Linha: 281
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(result.stdout)
+
+Arquivo: run_tests.py, Linha: 282
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("-" * 60)
+
+Arquivo: run_tests.py, Linha: 382
+Mensagem: Substituir print por logger em código de produção
+Contexto: print()
+
+Arquivo: run_tests.py, Linha: 391
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("\nOperação cancelada pelo usuário")
+
+Arquivo: run_tests.py, Linha: 290
+Mensagem: Evitar captura genérica de exceções
+Contexto: except:
+
+Arquivo: run_tests.py, Linha: 163
+Mensagem: Evitar os.system, usar subprocess
+Contexto: os.system(f"less {txt_report}")
+
+Arquivo: run_tests.py, Linha: 239
+Mensagem: Evitar os.system, usar subprocess
+Contexto: os.system(f"less {txt_file}")
+
+Arquivo: blueprints/reports/__init__.py, Linha: 3
+Mensagem: Substituir print por logger em código de produção
+Contexto: reports_bp = Blueprint('reports', __name__, url_prefix='/reports', template_folder='../../templates/reports')
+
+Arquivo: blueprints/dashboard/__init__.py, Linha: 3
+Mensagem: Substituir print por logger em código de produção
+Contexto: dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard', template_folder='../../templates/dashboard')
+
+Arquivo: blueprints/auth/__init__.py, Linha: 3
+Mensagem: Substituir print por logger em código de produção
+Contexto: auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+Arquivo: blueprints/auth/routes.py, Linha: 37
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário admin criado com sucesso!")
+
+Arquivo: blueprints/auth/routes.py, Linha: 63
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro de login: Usuário '{username}' não encontrado no sistema")
+
+Arquivo: blueprints/auth/routes.py, Linha: 68
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro de login: Senha incorreta para o usuário '{username}'")
+
+Arquivo: blueprints/auth/routes.py, Linha: 73
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro de login: A conta do usuário '{username}' está desativada")
+
+Arquivo: blueprints/auth/routes.py, Linha: 82
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Login bem-sucedido para: {user.username}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 103
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Acessando rota de registro")
+
+Arquivo: blueprints/auth/routes.py, Linha: 107
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Acesso negado: Usuário {current_user.username} não é administrador")
+
+Arquivo: blueprints/auth/routes.py, Linha: 115
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Recebido POST para registro. Dados: {request.form}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 119
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Formulário validado. Criando usuário: {form.username.data}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 133
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Usuário {user.username} criado com sucesso!")
+
+Arquivo: blueprints/auth/routes.py, Linha: 137
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"ERRO ao criar usuário: {str(e)}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 141
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erros de validação no formulário: {form.errors}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 289
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("ACESSANDO ROTA DE LOGIN AUTOMÁTICO")
+
+Arquivo: blueprints/auth/routes.py, Linha: 294
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Total de usuários no sistema: {total_users}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 298
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Nenhum usuário encontrado. Criando usuário admin padrão...")
+
+Arquivo: blueprints/auth/routes.py, Linha: 309
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário admin criado com sucesso!")
+
+Arquivo: blueprints/auth/routes.py, Linha: 315
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(msg)
+
+Arquivo: blueprints/auth/routes.py, Linha: 321
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(msg)
+
+Arquivo: blueprints/auth/routes.py, Linha: 324
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Usuário admin foi ativado automaticamente.")
+
+Arquivo: blueprints/auth/routes.py, Linha: 328
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Login automático para usuário: {user.username}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 329
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Nome do usuário: {user.name}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 330
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"E-mail do usuário: {user.email}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 331
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Função do usuário: {user.role}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 332
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Status de ativação: {user.is_active}")
+
+Arquivo: blueprints/auth/routes.py, Linha: 338
+Mensagem: Substituir print por logger em código de produção
+Contexto: print("Login automático bem-sucedido! Redirecionando para o dashboard...")
+
+Arquivo: blueprints/templates/__init__.py, Linha: 3
+Mensagem: Substituir print por logger em código de produção
+Contexto: templates_bp = Blueprint('templates', __name__, url_prefix='/templates')
+
+Arquivo: blueprints/templates/routes.py, Linha: 201
+Mensagem: Evitar captura genérica de exceções
+Contexto: except:
+
+Arquivo: blueprints/templates/routes.py, Linha: 300
+Mensagem: Evitar captura genérica de exceções
+Contexto: except:
+
+Arquivo: blueprints/templates/routes.py, Linha: 395
+Mensagem: Evitar captura genérica de exceções
+Contexto: except:
+
+Arquivo: blueprints/documents/__init__.py, Linha: 3
+Mensagem: Substituir print por logger em código de produção
+Contexto: documents_bp = Blueprint('documents', __name__)
+
+Arquivo: blueprints/forms/__init__.py, Linha: 3
+Mensagem: Substituir print por logger em código de produção
+Contexto: forms_bp = Blueprint('forms', __name__, url_prefix='/forms')
+
+Arquivo: blueprints/forms/routes.py, Linha: 843
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar célula ({row},{col}): {cell_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 846
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar arquivo Excel: {excel_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 870
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar parágrafo {para_index}: {para_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 873
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar arquivo Word: {docx_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 911
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar página {page_num} do PDF: {page_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 914
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar arquivo PDF: {pdf_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 928
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao extrair campos do formulário: {e}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 994
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao preencher célula ({field_id}): {cell_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 1000
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar arquivo Excel para preenchimento: {excel_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 1026
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao preencher parágrafo {field_id}: {para_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 1032
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar arquivo Word para preenchimento: {docx_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 1060
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao preencher página {page_num} do PDF: {page_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 1067
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar arquivo PDF para preenchimento: {pdf_error}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 1075
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao preencher formulário: {e}")
+
+Arquivo: blueprints/forms/routes.py, Linha: 1079
+Mensagem: Evitar captura genérica de exceções
+Contexto: except:
+
+Arquivo: blueprints/forms/routes_editor.py, Linha: 37
+Mensagem: Substituir print por logger em código de produção
+Contexto: editor_bp = Blueprint('editor', __name__, url_prefix='/forms/editor')
+
+Arquivo: blueprints/editor/__init__.py, Linha: 3
+Mensagem: Substituir print por logger em código de produção
+Contexto: editor_bp = Blueprint('editor', __name__, url_prefix='/editor',
+
+Arquivo: blueprints/calculos/__init__.py, Linha: 3
+Mensagem: Substituir print por logger em código de produção
+Contexto: calculos_bp = Blueprint('calculos', __name__, template_folder='templates')
+
+Arquivo: utils/dashboard.py, Linha: 69
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao obter estatísticas mensais: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 117
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao obter estatísticas por material: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 212
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao obter indicadores de qualidade: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 309
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao obter dados de eficiência operacional: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 354
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao converter relatório para dicionário: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 371
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao converter relatório pendente para dicionário: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 378
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao obter documentos recentes: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 430
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao processar atividade específica: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 437
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao obter atividades recentes: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 522
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro ao gerar gráfico de pizza: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 531
+Mensagem: Substituir print por logger em código de produção
+Contexto: print(f"Erro crítico em generate_material_chart: {e}")
+
+Arquivo: utils/dashboard.py, Linha: 418
+Mensagem: Evitar captura genérica de exceções
+Contexto: except:
+
+=== PROBLEMAS DE PERFORMANCE ===
+Tipo: duplicate_function
