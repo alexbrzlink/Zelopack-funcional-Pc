@@ -48,6 +48,8 @@ db.init_app(app)
 
 # Inicializar proteção CSRF
 csrf = CSRFProtect(app)
+app.config['WTF_CSRF_ENABLED'] = True
+app.config['WTF_CSRF_TIME_LIMIT'] = 3600
 
 # Configurar o Flask-Login
 login_manager = LoginManager()
