@@ -49,8 +49,7 @@
                         </div>
                         
                         <form method="POST" action="" id="login-form" class="form-animate-in">
-                            <!-- CSRF Token desabilitado para compatibilidade com dispositivos móveis -->
-                            
+                            {{ form.hidden_tag() }}
                             <div class="form-floating position-relative">
                                 {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="Nome de Usuário", id="username", required=true, autocomplete="username") }}
                                 <i class="fas fa-user input-icon"></i>

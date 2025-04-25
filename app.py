@@ -66,26 +66,14 @@ if app.debug:
     app.config['WTF_CSRF_SECRET_KEY'] = app.secret_key
     app.config['WTF_CSRF_CHECK_DEFAULT'] = True  # Verificação CSRF obrigatória
     app.config['WTF_CSRF_SSL_STRICT'] = False  # Permitir HTTPS mesmo em localhost
-    # Configurações de cookie para melhorar compatibilidade com dispositivos móveis
-    app.config['SESSION_COOKIE_SECURE'] = False
-    app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Permite autenticação em cross-site
 else:
     # Configuração mais restrita para produção
     app.config['WTF_CSRF_ENABLED'] = True
     app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # 1 hora
     app.config['WTF_CSRF_SECRET_KEY'] = app.secret_key
     app.config['WTF_CSRF_SSL_STRICT'] = True
-    # Configurações de cookie para produção
-    app.config['SESSION_COOKIE_SECURE'] = True  # Só envia em HTTPS
-    app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Permite autenticação em cross-site
 
 # Adicionar mais isenções para CSRF em rotas de teste/desenvolvimento
-csrf.exempt('blueprints.auth.login_direct')
-csrf.exempt('blueprints.auth.login')  # Temporariamente isento para testes fora do Replit
-csrf.exempt('app.login_direct')
-csrf.exempt('app.login_test')
 csrf.exempt('app.check_admin_user')  # Isento para permitir o diagnóstico do admin
 
 # Adicionar proteção global para problemas de CSRF token em dispositivos móveis
