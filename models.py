@@ -24,7 +24,6 @@ class Report(db.Model):
     batch_number = db.Column(db.String(100), nullable=True)
     raw_material_type = db.Column(db.String(100), nullable=True)  # Tipo de matéria-prima (laranja, maçã, etc)
     sample_code = db.Column(db.String(50), nullable=True)  # Código de rastreio da amostra
-    report_type = db.Column(db.String(100), nullable=True)  # Tipo de laudo (embalagem, matérias primas, etc)
     
     # Campos para análises citadas no laudo (informadas pelo fornecedor)
     brix = db.Column(db.Float, nullable=True)  # Sólidos solúveis (°Brix)
@@ -142,7 +141,6 @@ class Report(db.Model):
             # Categorização
             'category': self.category,
             'supplier': self.supplier,
-            'report_type': self.report_type,
             
             # Dados de rastreabilidade
             'batch_number': self.batch_number,
