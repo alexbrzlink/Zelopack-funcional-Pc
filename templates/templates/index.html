@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ title }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Templates de Laudos</li>
+    </ol>
+
+    <div class="row mb-4">
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-file-alt me-1"></i>
+                    Templates Disponíveis
+                </div>
+                <div class="card-body">
+                    {% if templates %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Descrição</th>
+                                    <th>Criado em</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for template in templates %}
+                                <tr>
+                                    <td>{{ template.name }}</td>
+                                    <td>{{ template.description|truncate(50) }}</td>
+                                    <td>{{ template.created_at.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('templates.fill_report', template_id=template.id) }}" class="btn btn-sm btn-primary" title="Preencher Laudo">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+                                            <a href="{{ url_for('templates.edit_template', template_id=template.id) }}" class="btn btn-sm btn-info" title="Editar Template">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Nenhum template cadastrado ainda. <a href="{{ url_for('templates.create_template') }}" class="alert-link">Criar o primeiro template</a>.
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('templates.create_template') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Criar Novo Template
+                    </a>
+                    <a href="{{ url_for('templates.import_zelopack_form') }}" class="btn btn-success">
+                        <i class="fas fa-upload"></i> Importar Formulário Zelopack
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-clipboard-list me-1"></i>
+                    Laudos Gerados Recentemente
+                </div>
+                <div class="card-body">
+                    {% if recent_reports %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Template</th>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in recent_reports %}
+                                <tr>
+                                    <td>{{ report.title|truncate(30) }}</td>
+                                    <td>{{ report.template.name|default('N/A') }}</td>
+                                    <td>{{ report.report_date.strftime('%d/%m/%Y') if report.report_date else 'N/A' }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ report.get_status_badge() }}">
+                                            {{ report.get_status_label() }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{ url_for('templates.view_report', report_id=report.id) }}" class="btn btn-sm btn-primary" title="Visualizar">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('templates.download_pdf', report_id=report.id) }}" class="btn btn-sm btn-secondary" title="Baixar PDF">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Nenhum laudo gerado a partir de templates ainda.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Como usar Templates
+                </div>
+                <div class="card-body">
+                    <h5>Instruções para usar o módulo de Templates de Laudos:</h5>
+                    <ol>
+                        <li><strong>Criar um Template:</strong> Utilize o botão "Criar Novo Template" para definir a estrutura do seu template de laudo.</li>
+                        <li><strong>Importar Formulário Zelopack:</strong> Use a opção para importar um dos formulários oficiais da Zelopack já pré-formatados.</li>
+                        <li><strong>Preencher um Laudo:</strong> Clique no ícone <i class="fas fa-pen"></i> para preencher um novo laudo a partir de um template.</li>
+                        <li><strong>Editar Templates:</strong> Utilize o ícone <i class="fas fa-edit"></i> para modificar templates existentes.</li>
+                        <li><strong>Baixar PDF:</strong> Depois de gerar um laudo, você pode baixá-lo em formato PDF utilizando o ícone <i class="fas fa-file-pdf"></i>.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

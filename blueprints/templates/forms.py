@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, TextAreaField, SelectField, DateField, FloatField, HiddenField, SubmitField, MultipleFileField
+from wtforms import StringField, TextAreaField, SelectField, DateField, FloatField, HiddenField, SubmitField, MultipleFileField, BooleanField
 from wtforms.validators import DataRequired, Optional, Length, ValidationError
 import json
 
@@ -64,3 +64,30 @@ class AutoFillReportForm(FlaskForm):
                     raise ValidationError('As métricas adicionais devem ser um objeto JSON válido.')
             except json.JSONDecodeError:
                 raise ValidationError('As métricas adicionais não são um JSON válido.')
+
+
+class ZelopackFormImportForm(FlaskForm):
+    """Formulário para importar formulários Zelopack como templates."""
+    name = StringField('Nome do Template', validators=[DataRequired(), Length(max=100)])
+    description = TextAreaField('Descrição', validators=[Optional(), Length(max=500)])
+    
+    category_id = SelectField('Categoria', validators=[Optional()], coerce=int)
+    
+    form_type = SelectField('Tipo de Formulário', choices=[
+        ('', 'Selecione um tipo de formulário'),
+        ('controle_qualidade', 'Controle de Qualidade'),
+        ('producao', 'Produção'),
+        ('manutencao', 'Manutenção'),
+        ('laboratorio', 'Laboratório'),
+        ('outro', 'Outro')
+    ], validators=[DataRequired()])
+    
+    zelopack_form = SelectField('Formulário Zelopack', validators=[DataRequired()])
+    
+    auto_generate_fields = BooleanField('Gerar campos automaticamente', default=True,
+                                        description='Analisa o formulário e cria campos automaticamente.')
+    
+    version = StringField('Versão', validators=[Optional(), Length(max=20)], default='1.0')
+    is_active = BooleanField('Ativo', default=True)
+    
+    submit = SubmitField('Importar Formulário')

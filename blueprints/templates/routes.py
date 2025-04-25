@@ -6,6 +6,7 @@ import os
 import datetime
 import json
 import io
+import glob
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -13,9 +14,9 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 
 from app import db
-from models import Report, ReportTemplate, ReportAttachment, Client, Sample, User
+from models import Report, ReportTemplate, ReportAttachment, Client, Sample, User, Category
 from blueprints.templates import templates_bp
-from blueprints.templates.forms import TemplateForm, AutoFillReportForm
+from blueprints.templates.forms import TemplateForm, AutoFillReportForm, ZelopackFormImportForm
 
 
 @templates_bp.route('/')
@@ -275,6 +276,145 @@ def get_client_data(client_id):
     }
     
     return jsonify(result)
+
+
+@templates_bp.route('/obter-formularios-zelopack/<form_type>')
+@login_required
+def get_zelopack_forms(form_type):
+    """API para obter lista de formulários Zelopack disponíveis para um determinado tipo."""
+    # Diretório onde estão os formulários
+    forms_dir = current_app.config.get('ATTACHED_ASSETS_FOLDER', 'attached_assets')
+
+    # Lista padrão para tipos de formulários conhecidos
+    form_files = []
+    
+    if form_type == 'controle_qualidade':
+        # Procurar por formulários de controle de qualidade (F_QLD_*.*)
+        pattern = os.path.join(forms_dir, 'F_QLD_*.*')
+        form_files = glob.glob(pattern)
+    elif form_type == 'producao':
+        # Procurar por formulários de produção (F_PRD_*.*)
+        pattern = os.path.join(forms_dir, 'F_PRD_*.*')
+        form_files = glob.glob(pattern)
+    elif form_type == 'laboratorio':
+        # Procurar por formulários de laboratório
+        patterns = [
+            os.path.join(forms_dir, '*Laboratório*.*'),
+            os.path.join(forms_dir, '*Laboratorio*.*'),
+            os.path.join(forms_dir, '*Análise*.*'),
+            os.path.join(forms_dir, '*Analise*.*')
+        ]
+        for pattern in patterns:
+            form_files.extend(glob.glob(pattern))
+    else:
+        # Procurar por todos os formulários
+        pattern = os.path.join(forms_dir, '*.*')
+        form_files = glob.glob(pattern)
+        # Filtrar apenas arquivos Excel, Word e PDF
+        form_files = [f for f in form_files if f.lower().endswith(('.xlsx', '.xls', '.docx', '.doc', '.pdf'))]
+    
+    # Formatar os resultados para o frontend
+    result = []
+    for file_path in form_files:
+        file_name = os.path.basename(file_path)
+        result.append({
+            'value': file_name,
+            'label': file_name,
+            'path': file_path
+        })
+    
+    return jsonify(result)
+
+
+@templates_bp.route('/importar-formulario-zelopack', methods=['GET', 'POST'])
+@login_required
+def import_zelopack_form():
+    """Importar um formulário da Zelopack como template."""
+    form = ZelopackFormImportForm()
+    
+    # Carregar categorias para o select field
+    form.category_id.choices = [(c.id, c.name) for c in Category.query.all()]
+    form.category_id.choices.insert(0, (0, 'Sem categoria'))
+    
+    # Deixar a lista de formulários em branco inicialmente
+    # Será carregada via JavaScript quando o usuário selecionar um tipo
+    form.zelopack_form.choices = [('', 'Primeiro selecione um tipo de formulário')]
+    
+    if form.validate_on_submit():
+        # Obter o arquivo de formulário selecionado
+        form_file = form.zelopack_form.data
+        forms_dir = current_app.config.get('ATTACHED_ASSETS_FOLDER', 'attached_assets')
+        file_path = os.path.join(forms_dir, form_file)
+        
+        if not os.path.exists(file_path):
+            flash('Arquivo de formulário não encontrado.', 'danger')
+            return redirect(url_for('templates.import_zelopack_form'))
+        
+        # Determinar a extensão e tipo de arquivo
+        _, ext = os.path.splitext(file_path)
+        ext = ext.lower()
+        
+        # Fazer upload e copiar para a área de templates
+        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
+        template_folder = os.path.join(upload_folder, 'templates')
+        os.makedirs(template_folder, exist_ok=True)
+        
+        # Nome do arquivo de destino
+        dest_filename = secure_filename(f"template_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}{ext}")
+        dest_path = os.path.join(template_folder, dest_filename)
+        
+        # Copiar o arquivo para a pasta de uploads
+        import shutil
+        shutil.copy2(file_path, dest_path)
+        
+        # Gerar estrutura JSON simples para o template
+        structure = {
+            "form_type": form.form_type.data,
+            "source_file": form_file,
+            "fields": {}
+        }
+        
+        # Se opção de gerar campos automaticamente estiver marcada
+        if form.auto_generate_fields.data:
+            # Aqui faríamos a análise do arquivo para extrair campos
+            # Por enquanto, vamos adicionar alguns campos padrão
+            if ext in ['.xlsx', '.xls']:
+                structure["fields"] = {
+                    "data": {"type": "date", "label": "Data", "required": True},
+                    "responsavel": {"type": "text", "label": "Responsável", "required": True},
+                    "observacoes": {"type": "textarea", "label": "Observações", "required": False}
+                }
+            elif ext in ['.docx', '.doc']:
+                structure["fields"] = {
+                    "data": {"type": "date", "label": "Data", "required": True},
+                    "processo": {"type": "text", "label": "Processo", "required": True},
+                    "responsavel": {"type": "text", "label": "Responsável", "required": True}
+                }
+        
+        # Criar o template no banco de dados
+        template = ReportTemplate(
+            name=form.name.data,
+            description=form.description.data,
+            category_id=form.category_id.data if form.category_id.data != 0 else None,
+            template_file=dest_filename,
+            file_path=dest_path,
+            structure=json.dumps(structure),
+            created_by=current_user.id,
+            version=form.version.data,
+            is_active=form.is_active.data
+        )
+        
+        db.session.add(template)
+        db.session.commit()
+        
+        flash(f'Formulário "{form_file}" importado com sucesso como template!', 'success')
+        return redirect(url_for('templates.index'))
+    
+    return render_template(
+        'templates/import_zelopack_form.html',
+        title='Importar Formulário Zelopack',
+        form=form
+    )
 
 
 def generate_pdf_report(report_id):
