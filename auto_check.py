@@ -811,9 +811,9 @@ def watch_changes(seconds=5):
         logger.error(f"Erro no monitoramento: {e}")
         print(f"\n{Colors.RED}Erro no monitoramento: {e}{Colors.END}")
 
-def schedule_checks(hours=2):
+def schedule_checks(minutes=5):
     """Agenda verificações periódicas"""
-    logger.info(f"Agendando verificações a cada {hours} horas")
+    logger.info(f"Agendando verificações a cada {minutes} minutos")
     
     try:
         while True:
@@ -827,11 +827,11 @@ def schedule_checks(hours=2):
             checker.run_checks(fix_issues=True)
             
             # Aguardar até a próxima verificação
-            next_check = datetime.datetime.now() + datetime.timedelta(hours=hours)
+            next_check = datetime.datetime.now() + datetime.timedelta(minutes=minutes)
             print(f"\nPróxima verificação agendada para: {next_check.strftime('%Y-%m-%d %H:%M:%S')}")
             
             # Dormir até a próxima verificação
-            time.sleep(hours * 3600)
+            time.sleep(minutes * 60)
     except KeyboardInterrupt:
         logger.info("Agendamento interrompido pelo usuário")
         print("\nAgendamento encerrado.")
@@ -855,8 +855,8 @@ def setup_cron_job():
                 print("Job cron já está configurado")
                 return
             
-            # Configurar o cron para executar a cada 2 horas
-            cron_line = f"0 */2 * * * {sys.executable} {script_path} --test --fix\n"
+            # Configurar o cron para executar a cada 5 minutos
+            cron_line = f"*/5 * * * * {sys.executable} {script_path} --test --fix\n"
             new_crontab = current_crontab + cron_line
             
             # Escrever em um arquivo temporário
@@ -867,14 +867,27 @@ def setup_cron_job():
             subprocess.run("crontab /tmp/zelopack_crontab", shell=True, check=True)
             os.remove("/tmp/zelopack_crontab")
             
-            print("Job cron configurado com sucesso")
+            print("Job cron configurado com sucesso para executar a cada 5 minutos")
         except Exception as e:
             logger.error(f"Erro ao configurar cron job: {e}")
             print(f"{Colors.RED}Erro ao configurar cron job: {e}{Colors.END}")
     else:
         # Para Windows
-        print("No Windows, use o Agendador de Tarefas para configurar verificações periódicas")
-        print(f"Comando: {sys.executable} {script_path} --test --fix")
+        try:
+            # Criar arquivo batch para executar o script
+            batch_file = os.path.join(os.path.dirname(script_path), "auto_check_scheduled.bat")
+            with open(batch_file, 'w') as f:
+                f.write(f'@echo off\n"{sys.executable}" "{script_path}" --test --fix\n')
+            
+            # Agendar a tarefa (windows task scheduler)
+            task_name = "ZelopackAutoCheck"
+            cmd = f'schtasks /create /sc MINUTE /mo 5 /tn "{task_name}" /tr "{batch_file}" /f'
+            subprocess.run(cmd, shell=True, check=True)
+            
+            print("Job agendado no Task Scheduler para executar a cada 5 minutos")
+        except Exception as e:
+            logger.error(f"Erro ao configurar Task Scheduler: {e}")
+            print(f"{Colors.RED}Erro ao configurar Task Scheduler: {e}{Colors.END}")
 
 def main():
     """Função principal"""
@@ -889,7 +902,7 @@ def main():
     
     # Opções adicionais
     parser.add_argument('--interval', type=int, default=5, help='Intervalo em segundos para monitoramento (--watch)')
-    parser.add_argument('--hours', type=int, default=2, help='Intervalo em horas para verificação agendada (--schedule)')
+    parser.add_argument('--minutes', type=int, default=5, help='Intervalo em minutos para verificação agendada (--schedule)')
     parser.add_argument('--setup-cron', action='store_true', help='Configurar job cron para verificações automatizadas')
     
     args = parser.parse_args()
@@ -911,7 +924,7 @@ def main():
     elif args.watch:
         watch_changes(seconds=args.interval)
     elif args.schedule:
-        schedule_checks(hours=args.hours)
+        schedule_checks(minutes=args.minutes)
     elif args.setup_cron:
         setup_cron_job()
     else:

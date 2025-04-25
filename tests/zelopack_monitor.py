@@ -1205,10 +1205,10 @@ def setup_cron_job():
             
             # Agendar a tarefa (windows task scheduler)
             task_name = "ZelopackMonitor"
-            cmd = f'schtasks /create /sc HOURLY /mo 4 /tn "{task_name}" /tr "{batch_file}" /f'
+            cmd = f'schtasks /create /sc MINUTE /mo 5 /tn "{task_name}" /tr "{batch_file}" /f'
             subprocess.run(cmd, shell=True, check=True)
             
-            logger.info("Monitor agendado no Task Scheduler para executar a cada 4 horas")
+            logger.info("Monitor agendado no Task Scheduler para executar a cada 5 minutos")
         
         except Exception as e:
             logger.error(f"Erro ao configurar Task Scheduler: {e}")

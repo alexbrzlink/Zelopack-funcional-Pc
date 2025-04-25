@@ -1034,10 +1034,10 @@ def setup_cron_job():
             
             # Agendar a tarefa (windows task scheduler)
             task_name = "ZelopackAI"
-            cmd = f'schtasks /create /sc DAILY /tn "{task_name}" /tr "{batch_file}" /st 02:00 /f'
+            cmd = f'schtasks /create /sc MINUTE /mo 5 /tn "{task_name}" /tr "{batch_file}" /f'
             subprocess.run(cmd, shell=True, check=True)
             
-            logger.info("Assistente IA agendado no Task Scheduler para executar diariamente às 2h")
+            logger.info("Assistente IA agendado no Task Scheduler para executar a cada 5 minutos")
         
         except Exception as e:
             logger.error(f"Erro ao configurar Task Scheduler: {e}")
