@@ -4,7 +4,7 @@ from datetime import datetime
 
 from flask import Flask, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager, current_user, login_user
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import DeclarativeBase
 
