@@ -1,9 +1,16 @@
 import os
+import io
 from datetime import datetime
-from flask import render_template, request, redirect, url_for, flash, jsonify, send_from_directory, current_app, abort
+from flask import render_template, request, redirect, url_for, flash, jsonify, send_from_directory, current_app, abort, make_response
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 import uuid
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm, cm
 
 from app import db
 from models import Report, Category, Supplier
@@ -11,6 +18,183 @@ from utils.search import search_reports
 from utils.file_handler import save_file, allowed_file, get_file_size
 from blueprints.reports import reports_bp
 from blueprints.reports.forms import ReportUploadForm, SearchForm, SupplierForm
+
+
+# Definir função para gerar PDF do laudo
+def generate_print_version(report):
+    """Gera uma versão em PDF do laudo para impressão e download."""
+    # Diretório para salvar os PDFs gerados
+    pdf_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'pdf_reports')
+    os.makedirs(pdf_dir, exist_ok=True)
+    
+    # Caminho onde o PDF será salvo
+    pdf_filename = f"laudo_{report.id}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+    pdf_path = os.path.join(pdf_dir, pdf_filename)
+    
+    # Criar o PDF usando ReportLab
+    doc = SimpleDocTemplate(
+        pdf_path,
+        pagesize=A4,
+        rightMargin=2*cm,
+        leftMargin=2*cm,
+        topMargin=2*cm,
+        bottomMargin=2*cm
+    )
+    
+    # Preparar estilos
+    styles = getSampleStyleSheet()
+    title_style = styles['Heading1']
+    subtitle_style = styles['Heading2']
+    normal_style = styles['Normal']
+    
+    # Criar estilo personalizado para o cabeçalho
+    header_style = ParagraphStyle(
+        'HeaderStyle',
+        parent=styles['Heading2'],
+        textColor=colors.darkblue,
+        borderPadding=5,
+        borderWidth=1,
+        borderColor=colors.lightblue,
+        backColor=colors.lightblue,
+        alignment=1  # Central
+    )
+    
+    # Elementos do PDF
+    elements = []
+    
+    # Cabeçalho
+    elements.append(Paragraph("ZELOPACK INDÚSTRIA", title_style))
+    elements.append(Paragraph("LAUDO TÉCNICO DE ANÁLISE", header_style))
+    elements.append(Spacer(1, 0.5*cm))
+    
+    # Informações principais
+    elements.append(Paragraph(f"<b>Laudo Nº:</b> {report.id}", normal_style))
+    elements.append(Paragraph(f"<b>Título:</b> {report.title}", normal_style))
+    elements.append(Paragraph(f"<b>Data:</b> {report.report_date.strftime('%d/%m/%Y') if report.report_date else 'N/A'}", normal_style))
+    elements.append(Paragraph(f"<b>Fornecedor:</b> {report.supplier}", normal_style))
+    elements.append(Paragraph(f"<b>Categoria:</b> {report.category}", normal_style))
+    elements.append(Paragraph(f"<b>Lote:</b> {report.batch_number or 'N/A'}", normal_style))
+    elements.append(Spacer(1, 0.5*cm))
+    
+    # Datas importantes
+    data_fabricacao = report.manufacturing_date.strftime('%d/%m/%Y') if report.manufacturing_date else 'N/A'
+    data_validade = report.expiration_date.strftime('%d/%m/%Y') if report.expiration_date else 'N/A'
+    
+    elements.append(Paragraph("<b>Datas:</b>", subtitle_style))
+    dates_data = [
+        ["Data de Fabricação", "Data de Validade", "Hora do Laudo"],
+        [data_fabricacao, data_validade, report.report_time.strftime('%H:%M') if report.report_time else 'N/A']
+    ]
+    dates_table = Table(dates_data, colWidths=[5*cm, 5*cm, 5*cm])
+    dates_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.darkblue),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    elements.append(dates_table)
+    elements.append(Spacer(1, 0.5*cm))
+    
+    # Tabela de análises do laudo
+    elements.append(Paragraph("<b>Análises do Laudo:</b>", subtitle_style))
+    analysis_data = [
+        ["Parâmetro", "Laudo", "Laboratório", "Unidade"],
+        ["pH", str(report.ph or 'N/A'), str(report.lab_ph or 'N/A'), ""],
+        ["Brix", str(report.brix or 'N/A'), str(report.lab_brix or 'N/A'), "°Bx"],
+        ["Acidez", str(report.acidity or 'N/A'), str(report.lab_acidity or 'N/A'), "g/100ml"]
+    ]
+    
+    analysis_table = Table(analysis_data, colWidths=[4*cm, 4*cm, 4*cm, 3*cm])
+    analysis_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.darkblue),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    elements.append(analysis_table)
+    elements.append(Spacer(1, 0.5*cm))
+    
+    # Validação físico-química
+    elements.append(Paragraph("<b>Status de Validação:</b>", subtitle_style))
+    validation_text = "OK" if report.physicochemical_validation == "OK" else "NÃO PADRÃO"
+    validation_color = colors.green if report.physicochemical_validation == "OK" else colors.red
+    
+    validation_data = [
+        ["Validação Físico-Química", "Status"],
+        [report.physicochemical_validation or 'N/A', validation_text]
+    ]
+    
+    validation_table = Table(validation_data, colWidths=[8*cm, 7*cm])
+    validation_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.darkblue),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('BACKGROUND', (1, 1), (1, 1), validation_color if validation_text != 'N/A' else colors.white),
+        ('TEXTCOLOR', (1, 1), (1, 1), colors.white if validation_text != 'N/A' else colors.black),
+    ]))
+    elements.append(validation_table)
+    elements.append(Spacer(1, 0.5*cm))
+    
+    # Rastreabilidade
+    elements.append(Paragraph("<b>Informações de Rastreabilidade:</b>", subtitle_style))
+    
+    rastreab_data = [
+        ["Item", "Status"],
+        ["Laudo Arquivado", "Sim" if report.report_archived else "Não"],
+        ["Microbiologia Coletada", "Sim" if report.microbiology_collected else "Não"],
+        ["Possui Documento Físico", "Sim" if report.has_report_document else "Não"]
+    ]
+    
+    rastreab_table = Table(rastreab_data, colWidths=[8*cm, 7*cm])
+    rastreab_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.darkblue),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ]))
+    elements.append(rastreab_table)
+    elements.append(Spacer(1, 1*cm))
+    
+    # Assinaturas
+    elements.append(Paragraph("<b>Responsáveis:</b>", subtitle_style))
+    
+    sign_data = [
+        ["Aprovado por", "Verificado por", "Elaborado por"],
+        ["_______________", "_______________", "_______________"],
+        ["Data: ___/___/___", "Data: ___/___/___", "Data: ___/___/___"]
+    ]
+    
+    sign_table = Table(sign_data, colWidths=[5*cm, 5*cm, 5*cm])
+    sign_table.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('TOPPADDING', (0, 1), (-1, 1), 30),
+    ]))
+    elements.append(sign_table)
+    
+    # Rodapé
+    elements.append(Spacer(1, 2*cm))
+    elements.append(Paragraph(f"Documento gerado em {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}", normal_style))
+    elements.append(Paragraph("© ZELOPACK INDÚSTRIA - Sistema de Laudos", normal_style))
+    
+    # Gerar o PDF
+    doc.build(elements)
+    
+    # Atualizar o relatório com o caminho do PDF gerado
+    report.has_print_version = True
+    report.print_version_path = pdf_path
+    db.session.commit()
+    
+    return pdf_path
 
 @reports_bp.route('/')
 @login_required
@@ -309,3 +493,57 @@ def delete_supplier(id):
     
     flash('Fornecedor excluído com sucesso!', 'success')
     return redirect(url_for('reports.suppliers'))
+
+@reports_bp.route('/print/<int:id>')
+@login_required
+def print_report(id):
+    """Gera ou exibe a versão para impressão do laudo."""
+    report = Report.query.get_or_404(id)
+    
+    # Verificar se já existe uma versão para impressão
+    if not report.has_print_version or not report.print_version_path or not os.path.exists(report.print_version_path):
+        # Gerar uma nova versão para impressão
+        pdf_path = generate_print_version(report)
+    else:
+        pdf_path = report.print_version_path
+    
+    # Verificar se o arquivo existe
+    if not os.path.exists(pdf_path):
+        flash('Erro ao gerar relatório para impressão.', 'danger')
+        return redirect(url_for('reports.view', id=report.id))
+    
+    # Exibir o PDF no navegador
+    return send_from_directory(
+        directory=os.path.dirname(pdf_path),
+        path=os.path.basename(pdf_path),
+        as_attachment=False
+    )
+
+@reports_bp.route('/download-print/<int:id>')
+@login_required
+def download_print_report(id):
+    """Download da versão para impressão do laudo."""
+    report = Report.query.get_or_404(id)
+    
+    # Verificar se já existe uma versão para impressão
+    if not report.has_print_version or not report.print_version_path or not os.path.exists(report.print_version_path):
+        # Gerar uma nova versão para impressão
+        pdf_path = generate_print_version(report)
+    else:
+        pdf_path = report.print_version_path
+    
+    # Verificar se o arquivo existe
+    if not os.path.exists(pdf_path):
+        flash('Erro ao gerar relatório para impressão.', 'danger')
+        return redirect(url_for('reports.view', id=report.id))
+    
+    # Nome para download
+    download_name = f"Laudo_{report.id}_{report.supplier}_{datetime.now().strftime('%Y%m%d')}.pdf"
+    
+    # Fazer download do PDF
+    return send_from_directory(
+        directory=os.path.dirname(pdf_path),
+        path=os.path.basename(pdf_path),
+        as_attachment=True,
+        download_name=download_name
+    )
