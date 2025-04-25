@@ -779,38 +779,48 @@ class ReportAttachment(db.Model):
     # Relacionamentos
     report = db.relationship('Report', back_populates='attachments')
     uploader = db.relationship('User', foreign_keys=[uploader_id])
+
+
+class FormPreset(db.Model):
+    """Modelo para armazenar predefinições de preenchimento de formulários."""
+    __tablename__ = 'form_presets'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    form_type = db.Column(db.String(100), nullable=False)  # Tipo/nome do formulário
+    file_path = db.Column(db.String(255), nullable=False)  # Caminho relativo do arquivo no sistema
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    data = db.Column(db.JSON, nullable=False)  # Campos e valores predefinidos
+    is_default = db.Column(db.Boolean, default=False)  # Se é a predefinição padrão para este formulário
+    is_active = db.Column(db.Boolean, default=True)
+    
+    # Relacionamentos
+    creator = db.relationship('User', backref='form_presets')
     
     def __repr__(self):
-        return f'<ReportAttachment {self.original_filename}>'
+        return f"<FormPreset {self.id}: {self.name} for {self.form_type}>"
     
     def to_dict(self):
-        """Converte o modelo para um dicionário."""
+        """Converte o preset para dicionário."""
         return {
             'id': self.id,
-            'report_id': self.report_id,
+            'name': self.name,
+            'description': self.description,
+            'form_type': self.form_type,
             'file_path': self.file_path,
-            'original_filename': self.original_filename,
-            'file_type': self.file_type,
-            'file_size': self.file_size,
-            'file_size_formatted': self.get_formatted_size(),
-            'upload_date': self.upload_date.strftime('%d/%m/%Y %H:%M') if self.upload_date else None,
-            'uploader_id': self.uploader_id,
-            'uploader_name': self.uploader.name if self.uploader else None
+            'created_by': self.created_by,
+            'creator_name': self.creator.name if self.creator else None,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'data': self.data,
+            'is_default': self.is_default,
+            'is_active': self.is_active
         }
     
-    def get_formatted_size(self):
-        """Retorna o tamanho do arquivo formatado."""
-        if not self.file_size:
-            return '0 KB'
-            
-        kb_size = self.file_size / 1024
-        if kb_size < 1000:
-            return f'{kb_size:.1f} KB'
-        else:
-            mb_size = kb_size / 1024
-            return f'{mb_size:.1f} MB'
-    
     def get_download_url(self):
-        """Retorna a URL para download do anexo."""
+        """Retorna a URL para download da predefinição."""
         from flask import url_for
-        return url_for('reports.download_attachment', attachment_id=self.id)
+        return url_for('forms.download_preset', preset_id=self.id)
