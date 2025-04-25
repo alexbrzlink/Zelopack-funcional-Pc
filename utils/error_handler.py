@@ -1,199 +1,212 @@
 """
-Módulo para tratamento centralizado de erros e exceções.
-Fornece funções padronizadas para tratar erros em toda a aplicação.
+Sistema centralizado de tratamento de erros para o Zelopack.
+Fornece funções para registro, monitoramento e exibição amigável de erros.
 """
 
 import logging
 import traceback
-import sys
-from flask import flash, jsonify, render_template
+import json
+from datetime import datetime
+from flask import flash, jsonify, current_app
 
-# Configuração de logging
-logger = logging.getLogger('zelopack')
-handler = logging.StreamHandler(sys.stdout)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
+# Configuração do logger específico para erros
+error_logger = logging.getLogger('zelopack.errors')
 
-# Tipos de erros conhecidos 
-DATABASE_ERROR = 'database'
-VALIDATION_ERROR = 'validation'
-AUTH_ERROR = 'authentication'
-FILE_ERROR = 'file'
-CALCULATION_ERROR = 'calculation'
-GENERAL_ERROR = 'general'
-
-def log_exception(exception, error_type=GENERAL_ERROR, context=None):
+def log_exception(exception, context=None):
     """
-    Registra detalhes da exceção no log com contexto adicional.
+    Registra uma exceção com contexto adicional para facilitar a depuração.
     
     Args:
-        exception: Objeto de exceção
-        error_type: Tipo de erro para categorização
-        context: Dicionário com informações de contexto adicionais
+        exception: A exceção capturada
+        context: Dicionário com informações adicionais sobre o contexto do erro
     """
-    tb = traceback.format_exc()
-    
-    # Formatar mensagem de erro
-    error_msg = f"ERRO ({error_type}): {str(exception)}"
-    
-    # Adicionar informações de contexto se disponíveis
-    if context:
-        context_info = ", ".join(f"{k}={v}" for k, v in context.items())
-        error_msg += f" | Contexto: {context_info}"
+    error_info = {
+        'timestamp': datetime.now().isoformat(),
+        'exception_type': exception.__class__.__name__,
+        'message': str(exception),
+        'traceback': traceback.format_exc(),
+        'context': context or {}
+    }
     
     # Registrar no log
-    logger.error(error_msg)
-    logger.debug(tb)  # Trace completo em nível de debug
+    error_logger.error(
+        f"Exceção: {error_info['exception_type']} - {error_info['message']}", 
+        extra={'error_data': error_info}
+    )
     
-    return error_msg
+    # Registrar detalhes completos em nível de debug
+    error_logger.debug(f"Detalhes completos do erro: {json.dumps(error_info, default=str, indent=2)}")
+    
+    return error_info
 
-def handle_database_error(exception, operation=None, table=None):
+def handle_database_error(exception, session=None, operation=None):
     """
-    Manipula erros de banco de dados de maneira padronizada.
+    Trata erros específicos de banco de dados e realiza limpeza necessária.
     
     Args:
-        exception: Exceção de banco de dados
-        operation: Operação que foi tentada (select, insert, update, delete)
-        table: Tabela afetada
+        exception: A exceção de banco de dados
+        session: A sessão SQLAlchemy ativa (opcional)
+        operation: Descrição da operação que falhou (opcional)
     
     Returns:
-        Mensagem de erro formatada
+        Dict com informações sobre o erro para uso interno
     """
-    context = {
-        'operation': operation,
-        'table': table
+    context = {'operation': operation or 'database_operation'}
+    
+    # Fazer rollback da sessão se fornecida
+    if session:
+        try:
+            session.rollback()
+            context['rollback'] = 'success'
+        except Exception as rollback_error:
+            context['rollback'] = 'failed'
+            context['rollback_error'] = str(rollback_error)
+    
+    # Registrar o erro
+    error_info = log_exception(exception, context)
+    
+    # Simplificar a mensagem para o usuário
+    user_message = simplify_error_for_user(exception, error_type='database')
+    
+    return {
+        'error_info': error_info,
+        'user_message': user_message
     }
-    
-    error_msg = log_exception(exception, DATABASE_ERROR, context)
-    
-    # Tentar identificar tipos específicos de erro de BD
-    error_type = "desconhecido"
-    if "violates foreign key constraint" in str(exception):
-        error_type = "violação de chave estrangeira"
-    elif "duplicate key value violates unique constraint" in str(exception):
-        error_type = "violação de unicidade"
-    elif "connection" in str(exception).lower():
-        error_type = "conexão com banco de dados"
-    
-    return f"Erro de banco de dados ({error_type}): {str(exception)}"
 
-def handle_calculation_error(exception, calculation_type=None, inputs=None):
+def handle_calculation_error(exception, calculation_type=None, input_data=None):
     """
-    Manipula erros em cálculos técnicos.
+    Trata erros em operações de cálculo.
     
     Args:
-        exception: Exceção ocorrida durante o cálculo
-        calculation_type: Tipo de cálculo tentado
-        inputs: Valores de entrada que causaram o erro
+        exception: A exceção de cálculo
+        calculation_type: Tipo/nome do cálculo (opcional)
+        input_data: Dados de entrada que causaram o erro (opcional)
     
     Returns:
-        Mensagem de erro formatada
+        Dict com informações sobre o erro para uso interno
     """
     context = {
-        'calculation_type': calculation_type,
-        'inputs': inputs
+        'calculation_type': calculation_type or 'unknown',
+        'input_data': input_data
     }
     
-    error_msg = log_exception(exception, CALCULATION_ERROR, context)
+    # Registrar o erro
+    error_info = log_exception(exception, context)
     
-    return f"Erro no cálculo: {str(exception)}"
+    # Simplificar a mensagem para o usuário
+    user_message = simplify_error_for_user(exception, error_type='calculation')
+    
+    return {
+        'error_info': error_info,
+        'user_message': user_message
+    }
 
 def handle_file_error(exception, file_path=None, operation=None):
     """
-    Manipula erros relacionados a operações com arquivos.
+    Trata erros em operações de arquivo.
     
     Args:
-        exception: Exceção ocorrida
-        file_path: Caminho do arquivo
-        operation: Operação (leitura, escrita, upload, download)
+        exception: A exceção de arquivo
+        file_path: Caminho do arquivo (opcional)
+        operation: Operação que estava sendo realizada (opcional)
     
     Returns:
-        Mensagem de erro formatada
+        Dict com informações sobre o erro para uso interno
     """
     context = {
-        'file_path': file_path,
-        'operation': operation
+        'file_path': file_path or 'unknown',
+        'operation': operation or 'file_operation'
     }
     
-    error_msg = log_exception(exception, FILE_ERROR, context)
+    # Registrar o erro
+    error_info = log_exception(exception, context)
     
-    return f"Erro ao manipular arquivo: {str(exception)}"
+    # Simplificar a mensagem para o usuário
+    user_message = simplify_error_for_user(exception, error_type='file')
+    
+    return {
+        'error_info': error_info,
+        'user_message': user_message
+    }
 
-def api_error_response(message, status_code=400, error_type=GENERAL_ERROR, details=None):
+def api_error_response(error_dict, status_code=400):
     """
-    Cria uma resposta de erro padronizada para APIs.
+    Cria uma resposta JSON padronizada para erros de API.
     
     Args:
-        message: Mensagem de erro
-        status_code: Código HTTP de status
-        error_type: Tipo de erro
-        details: Detalhes adicionais (opcional)
+        error_dict: Dicionário de erro de uma das funções handle_*_error
+        status_code: Código HTTP de status (padrão: 400)
     
     Returns:
-        Resposta JSON formatada, código de status
+        Resposta JSON para erro de API
     """
     response = {
-        'success': False,
-        'error': {
-            'type': error_type,
-            'message': message
-        }
+        'status': 'error',
+        'message': error_dict.get('user_message', 'Ocorreu um erro desconhecido.'),
+        'error_code': error_dict.get('error_info', {}).get('exception_type', 'unknown_error')
     }
     
-    if details:
-        response['error']['details'] = details
-        
+    # Incluir detalhes técnicos se em modo debug
+    if current_app.debug:
+        response['debug_info'] = error_dict.get('error_info')
+    
     return jsonify(response), status_code
 
-def flash_error(exception, category='danger', error_type=GENERAL_ERROR):
+def flash_error(error_dict):
     """
-    Registra erro no log e envia mensagem flash para o usuário.
+    Exibe uma mensagem flash para o usuário com base no erro.
     
     Args:
-        exception: Exceção a ser tratada
-        category: Categoria da mensagem flash
-        error_type: Tipo de erro
+        error_dict: Dicionário de erro de uma das funções handle_*_error
     """
-    log_exception(exception, error_type)
-    
-    # Simplificar a mensagem para o usuário final
-    user_friendly_message = simplify_error_for_user(exception)
-    
-    # Flash a mensagem para o usuário
-    flash(user_friendly_message, category)
+    flash(error_dict.get('user_message', 'Ocorreu um erro desconhecido.'), 'danger')
 
-def simplify_error_for_user(exception):
+def simplify_error_for_user(exception, error_type='general'):
     """
-    Simplifica mensagens de erro para os usuários finais.
+    Converte mensagens de erro técnicas em mensagens amigáveis para usuários.
     
     Args:
-        exception: Exceção original
+        exception: A exceção original
+        error_type: Tipo de erro (database, calculation, file, general)
     
     Returns:
-        Mensagem simplificada amigável para usuários
+        Mensagem simplificada e amigável
     """
     error_message = str(exception)
     
-    # Mapeamento de erros técnicos para mensagens amigáveis
-    if "violates foreign key constraint" in error_message:
-        return "Este registro não pode ser excluído porque está sendo usado em outras partes do sistema."
+    # Mapeamento de erros comuns de banco de dados
+    if error_type == 'database':
+        if 'violates foreign key constraint' in error_message:
+            return "Este registro não pode ser modificado porque está sendo usado em outro lugar do sistema."
+        elif 'violates unique constraint' in error_message or 'UNIQUE constraint failed' in error_message:
+            return "Um registro com estas informações já existe no sistema."
+        elif 'violates not-null constraint' in error_message:
+            return "Todos os campos obrigatórios precisam ser preenchidos."
+        else:
+            return "Houve um problema ao acessar o banco de dados. Por favor, tente novamente."
     
-    elif "duplicate key value violates unique constraint" in error_message:
-        return "Já existe um registro com estas informações no sistema."
+    # Mapeamento de erros comuns de cálculo
+    elif error_type == 'calculation':
+        if 'division by zero' in error_message:
+            return "Não é possível dividir por zero. Por favor, verifique os valores informados."
+        elif 'could not convert string to float' in error_message:
+            return "Um dos valores não é um número válido. Use apenas números (com ponto para decimais)."
+        elif 'invalid value encountered in' in error_message:
+            return "Um dos cálculos resultou em um valor inválido. Verifique os números informados."
+        else:
+            return "Houve um erro ao realizar o cálculo. Por favor, revise os valores informados."
     
-    elif "connection" in error_message.lower() and "database" in error_message.lower():
-        return "Não foi possível conectar ao banco de dados. Por favor, tente novamente em alguns instantes."
+    # Mapeamento de erros comuns de arquivo
+    elif error_type == 'file':
+        if 'No such file or directory' in error_message:
+            return "O arquivo solicitado não foi encontrado."
+        elif 'Permission denied' in error_message:
+            return "Sem permissão para acessar este arquivo."
+        elif 'disk space' in error_message.lower():
+            return "Não há espaço suficiente em disco para esta operação."
+        else:
+            return "Houve um problema ao acessar o arquivo solicitado."
     
-    elif "permission" in error_message.lower() or "acesso negado" in error_message.lower():
-        return "Você não tem permissão para realizar esta ação."
-    
-    elif "division by zero" in error_message.lower():
-        return "Não é possível realizar esta operação com divisão por zero."
-    
-    elif "file not found" in error_message.lower() or "no such file" in error_message.lower():
-        return "O arquivo solicitado não foi encontrado."
-    
-    # Se não for um erro conhecido, retornar uma mensagem genérica
-    return "Ocorreu um erro durante a operação. Por favor, tente novamente ou contate o suporte técnico."
+    # Erro genérico
+    else:
+        return "Ocorreu um erro inesperado. Os administradores do sistema foram notificados."

@@ -1,181 +1,242 @@
 /**
- * ZeloPack Theme Manager
- * Sistema centralizado para gerenciar temas e preferências visuais da aplicação
+ * Gerenciador de temas para o sistema ZeloPack
+ * Permite alternar entre tema claro e escuro e gerenciar preferências de acessibilidade
  */
 
-// Constantes de tema
-const THEME_KEY = 'zelopack_theme';
-const DARK_MODE = 'dark';
-const LIGHT_MODE = 'light';
-
-// Configurações padrão
-const DEFAULT_THEME = LIGHT_MODE;
-const DEFAULT_FONT_SIZE = 'medium'; // small, medium, large
-const DEFAULT_ANIMATION_LEVEL = 'standard'; // minimal, standard, enhanced
-
-// Inicialização do sistema de temas
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("ZeloPack Theme Manager: Inicializando...");
-    initializeTheme();
-    setupThemeToggle();
-    setupAccessibilityOptions();
-});
-
-/**
- * Inicializa o tema baseado em preferências salvas ou configuração do sistema
- */
-function initializeTheme() {
-    // Verificar preferência salva
-    const savedTheme = localStorage.getItem(THEME_KEY);
+(function() {
+    'use strict';
     
-    // Se não houver preferência salva, usar preferência do sistema
-    if (!savedTheme) {
-        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const themeToApply = prefersDarkMode ? DARK_MODE : LIGHT_MODE;
+    // Armazenamento de configurações
+    const STORAGE_KEY = 'zelopack_theme_preferences';
+    
+    // Valores padrão
+    const DEFAULT_PREFERENCES = {
+        theme: 'auto',          // 'light', 'dark', 'auto'
+        fontSize: 'medium',     // 'small', 'medium', 'large'
+        animationLevel: 'standard' // 'minimal', 'standard', 'enhanced'
+    };
+    
+    /**
+     * Inicializa o tema baseado em preferências salvas ou configuração do sistema
+     */
+    function initializeTheme() {
+        // Obter configurações salvas ou usar padrões
+        const savedPrefs = localStorage.getItem(STORAGE_KEY);
+        const preferences = savedPrefs ? JSON.parse(savedPrefs) : DEFAULT_PREFERENCES;
+        
+        // Determinar o tema a ser usado
+        let themeToApply = preferences.theme;
+        
+        // Se configurado como automático, usar preferência do sistema
+        if (themeToApply === 'auto') {
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            themeToApply = prefersDarkScheme ? 'dark' : 'light';
+        }
+        
+        // Aplicar tema inicial
         applyTheme(themeToApply);
-        localStorage.setItem(THEME_KEY, themeToApply);
-    } else {
-        applyTheme(savedTheme);
-    }
-
-    // Escutar mudanças na preferência do sistema
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-        // Só mudar automaticamente se o usuário não tiver preferência específica salva
-        if (!localStorage.getItem(THEME_KEY)) {
-            const themeToApply = e.matches ? DARK_MODE : LIGHT_MODE;
-            applyTheme(themeToApply);
-        }
-    });
-}
-
-/**
- * Aplica o tema selecionado ao documento
- * @param {string} theme - Tema a ser aplicado ('dark' ou 'light')
- */
-function applyTheme(theme) {
-    if (theme === DARK_MODE) {
-        document.body.classList.add('dark-mode');
-        document.documentElement.setAttribute('data-bs-theme', 'dark');
-        updateThemeIcons(true);
-    } else {
-        document.body.classList.remove('dark-mode');
-        document.documentElement.setAttribute('data-bs-theme', 'light');
-        updateThemeIcons(false);
+        
+        // Aplicar tamanho de fonte
+        setFontSize(preferences.fontSize);
+        
+        // Aplicar nível de animação
+        setAnimationLevel(preferences.animationLevel);
+        
+        // Configurar listener para tema do sistema (modo automático)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (preferences.theme === 'auto') {
+                applyTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+        
+        // Configurar botões e controles
+        setupThemeToggle();
+        setupAccessibilityOptions();
     }
     
-    // Evento para notificar outras partes da aplicação
-    document.dispatchEvent(new CustomEvent('themeChanged', { 
-        detail: { theme: theme } 
-    }));
-}
-
-/**
- * Configura os botões de alternância de tema
- */
-function setupThemeToggle() {
-    // Botões de tema no header principal
-    const themeButtons = document.querySelectorAll('.theme-toggle');
+    /**
+     * Aplica o tema selecionado ao documento
+     * @param {string} theme - Tema a ser aplicado ('dark' ou 'light')
+     */
+    function applyTheme(theme) {
+        // Atualizar as classes/atributos no documento
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        document.body.classList.toggle('dark-mode', theme === 'dark');
+        
+        // Atualizar ícones de tema
+        updateThemeIcons(theme === 'dark');
+        
+        // Disparar evento para outros scripts poderem reagir
+        document.dispatchEvent(new CustomEvent('themeChanged', { 
+            detail: { theme: theme }
+        }));
+    }
     
-    themeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const currentTheme = localStorage.getItem(THEME_KEY) || DEFAULT_THEME;
-            const newTheme = currentTheme === LIGHT_MODE ? DARK_MODE : LIGHT_MODE;
+    /**
+     * Configura os botões de alternância de tema
+     */
+    function setupThemeToggle() {
+        const themeToggleButtons = document.querySelectorAll('.theme-toggle');
+        
+        themeToggleButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Obter configurações atuais
+                const currentPrefs = getPreferences();
+                
+                // Se estiver em modo automático, alternar para modo específico
+                if (currentPrefs.theme === 'auto') {
+                    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    // Se o sistema prefere escuro, alternar para claro, e vice-versa
+                    const newTheme = systemPrefersDark ? 'light' : 'dark';
+                    savePreferences({ ...currentPrefs, theme: newTheme });
+                    applyTheme(newTheme);
+                } else {
+                    // Alternar entre claro e escuro
+                    const newTheme = currentPrefs.theme === 'dark' ? 'light' : 'dark';
+                    savePreferences({ ...currentPrefs, theme: newTheme });
+                    applyTheme(newTheme);
+                }
+            });
+        });
+    }
+    
+    /**
+     * Atualiza os ícones de tema em toda a aplicação
+     * @param {boolean} isDarkMode - Se está no modo escuro
+     */
+    function updateThemeIcons(isDarkMode) {
+        // Atualizar ícones nos botões de alternância
+        document.querySelectorAll('.theme-toggle i').forEach(icon => {
+            // Remover todas as classes de ícone
+            icon.classList.remove('fa-sun', 'fa-moon');
             
-            localStorage.setItem(THEME_KEY, newTheme);
+            // Adicionar ícone correto
+            if (isDarkMode) {
+                icon.classList.add('fa-sun');  // No modo escuro, mostrar sol para alternar para claro
+            } else {
+                icon.classList.add('fa-moon'); // No modo claro, mostrar lua para alternar para escuro
+            }
+        });
+    }
+    
+    /**
+     * Configura opções adicionais de acessibilidade
+     */
+    function setupAccessibilityOptions() {
+        // Exemplo: botões de tamanho de fonte, se existirem
+        document.querySelectorAll('[data-font-size]').forEach(button => {
+            button.addEventListener('click', () => {
+                const size = button.getAttribute('data-font-size');
+                setFontSize(size);
+                savePreference('fontSize', size);
+            });
+        });
+        
+        // Exemplo: botões de nível de animação, se existirem
+        document.querySelectorAll('[data-animation-level]').forEach(button => {
+            button.addEventListener('click', () => {
+                const level = button.getAttribute('data-animation-level');
+                setAnimationLevel(level);
+                savePreference('animationLevel', level);
+            });
+        });
+    }
+    
+    /**
+     * Define o tamanho da fonte para toda a aplicação
+     * @param {string} size - Tamanho (small, medium, large)
+     */
+    function setFontSize(size) {
+        // Remover classes de tamanho anteriores
+        document.documentElement.classList.remove('font-small', 'font-medium', 'font-large');
+        // Adicionar nova classe de tamanho
+        document.documentElement.classList.add(`font-${size}`);
+        // Definir atributo para CSS específico
+        document.documentElement.setAttribute('data-font-size', size);
+    }
+    
+    /**
+     * Define o nível de animações
+     * @param {string} level - Nível (minimal, standard, enhanced)
+     */
+    function setAnimationLevel(level) {
+        // Remover configurações de animação anteriores
+        document.documentElement.classList.remove('animations-minimal', 'animations-standard', 'animations-enhanced');
+        // Adicionar nova configuração
+        document.documentElement.classList.add(`animations-${level}`);
+        // Definir atributo para CSS específico
+        document.documentElement.setAttribute('data-animation-level', level);
+    }
+    
+    /**
+     * Obtém as preferências salvas
+     * @returns {Object} Preferências atuais
+     */
+    function getPreferences() {
+        const savedPrefs = localStorage.getItem(STORAGE_KEY);
+        return savedPrefs ? JSON.parse(savedPrefs) : DEFAULT_PREFERENCES;
+    }
+    
+    /**
+     * Salva todas as preferências
+     * @param {Object} preferences - Objeto com todas as preferências
+     */
+    function savePreferences(preferences) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
+    }
+    
+    /**
+     * Salva uma preferência específica
+     * @param {string} key - Chave da preferência
+     * @param {*} value - Valor a ser salvo
+     */
+    function savePreference(key, value) {
+        const currentPrefs = getPreferences();
+        currentPrefs[key] = value;
+        savePreferences(currentPrefs);
+    }
+    
+    /**
+     * API pública do Theme Manager
+     */
+    window.ThemeManager = {
+        toggleTheme: function() {
+            const currentPrefs = getPreferences();
+            const newTheme = currentPrefs.theme === 'dark' ? 'light' : 'dark';
+            savePreferences({ ...currentPrefs, theme: newTheme });
             applyTheme(newTheme);
-        });
-    });
-}
-
-/**
- * Atualiza os ícones de tema em toda a aplicação
- * @param {boolean} isDarkMode - Se está no modo escuro
- */
-function updateThemeIcons(isDarkMode) {
-    const themeButtons = document.querySelectorAll('.theme-toggle');
-    
-    themeButtons.forEach(button => {
-        // Limpar conteúdo existente
-        while (button.firstChild) {
-            button.removeChild(button.firstChild);
-        }
+        },
         
-        // Adicionar ícone apropriado
-        const icon = document.createElement('i');
-        icon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
-        button.appendChild(icon);
+        setTheme: function(theme) {
+            if (['light', 'dark', 'auto'].includes(theme)) {
+                savePreference('theme', theme);
+                
+                if (theme === 'auto') {
+                    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    applyTheme(systemPrefersDark ? 'dark' : 'light');
+                } else {
+                    applyTheme(theme);
+                }
+            }
+        },
         
-        // Opcional: atualizar texto se existe
-        const textSpan = button.querySelector('.toggle-text');
-        if (textSpan) {
-            textSpan.textContent = isDarkMode ? 'Modo Claro' : 'Modo Escuro';
-        }
-    });
-}
-
-/**
- * Configura opções adicionais de acessibilidade
- */
-function setupAccessibilityOptions() {
-    // Tamanho de fonte
-    const fontSizeControls = document.querySelectorAll('[data-font-size]');
-    fontSizeControls.forEach(control => {
-        control.addEventListener('click', function() {
-            const size = this.getAttribute('data-font-size');
-            setFontSize(size);
-        });
-    });
+        setFontSize: function(size) {
+            if (['small', 'medium', 'large'].includes(size)) {
+                setFontSize(size);
+                savePreference('fontSize', size);
+            }
+        },
+        
+        setAnimationLevel: function(level) {
+            if (['minimal', 'standard', 'enhanced'].includes(level)) {
+                setAnimationLevel(level);
+                savePreference('animationLevel', level);
+            }
+        },
+        
+        getPreferences: getPreferences
+    };
     
-    // Nível de animação
-    const animationControls = document.querySelectorAll('[data-animation-level]');
-    animationControls.forEach(control => {
-        control.addEventListener('click', function() {
-            const level = this.getAttribute('data-animation-level');
-            setAnimationLevel(level);
-        });
-    });
-}
-
-/**
- * Define o tamanho da fonte para toda a aplicação
- * @param {string} size - Tamanho (small, medium, large)
- */
-function setFontSize(size) {
-    document.documentElement.setAttribute('data-font-size', size);
-    localStorage.setItem('zelopack_font_size', size);
-}
-
-/**
- * Define o nível de animações
- * @param {string} level - Nível (minimal, standard, enhanced)
- */
-function setAnimationLevel(level) {
-    document.documentElement.setAttribute('data-animation-level', level);
-    localStorage.setItem('zelopack_animation_level', level);
-}
-
-/**
- * API pública do Theme Manager
- */
-window.ThemeManager = {
-    toggleTheme: function() {
-        const currentTheme = localStorage.getItem(THEME_KEY) || DEFAULT_THEME;
-        const newTheme = currentTheme === LIGHT_MODE ? DARK_MODE : LIGHT_MODE;
-        localStorage.setItem(THEME_KEY, newTheme);
-        applyTheme(newTheme);
-    },
-    
-    setTheme: function(theme) {
-        if (theme === DARK_MODE || theme === LIGHT_MODE) {
-            localStorage.setItem(THEME_KEY, theme);
-            applyTheme(theme);
-        }
-    },
-    
-    getCurrentTheme: function() {
-        return localStorage.getItem(THEME_KEY) || DEFAULT_THEME;
-    },
-    
-    setFontSize: setFontSize,
-    setAnimationLevel: setAnimationLevel
-};
+    // Inicializar tema quando o DOM estiver carregado
+    document.addEventListener('DOMContentLoaded', initializeTheme);
+})();

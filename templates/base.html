@@ -17,6 +17,9 @@
     <!-- Animações personalizadas -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
     
+    <!-- Sistema de temas -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     
@@ -104,6 +107,11 @@
                     </li>
                 </ul>
                 
+                <!-- Botão de Alternar Tema -->
+                <button class="btn btn-outline-secondary me-2 theme-toggle" title="Alternar tema claro/escuro">
+                    <i class="fas fa-moon"></i>
+                </button>
+
                 <!-- Busca Rápida -->
                 <div class="position-relative d-none d-lg-block me-3">
                     <input type="text" id="quickSearch" class="form-control" placeholder="Busca rápida..." aria-label="Busca rápida">
@@ -223,9 +231,13 @@
     </script>
     
     <!-- Scripts personalizados -->
+    <!-- Scripts principais do sistema -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
     <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    
+    <!-- Gerenciador de temas -->
+    <script src="{{ url_for('static', filename='js/theme_manager.js') }}"></script>
     
     {% block extra_js %}{% endblock %}
 </body>
