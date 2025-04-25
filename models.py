@@ -1,4 +1,6 @@
 from datetime import datetime
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 
 class Report(db.Model):
@@ -60,3 +62,41 @@ class Supplier(db.Model):
     
     def __repr__(self):
         return f"<Supplier {self.name}>"
+
+
+class User(UserMixin, db.Model):
+    """Modelo para usuários do sistema."""
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(20), nullable=False, default='analista')  # admin, analista, gestor
+    is_active = db.Column(db.Boolean, default=True)
+    last_login = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def __repr__(self):
+        return f'<User {self.username}>'
+    
+    def set_password(self, password):
+        """Define a senha criptografada para o usuário."""
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        """Verifica se a senha está correta."""
+        return check_password_hash(self.password_hash, password)
+    
+    def to_dict(self):
+        """Converte o objeto para dicionário (sem a senha)."""
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'name': self.name,
+            'role': self.role,
+            'is_active': self.is_active,
+            'last_login': self.last_login.strftime('%d/%m/%Y %H:%M') if self.last_login else None,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M')
+        }

@@ -1,0 +1,80 @@
+Estrutura e Funcionalidades Principais
+
+1. Sistema de Autenticação e Login de Usuários
+	•	Módulo seguro de login e logout.
+	•	Cadastro e gerenciamento de usuários com diferentes níveis de permissão (admin, analista, gestor).
+	•	Integração com JWT para sessões seguras.
+	•	Página de recuperação de senha e redefinição.
+
+⸻
+
+2. Dashboard Principal
+	•	Visualização rápida de:
+	•	Laudos recentes
+	•	Status de análises em andamento
+	•	Documentos pendentes
+	•	Alertas técnicos (ex: análises vencidas ou críticas)
+	•	Gráficos interativos com dados de produção e qualidade.
+	•	KPIs laboratoriais (tempo médio de análise, não conformidades, etc.).
+
+⸻
+
+3. Módulo de Laudos Laboratoriais
+	•	Cadastro e consulta de laudos técnicos.
+	•	Upload e visualização de PDFs e imagens laboratoriais.
+	•	Assinatura digital de laudos.
+	•	Integração com modelos predefinidos de laudos.
+	•	Filtros por tipo de matéria-prima, data, lote, fornecedor, etc.
+
+⸻
+
+4. Cálculos de Laboratório
+	•	Fórmulas personalizadas para cálculos técnicos:
+	•	Brix
+	•	Acidez
+	•	pH
+	•	Umidade, entre outros.
+	•	Interface dinâmica para inserção de parâmetros e visualização de resultados.
+	•	Armazenamento dos cálculos dentro do respectivo laudo.
+
+⸻
+
+5. Gestão de Documentos
+	•	Central de documentos técnicos e normativos.
+	•	Controle de versões de arquivos.
+	•	Marcação de documentos como obrigatórios para determinadas etapas.
+
+⸻
+
+6. Emissão de Relatórios
+	•	Relatórios gerados em PDF, com opção de impressão direta.
+	•	Modelos personalizáveis de relatórios analíticos.
+	•	Agrupamento por período, fornecedor, tipo de matéria-prima, etc.
+	•	Exportação de dados em CSV/XLSX.
+
+⸻
+
+7. Módulo de Impressão
+	•	Impressão automatizada de etiquetas, relatórios e fichas.
+	•	Integração com impressoras industriais ou locais.
+
+⸻
+
+8. Configurações do Sistema
+	•	Gerenciamento de usuários e permissões.
+	•	Parâmetros de laboratório (tolerâncias, unidades, limites).
+	•	Configurações de relatórios e cabeçalhos personalizados.
+	•	Idioma e preferências do sistema.
+
+⸻
+
+9. Backup e Recuperação
+	•	Backup automático e manual do banco de dados.
+	•	Exportação de histórico de laudos, configurações e documentos.
+	•	Mecanismo de restauração a partir de backups.
+
+⸻
+
+10. Histórico de Atividades
+	•	Registro completo de ações de usuários no sistema (auditoria).
+	•	Logs com data/hora, tipo de operação e usuário envolvido.

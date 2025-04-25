@@ -2,8 +2,9 @@ import os
 import logging
 from datetime import datetime
 
-from flask import Flask
+from flask import Flask, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, current_user
 from sqlalchemy.orm import DeclarativeBase
 
 # Configurar logging
@@ -43,6 +44,18 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 # Inicializar o banco de dados
 db.init_app(app)
+
+# Configurar o Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'auth.login'
+login_manager.login_message = 'Por favor, faça login para acessar esta página.'
+login_manager.login_message_category = 'info'
+
+@login_manager.user_loader
+def load_user(user_id):
+    from models import User
+    return User.query.get(int(user_id))
 
 # Adicionar variáveis de contexto para todas as templates
 @app.context_processor
@@ -85,3 +98,16 @@ with app.app_context():
         db.session.add_all(default_suppliers)
         db.session.commit()
         print("Fornecedores padrão adicionados.")
+    
+    # Criar usuário admin padrão se não existir nenhum usuário
+    if models.User.query.count() == 0:
+        admin_user = models.User(
+            username='admin',
+            email='admin@zelopack.com.br',
+            name='Administrador',
+            role='admin'
+        )
+        admin_user.set_password('admin123')  # Em produção, usar senha mais segura!
+        db.session.add(admin_user)
+        db.session.commit()
+        print("Usuário administrador padrão criado.")
