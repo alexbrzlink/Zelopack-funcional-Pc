@@ -29,6 +29,9 @@ def index():
         if os.path.isdir(os.path.join(FORMS_DIR, item)):
             categories.append(item)
     
+    # Ordenar alfabeticamente
+    categories.sort()
+    
     return render_template(
         'forms/index.html',
         title="Formulários Zelopack",

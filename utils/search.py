@@ -3,7 +3,7 @@ from datetime import datetime
 
 from models import Report
 
-def search_reports(query=None, category=None, supplier=None, date_from=None, date_to=None):
+def search_reports(query=None, category=None, supplier=None, date_from=None, date_to=None, order_by_title=False):
     """
     Realiza busca flexível de laudos com suporte a termos parciais.
     
@@ -13,6 +13,7 @@ def search_reports(query=None, category=None, supplier=None, date_from=None, dat
         supplier: Filtro por fornecedor
         date_from: Data inicial para filtro
         date_to: Data final para filtro
+        order_by_title: Se True, ordena os resultados alfabeticamente pelo título em vez da data
         
     Returns:
         Lista de objetos Report que correspondem aos critérios
@@ -51,7 +52,12 @@ def search_reports(query=None, category=None, supplier=None, date_from=None, dat
     if date_to:
         search_query = search_query.filter(Report.report_date <= date_to)
     
-    # Ordenar resultados do mais recente para o mais antigo
-    search_query = search_query.order_by(Report.upload_date.desc())
+    # Ordenar resultados com base no parâmetro order_by_title
+    if order_by_title:
+        # Ordenar alfabeticamente pelo título
+        search_query = search_query.order_by(Report.title)
+    else:
+        # Ordenar do mais recente para o mais antigo (padrão)
+        search_query = search_query.order_by(Report.upload_date.desc())
     
     return search_query.all()

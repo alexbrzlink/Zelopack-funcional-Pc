@@ -26,8 +26,8 @@ def upload():
     form = ReportUploadForm()
     
     # Carregar opções para os selects
-    categories = Category.query.all()
-    suppliers = Supplier.query.all()
+    categories = Category.query.order_by(Category.name).all()
+    suppliers = Supplier.query.order_by(Supplier.name).all()
     
     form.category.choices = [(c.name, c.name) for c in categories]
     form.category.choices.insert(0, ('', 'Selecione uma categoria'))
@@ -117,8 +117,8 @@ def search():
     form = SearchForm()
     
     # Carregar opções para os selects
-    categories = Category.query.all()
-    suppliers = Supplier.query.all()
+    categories = Category.query.order_by(Category.name).all()
+    suppliers = Supplier.query.order_by(Supplier.name).all()
     
     form.category.choices = [(c.name, c.name) for c in categories]
     form.category.choices.insert(0, ('', 'Todas as categorias'))
@@ -134,9 +134,13 @@ def search():
         supplier = form.supplier.data
         date_from = form.date_from.data
         date_to = form.date_to.data
+        sort_by = request.form.get('sort_by', 'date')
+        
+        # Determinar se deve ordenar por título ou data
+        order_by_title = sort_by == 'title'
         
         # Realizar busca com os filtros
-        results = search_reports(query, category, supplier, date_from, date_to)
+        results = search_reports(query, category, supplier, date_from, date_to, order_by_title)
     
     return render_template('reports/search.html', form=form, results=results, title="Buscar Laudos")
 
@@ -147,6 +151,7 @@ def api_search():
     query = request.args.get('query', '')
     category = request.args.get('category', '')
     supplier = request.args.get('supplier', '')
+    sort_by = request.args.get('sort_by', 'date')
     
     date_from_str = request.args.get('date_from', '')
     date_to_str = request.args.get('date_to', '')
@@ -166,7 +171,10 @@ def api_search():
         except ValueError:
             pass
     
-    results = search_reports(query, category, supplier, date_from, date_to)
+    # Determinar se deve ordenar por título ou data
+    order_by_title = sort_by == 'title'
+    
+    results = search_reports(query, category, supplier, date_from, date_to, order_by_title)
     return jsonify([r.to_dict() for r in results])
 
 @reports_bp.route('/delete/<int:id>', methods=['POST'])
