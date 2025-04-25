@@ -682,7 +682,7 @@ def edit_supplier(id):
     
     return render_template('reports/supplier_form.html', form=form, supplier=supplier, title="Editar Fornecedor")
 
-@reports_bp.route('/suppliers/delete/<int:id>', methods=['POST'])
+@reports_bp.route('/suppliers/delete/<int:id>', methods=['POST', 'GET'])
 @login_required
 def delete_supplier(id):
     """Excluir um fornecedor."""
