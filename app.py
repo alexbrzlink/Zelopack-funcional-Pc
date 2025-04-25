@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or "ChangeThis2024!"
 from datetime import datetime
 
-from flask import Flask, flash, redirect, url_for
+from flask import Flask, flash, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user, login_user
 from flask_wtf.csrf import CSRFProtect
@@ -66,18 +66,38 @@ if app.debug:
     app.config['WTF_CSRF_SECRET_KEY'] = app.secret_key
     app.config['WTF_CSRF_CHECK_DEFAULT'] = True  # Verificação CSRF obrigatória
     app.config['WTF_CSRF_SSL_STRICT'] = False  # Permitir HTTPS mesmo em localhost
+    # Configurações de cookie para melhorar compatibilidade com dispositivos móveis
+    app.config['SESSION_COOKIE_SECURE'] = False
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Permite autenticação em cross-site
 else:
     # Configuração mais restrita para produção
     app.config['WTF_CSRF_ENABLED'] = True
     app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # 1 hora
     app.config['WTF_CSRF_SECRET_KEY'] = app.secret_key
     app.config['WTF_CSRF_SSL_STRICT'] = True
+    # Configurações de cookie para produção
+    app.config['SESSION_COOKIE_SECURE'] = True  # Só envia em HTTPS
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Permite autenticação em cross-site
 
 # Adicionar mais isenções para CSRF em rotas de teste/desenvolvimento
 csrf.exempt('blueprints.auth.login_direct')
 csrf.exempt('blueprints.auth.login')  # Temporariamente isento para testes fora do Replit
 csrf.exempt('app.login_direct')
 csrf.exempt('app.login_test')
+csrf.exempt('app.check_admin_user')  # Isento para permitir o diagnóstico do admin
+
+# Adicionar proteção global para problemas de CSRF token em dispositivos móveis
+@app.after_request
+def add_csrf_cookie(response):
+    try:
+        if 'csrf_token' not in session:
+            from flask_wtf.csrf import generate_csrf
+            session['csrf_token'] = generate_csrf()
+    except Exception as e:
+        logger.error(f"Erro ao configurar CSRF token: {e}")
+    return response
 
 # Configurar o Flask-Login
 login_manager = LoginManager()
