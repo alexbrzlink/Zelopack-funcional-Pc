@@ -1,54 +1,52 @@
 """
 Módulo de Rotas para o Editor Universal do ZeloPack
+
+Este módulo implementa as rotas para o editor universal de formulários,
+permitindo a edição online sem necessidade de download dos arquivos.
 """
 
 import os
 import json
-import uuid
-import tempfile
-import shutil
+import base64
 from datetime import datetime
-from pathlib import Path
+from io import BytesIO
 
+# Importações do Flask
 from flask import (
-    Blueprint, render_template, redirect, url_for, request, 
-    flash, jsonify, session, send_file, abort, current_app
+    Blueprint, render_template, request, jsonify, url_for, 
+    current_app, session, send_file, redirect, flash
 )
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 
-from models import db, FormPreset, StandardFields
-from blueprints.forms.online_editor import OnlineEditorConverter, extract_fields_from_file
+# Importar funções de processamento de documentos
+from .online_editor import (
+    extract_data_from_excel,
+    extract_data_from_docx,
+    extract_data_from_pdf, 
+    apply_excel_fields,
+    apply_docx_fields,
+    apply_pdf_fields
+)
 
-# Criar blueprint
+# Importações de modelos
+from app import db
+from models import FormPreset, StandardFields
+
+# Criar blueprint para o editor universal
 editor_bp = Blueprint('editor', __name__, url_prefix='/editor')
-
-# Configurações
-FORMS_DIR = os.environ.get('FORMS_DIR', 'attached_assets')
-EXTRACTED_FORMS_DIR = os.path.join(os.getcwd(), 'extracted_forms')
-
-# Garantir que a pasta de formulários extraídos exista
-os.makedirs(EXTRACTED_FORMS_DIR, exist_ok=True)
-
 
 @editor_bp.route('/')
 @login_required
 def index():
     """Página inicial do editor universal."""
-    # Obter todas as categorias (pastas)
-    categories = []
+    # Obter todas as categorias de formulários disponíveis
+    categories = os.listdir(current_app.config['ATTACHED_ASSETS_FOLDER'])
+    # Filtrar apenas diretórios e excluir arquivos
+    categories = [c for c in categories if os.path.isdir(os.path.join(current_app.config['ATTACHED_ASSETS_FOLDER'], c))]
     
-    try:
-        # Listar pastas no diretório de formulários
-        for item in os.listdir(FORMS_DIR):
-            full_path = os.path.join(FORMS_DIR, item)
-            if os.path.isdir(full_path) and not item.startswith('.'):
-                categories.append(item)
-        
-        # Ordenar categorias em ordem alfabética
-        categories.sort()
-    except Exception as e:
-        flash(f'Erro ao listar categorias: {str(e)}', 'danger')
+    # Ordenar alfabeticamente
+    categories.sort()
     
     return render_template(
         'forms/editor_index.html',
@@ -56,175 +54,224 @@ def index():
         categories=categories
     )
 
-
-@editor_bp.route('/lista/<category>')
+@editor_bp.route('/categoria/<category>')
 @login_required
 def category(category):
     """Lista todos os formulários de uma categoria para edição online."""
-    # Validar caminho da categoria
-    category_path = os.path.join(FORMS_DIR, category)
+    # Verificar se a categoria existe
+    category_path = os.path.join(current_app.config['ATTACHED_ASSETS_FOLDER'], category)
     if not os.path.exists(category_path) or not os.path.isdir(category_path):
-        flash('Categoria não encontrada.', 'danger')
+        flash(f'Categoria {category} não encontrada!', 'danger')
         return redirect(url_for('editor.index'))
     
-    # Obter lista de formulários
-    forms = []
+    # Listar todos os arquivos na categoria
+    files = []
+    for filename in os.listdir(category_path):
+        file_path = os.path.join(category_path, filename)
+        if os.path.isfile(file_path):
+            # Obter extensão do arquivo
+            extension = os.path.splitext(filename)[1].lower()
+            # Verificar se é um formato suportado
+            if extension in ['.xlsx', '.xls', '.docx', '.pdf']:
+                # Obter data de modificação
+                modified = datetime.fromtimestamp(os.path.getmtime(file_path))
+                # Formatar para exibição
+                modified_str = modified.strftime('%d/%m/%Y %H:%M')
+                
+                # Verificar se existem presets para este formulário
+                file_rel_path = os.path.join(category, filename)
+                preset_count = FormPreset.query.filter_by(form_path=file_rel_path).count()
+                
+                files.append({
+                    'name': filename,
+                    'extension': extension,
+                    'path': os.path.join(category, filename),
+                    'modified': modified_str,
+                    'size': os.path.getsize(file_path),
+                    'preset_count': preset_count
+                })
     
-    try:
-        for item in os.listdir(category_path):
-            if item.startswith('.') or item.startswith('~$'):
-                continue
-                
-            full_path = os.path.join(category_path, item)
-            if os.path.isfile(full_path):
-                file_path = os.path.join(category, item)
-                file_ext = os.path.splitext(item)[1].lower()
-                
-                # Verificar se é um tipo de arquivo suportado
-                if file_ext in ['.pdf', '.docx', '.xlsx', '.xls']:
-                    # Obter ícone baseado na extensão
-                    icon = ''
-                    if file_ext == '.pdf':
-                        icon = 'fa-file-pdf'
-                    elif file_ext == '.docx':
-                        icon = 'fa-file-word'
-                    elif file_ext in ['.xlsx', '.xls']:
-                        icon = 'fa-file-excel'
-                    else:
-                        icon = 'fa-file-alt'
-                    
-                    forms.append({
-                        'name': item,
-                        'path': file_path,
-                        'icon': icon,
-                        'ext': file_ext
-                    })
-        
-        # Ordenar formulários em ordem alfabética
-        forms.sort(key=lambda x: x['name'])
-    except Exception as e:
-        flash(f'Erro ao listar formulários: {str(e)}', 'danger')
+    # Ordenar por nome de arquivo (ordem alfabética)
+    files.sort(key=lambda x: x['name'])
     
     return render_template(
         'forms/editor_category.html',
-        title=f'Formulários de {category}',
+        title=f'Formulários para Edição - {category}',
         category=category,
-        forms=forms
+        files=files
     )
-
 
 @editor_bp.route('/editar/<path:file_path>')
 @login_required
 def edit_form(file_path):
     """Interface do editor universal para formulários."""
-    try:
-        # Inicializar conversor
-        converter = OnlineEditorConverter(file_path, FORMS_DIR)
-        file_name = os.path.basename(file_path)
-        file_ext = os.path.splitext(file_name)[1].lower()
-        
-        # Obter campos padronizados disponíveis
-        standard_fields = StandardFields.query.filter_by(
-            is_active=True
-        ).order_by(StandardFields.is_default.desc(), StandardFields.name).all()
-        
-        # Obter predefinições disponíveis para esse formulário
-        presets = FormPreset.query.filter_by(
-            form_type=file_name,
-            is_active=True
-        ).order_by(FormPreset.is_default.desc(), FormPreset.name).all()
-        
-        # Gerar CSRF token para o template
-        csrf_token = generate_csrf()
-        
-        return render_template(
-            'forms/editor_form.html',
-            title=f'Editor Universal - {file_name}',
-            file_path=file_path,
-            file_name=file_name,
-            file_ext=file_ext,
-            standard_fields=standard_fields,
-            presets=presets,
-            csrf_token=csrf_token
-        )
-    except Exception as e:
-        flash(f'Erro ao abrir editor: {str(e)}', 'danger')
+    # Verificar se o arquivo existe
+    full_path = os.path.join(current_app.config['ATTACHED_ASSETS_FOLDER'], file_path)
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        flash(f'Arquivo {file_path} não encontrado!', 'danger')
         return redirect(url_for('editor.index'))
+    
+    # Obter nome do arquivo e extensão
+    file_name = os.path.basename(full_path)
+    file_ext = os.path.splitext(file_name)[1].lower()
+    
+    # Buscar presets para este formulário
+    presets = FormPreset.query.filter_by(form_path=file_path).all()
+    
+    # Buscar campos padronizados
+    standard_fields = StandardFields.query.all()
+    
+    return render_template(
+        'forms/editor_form.html',
+        title=f'Editor Universal - {file_name}',
+        file_path=file_path,
+        file_name=file_name,
+        file_ext=file_ext,
+        presets=presets,
+        standard_fields=standard_fields,
+        csrf_token=generate_csrf()
+    )
 
-
-@editor_bp.route('/api/load/<path:file_path>')
+@editor_bp.route('/api/load-content/<path:file_path>')
 @login_required
 def api_load_content(file_path):
     """API para carregar o conteúdo do documento para edição."""
+    # Verificar se o arquivo existe
+    full_path = os.path.join(current_app.config['ATTACHED_ASSETS_FOLDER'], file_path)
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        return jsonify({'success': False, 'message': 'Arquivo não encontrado'})
+    
+    # Obter extensão do arquivo
+    file_ext = os.path.splitext(full_path)[1].lower()
+    
     try:
-        converter = OnlineEditorConverter(file_path, FORMS_DIR)
-        content = converter.get_editable_content()
-        return jsonify(content)
+        # Processar o arquivo de acordo com a extensão
+        if file_ext in ['.xlsx', '.xls']:
+            # Excel
+            data = extract_data_from_excel(full_path)
+            return jsonify({
+                'success': True,
+                'content_type': 'excel',
+                'active_sheet': data['active_sheet'],
+                'sheets': data['sheets'],
+                'fields': data['fields']
+            })
+        elif file_ext == '.docx':
+            # Word
+            data = extract_data_from_docx(full_path)
+            return jsonify({
+                'success': True,
+                'content_type': 'docx',
+                'paragraphs': data['paragraphs'],
+                'tables': data['tables'],
+                'fields': data['fields']
+            })
+        elif file_ext == '.pdf':
+            # PDF
+            data = extract_data_from_pdf(full_path)
+            
+            # Converter o PDF para base64 para visualização
+            with open(full_path, 'rb') as pdf_file:
+                pdf_base64 = base64.b64encode(pdf_file.read()).decode('utf-8')
+            
+            return jsonify({
+                'success': True,
+                'content_type': 'pdf',
+                'pdf_base64': pdf_base64,
+                'fields': data['fields']
+            })
+        else:
+            # Formato não suportado
+            return jsonify({'success': False, 'message': 'Formato de arquivo não suportado'})
+    
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Erro ao carregar conteúdo: {str(e)}'
-        })
+        # Em caso de erro, enviar mensagem de falha
+        return jsonify({'success': False, 'message': f'Erro ao processar arquivo: {str(e)}'})
 
-
-@editor_bp.route('/api/save/<path:file_path>', methods=['POST'])
+@editor_bp.route('/api/save-content/<path:file_path>', methods=['POST'])
 @login_required
 def api_save_content(file_path):
     """API para salvar o conteúdo editado."""
+    # Verificar se o arquivo existe
+    full_path = os.path.join(current_app.config['ATTACHED_ASSETS_FOLDER'], file_path)
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        return jsonify({'success': False, 'message': 'Arquivo não encontrado'})
+    
+    # Obter dados do formulário
+    data = request.get_json()
+    
+    if not data or 'fields' not in data:
+        return jsonify({'success': False, 'message': 'Dados inválidos'})
+    
+    # Obter extensão do arquivo
+    file_ext = os.path.splitext(full_path)[1].lower()
+    
     try:
-        # Obter dados enviados
-        edited_data = request.json
-        if not edited_data:
-            return jsonify({
-                'success': False,
-                'message': 'Dados não fornecidos.'
-            })
+        # Criar uma cópia temporária do arquivo com os campos preenchidos
+        file_name = os.path.basename(full_path)
+        output_filename = f"edited_{file_name}"
+        output_path = os.path.join(current_app.config['UPLOAD_FOLDER'], output_filename)
         
-        # Salvar o conteúdo
-        converter = OnlineEditorConverter(file_path, FORMS_DIR)
-        result = converter.save_edited_content(edited_data)
+        # Aplicar os campos preenchidos ao arquivo de acordo com o tipo
+        if file_ext in ['.xlsx', '.xls']:
+            # Excel
+            apply_excel_fields(full_path, output_path, data['fields'])
+        elif file_ext == '.docx':
+            # Word
+            apply_docx_fields(full_path, output_path, data['fields'])
+        elif file_ext == '.pdf':
+            # PDF
+            apply_pdf_fields(full_path, output_path, data['fields'])
+        else:
+            return jsonify({'success': False, 'message': 'Formato de arquivo não suportado'})
         
-        if result.get('success'):
-            # Guardar o caminho temporário na sessão para download posterior
-            session['saved_temp_file'] = result['file_path']
-            session['saved_file_name'] = result['file_name']
+        # Salvar o caminho do arquivo na sessão para download posterior
+        session['edited_file'] = output_path
         
-        return jsonify(result)
+        return jsonify({'success': True, 'message': 'Documento salvo com sucesso'})
+    
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Erro ao salvar conteúdo: {str(e)}'
-        })
-
+        # Em caso de erro, enviar mensagem de falha
+        return jsonify({'success': False, 'message': f'Erro ao salvar arquivo: {str(e)}'})
 
 @editor_bp.route('/api/download-edited')
 @login_required
 def api_download_edited():
     """API para baixar o arquivo editado."""
-    try:
-        # Obter caminho do arquivo temporário da sessão
-        temp_file_path = session.get('saved_temp_file')
-        file_name = session.get('saved_file_name')
-        
-        if not temp_file_path or not os.path.exists(temp_file_path):
-            abort(404)
-        
-        # Enviar o arquivo para download
-        return send_file(
-            temp_file_path,
-            as_attachment=True,
-            download_name=file_name
-        )
-    except Exception as e:
-        flash(f'Erro ao baixar arquivo: {str(e)}', 'danger')
+    # Verificar se existe um arquivo editado na sessão
+    if 'edited_file' not in session:
+        flash('Nenhum arquivo editado encontrado!', 'danger')
         return redirect(url_for('editor.index'))
+    
+    # Obter caminho do arquivo
+    file_path = session['edited_file']
+    if not os.path.exists(file_path) or not os.path.isfile(file_path):
+        flash('Arquivo não encontrado!', 'danger')
+        return redirect(url_for('editor.index'))
+    
+    # Obter nome do arquivo
+    file_name = os.path.basename(file_path)
+    
+    # Enviar arquivo para download
+    return send_file(
+        file_path,
+        as_attachment=True,
+        download_name=file_name
+    )
 
-
-@editor_bp.route('/api/preset/<int:preset_id>')
+@editor_bp.route('/api/get-preset/<int:preset_id>')
 @login_required
 def api_get_preset(preset_id):
     """API para obter dados de uma predefinição."""
-    preset = FormPreset.query.get_or_404(preset_id)
+    preset = FormPreset.query.get(preset_id)
+    if not preset:
+        return jsonify({'success': False, 'message': 'Predefinição não encontrada'})
+    
+    # Converter dados JSON para dicionário
+    try:
+        data = json.loads(preset.data)
+    except Exception:
+        data = {}
     
     return jsonify({
         'success': True,
@@ -232,110 +279,87 @@ def api_get_preset(preset_id):
             'id': preset.id,
             'name': preset.name,
             'description': preset.description,
-            'form_type': preset.form_type,
-            'data': preset.data,
-            'is_default': preset.is_default
+            'is_default': preset.is_default,
+            'data': data
         }
     })
 
-
-@editor_bp.route('/api/standard-fields/<int:fields_id>')
+@editor_bp.route('/api/get-standard-fields/<int:fields_id>')
 @login_required
 def api_get_standard_fields(fields_id):
     """API para obter dados de campos padronizados."""
-    std_fields = StandardFields.query.get_or_404(fields_id)
+    standard_fields = StandardFields.query.get(fields_id)
+    if not standard_fields:
+        return jsonify({'success': False, 'message': 'Campos padronizados não encontrados'})
+    
+    # Converter dados JSON para dicionário
+    try:
+        data = json.loads(standard_fields.data)
+    except Exception:
+        data = {}
     
     return jsonify({
         'success': True,
         'standard_fields': {
-            'id': std_fields.id,
-            'name': std_fields.name,
-            'description': std_fields.description,
-            'data': std_fields.data,
-            'is_default': std_fields.is_default
+            'id': standard_fields.id,
+            'name': standard_fields.name,
+            'is_default': standard_fields.is_default,
+            'data': data
         }
     })
-
 
 @editor_bp.route('/api/create-preset/<path:file_path>', methods=['POST'])
 @login_required
 def api_create_preset(file_path):
     """API para criar uma predefinição para o formulário."""
+    # Obter dados do formulário
+    data = request.get_json()
+    
+    if not data or 'name' not in data or 'data' not in data:
+        return jsonify({'success': False, 'message': 'Dados inválidos'})
+    
+    # Verificar se o arquivo existe
+    full_path = os.path.join(current_app.config['ATTACHED_ASSETS_FOLDER'], file_path)
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        return jsonify({'success': False, 'message': 'Arquivo não encontrado'})
+    
     try:
-        full_path = os.path.join(FORMS_DIR, file_path)
-        
-        # Verificar se o arquivo existe
-        if not os.path.exists(full_path) or not os.path.isfile(full_path):
-            return jsonify({
-                'success': False,
-                'message': 'Arquivo não encontrado.'
-            }), 404
-        
-        file_name = os.path.basename(full_path)
-        
-        # Obter dados da requisição
-        data = request.json
-        
-        if not data or not data.get('name') or not data.get('data'):
-            return jsonify({
-                'success': False,
-                'message': 'Dados incompletos. Nome e campos são obrigatórios.'
-            }), 400
-        
-        preset_name = data.get('name')
-        preset_description = data.get('description', '')
-        is_default = data.get('is_default', False)
-        preset_data = data.get('data', {})
-        
-        # Verificar se já existe uma predefinição com esse nome
-        existing = FormPreset.query.filter_by(
-            form_type=file_name,
-            name=preset_name,
-            is_active=True
-        ).first()
-        
-        if existing:
-            return jsonify({
-                'success': False,
-                'message': f'Já existe uma predefinição com o nome "{preset_name}" para este formulário.'
-            }), 400
-        
-        # Verificar se estamos definindo como padrão
-        if is_default:
-            # Remover a definição de padrão de outras predefinições para este formulário
-            FormPreset.query.filter_by(
-                form_type=file_name,
-                is_default=True,
-                is_active=True
-            ).update({
-                'is_default': False
-            })
+        # Se esta predefinição for marcada como padrão, desmarcar outras como padrão
+        if data.get('is_default', False):
+            # Buscar todas as predefinições deste formulário marcadas como padrão
+            default_presets = FormPreset.query.filter_by(
+                form_path=file_path,
+                is_default=True
+            ).all()
+            
+            # Desmarcar como padrão
+            for preset in default_presets:
+                preset.is_default = False
+            
+            # Commit das alterações
+            db.session.commit()
         
         # Criar nova predefinição
         preset = FormPreset(
-            name=preset_name,
-            description=preset_description,
-            form_type=file_name,
-            data=preset_data,
-            is_default=is_default,
+            name=data['name'],
+            description=data.get('description', ''),
+            form_path=file_path,
+            is_default=data.get('is_default', False),
+            data=json.dumps(data['data']),
             created_by=current_user.id
         )
         
+        # Salvar no banco de dados
         db.session.add(preset)
         db.session.commit()
         
         return jsonify({
             'success': True,
-            'message': 'Predefinição criada com sucesso!',
-            'preset': {
-                'id': preset.id,
-                'name': preset.name,
-                'description': preset.description,
-                'is_default': preset.is_default
-            }
+            'message': 'Predefinição criada com sucesso',
+            'preset_id': preset.id
         })
+    
     except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Erro ao criar predefinição: {str(e)}'
-        }), 500
+        # Em caso de erro, reverter as alterações no banco de dados
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Erro ao criar predefinição: {str(e)}'})

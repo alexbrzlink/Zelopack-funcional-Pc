@@ -798,12 +798,13 @@ class FormPreset(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    form_type = db.Column(db.String(100), nullable=False)  # Tipo/nome do formulário
-    file_path = db.Column(db.String(255), nullable=True)  # Caminho relativo do arquivo no sistema
+    form_type = db.Column(db.String(100), nullable=True)  # Tipo/nome do formulário
+    form_path = db.Column(db.String(500), nullable=True)  # Caminho relativo do arquivo no sistema
+    file_path = db.Column(db.String(500), nullable=True)  # Campo mantido para compatibilidade
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    data = db.Column(db.JSON, nullable=False)  # Campos e valores predefinidos
+    data = db.Column(db.Text, nullable=False, default='{}')  # Campos e valores predefinidos em formato JSON
     is_default = db.Column(db.Boolean, default=False)  # Se é a predefinição padrão para este formulário
     is_active = db.Column(db.Boolean, default=True)
     use_standard_fields = db.Column(db.Boolean, default=True)  # Se deve usar campos padronizados
@@ -814,26 +815,32 @@ class FormPreset(db.Model):
     standard_fields = db.relationship('StandardFields', backref='form_presets')
     
     def __repr__(self):
-        return f"<FormPreset {self.id}: {self.name} for {self.form_type}>"
+        return f"<FormPreset {self.id}: {self.name} for {self.form_path or self.form_type}>"
     
     def to_dict(self):
-        """Converte o preset para dicionário."""
+        """Converte a predefinição para dicionário."""
+        try:
+            data_dict = json.loads(self.data) if isinstance(self.data, str) else self.data
+        except (json.JSONDecodeError, TypeError):
+            data_dict = {}
+            
         return {
             'id': self.id,
             'name': self.name,
             'description': self.description,
+            'form_path': self.form_path,
             'form_type': self.form_type,
             'file_path': self.file_path,
             'created_by': self.created_by,
             'creator_name': self.creator.name if self.creator else None,
             'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
             'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
-            'data': self.data,
+            'data': data_dict,
             'is_default': self.is_default,
             'is_active': self.is_active,
             'use_standard_fields': self.use_standard_fields,
             'standard_fields_id': self.standard_fields_id,
-            'standard_fields': self.standard_fields.to_dict() if self.standard_fields else None
+            'standard_fields_name': self.standard_fields.name if self.standard_fields else None
         }
     
     def get_download_url(self):

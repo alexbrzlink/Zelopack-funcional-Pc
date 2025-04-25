@@ -4,195 +4,102 @@
 
 {% block content %}
 <div class="container-fluid py-4">
-    <!-- Cabeçalho com imagem de fundo gradiente -->
-    <div class="forms-header rounded-lg mb-5 p-4 animate-fade-in">
+    <!-- Cabeçalho com gradiente -->
+    <div class="header-gradient rounded-lg mb-4 p-4 animate-fade-in">
         <div class="row align-items-center">
-            <div class="col-md-7">
-                <h1 class="display-5 text-white fw-bold mb-2">
-                    <i class="fas fa-edit me-3 header-icon"></i>Editor Universal de Formulários
+            <div class="col">
+                <h1 class="text-white fw-bold mb-0">
+                    <i class="fas fa-edit me-2 pulse-icon"></i>
+                    Editor Universal de Formulários
                 </h1>
-                <p class="lead text-white-50 mb-0">
-                    Edite qualquer formulário diretamente no navegador sem necessidade de download
+                <p class="text-white-50 mb-0">
+                    Edite formulários online sem necessidade de download
                 </p>
             </div>
-            <div class="col-md-5">
-                <div class="search-container p-2 rounded-pill shadow">
-                    <div class="input-group">
-                        <span class="input-group-text bg-transparent border-0 text-white">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input 
-                            type="text" 
-                            id="search-input" 
-                            class="form-control form-control-lg bg-transparent border-0 text-white" 
-                            placeholder="Pesquisar formulários..." 
-                            aria-label="Pesquisar formulários"
-                        >
-                        <button class="btn btn-search rounded-circle" type="button" id="search-button">
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
+            <div class="col-auto">
+                <a href="{{ url_for('forms.index') }}" class="btn btn-light btn-rounded animate-fade-in-left">
+                    <i class="fas fa-list me-1"></i> Ver Formulários
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- Estatísticas rápidas -->
-    <div class="row mb-5 animate-fade-in-up">
-        <div class="col-md-3">
-            <div class="stat-card bg-gradient-primary text-white rounded-lg p-3 shadow">
-                <div class="stat-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-title">Formulários</h3>
-                    <p class="stat-value">{{ categories|length }} Categorias</p>
-                </div>
-                <div class="stat-arrow">
-                    <i class="fas fa-arrow-right"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card bg-gradient-success text-white rounded-lg p-3 shadow">
-                <div class="stat-icon">
-                    <i class="fas fa-check-double"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-title">Edição Online</h3>
-                    <p class="stat-value">100% Precisa</p>
-                </div>
-                <div class="stat-arrow">
-                    <i class="fas fa-arrow-right"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card bg-gradient-warning text-white rounded-lg p-3 shadow">
-                <div class="stat-icon">
-                    <i class="fas fa-industry"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-title">Predefinições</h3>
-                    <p class="stat-value">Valores Padrão</p>
-                </div>
-                <div class="stat-arrow">
-                    <i class="fas fa-arrow-right"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="stat-card bg-gradient-info text-white rounded-lg p-3 shadow">
-                <div class="stat-icon">
-                    <i class="fas fa-flask"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-title">Campos Customizados</h3>
-                    <p class="stat-value">Empresa, Marca, Lote</p>
-                </div>
-                <div class="stat-arrow">
-                    <i class="fas fa-arrow-right"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Lista de categorias com cards modernos e interativos -->
-    <div id="categories-section" class="animate-fade-in">
-        <div class="section-header d-flex align-items-center mb-4">
-            <div class="section-icon bg-primary text-white rounded-circle me-3">
-                <i class="fas fa-folder-open"></i>
-            </div>
-            <h2 class="section-title mb-0">Categorias de Formulários</h2>
-        </div>
-        
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Categorias de formulários -->
+    <div class="row">
+        {% if categories|length > 0 %}
             {% for category in categories %}
-            <div class="col">
-                <div class="category-card h-100 rounded-lg shadow animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
-                    <div class="category-bg-wrapper">
-                        <div class="category-bg 
-                        {% if category == 'Produção' or 'PRODUCAO' in category %}bg-gradient-primary
-                        {% elif category == 'Qualidade' or 'QUALIDADE' in category %}bg-gradient-success
-                        {% elif category == 'Manutenção' or 'MANUTENCAO' in category %}bg-gradient-warning
-                        {% elif category == 'Segurança' or 'SEGURANCA' in category %}bg-gradient-danger
-                        {% elif category == 'Laboratório' or 'LABORATORIO' in category %}bg-gradient-info
-                        {% elif category == 'Gerencial' or 'GERENCIAL' in category %}bg-gradient-dark
-                        {% else %}bg-gradient-custom-{{ loop.index0 % 5 }}{% endif %}"></div>
-                    </div>
-                    
-                    <div class="category-content p-4">
-                        <div class="category-icon rounded-circle shadow-sm 
-                            {% if category == 'Produção' or 'PRODUCAO' in category %}bg-primary
-                            {% elif category == 'Qualidade' or 'QUALIDADE' in category %}bg-success
-                            {% elif category == 'Manutenção' or 'MANUTENCAO' in category %}bg-warning
-                            {% elif category == 'Segurança' or 'SEGURANCA' in category %}bg-danger
-                            {% elif category == 'Laboratório' or 'LABORATORIO' in category %}bg-info
-                            {% elif category == 'Gerencial' or 'GERENCIAL' in category %}bg-dark
-                            {% else %}bg-primary{% endif %}">
-                            {% if category == 'Produção' or 'PRODUCAO' in category %}
-                                <i class="fas fa-industry"></i>
-                            {% elif category == 'Qualidade' or 'QUALIDADE' in category %}
-                                <i class="fas fa-check-circle"></i>
-                            {% elif category == 'Manutenção' or 'MANUTENCAO' in category %}
-                                <i class="fas fa-tools"></i>
-                            {% elif category == 'Segurança' or 'SEGURANCA' in category %}
-                                <i class="fas fa-shield-alt"></i>
-                            {% elif category == 'Laboratório' or 'LABORATORIO' in category %}
-                                <i class="fas fa-flask"></i>
-                            {% elif category == 'Gerencial' or 'GERENCIAL' in category %}
-                                <i class="fas fa-chart-line"></i>
-                            {% elif 'FORMULARIOS' in category %}
-                                <i class="fas fa-file-signature"></i>
-                            {% elif 'PRD' in category %}
-                                <i class="fas fa-cogs"></i>
-                            {% elif 'QLD' in category %}
-                                <i class="fas fa-clipboard-check"></i>
-                            {% elif 'TQ' in category or 'TBA' in category %}
-                                <i class="fas fa-cubes"></i>
-                            {% else %}
-                                <i class="fas fa-folder-open"></i>
-                            {% endif %}
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <div class="category-card animate-fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 }}s;">
+                        <div class="category-icon">
+                            <i class="fas {% if category == 'FORMULÁRIOS BLENDER' %}fa-blender{% elif category == 'FORMULÁRIOS' %}fa-file-alt{% else %}fa-folder{% endif %}"></i>
                         </div>
-                        
-                        <h3 class="category-title mt-4">{{ category }}</h3>
-                        <p class="category-description text-muted">
-                            {% if category == 'Produção' or 'PRODUCAO' in category %}
-                                Edite formulários para controle e monitoramento dos processos produtivos
-                            {% elif category == 'Qualidade' or 'QUALIDADE' in category %}
-                                Edite documentos para garantia da qualidade e atendimento de normas
-                            {% elif category == 'Manutenção' or 'MANUTENCAO' in category %}
-                                Edite checklists e relatórios de manutenção de equipamentos
-                            {% elif category == 'Segurança' or 'SEGURANCA' in category %}
-                                Edite protocolos de segurança e documentação de conformidade
-                            {% elif category == 'Laboratório' or 'LABORATORIO' in category %}
-                                Edite relatórios de análises e medições laboratoriais
-                            {% elif category == 'Gerencial' or 'GERENCIAL' in category %}
-                                Edite documentos para gestão e acompanhamento gerencial
-                            {% elif 'FORMULARIOS' in category %}
-                                Edite coleção de documentos e formulários padronizados
-                            {% elif 'QLD' in category %}
-                                Edite documentação relacionada à qualidade dos produtos e processos
-                            {% elif 'PRD' in category %}
-                                Edite formulários e checklists do setor de produção
-                            {% elif 'TQ' in category or 'TBA' in category %}
-                                Edite documentos relacionados aos tanques e equipamentos TBA
-                            {% else %}
-                                Edite todos os formulários desta categoria diretamente no navegador
-                            {% endif %}
-                        </p>
-                        
-                        <div class="category-footer mt-4">
-                            <div class="d-grid">
-                                <a href="{{ url_for('editor.category', category=category) }}" class="btn btn-primary rounded-pill">
-                                    <i class="fas fa-edit me-2"></i> Editar Formulários
-                                </a>
-                            </div>
+                        <div class="category-info">
+                            <h3 class="category-title">{{ category }}</h3>
+                            <p class="category-description">
+                                Formulários para edição online
+                            </p>
+                            <a href="{{ url_for('editor.category', category=category) }}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit me-1"></i> Editar Formulários
+                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
             {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="empty-state text-center p-5 animate-fade-in">
+                    <i class="fas fa-folder-open text-muted display-1 mb-3"></i>
+                    <h3>Nenhuma categoria encontrada</h3>
+                    <p class="text-muted">Não há categorias de formulários disponíveis para edição.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Instruções de uso -->
+    <div class="card instruction-card mt-4 animate-fade-in" style="animation-delay: 0.5s;">
+        <div class="card-body">
+            <h4 class="card-title">
+                <i class="fas fa-info-circle text-primary me-2"></i>
+                Como usar o Editor Universal
+            </h4>
+            <div class="row mt-4">
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <div class="instruction-step text-center">
+                        <div class="step-number">1</div>
+                        <h5>Selecione a Categoria</h5>
+                        <p class="text-muted">Escolha a categoria de formulários que deseja editar</p>
+                        <i class="fas fa-folder-open instruction-icon"></i>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <div class="instruction-step text-center">
+                        <div class="step-number">2</div>
+                        <h5>Selecione o Formulário</h5>
+                        <p class="text-muted">Escolha o formulário específico para edição</p>
+                        <i class="fas fa-file-alt instruction-icon"></i>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <div class="instruction-step text-center">
+                        <div class="step-number">3</div>
+                        <h5>Edite os Campos</h5>
+                        <p class="text-muted">Preencha os campos do formulário com os dados desejados</p>
+                        <i class="fas fa-pencil-alt instruction-icon"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="instruction-step text-center">
+                        <div class="step-number">4</div>
+                        <h5>Salve ou Baixe</h5>
+                        <p class="text-muted">Salve como preset ou baixe o formulário preenchido</p>
+                        <i class="fas fa-download instruction-icon"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <p class="mb-0"><strong>Dica:</strong> Crie presets para reutilizar informações em formulários semelhantes!</p>
+            </div>
         </div>
     </div>
 </div>
@@ -200,16 +107,15 @@
 
 {% block extra_css %}
 <style>
-    /* Estilos para o cabeçalho com gradiente */
-    .forms-header {
+    /* Estilos para cabeçalho com gradiente */
+    .header-gradient {
         background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
         position: relative;
         overflow: hidden;
-        border-radius: 15px;
         box-shadow: 0 10px 30px rgba(78, 115, 223, 0.15);
     }
     
-    .forms-header::before {
+    .header-gradient::before {
         content: '';
         position: absolute;
         top: 0;
@@ -220,7 +126,7 @@
         opacity: 0.3;
     }
     
-    .header-icon {
+    .pulse-icon {
         animation: pulse 1.5s infinite ease-in-out;
     }
     
@@ -230,210 +136,118 @@
         100% { transform: scale(1); }
     }
     
-    /* Barra de pesquisa estilizada */
-    .search-container {
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-    }
-    
-    .search-container .form-control::placeholder {
-        color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .search-container .form-control:focus {
-        box-shadow: none;
-    }
-    
-    .btn-search {
-        width: 38px;
-        height: 38px;
-        background-color: #fff;
-        color: #4e73df;
+    /* Estilos para cards de categoria */
+    .category-card {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-search:hover {
-        transform: scale(1.1);
-        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    }
-    
-    /* Cards de estatística */
-    .stat-card {
-        display: flex;
-        align-items: center;
+        background-color: white;
         border-radius: 15px;
-        transition: all 0.3s ease;
         overflow: hidden;
-        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        height: 100%;
     }
     
-    .stat-card:hover {
+    .category-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     }
     
-    .stat-icon {
-        font-size: 2rem;
-        margin-right: 15px;
-        width: 50px;
-        height: 50px;
+    .category-icon {
+        width: 80px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        color: white;
+        font-size: 2rem;
     }
     
-    .stat-content {
+    .category-info {
+        padding: 1.25rem;
         flex-grow: 1;
     }
     
-    .stat-title {
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 5px;
-        opacity: 0.8;
-    }
-    
-    .stat-value {
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin: 0;
-    }
-    
-    .stat-arrow {
-        margin-left: 10px;
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-    
-    .stat-card:hover .stat-arrow {
-        opacity: 1;
-        transform: translateX(5px);
-    }
-    
-    /* Ícones de seção */
-    .section-icon {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-    }
-    
-    .section-title {
-        font-weight: 600;
-    }
-    
-    /* Cards de categoria */
-    .category-card {
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        height: 100%;
-        cursor: pointer;
-    }
-    
-    .category-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
-    }
-    
-    .category-bg-wrapper {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 150px;
-        overflow: hidden;
-    }
-    
-    .category-bg {
-        width: 100%;
-        height: 100%;
-        transform: skewY(-3deg);
-        transform-origin: top left;
-    }
-    
-    .bg-gradient-custom-0 {
-        background: linear-gradient(45deg, #2196F3, #3F51B5);
-    }
-    
-    .bg-gradient-custom-1 {
-        background: linear-gradient(45deg, #9C27B0, #673AB7);
-    }
-    
-    .bg-gradient-custom-2 {
-        background: linear-gradient(45deg, #4CAF50, #8BC34A);
-    }
-    
-    .bg-gradient-custom-3 {
-        background: linear-gradient(45deg, #FF9800, #FF5722);
-    }
-    
-    .bg-gradient-custom-4 {
-        background: linear-gradient(45deg, #795548, #9E9E9E);
-    }
-    
-    .category-content {
-        position: relative;
-        z-index: 1;
-        padding-top: 60px;
-    }
-    
-    .category-icon {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: -30px;
-        margin-left: 20px;
-        border: 3px solid white;
-        transition: all 0.3s ease;
-    }
-    
-    .category-card:hover .category-icon {
-        transform: scale(1.1) rotate(5deg);
-    }
-    
     .category-title {
-        font-size: 1.3rem;
+        font-size: 1.25rem;
         font-weight: 600;
         margin-bottom: 0.5rem;
-        transition: all 0.3s ease;
-    }
-    
-    .category-card:hover .category-title {
-        color: #4e73df;
+        color: #333;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     
     .category-description {
-        font-size: 0.9rem;
-        min-height: 60px;
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
     }
     
-    .category-footer {
-        margin-top: auto;
+    /* Estilos para instruções */
+    .instruction-card {
+        background: white;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .instruction-step {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        padding: 1.5rem;
+        height: 100%;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    .instruction-step:hover {
+        background-color: #e9ecef;
+        transform: translateY(-3px);
+    }
+    
+    .step-number {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin: 0 auto 1rem;
+    }
+    
+    .instruction-icon {
+        color: #4e73df;
+        font-size: 2.5rem;
+        margin-top: 1rem;
+        opacity: 0.7;
+    }
+    
+    /* Estilos para estado vazio */
+    .empty-state {
+        background-color: #f8f9fa;
+        border-radius: 15px;
     }
     
     /* Animações */
     .animate-fade-in {
-        animation: fadeIn 0.8s ease-in-out;
+        opacity: 0;
+        animation: fadeIn 0.8s ease-in-out forwards;
     }
     
     .animate-fade-in-up {
-        animation: fadeInUp 0.8s ease-in-out;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s ease-in-out forwards;
     }
     
     .animate-fade-in-left {
-        animation: fadeInLeft 0.8s ease-in-out;
+        opacity: 0;
+        transform: translateX(20px);
+        animation: fadeInLeft 0.8s ease-in-out forwards;
     }
     
     @keyframes fadeIn {
@@ -461,6 +275,13 @@
             opacity: 1;
             transform: translateX(0);
         }
+    }
+    
+    /* Botão arredondado */
+    .btn-rounded {
+        border-radius: 50px;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
     }
 </style>
 {% endblock %}
