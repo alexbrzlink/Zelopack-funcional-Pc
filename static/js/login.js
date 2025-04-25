@@ -1,0 +1,214 @@
+/**
+ * Script para interatividade e animações da página de login
+ * Sistema de gerenciamento de laudos ZELOPACK 
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Elementos da página
+    const loginForm = document.getElementById('login-form');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('submit');
+    const rememberMe = document.getElementById('remember_me');
+    const alerts = document.querySelectorAll('.alert');
+    
+    // Verificar e animar mensagens de erro existentes
+    const invalidControls = document.querySelectorAll('.is-invalid');
+    const errorMessages = document.querySelectorAll('.invalid-feedback');
+    
+    // Converter as mensagens de erro padrão para o formato animado
+    errorMessages.forEach(message => {
+        const parent = message.parentElement;
+        const input = parent.querySelector('.form-control');
+        
+        // Remover a mensagem antiga
+        message.remove();
+        
+        // Criar a nova mensagem de erro com animação
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `<i class="fas fa-exclamation-circle error-icon"></i> ${message.textContent}`;
+        
+        // Inserir a nova mensagem
+        parent.appendChild(errorDiv);
+        
+        // Adicionar animação ao campo
+        input.parentElement.classList.add('error-shake');
+    });
+    
+    // Animar alertas flash e mover para o login-messages container
+    if (alerts.length > 0) {
+        const loginMessages = document.getElementById('login-messages');
+        
+        alerts.forEach(alert => {
+            // Adicionar ícone com base no tipo de alerta
+            const alertText = alert.innerHTML.replace(/<button.*?button>/g, '');
+            const alertType = alert.classList.contains('alert-danger') ? 'exclamation-circle' :
+                            alert.classList.contains('alert-success') ? 'check-circle' :
+                            alert.classList.contains('alert-warning') ? 'exclamation-triangle' : 'info-circle';
+            
+            // Criar novo alerta estilizado
+            const newAlert = document.createElement('div');
+            newAlert.className = `alert alert-${alert.classList.contains('alert-danger') ? 'danger' : 
+                                               alert.classList.contains('alert-success') ? 'success' : 
+                                               alert.classList.contains('alert-warning') ? 'warning' : 'info'} 
+                                  error-message`;
+            newAlert.innerHTML = `<i class="fas fa-${alertType} me-2"></i> ${alertText}`;
+            
+            // Adicionar ao container de mensagens
+            if (loginMessages) {
+                loginMessages.appendChild(newAlert);
+            }
+            
+            // Remover o alerta original
+            alert.remove();
+            
+            // Fechar automaticamente após 5 segundos se não for um erro
+            if (!newAlert.classList.contains('alert-danger')) {
+                setTimeout(() => {
+                    // Animar saída
+                    newAlert.style.animation = 'fadeOut 0.5s ease forwards';
+                    setTimeout(() => {
+                        newAlert.remove();
+                    }, 500);
+                }, 5000);
+            }
+        });
+    }
+    
+    // Adicionar animação quando o formulário for enviado
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            const formValid = loginForm.checkValidity();
+            
+            if (!formValid) {
+                e.preventDefault();
+                
+                // Verificar campos vazios
+                if (!usernameInput.value.trim()) {
+                    showError(usernameInput, 'Por favor, digite seu nome de usuário');
+                }
+                
+                if (!passwordInput.value.trim()) {
+                    showError(passwordInput, 'Por favor, digite sua senha');
+                }
+            } else {
+                // Adicionar efeito ao botão
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Entrando...';
+                loginBtn.disabled = true;
+                
+                // Mostrar animação de carregamento no fundo (se existir)
+                if (window.ZelopackAnimations) {
+                    window.ZelopackAnimations.showLoading('Autenticando...', 'dots');
+                }
+            }
+        });
+    }
+    
+    // Adicionar efeito aos campos quando focados
+    const formControls = document.querySelectorAll('.form-control');
+    formControls.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('input-focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('input-focused');
+            
+            // Validar campo ao sair
+            if (this.value.trim() === '' && this.hasAttribute('required')) {
+                showError(this, `Por favor, preencha este campo`);
+            } else {
+                // Remover erro se estiver preenchido
+                removeError(this);
+            }
+        });
+    });
+    
+    // Funções auxiliares
+    function showError(input, message) {
+        // Remover erro anterior se existir
+        removeError(input);
+        
+        const parentElement = input.parentElement;
+        input.classList.add('is-invalid');
+        parentElement.classList.add('error-shake');
+        
+        // Criar elemento de erro
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `<i class="fas fa-exclamation-circle error-icon"></i> ${message}`;
+        
+        // Adicionar após o input
+        parentElement.appendChild(errorDiv);
+        
+        // Remover a animação de shake após um tempo
+        setTimeout(() => {
+            parentElement.classList.remove('error-shake');
+        }, 1000);
+    }
+    
+    function removeError(input) {
+        input.classList.remove('is-invalid');
+        const errorMessage = input.parentElement.querySelector('.error-message');
+        if (errorMessage) {
+            errorMessage.remove();
+        }
+    }
+    
+    // Adicionar animação ao checkbox de lembrar-me
+    if (rememberMe) {
+        const checkboxLabel = rememberMe.nextElementSibling;
+        
+        rememberMe.addEventListener('change', function() {
+            if (this.checked) {
+                checkboxLabel.innerHTML = '<i class="fas fa-check-circle me-1"></i> ' + checkboxLabel.textContent;
+            } else {
+                checkboxLabel.innerHTML = checkboxLabel.textContent.replace('<i class="fas fa-check-circle me-1"></i> ', '');
+            }
+        });
+    }
+    
+    // Efeito de partículas no background (opcional, remover se afetar performance)
+    try {
+        // Configuração básica para partículas
+        if (typeof particlesJS !== 'undefined') {
+            particlesJS('login-particles', {
+                particles: {
+                    number: { value: 50, density: { enable: true, value_area: 800 } },
+                    color: { value: '#0d6efd' },
+                    shape: { type: 'circle' },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#0d6efd',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: 'none',
+                        random: false,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: { enable: true, mode: 'grab' },
+                        onclick: { enable: true, mode: 'push' },
+                        resize: true
+                    }
+                },
+                retina_detect: true
+            });
+        }
+    } catch (e) {
+        console.log('Particles.js não carregado. Ignorando efeito de partículas.');
+    }
+});

@@ -1,0 +1,330 @@
+/* Estilos para a página de login ZELOPACK 
+ * Design moderno e responsivo com animações
+ */
+
+:root {
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --accent-color: #2e86de;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --white-color: #ffffff;
+  --transition-time: 0.3s;
+}
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+}
+
+.login-card {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+  transition: transform var(--transition-time);
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+}
+
+.login-header {
+  padding: 25px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: var(--primary-color);
+  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+  color: var(--white-color);
+}
+
+.login-header h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.login-body {
+  padding: 40px 30px;
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-brand h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 1px;
+}
+
+.login-title {
+  font-size: 1.2rem;
+  color: var(--secondary-color);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.form-floating {
+  margin-bottom: 20px;
+}
+
+.form-floating > .form-control {
+  padding: 1.5rem 1rem;
+  height: calc(3.5rem + 2px);
+  border-radius: 10px;
+  box-shadow: none;
+  border: 2px solid #e4e8f0;
+  transition: all var(--transition-time);
+}
+
+.form-floating > .form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-floating > label {
+  padding: 1rem;
+}
+
+.login-button {
+  margin-top: 15px;
+  border-radius: 10px;
+  padding: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  background: var(--primary-color);
+  background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+  border: none;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-time);
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+  filter: brightness(110%);
+}
+
+.login-button:active {
+  transform: translateY(1px);
+}
+
+.login-footer {
+  padding: 15px;
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: var(--light-color);
+}
+
+.forgot-password {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.forgot-password a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: all var(--transition-time);
+}
+
+.forgot-password a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+/* Animações para mensagens de erro */
+.error-shake {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+.error-icon {
+  color: var(--danger-color);
+  margin-right: 5px;
+}
+
+.error-message {
+  margin-top: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--danger-color);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animação para o ícone de usuário e senha */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: var(--secondary-color);
+  transition: all var(--transition-time);
+  pointer-events: none;
+}
+
+.form-floating > .form-control:focus + .input-icon,
+.form-floating > .form-control:not(:placeholder-shown) + .input-icon {
+  color: var(--primary-color);
+}
+
+.form-floating > .form-control {
+  padding-left: 40px !important;
+}
+
+/* Efeito pulsante para botões */
+.pulse-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.pulse-effect:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.6);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.pulse-effect:hover:after {
+  animation: pulse 1.5s ease-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  25% {
+    transform: scale(30, 30);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(50, 50);
+    opacity: 0;
+  }
+}
+
+/* Animação para checkbox */
+.form-check-input {
+  cursor: pointer;
+  transition: all var(--transition-time);
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  animation: checkbox-pop 0.3s ease-in-out;
+}
+
+@keyframes checkbox-pop {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animação para flash messages */
+.alert {
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  animation: alertSlideIn 0.5s ease forwards;
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-left: 4px solid var(--danger-color);
+}
+
+.alert-success {
+  background-color: rgba(40, 167, 69, 0.1);
+  border-left: 4px solid var(--success-color);
+}
+
+.alert-warning {
+  background-color: rgba(255, 193, 7, 0.1);
+  border-left: 4px solid var(--warning-color);
+}
+
+.alert-info {
+  background-color: rgba(23, 162, 184, 0.1);
+  border-left: 4px solid var(--info-color);
+}
+
+@keyframes alertSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Melhoria responsiva */
+@media (max-width: 576px) {
+  .login-body {
+    padding: 30px 15px;
+  }
+  
+  .login-brand h1 {
+    font-size: 2rem;
+  }
+}
