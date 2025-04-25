@@ -16,7 +16,9 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/color_fixes.css') }}">
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -25,8 +27,11 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-flask me-2"></i>
-                ZeloPack
+                <span class="logo-container">
+                    <i class="fas fa-vial me-1 text-warning"></i>
+                    <i class="fas fa-flask text-info"></i>
+                    <strong class="ms-2">Zelo<span class="text-info">Pack</span></strong>
+                </span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
@@ -68,11 +73,12 @@
                 
                 <!-- Menu de usuário e tema -->
                 <ul class="navbar-nav ms-auto">
-                    <!-- Botão de configurações -->
+                    <!-- Alternador de tema -->
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-cog me-1"></i> Configurações
-                        </a>
+                        <button class="nav-link btn theme-toggle" id="theme-toggle">
+                            <i class="fas fa-sun me-1" id="theme-icon"></i>
+                            <span id="theme-text">Tema Claro</span>
+                        </button>
                     </li>
                     
                     {% if current_user.is_authenticated %}
@@ -191,6 +197,7 @@
     
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme_manager.js') }}"></script>
     <script src="{{ url_for('static', filename='js/skeleton-loader.js') }}"></script>
     
     {% block scripts %}{% endblock %}
