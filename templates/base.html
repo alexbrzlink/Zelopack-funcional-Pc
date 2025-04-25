@@ -192,16 +192,92 @@
         {% block content %}{% endblock %}
     </main>
     
-    <!-- Rodapé -->
-    <footer class="footer mt-auto py-3">
-        <div class="container">
+    <!-- Rodapé Moderno -->
+    <footer class="footer">
+        <div class="footer-wave"></div>
+        <div class="container footer-container">
             <div class="row">
-                <div class="col-md-6">
-                    <h5>ZELOPACK</h5>
-                    <p>Sistema de Gerenciamento de Laudos</p>
+                <!-- Coluna da marca e descrição -->
+                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <div class="footer-brand">
+                        <span style="font-size: 1.8rem; font-weight: 700; color: var(--zelopack-primary);">ZELOPACK</span>
+                    </div>
+                    <p class="footer-description">
+                        Sistema integrado para gerenciamento de laudos técnicos e cálculos laboratoriais otimizados para a indústria de sucos.
+                    </p>
+                    
+                    <!-- Redes sociais -->
+                    <div class="footer-social">
+                        <a href="#" class="footer-social-link facebook" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="footer-social-link instagram" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="footer-social-link linkedin" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="footer-social-link" title="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <p>© {{ current_year }} ZELOPACK. Todos os direitos reservados.</p>
+                
+                <!-- Coluna de links úteis -->
+                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+                    <h5 class="footer-title">Módulos</h5>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('reports.index') }}"><i class="fas fa-home"></i> Início</a></li>
+                        <li><a href="{{ url_for('reports.upload') }}"><i class="fas fa-upload"></i> Laudos</a></li>
+                        <li><a href="{{ url_for('dashboard.index') }}"><i class="fas fa-chart-bar"></i> Dashboard</a></li>
+                        <li><a href="{{ url_for('forms.index') }}"><i class="fas fa-file-signature"></i> Formulários</a></li>
+                        <li><a href="{{ url_for('calculos.index') }}"><i class="fas fa-calculator"></i> Cálculos</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Coluna de recursos -->
+                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+                    <h5 class="footer-title">Recursos</h5>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-book"></i> Manual do sistema</a></li>
+                        <li><a href="#"><i class="fas fa-question-circle"></i> Suporte</a></li>
+                        <li><a href="#"><i class="fas fa-exclamation-triangle"></i> Reportar problema</a></li>
+                        <li><a href="#"><i class="fas fa-sync"></i> Verificar atualizações</a></li>
+                        <li><a href="#"><i class="fas fa-download"></i> Aplicativo desktop</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Coluna de contato -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="footer-title">Contato</h5>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div>Av. Tecnologia, 1500<br>Distrito Industrial<br>São Paulo - SP, Brasil</div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon"><i class="fas fa-envelope"></i></div>
+                        <div>contato@zelopack.com.br<br>suporte@zelopack.com.br</div>
+                    </div>
+                    <div class="footer-contact-item">
+                        <div class="footer-contact-icon"><i class="fas fa-phone-alt"></i></div>
+                        <div>+55 (11) 3000-5000<br>+55 (11) 98765-4321</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Divisor -->
+            <div class="footer-divider"></div>
+            
+            <!-- Rodapé inferior -->
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    © {{ current_year }} ZELOPACK. Todos os direitos reservados.
+                </div>
+                <div class="footer-legal-links">
+                    <a href="#">Termos de Uso</a>
+                    <a href="#">Política de Privacidade</a>
+                    <a href="#">Cookies</a>
+                    <a href="#">Licenças</a>
                 </div>
             </div>
         </div>
