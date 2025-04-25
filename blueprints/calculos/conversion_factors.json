@@ -1,0 +1,10 @@
+{
+    "cristal_to_liquido": 0.85,
+    "liquido_to_cristal": 1.18,
+    "acido_citrico_fator": 1.0,
+    "brix_correcao_temp": {
+        "20": 1.000,
+        "25": 0.990,
+        "30": 0.980
+    }
+}

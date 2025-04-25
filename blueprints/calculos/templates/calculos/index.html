@@ -4,6 +4,40 @@
 
 {% block head_extra %}
 <style>
+    /* Estilos gerais */
+    .calculation-tabs {
+        margin-bottom: 30px;
+    }
+    
+    .calculation-tabs .nav-link {
+        color: #495057;
+        font-weight: 500;
+        padding: 12px 20px;
+        border-radius: 0;
+        border: 1px solid transparent;
+        transition: all 0.3s;
+    }
+    
+    .calculation-tabs .nav-link.active {
+        color: #0d6efd;
+        background-color: #fff;
+        border-color: #dee2e6 #dee2e6 #fff;
+        border-top: 3px solid #0d6efd;
+    }
+    
+    .calculation-tabs .nav-link:hover:not(.active) {
+        border-color: transparent;
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .tab-content {
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-top: none;
+        padding: 25px;
+        border-radius: 0 0 8px 8px;
+    }
+    
     .calculator-container {
         background-color: #f8f9fa;
         border-radius: 10px;
@@ -15,7 +49,7 @@
     
     .calculator-container:hover {
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        transform: translateY(-5px);
+        transform: translateY(-2px);
     }
     
     .calculator-title {
@@ -188,6 +222,196 @@
         margin: 10px 0;
         font-size: 0.9rem;
     }
+    
+    /* Melhorias visuais */
+    .calculation-visual {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .calculation-icon {
+        flex: 0 0 100px;
+        text-align: center;
+        font-size: 2.5rem;
+        color: #0d6efd;
+    }
+    
+    .calculation-details {
+        flex: 1;
+        padding-left: 15px;
+    }
+    
+    .calculation-image {
+        max-width: 100%;
+        height: auto;
+        margin: 15px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-calculator {
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .card-calculator:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-header-calculator {
+        background-color: #1565C0;
+        color: white;
+        font-weight: 500;
+        padding: 15px;
+    }
+    
+    .card-body-calculator {
+        padding: 20px;
+    }
+    
+    .card-footer-calculator {
+        background-color: #f8f9fa;
+        border-top: 1px solid rgba(0, 0, 0, 0.125);
+        padding: 15px;
+    }
+    
+    /* Estilo para o diagrama interativo */
+    .interactive-diagram {
+        position: relative;
+        margin: 20px 0;
+        height: 250px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #f8f9fa;
+    }
+    
+    .diagram-item {
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #0d6efd;
+        border-radius: 6px;
+        padding: 10px;
+        min-width: 100px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+    }
+    
+    .diagram-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+    }
+    
+    .diagram-arrow {
+        position: absolute;
+        height: 2px;
+        background-color: #0d6efd;
+        transform-origin: left;
+    }
+    
+    .diagram-arrow::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: -4px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 0 5px 10px;
+        border-color: transparent transparent transparent #0d6efd;
+    }
+    
+    /* Estilos para subabas dentro das abas principais */
+    .subtab-nav {
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 20px;
+    }
+    
+    .subtab-nav .nav-link {
+        color: #495057;
+        font-size: 0.9rem;
+        padding: 8px 15px;
+        border: 1px solid transparent;
+        border-radius: 4px 4px 0 0;
+        margin-right: 5px;
+    }
+    
+    .subtab-nav .nav-link.active {
+        color: #0d6efd;
+        border-color: #dee2e6 #dee2e6 #fff;
+        background-color: #fff;
+    }
+    
+    .subtab-content {
+        padding: 15px 0;
+    }
+    
+    /* Animações para transições entre abas */
+    .fade-transition {
+        transition: opacity 0.3s ease;
+    }
+    
+    .fade-enter {
+        opacity: 0;
+    }
+    
+    .fade-enter-active {
+        opacity: 1;
+    }
+    
+    /* Estilos para visualizações gráficas */
+    .graph-container {
+        margin-top: 20px;
+        height: 300px;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+    }
+    
+    /* Estilos para calculadora especial */
+    .special-calculator {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .special-calculator-input {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .special-calculator-result {
+        flex: 1;
+        min-width: 200px;
+        background-color: #f0f8ff;
+        border: 1px solid #b8daff;
+        border-radius: 6px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .special-calculator-value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #0d6efd;
+        margin: 10px 0;
+    }
 </style>
 {% endblock %}
 
@@ -196,384 +420,1012 @@
     <div class="row">
         <div class="col-md-12">
             <h1 class="mb-4">Cálculos de Laboratório</h1>
-            <p class="lead">Utilize as ferramentas abaixo para realizar cálculos importantes para análises de laboratório e processo de produção.</p>
+            <p class="lead">Utilize as ferramentas de cálculo para análises de laboratório e controle do processo de produção.</p>
             
-            <div class="category-header">
-                <i class="fas fa-industry"></i> Cálculos de Produção e Peso
-            </div>
+            <!-- Abas principais -->
+            <ul class="nav nav-tabs calculation-tabs" id="calculationTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="producao-tab" data-bs-toggle="tab" data-bs-target="#producao" type="button" role="tab" aria-controls="producao" aria-selected="true">
+                        <i class="fas fa-industry me-2"></i>Produção
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="laboratorio-tab" data-bs-toggle="tab" data-bs-target="#laboratorio" type="button" role="tab" aria-controls="laboratorio" aria-selected="false">
+                        <i class="fas fa-flask me-2"></i>Laboratório
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="conversoes-tab" data-bs-toggle="tab" data-bs-target="#conversoes" type="button" role="tab" aria-controls="conversoes" aria-selected="false">
+                        <i class="fas fa-exchange-alt me-2"></i>Conversões
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="juice-tab" data-bs-toggle="tab" data-bs-target="#juice" type="button" role="tab" aria-controls="juice" aria-selected="false">
+                        <i class="fas fa-tint me-2"></i>Sucos
+                    </button>
+                </li>
+            </ul>
             
-            <!-- Calculadora 1: Produção 200 -->
-            <div class="calculator-container">
-                <div class="calculator-title" onclick="toggleCalculator('producao200')">
-                    <span><i class="fas fa-balance-scale calculator-icon"></i> Produção 200g</span>
-                    <i class="fas fa-chevron-down" id="icon-producao200"></i>
+            <!-- Conteúdo das abas -->
+            <div class="tab-content" id="calculationTabsContent">
+                
+                <!-- Aba de Produção -->
+                <div class="tab-pane fade show active" id="producao" role="tabpanel" aria-labelledby="producao-tab">
+                    <div class="calculation-visual">
+                        <div class="calculation-icon">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <div class="calculation-details">
+                            <h3>Cálculos de Produção</h3>
+                            <p>Ferramentas essenciais para controle e monitoramento do processo produtivo. Realize cálculos de peso líquido, volume de produção e muito mais.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <!-- Calculadora 1: Produção 200g -->
+                        <div class="col-md-6">
+                            <div class="card card-calculator">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-balance-scale me-2"></i> Produção 200g
+                                </div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Determina o peso líquido de embalagens de 200g, subtraindo a tara (peso da embalagem) do peso bruto.
+                                    </div>
+                                    <div class="formula-box">
+                                        <strong>Fórmula:</strong> Peso Líquido = Peso Bruto - Tara
+                                    </div>
+                                    <form id="form-producao200">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="peso_bruto_200">Peso Bruto (g):</label>
+                                                    <input type="number" class="form-control" id="peso_bruto_200" placeholder="Digite o peso bruto" step="0.01" required>
+                                                    <div class="error-message" id="error-peso_bruto_200">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="tara_200">Tara (g):</label>
+                                                    <input type="number" class="form-control" id="tara_200" placeholder="Digite a tara" step="0.01" required>
+                                                    <div class="error-message" id="error-tara_200">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('producao_200')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-producao_200">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <div class="result-label">Peso Líquido:</div>
+                                                    <div class="result-value" id="result-value-producao_200">0</div>
+                                                    <div class="result-unit">gramas</div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button copy" onclick="copyResult('result-value-producao_200', 'g')">
+                                                    <i class="fas fa-copy"></i> Copiar
+                                                </div>
+                                                <div class="action-button reset" onclick="resetCalculator('form-producao200', 'result-producao_200')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Calculadora 2: Volume de Produção -->
+                        <div class="col-md-6">
+                            <div class="card card-calculator">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-tint me-2"></i> Volume de Produção
+                                </div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Calcula o volume final de produção com base no peso e densidade do produto.
+                                    </div>
+                                    <div class="formula-box">
+                                        <strong>Fórmula:</strong> Volume (L) = Massa (kg) / Densidade (kg/L)
+                                    </div>
+                                    <form id="form-producaoLitro">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="peso_total">Peso Total (kg):</label>
+                                                    <input type="number" class="form-control" id="peso_total" placeholder="Digite o peso total" step="0.01" required>
+                                                    <div class="error-message" id="error-peso_total">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="densidade">Densidade (kg/L):</label>
+                                                    <input type="number" class="form-control" id="densidade" placeholder="Digite a densidade" step="0.001" required>
+                                                    <div class="error-message" id="error-densidade">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('producao_litro')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-producao_litro">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <div class="result-label">Volume Produzido:</div>
+                                                    <div class="result-value" id="result-value-producao_litro">0</div>
+                                                    <div class="result-unit">litros</div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button copy" onclick="copyResult('result-value-producao_litro', 'L')">
+                                                    <i class="fas fa-copy"></i> Copiar
+                                                </div>
+                                                <div class="action-button reset" onclick="resetCalculator('form-producaoLitro', 'result-producao_litro')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Calculadora 3: Rendimento de Produção -->
+                        <div class="col-md-6">
+                            <div class="card card-calculator mt-4">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-percentage me-2"></i> Rendimento de Produção
+                                </div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Calcula o rendimento percentual da produção com base na entrada e saída de material.
+                                    </div>
+                                    <div class="formula-box">
+                                        <strong>Fórmula:</strong> Rendimento (%) = (Saída / Entrada) × 100
+                                    </div>
+                                    <form id="form-rendimento">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="entrada_material">Material de Entrada (kg):</label>
+                                                    <input type="number" class="form-control" id="entrada_material" placeholder="Digite a entrada" step="0.01" required>
+                                                    <div class="error-message" id="error-entrada_material">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="saida_material">Material de Saída (kg):</label>
+                                                    <input type="number" class="form-control" id="saida_material" placeholder="Digite a saída" step="0.01" required>
+                                                    <div class="error-message" id="error-saida_material">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('rendimento')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-rendimento">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <div class="result-label">Rendimento:</div>
+                                                    <div class="result-value" id="result-value-rendimento">0</div>
+                                                    <div class="result-unit">%</div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button copy" onclick="copyResult('result-value-rendimento', '%')">
+                                                    <i class="fas fa-copy"></i> Copiar
+                                                </div>
+                                                <div class="action-button reset" onclick="resetCalculator('form-rendimento', 'result-rendimento')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Calculadora 4: Consumo de Insumos -->
+                        <div class="col-md-6">
+                            <div class="card card-calculator mt-4">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-boxes me-2"></i> Consumo de Insumos
+                                </div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Calcula o consumo de insumos por unidade de produto final.
+                                    </div>
+                                    <div class="formula-box">
+                                        <strong>Fórmula:</strong> Consumo por Unidade = Quantidade Total de Insumo / Número de Unidades Produzidas
+                                    </div>
+                                    <form id="form-consumo">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="quantidade_insumo">Quantidade de Insumo (kg):</label>
+                                                    <input type="number" class="form-control" id="quantidade_insumo" placeholder="Digite a quantidade" step="0.01" required>
+                                                    <div class="error-message" id="error-quantidade_insumo">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="unidades_produzidas">Unidades Produzidas:</label>
+                                                    <input type="number" class="form-control" id="unidades_produzidas" placeholder="Digite as unidades" step="1" required>
+                                                    <div class="error-message" id="error-unidades_produzidas">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('consumo')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-consumo">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <div class="result-label">Consumo por Unidade:</div>
+                                                    <div class="result-value" id="result-value-consumo">0</div>
+                                                    <div class="result-unit">kg/unidade</div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button copy" onclick="copyResult('result-value-consumo', 'kg/unidade')">
+                                                    <i class="fas fa-copy"></i> Copiar
+                                                </div>
+                                                <div class="action-button reset" onclick="resetCalculator('form-consumo', 'result-consumo')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="calculator-body" id="producao200">
-                    <div class="calculation-description">
-                        Determina o peso líquido de embalagens de 200g, subtraindo a tara (peso da embalagem) do peso bruto.
+                
+                <!-- Aba de Laboratório -->
+                <div class="tab-pane fade" id="laboratorio" role="tabpanel" aria-labelledby="laboratorio-tab">
+                    <div class="calculation-visual">
+                        <div class="calculation-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <div class="calculation-details">
+                            <h3>Cálculos de Laboratório</h3>
+                            <p>Ferramentas para análises de laboratório, incluindo diluições, concentrações e cálculos relacionados às propriedades físico-químicas.</p>
+                        </div>
                     </div>
-                    <div class="formula-box">
-                        <strong>Fórmula:</strong> Peso Líquido = Peso Bruto - Tara
-                    </div>
-                    <form id="form-producao200">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="peso_bruto_200">Peso Bruto (g):</label>
-                                    <input type="number" class="form-control" id="peso_bruto_200" placeholder="Digite o peso bruto" step="0.01" required>
-                                    <div class="error-message" id="error-peso_bruto_200">Valor inválido</div>
+                    
+                    <div class="row">
+                        <!-- Calculadora 1: Diluição para Ajuste de Brix -->
+                        <div class="col-md-6">
+                            <div class="card card-calculator">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-arrow-down me-2"></i> Diluição para Ajuste de Brix
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="tara_200">Tara (g):</label>
-                                    <input type="number" class="form-control" id="tara_200" placeholder="Digite a tara" step="0.01" required>
-                                    <div class="error-message" id="error-tara_200">Valor inválido</div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Estima quanto de água é necessário adicionar para reduzir o Brix de uma solução até o valor desejado.
+                                    </div>
+                                    <div class="formula-box">
+                                        <strong>Fórmula:</strong> Volume de água (L) = (Volume inicial × Brix atual / Brix desejado) - Volume inicial
+                                    </div>
+                                    <form id="form-abaixarBrix">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="brix_atual">Brix Atual:</label>
+                                                    <input type="number" class="form-control" id="brix_atual" placeholder="Digite o Brix atual" step="0.1" required>
+                                                    <div class="error-message" id="error-brix_atual">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="brix_desejado">Brix Desejado:</label>
+                                                    <input type="number" class="form-control" id="brix_desejado" placeholder="Digite o Brix desejado" step="0.1" required>
+                                                    <div class="error-message" id="error-brix_desejado">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="volume_inicial">Volume Inicial (L):</label>
+                                                    <input type="number" class="form-control" id="volume_inicial" placeholder="Digite o volume inicial" step="0.1" required>
+                                                    <div class="error-message" id="error-volume_inicial">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('abaixar_brix')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-abaixar_brix">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <div class="result-label">Água a Adicionar:</div>
+                                                    <div class="result-value" id="result-value-abaixar_brix">0</div>
+                                                    <div class="result-unit">litros</div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button copy" onclick="copyResult('result-value-abaixar_brix', 'L')">
+                                                    <i class="fas fa-copy"></i> Copiar
+                                                </div>
+                                                <div class="action-button reset" onclick="resetCalculator('form-abaixarBrix', 'result-abaixar_brix')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                        <div class="text-center mt-3">
-                            <button type="button" class="btn btn-calculate" onclick="calculate('producao_200')">
-                                <i class="fas fa-calculator"></i> Calcular
-                            </button>
+                        
+                        <!-- Calculadora 2: Ratio (Brix/Acidez) -->
+                        <div class="col-md-6">
+                            <div class="card card-calculator">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-divide me-2"></i> Ratio (Brix/Acidez)
+                                </div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Relação entre Brix e Acidez, importante para controle de qualidade do suco. O Ratio é um indicador importante do sabor e ponto de colheita para frutas.
+                                    </div>
+                                    <div class="formula-box">
+                                        <strong>Fórmula:</strong> Ratio = Brix / Acidez
+                                    </div>
+                                    <form id="form-ratio">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="brix_ratio">Brix:</label>
+                                                    <input type="number" class="form-control" id="brix_ratio" placeholder="Digite o Brix" step="0.1" required>
+                                                    <div class="error-message" id="error-brix_ratio">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="acidez_ratio">Acidez:</label>
+                                                    <input type="number" class="form-control" id="acidez_ratio" placeholder="Digite a acidez" step="0.01" required>
+                                                    <div class="error-message" id="error-acidez_ratio">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('ratio')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-ratio">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <div class="result-label">Ratio:</div>
+                                                    <div class="result-value" id="result-value-ratio">0</div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button copy" onclick="copyResult('result-value-ratio', '')">
+                                                    <i class="fas fa-copy"></i> Copiar
+                                                </div>
+                                                <div class="action-button reset" onclick="resetCalculator('form-ratio', 'result-ratio')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="result-box" id="result-producao_200">
+                        
+                        <!-- Calculadora 3: Diluição de Solução -->
+                        <div class="col-md-6">
+                            <div class="card card-calculator mt-4">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-vial me-2"></i> Diluição de Solução
+                                </div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Calcula a concentração final de uma solução após diluição.
+                                    </div>
+                                    <div class="formula-box">
+                                        <strong>Fórmula:</strong> C₁ × V₁ = C₂ × V₂ (onde C = concentração, V = volume)
+                                    </div>
+                                    <form id="form-diluicao">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="conc_inicial">Concentração inicial:</label>
+                                                    <input type="number" class="form-control" id="conc_inicial" placeholder="Conc. inicial" step="0.01" required>
+                                                    <div class="error-message" id="error-conc_inicial">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="vol_inicial">Volume inicial (mL):</label>
+                                                    <input type="number" class="form-control" id="vol_inicial" placeholder="Vol. inicial" step="0.1" required>
+                                                    <div class="error-message" id="error-vol_inicial">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="vol_final">Volume final (mL):</label>
+                                                    <input type="number" class="form-control" id="vol_final" placeholder="Vol. final" step="0.1" required>
+                                                    <div class="error-message" id="error-vol_final">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="unidade_conc">Unidade:</label>
+                                                    <select class="form-control" id="unidade_conc">
+                                                        <option value="%">Porcentagem (%)</option>
+                                                        <option value="mg/L">mg/L</option>
+                                                        <option value="g/L">g/L</option>
+                                                        <option value="mol/L">mol/L</option>
+                                                        <option value="ppm">ppm</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('diluicao')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-diluicao">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <div class="result-label">Concentração final:</div>
+                                                    <div class="result-value" id="result-value-diluicao">0</div>
+                                                    <div class="result-unit" id="result-unit-diluicao">%</div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button copy" onclick="copyResultWithUnit('result-value-diluicao', 'result-unit-diluicao')">
+                                                    <i class="fas fa-copy"></i> Copiar
+                                                </div>
+                                                <div class="action-button reset" onclick="resetCalculator('form-diluicao', 'result-diluicao')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Calculadora 4: Concentração de Soluções -->
+                        <div class="col-md-6">
+                            <div class="card card-calculator mt-4">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-fill-drip me-2"></i> Preparo de Soluções
+                                </div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Calcula a quantidade de soluto necessária para preparar uma solução com concentração específica.
+                                    </div>
+                                    <div class="formula-box">
+                                        <strong>Fórmula:</strong> Massa do soluto = Concentração × Volume
+                                    </div>
+                                    <form id="form-solucao">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="concentracao_desejada">Concentração (%):</label>
+                                                    <input type="number" class="form-control" id="concentracao_desejada" placeholder="Digite a concentração" step="0.01" required>
+                                                    <div class="error-message" id="error-concentracao_desejada">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="volume_solucao">Volume da solução (mL):</label>
+                                                    <input type="number" class="form-control" id="volume_solucao" placeholder="Digite o volume" step="0.1" required>
+                                                    <div class="error-message" id="error-volume_solucao">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="tipo_solucao">Tipo de solução:</label>
+                                                    <select class="form-control" id="tipo_solucao">
+                                                        <option value="massa">Massa/Volume (m/v)</option>
+                                                        <option value="volume">Volume/Volume (v/v)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('solucao')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-solucao">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <div class="result-label">Quantidade de soluto:</div>
+                                                    <div class="result-value" id="result-value-solucao">0</div>
+                                                    <div class="result-unit" id="result-unit-solucao">g</div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button copy" onclick="copyResultWithUnit('result-value-solucao', 'result-unit-solucao')">
+                                                    <i class="fas fa-copy"></i> Copiar
+                                                </div>
+                                                <div class="action-button reset" onclick="resetCalculator('form-solucao', 'result-solucao')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aba de Conversões -->
+                <div class="tab-pane fade" id="conversoes" role="tabpanel" aria-labelledby="conversoes-tab">
+                    <div class="calculation-visual">
+                        <div class="calculation-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="calculation-details">
+                            <h3>Conversões de Unidades</h3>
+                            <p>Realize conversões entre diferentes unidades de medida utilizadas em processos industriais e análises de laboratório.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Calculadora de Conversão -->
+                    <div class="card card-calculator">
+                        <div class="card-header-calculator">
+                            <i class="fas fa-exchange-alt me-2"></i> Conversão de Unidades
+                        </div>
+                        <div class="card-body-calculator">
+                            <div class="calculation-description">
+                                Converte entre diferentes unidades de medida frequentemente usadas no laboratório.
+                            </div>
+                            <form id="form-conversao">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="form-label" for="valor_converter">Valor:</label>
+                                            <input type="number" class="form-control" id="valor_converter" placeholder="Valor para converter" step="any" required>
+                                            <div class="error-message" id="error-valor_converter">Valor inválido</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="form-label" for="unidade_origem">De:</label>
+                                            <select class="form-control" id="unidade_origem" onchange="updateConversionDestinations()">
+                                                <option value="grupo">Selecione o grupo</option>
+                                                <option value="volume">Volume</option>
+                                                <option value="massa">Massa</option>
+                                                <option value="temperatura">Temperatura</option>
+                                                <option value="concentracao">Concentração</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="form-label" for="unidade_destino">Para:</label>
+                                            <select class="form-control" id="unidade_destino" disabled>
+                                                <option value="">Selecione a unidade de origem primeiro</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="form-label" style="visibility: hidden;">Calcular</label>
+                                            <button type="button" class="btn btn-calculate form-control" onclick="calculate('conversao')">
+                                                <i class="fas fa-calculator"></i> Converter
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="result-box" id="result-conversao">
+                                    <div class="row">
+                                        <div class="col-md-12 text-center">
+                                            <div class="result-label">Resultado da conversão:</div>
+                                            <div class="result-value" id="result-value-conversao">0</div>
+                                            <div class="result-unit" id="result-unit-conversao"></div>
+                                        </div>
+                                    </div>
+                                    <div class="action-buttons">
+                                        <div class="action-button copy" onclick="copyResultWithUnit('result-value-conversao', 'result-unit-conversao')">
+                                            <i class="fas fa-copy"></i> Copiar
+                                        </div>
+                                        <div class="action-button reset" onclick="resetCalculator('form-conversao', 'result-conversao')">
+                                            <i class="fas fa-redo"></i> Limpar
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabelas de Conversão -->
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <i class="fas fa-table me-2"></i> Tabela de Conversão - Volume
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>De</th>
+                                                    <th>Para</th>
+                                                    <th>Multiplicar por</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Mililitros (mL)</td>
+                                                    <td>Litros (L)</td>
+                                                    <td>0.001</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Litros (L)</td>
+                                                    <td>Mililitros (mL)</td>
+                                                    <td>1000</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Litros (L)</td>
+                                                    <td>Metros cúbicos (m³)</td>
+                                                    <td>0.001</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Galões (US)</td>
+                                                    <td>Litros (L)</td>
+                                                    <td>3.78541</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <i class="fas fa-table me-2"></i> Tabela de Conversão - Massa
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>De</th>
+                                                    <th>Para</th>
+                                                    <th>Multiplicar por</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Miligramas (mg)</td>
+                                                    <td>Gramas (g)</td>
+                                                    <td>0.001</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Gramas (g)</td>
+                                                    <td>Quilogramas (kg)</td>
+                                                    <td>0.001</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Quilogramas (kg)</td>
+                                                    <td>Gramas (g)</td>
+                                                    <td>1000</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Quilogramas (kg)</td>
+                                                    <td>Toneladas (ton)</td>
+                                                    <td>0.001</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aba de Sucos -->
+                <div class="tab-pane fade" id="juice" role="tabpanel" aria-labelledby="juice-tab">
+                    <div class="calculation-visual">
+                        <div class="calculation-icon">
+                            <i class="fas fa-tint"></i>
+                        </div>
+                        <div class="calculation-details">
+                            <h3>Cálculos para Sucos</h3>
+                            <p>Ferramentas específicas para análise e processamento de sucos, incluindo correção de Brix, acidez e outros parâmetros de qualidade.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Subtabs dentro da aba de Sucos -->
+                    <ul class="nav nav-pills mb-3" id="juice-subtabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="juice-quality-tab" data-bs-toggle="pill" data-bs-target="#juice-quality" type="button" role="tab" aria-controls="juice-quality" aria-selected="true">Qualidade</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="juice-processing-tab" data-bs-toggle="pill" data-bs-target="#juice-processing" type="button" role="tab" aria-controls="juice-processing" aria-selected="false">Processamento</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="juice-recipes-tab" data-bs-toggle="pill" data-bs-target="#juice-recipes" type="button" role="tab" aria-controls="juice-recipes" aria-selected="false">Formulações</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="juice-subtabs-content">
+                        <!-- Subtab: Qualidade -->
+                        <div class="tab-pane fade show active" id="juice-quality" role="tabpanel" aria-labelledby="juice-quality-tab">
                             <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <div class="result-label">Peso Líquido:</div>
-                                    <div class="result-value" id="result-value-producao_200">0</div>
-                                    <div class="result-unit">gramas</div>
+                                <!-- Calculadora de Ratio por Fruta -->
+                                <div class="col-md-6">
+                                    <div class="card card-calculator">
+                                        <div class="card-header-calculator">
+                                            <i class="fas fa-apple-alt me-2"></i> Ratio por Tipo de Fruta
+                                        </div>
+                                        <div class="card-body-calculator">
+                                            <div class="calculation-description">
+                                                Compara o Ratio (Brix/Acidez) medido com valores de referência para diferentes tipos de frutas.
+                                            </div>
+                                            <form id="form-ratio-fruta">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="tipo_fruta">Tipo de Fruta:</label>
+                                                            <select class="form-control" id="tipo_fruta">
+                                                                <option value="laranja">Laranja</option>
+                                                                <option value="uva">Uva</option>
+                                                                <option value="maca">Maçã</option>
+                                                                <option value="manga">Manga</option>
+                                                                <option value="abacaxi">Abacaxi</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="brix_fruta">Brix:</label>
+                                                            <input type="number" class="form-control" id="brix_fruta" placeholder="Digite o Brix" step="0.1" required>
+                                                            <div class="error-message" id="error-brix_fruta">Valor inválido</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="acidez_fruta">Acidez:</label>
+                                                            <input type="number" class="form-control" id="acidez_fruta" placeholder="Digite a acidez" step="0.01" required>
+                                                            <div class="error-message" id="error-acidez_fruta">Valor inválido</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center mt-3">
+                                                    <button type="button" class="btn btn-calculate" onclick="calculate('ratio_fruta')">
+                                                        <i class="fas fa-calculator"></i> Calcular
+                                                    </button>
+                                                </div>
+                                                <div class="result-box" id="result-ratio_fruta">
+                                                    <div class="row">
+                                                        <div class="col-md-6 text-center">
+                                                            <div class="result-label">Ratio Calculado:</div>
+                                                            <div class="result-value" id="result-value-ratio_fruta">0</div>
+                                                        </div>
+                                                        <div class="col-md-6 text-center">
+                                                            <div class="result-label">Classificação:</div>
+                                                            <div class="result-value" id="result-class-ratio_fruta">-</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="action-buttons">
+                                                        <div class="action-button copy" onclick="copyResult('result-value-ratio_fruta', '')">
+                                                            <i class="fas fa-copy"></i> Copiar
+                                                        </div>
+                                                        <div class="action-button reset" onclick="resetCalculator('form-ratio-fruta', 'result-ratio_fruta')">
+                                                            <i class="fas fa-redo"></i> Limpar
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="action-buttons">
-                                <div class="action-button copy" onclick="copyResult('result-value-producao_200', 'g')">
-                                    <i class="fas fa-copy"></i> Copiar
-                                </div>
-                                <div class="action-button reset" onclick="resetCalculator('form-producao200', 'result-producao_200')">
-                                    <i class="fas fa-redo"></i> Limpar
+                                
+                                <!-- Calculadora de Correção de Acidez -->
+                                <div class="col-md-6">
+                                    <div class="card card-calculator">
+                                        <div class="card-header-calculator">
+                                            <i class="fas fa-vial me-2"></i> Correção de Acidez
+                                        </div>
+                                        <div class="card-body-calculator">
+                                            <div class="calculation-description">
+                                                Calcula a quantidade de ácido cítrico necessária para ajustar a acidez do suco.
+                                            </div>
+                                            <form id="form-correcao-acidez">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="acidez_atual">Acidez Atual (%):</label>
+                                                            <input type="number" class="form-control" id="acidez_atual" placeholder="Acidez atual" step="0.01" required>
+                                                            <div class="error-message" id="error-acidez_atual">Valor inválido</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="acidez_desejada">Acidez Desejada (%):</label>
+                                                            <input type="number" class="form-control" id="acidez_desejada" placeholder="Acidez desejada" step="0.01" required>
+                                                            <div class="error-message" id="error-acidez_desejada">Valor inválido</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label class="form-label" for="volume_suco">Volume de Suco (L):</label>
+                                                            <input type="number" class="form-control" id="volume_suco" placeholder="Volume de suco" step="0.1" required>
+                                                            <div class="error-message" id="error-volume_suco">Valor inválido</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center mt-3">
+                                                    <button type="button" class="btn btn-calculate" onclick="calculate('correcao_acidez')">
+                                                        <i class="fas fa-calculator"></i> Calcular
+                                                    </button>
+                                                </div>
+                                                <div class="result-box" id="result-correcao_acidez">
+                                                    <div class="row">
+                                                        <div class="col-md-12 text-center">
+                                                            <div class="result-label">Ácido Cítrico a Adicionar:</div>
+                                                            <div class="result-value" id="result-value-correcao_acidez">0</div>
+                                                            <div class="result-unit">g</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="action-buttons">
+                                                        <div class="action-button copy" onclick="copyResult('result-value-correcao_acidez', 'g')">
+                                                            <i class="fas fa-copy"></i> Copiar
+                                                        </div>
+                                                        <div class="action-button reset" onclick="resetCalculator('form-correcao-acidez', 'result-correcao_acidez')">
+                                                            <i class="fas fa-redo"></i> Limpar
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-            </div>
-            
-            <!-- Calculadora 2: Produção Litro -->
-            <div class="calculator-container">
-                <div class="calculator-title" onclick="toggleCalculator('producaoLitro')">
-                    <span><i class="fas fa-tint calculator-icon"></i> Volume de Produção</span>
-                    <i class="fas fa-chevron-down" id="icon-producaoLitro"></i>
-                </div>
-                <div class="calculator-body" id="producaoLitro">
-                    <div class="calculation-description">
-                        Calcula o volume final de produção com base no peso e densidade do produto.
+                        
+                        <!-- Subtab: Processamento -->
+                        <div class="tab-pane fade" id="juice-processing" role="tabpanel" aria-labelledby="juice-processing-tab">
+                            <!-- Calculadora de Pasteurização -->
+                            <div class="card card-calculator">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-temperature-high me-2"></i> Pasteurização (Unidades de Pasteurização)
+                                </div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Calcula as Unidades de Pasteurização (PU) com base na temperatura e tempo de retenção.
+                                    </div>
+                                    <div class="formula-box">
+                                        <strong>Fórmula:</strong> PU = t × 1.393<sup>(T-60)</sup>
+                                        <br>
+                                        <small>Onde: t = tempo em minutos, T = temperatura em °C</small>
+                                    </div>
+                                    <form id="form-pasteurizacao">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="temperatura_pasteurizacao">Temperatura (°C):</label>
+                                                    <input type="number" class="form-control" id="temperatura_pasteurizacao" placeholder="Digite a temperatura" step="0.1" required>
+                                                    <div class="error-message" id="error-temperatura_pasteurizacao">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="tempo_retencao">Tempo de Retenção (min):</label>
+                                                    <input type="number" class="form-control" id="tempo_retencao" placeholder="Digite o tempo" step="0.01" required>
+                                                    <div class="error-message" id="error-tempo_retencao">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('pasteurizacao')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-pasteurizacao">
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <div class="result-label">Unidades de Pasteurização (PU):</div>
+                                                    <div class="result-value" id="result-value-pasteurizacao">0</div>
+                                                    <div class="result-unit">PU</div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button copy" onclick="copyResult('result-value-pasteurizacao', 'PU')">
+                                                    <i class="fas fa-copy"></i> Copiar
+                                                </div>
+                                                <div class="action-button reset" onclick="resetCalculator('form-pasteurizacao', 'result-pasteurizacao')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Subtab: Formulações -->
+                        <div class="tab-pane fade" id="juice-recipes" role="tabpanel" aria-labelledby="juice-recipes-tab">
+                            <!-- Calculadora de Formulação de Bebidas -->
+                            <div class="card card-calculator">
+                                <div class="card-header-calculator">
+                                    <i class="fas fa-blender me-2"></i> Formulação de Bebidas
+                                </div>
+                                <div class="card-body-calculator">
+                                    <div class="calculation-description">
+                                        Calcula a proporção de ingredientes para uma formulação específica.
+                                    </div>
+                                    <form id="form-formulacao">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="tipo_bebida">Tipo de Bebida:</label>
+                                                    <select class="form-control" id="tipo_bebida">
+                                                        <option value="nectar">Néctar</option>
+                                                        <option value="refresco">Refresco</option>
+                                                        <option value="suco">Suco Integral</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label" for="volume_bebida">Volume Final (L):</label>
+                                                    <input type="number" class="form-control" id="volume_bebida" placeholder="Digite o volume" step="0.1" required>
+                                                    <div class="error-message" id="error-volume_bebida">Valor inválido</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-calculate" onclick="calculate('formulacao')">
+                                                <i class="fas fa-calculator"></i> Calcular
+                                            </button>
+                                        </div>
+                                        <div class="result-box" id="result-formulacao">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered">
+                                                            <thead class="table-light">
+                                                                <tr>
+                                                                    <th>Ingrediente</th>
+                                                                    <th>Quantidade</th>
+                                                                    <th>Unidade</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="result-table-formulacao">
+                                                                <!-- Os resultados serão preenchidos via JavaScript -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <div class="action-button reset" onclick="resetCalculator('form-formulacao', 'result-formulacao')">
+                                                    <i class="fas fa-redo"></i> Limpar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="formula-box">
-                        <strong>Fórmula:</strong> Volume (L) = Massa (kg) / Densidade (kg/L)
-                    </div>
-                    <form id="form-producaoLitro">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="peso_total">Peso Total (kg):</label>
-                                    <input type="number" class="form-control" id="peso_total" placeholder="Digite o peso total" step="0.01" required>
-                                    <div class="error-message" id="error-peso_total">Valor inválido</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="densidade">Densidade (kg/L):</label>
-                                    <input type="number" class="form-control" id="densidade" placeholder="Digite a densidade" step="0.001" required>
-                                    <div class="error-message" id="error-densidade">Valor inválido</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <button type="button" class="btn btn-calculate" onclick="calculate('producao_litro')">
-                                <i class="fas fa-calculator"></i> Calcular
-                            </button>
-                        </div>
-                        <div class="result-box" id="result-producao_litro">
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <div class="result-label">Volume Produzido:</div>
-                                    <div class="result-value" id="result-value-producao_litro">0</div>
-                                    <div class="result-unit">litros</div>
-                                </div>
-                            </div>
-                            <div class="action-buttons">
-                                <div class="action-button copy" onclick="copyResult('result-value-producao_litro', 'L')">
-                                    <i class="fas fa-copy"></i> Copiar
-                                </div>
-                                <div class="action-button reset" onclick="resetCalculator('form-producaoLitro', 'result-producao_litro')">
-                                    <i class="fas fa-redo"></i> Limpar
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <div class="category-header">
-                <i class="fas fa-flask"></i> Cálculos de Laboratório
-            </div>
-            
-            <!-- Calculadora 3: Abaixar Brix -->
-            <div class="calculator-container">
-                <div class="calculator-title" onclick="toggleCalculator('abaixarBrix')">
-                    <span><i class="fas fa-arrow-down calculator-icon"></i> Diluição para Ajuste de Brix</span>
-                    <i class="fas fa-chevron-down" id="icon-abaixarBrix"></i>
-                </div>
-                <div class="calculator-body" id="abaixarBrix">
-                    <div class="calculation-description">
-                        Estima quanto de água é necessário adicionar para reduzir o Brix de uma solução até o valor desejado.
-                    </div>
-                    <div class="formula-box">
-                        <strong>Fórmula:</strong> Volume de água (L) = (Volume inicial × Brix atual / Brix desejado) - Volume inicial
-                    </div>
-                    <form id="form-abaixarBrix">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label" for="brix_atual">Brix Atual:</label>
-                                    <input type="number" class="form-control" id="brix_atual" placeholder="Digite o Brix atual" step="0.1" required>
-                                    <div class="error-message" id="error-brix_atual">Valor inválido</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label" for="brix_desejado">Brix Desejado:</label>
-                                    <input type="number" class="form-control" id="brix_desejado" placeholder="Digite o Brix desejado" step="0.1" required>
-                                    <div class="error-message" id="error-brix_desejado">Valor inválido</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label" for="volume_inicial">Volume Inicial (L):</label>
-                                    <input type="number" class="form-control" id="volume_inicial" placeholder="Digite o volume inicial" step="0.1" required>
-                                    <div class="error-message" id="error-volume_inicial">Valor inválido</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <button type="button" class="btn btn-calculate" onclick="calculate('abaixar_brix')">
-                                <i class="fas fa-calculator"></i> Calcular
-                            </button>
-                        </div>
-                        <div class="result-box" id="result-abaixar_brix">
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <div class="result-label">Água a Adicionar:</div>
-                                    <div class="result-value" id="result-value-abaixar_brix">0</div>
-                                    <div class="result-unit">litros</div>
-                                </div>
-                            </div>
-                            <div class="action-buttons">
-                                <div class="action-button copy" onclick="copyResult('result-value-abaixar_brix', 'L')">
-                                    <i class="fas fa-copy"></i> Copiar
-                                </div>
-                                <div class="action-button reset" onclick="resetCalculator('form-abaixarBrix', 'result-abaixar_brix')">
-                                    <i class="fas fa-redo"></i> Limpar
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <!-- Calculadora 4: Ratio -->
-            <div class="calculator-container">
-                <div class="calculator-title" onclick="toggleCalculator('ratio')">
-                    <span><i class="fas fa-divide calculator-icon"></i> Ratio (Brix/Acidez)</span>
-                    <i class="fas fa-chevron-down" id="icon-ratio"></i>
-                </div>
-                <div class="calculator-body" id="ratio">
-                    <div class="calculation-description">
-                        Relação entre Brix e Acidez, importante para controle de qualidade do suco. O Ratio é um indicador importante do sabor e ponto de colheita para frutas.
-                    </div>
-                    <div class="formula-box">
-                        <strong>Fórmula:</strong> Ratio = Brix / Acidez
-                    </div>
-                    <form id="form-ratio">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="brix_ratio">Brix:</label>
-                                    <input type="number" class="form-control" id="brix_ratio" placeholder="Digite o Brix" step="0.1" required>
-                                    <div class="error-message" id="error-brix_ratio">Valor inválido</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label" for="acidez_ratio">Acidez:</label>
-                                    <input type="number" class="form-control" id="acidez_ratio" placeholder="Digite a acidez" step="0.01" required>
-                                    <div class="error-message" id="error-acidez_ratio">Valor inválido</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <button type="button" class="btn btn-calculate" onclick="calculate('ratio')">
-                                <i class="fas fa-calculator"></i> Calcular
-                            </button>
-                        </div>
-                        <div class="result-box" id="result-ratio">
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <div class="result-label">Ratio:</div>
-                                    <div class="result-value" id="result-value-ratio">0</div>
-                                </div>
-                            </div>
-                            <div class="action-buttons">
-                                <div class="action-button copy" onclick="copyResult('result-value-ratio', '')">
-                                    <i class="fas fa-copy"></i> Copiar
-                                </div>
-                                <div class="action-button reset" onclick="resetCalculator('form-ratio', 'result-ratio')">
-                                    <i class="fas fa-redo"></i> Limpar
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <!-- Calculadora 5: Diluição de Soluções -->
-            <div class="calculator-container">
-                <div class="calculator-title" onclick="toggleCalculator('diluicao')">
-                    <span><i class="fas fa-vial calculator-icon"></i> Diluição de Solução</span>
-                    <i class="fas fa-chevron-down" id="icon-diluicao"></i>
-                </div>
-                <div class="calculator-body" id="diluicao">
-                    <div class="calculation-description">
-                        Calcula a concentração final de uma solução após diluição.
-                    </div>
-                    <div class="formula-box">
-                        <strong>Fórmula:</strong> C₁ × V₁ = C₂ × V₂ (onde C = concentração, V = volume)
-                    </div>
-                    <form id="form-diluicao">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="form-label" for="conc_inicial">Concentração inicial:</label>
-                                    <input type="number" class="form-control" id="conc_inicial" placeholder="Concentração inicial" step="0.01" required>
-                                    <div class="error-message" id="error-conc_inicial">Valor inválido</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="form-label" for="vol_inicial">Volume inicial (mL):</label>
-                                    <input type="number" class="form-control" id="vol_inicial" placeholder="Volume inicial" step="0.1" required>
-                                    <div class="error-message" id="error-vol_inicial">Valor inválido</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="form-label" for="vol_final">Volume final (mL):</label>
-                                    <input type="number" class="form-control" id="vol_final" placeholder="Volume final" step="0.1" required>
-                                    <div class="error-message" id="error-vol_final">Valor inválido</div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="form-label" for="unidade_conc">Unidade:</label>
-                                    <select class="form-control" id="unidade_conc">
-                                        <option value="%">Porcentagem (%)</option>
-                                        <option value="mg/L">mg/L</option>
-                                        <option value="g/L">g/L</option>
-                                        <option value="mol/L">mol/L</option>
-                                        <option value="ppm">ppm</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <button type="button" class="btn btn-calculate" onclick="calculate('diluicao')">
-                                <i class="fas fa-calculator"></i> Calcular
-                            </button>
-                        </div>
-                        <div class="result-box" id="result-diluicao">
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <div class="result-label">Concentração final:</div>
-                                    <div class="result-value" id="result-value-diluicao">0</div>
-                                    <div class="result-unit" id="result-unit-diluicao">%</div>
-                                </div>
-                            </div>
-                            <div class="action-buttons">
-                                <div class="action-button copy" onclick="copyResultWithUnit('result-value-diluicao', 'result-unit-diluicao')">
-                                    <i class="fas fa-copy"></i> Copiar
-                                </div>
-                                <div class="action-button reset" onclick="resetCalculator('form-diluicao', 'result-diluicao')">
-                                    <i class="fas fa-redo"></i> Limpar
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <!-- Calculadora 6: Conversão de unidades -->
-            <div class="calculator-container">
-                <div class="calculator-title" onclick="toggleCalculator('conversao')">
-                    <span><i class="fas fa-exchange-alt calculator-icon"></i> Conversão de Unidades</span>
-                    <i class="fas fa-chevron-down" id="icon-conversao"></i>
-                </div>
-                <div class="calculator-body" id="conversao">
-                    <div class="calculation-description">
-                        Converte entre diferentes unidades de medida frequentemente usadas no laboratório.
-                    </div>
-                    <form id="form-conversao">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label" for="valor_converter">Valor:</label>
-                                    <input type="number" class="form-control" id="valor_converter" placeholder="Valor para converter" step="any" required>
-                                    <div class="error-message" id="error-valor_converter">Valor inválido</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label" for="unidade_origem">De:</label>
-                                    <select class="form-control" id="unidade_origem" onchange="updateConversionDestinations()">
-                                        <option value="grupo">Selecione o grupo</option>
-                                        <option value="volume">Volume</option>
-                                        <option value="massa">Massa</option>
-                                        <option value="temperatura">Temperatura</option>
-                                        <option value="concentracao">Concentração</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label" for="unidade_destino">Para:</label>
-                                    <select class="form-control" id="unidade_destino" disabled>
-                                        <option value="">Selecione a unidade de origem primeiro</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <button type="button" class="btn btn-calculate" onclick="calculate('conversao')">
-                                <i class="fas fa-calculator"></i> Converter
-                            </button>
-                        </div>
-                        <div class="result-box" id="result-conversao">
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <div class="result-label">Resultado da conversão:</div>
-                                    <div class="result-value" id="result-value-conversao">0</div>
-                                    <div class="result-unit" id="result-unit-conversao"></div>
-                                </div>
-                            </div>
-                            <div class="action-buttons">
-                                <div class="action-button copy" onclick="copyResultWithUnit('result-value-conversao', 'result-unit-conversao')">
-                                    <i class="fas fa-copy"></i> Copiar
-                                </div>
-                                <div class="action-button reset" onclick="resetCalculator('form-conversao', 'result-conversao')">
-                                    <i class="fas fa-redo"></i> Limpar
-                                </div>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
@@ -758,6 +1610,31 @@
         });
     }
     
+    // Função para processar resultado da formulação
+    function processRecipeResult(data, tipo) {
+        const tableBody = document.getElementById('result-table-formulacao');
+        tableBody.innerHTML = '';
+        
+        // Para cada ingrediente no resultado, adicionar uma linha na tabela
+        data.ingredientes.forEach(ingrediente => {
+            const row = document.createElement('tr');
+            
+            const nameCell = document.createElement('td');
+            nameCell.textContent = ingrediente.nome;
+            row.appendChild(nameCell);
+            
+            const quantityCell = document.createElement('td');
+            quantityCell.textContent = formatResult(ingrediente.quantidade);
+            row.appendChild(quantityCell);
+            
+            const unitCell = document.createElement('td');
+            unitCell.textContent = ingrediente.unidade;
+            row.appendChild(unitCell);
+            
+            tableBody.appendChild(row);
+        });
+    }
+    
     // Função para enviar solicitação de cálculo
     function calculate(calculationType) {
         // Mapear tipo de cálculo para ID do formulário
@@ -767,7 +1644,14 @@
             'abaixar_brix': 'form-abaixarBrix',
             'ratio': 'form-ratio',
             'diluicao': 'form-diluicao',
-            'conversao': 'form-conversao'
+            'conversao': 'form-conversao',
+            'rendimento': 'form-rendimento',
+            'consumo': 'form-consumo',
+            'solucao': 'form-solucao',
+            'ratio_fruta': 'form-ratio-fruta',
+            'correcao_acidez': 'form-correcao-acidez',
+            'pasteurizacao': 'form-pasteurizacao',
+            'formulacao': 'form-formulacao'
         };
         
         const formId = formMappings[calculationType];
@@ -811,6 +1695,37 @@
                 data.de = document.getElementById('unidade_origem').value;
                 data.para = document.getElementById('unidade_destino').value;
                 break;
+            case 'rendimento':
+                data.entrada = parseFloat(document.getElementById('entrada_material').value);
+                data.saida = parseFloat(document.getElementById('saida_material').value);
+                break;
+            case 'consumo':
+                data.quantidade_insumo = parseFloat(document.getElementById('quantidade_insumo').value);
+                data.unidades_produzidas = parseInt(document.getElementById('unidades_produzidas').value);
+                break;
+            case 'solucao':
+                data.concentracao = parseFloat(document.getElementById('concentracao_desejada').value);
+                data.volume = parseFloat(document.getElementById('volume_solucao').value);
+                data.tipo_solucao = document.getElementById('tipo_solucao').value;
+                break;
+            case 'ratio_fruta':
+                data.tipo_fruta = document.getElementById('tipo_fruta').value;
+                data.brix = parseFloat(document.getElementById('brix_fruta').value);
+                data.acidez = parseFloat(document.getElementById('acidez_fruta').value);
+                break;
+            case 'correcao_acidez':
+                data.acidez_atual = parseFloat(document.getElementById('acidez_atual').value);
+                data.acidez_desejada = parseFloat(document.getElementById('acidez_desejada').value);
+                data.volume_suco = parseFloat(document.getElementById('volume_suco').value);
+                break;
+            case 'pasteurizacao':
+                data.temperatura = parseFloat(document.getElementById('temperatura_pasteurizacao').value);
+                data.tempo = parseFloat(document.getElementById('tempo_retencao').value);
+                break;
+            case 'formulacao':
+                data.tipo_bebida = document.getElementById('tipo_bebida').value;
+                data.volume = parseFloat(document.getElementById('volume_bebida').value);
+                break;
         }
         
         // Enviar a solicitação para o servidor
@@ -832,6 +1747,29 @@
             const resultBox = document.getElementById(`result-${calculationType}`);
             resultBox.style.display = 'block';
             
+            // Processamento especial para formulação
+            if (calculationType === 'formulacao') {
+                processRecipeResult(data, document.getElementById('tipo_bebida').value);
+                return;
+            }
+            
+            // Processamento especial para ratio por fruta
+            if (calculationType === 'ratio_fruta') {
+                const resultValueElement = document.getElementById(`result-value-${calculationType}`);
+                resultValueElement.textContent = formatResult(data.resultado);
+                
+                const resultClassElement = document.getElementById(`result-class-${calculationType}`);
+                resultClassElement.textContent = data.classificacao;
+                resultClassElement.className = `result-value ${data.status}`;
+                
+                // Animar resultado
+                resultValueElement.classList.add('pulse');
+                setTimeout(() => {
+                    resultValueElement.classList.remove('pulse');
+                }, 500);
+                return;
+            }
+            
             const resultValueElement = document.getElementById(`result-value-${calculationType}`);
             resultValueElement.textContent = formatResult(data.resultado);
             
@@ -844,6 +1782,10 @@
                     document.getElementById('unidade_destino').options[
                         document.getElementById('unidade_destino').selectedIndex
                     ].text.match(/\(([^)]+)\)/)[1];
+            } else if (calculationType === 'solucao') {
+                const tipoSolucao = document.getElementById('tipo_solucao').value;
+                document.getElementById('result-unit-solucao').textContent = 
+                    tipoSolucao === 'massa' ? 'g' : 'mL';
             }
             
             // Animar resultado
@@ -857,10 +1799,5 @@
             alert('Ocorreu um erro ao processar o cálculo. Por favor, tente novamente.');
         });
     }
-    
-    // Inicializar primeira calculadora aberta ao carregar
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleCalculator('producao200');
-    });
 </script>
 {% endblock %}
