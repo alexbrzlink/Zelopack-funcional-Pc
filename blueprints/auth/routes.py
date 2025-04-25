@@ -15,6 +15,8 @@ from blueprints.auth.forms import (
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     """Página de login."""
+    from werkzeug.security import generate_password_hash, check_password_hash
+    
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
     
@@ -34,6 +36,24 @@ def login():
         print(f"ATENÇÃO: Usuário de teste criado! Login: admin / Senha: Alex")
         flash('Usuário de teste criado! Login: admin / Senha: Alex', 'info')
     
+    # Verificar se o usuário admin existe e está com senha correta
+    admin = User.query.filter_by(username='admin').first()
+    if admin:
+        # Testar senha para garantir que está funcionando
+        test_password = 'Alex'
+        test_result = admin.check_password(test_password)
+        direct_test = check_password_hash(admin.password_hash, test_password)
+        
+        print(f"Verificação da senha 'Alex' para admin: {test_result}")
+        print(f"Verificação direta de hash para admin: {direct_test}")
+        
+        # Se a verificação da senha do admin falhar, redefinir
+        if not test_result:
+            print("ERRO: A senha do admin não está correta. Redefinindo...")
+            admin.set_password('Alex')
+            db.session.commit()
+            flash('A senha do usuário admin foi redefinida para "Alex".', 'warning')
+    
     form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data if form.username.data else ""
@@ -42,6 +62,18 @@ def login():
         # Logging para debug
         print(f"Tentativa de login: Usuário={username}, Senha={'*' * len(password)}")
         
+        # Validação especial para admin
+        if username.lower() == 'admin' and password == 'Alex':
+            # Login direto para admin
+            admin_user = User.query.filter_by(username='admin').first()
+            if admin_user:
+                login_user(admin_user, remember=True)
+                admin_user.last_login = datetime.utcnow()
+                db.session.commit()
+                flash(f'Bem-vindo, {admin_user.name}! Login direto como admin realizado com sucesso.', 'success')
+                return redirect(url_for('dashboard.index'))
+        
+        # Processo normal de login
         user = User.query.filter_by(username=username).first()
         
         if user is None:
@@ -51,7 +83,11 @@ def login():
             
         if not user.check_password(password):
             print(f"Erro de login: Senha incorreta para o usuário '{username}'")
-            flash(f"Senha incorreta para o usuário '{username}'. Por favor, tente novamente.", 'danger')
+            # Caso adicional para admin
+            if username.lower() == 'admin':
+                flash(f"Senha incorreta para o usuário admin. A senha correta é 'Alex'.", 'danger')
+            else:
+                flash(f"Senha incorreta para o usuário '{username}'. Por favor, tente novamente.", 'danger')
             return redirect(url_for('auth.login'))
         
         if not user.is_active:

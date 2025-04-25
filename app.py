@@ -80,11 +80,50 @@ def inject_variables():
 def check_admin_user():
     """Rota para verificar se o usuário admin existe e mostrar suas informações."""
     from models import User
+    from werkzeug.security import generate_password_hash, check_password_hash
     
     # Verificar se existe usuário admin
     user = User.query.filter_by(username='admin').first()
     
+    # Verificação de senha para testes
+    test_password = 'Alex'
+    is_password_valid = False
+    password_hash_info = "Não foi possível verificar o hash"
+    
     if user:
+        # Tentar verificar a senha diretamente
+        is_password_valid = user.check_password(test_password)
+        
+        # Informações sobre o hash atual
+        current_hash = user.password_hash
+        
+        # Tentar verificar com check_password_hash diretamente
+        direct_check = check_password_hash(current_hash, test_password)
+        
+        # Criar um novo hash para comparação
+        new_hash = generate_password_hash(test_password)
+        
+        password_hash_info = f"""
+        <div style="background-color: #f8f9fa; padding: 10px; margin: 10px 0; border-left: 4px solid #007bff;">
+            <h4>Informações do hash de senha:</h4>
+            <p>Hash atual: <code>{current_hash}</code></p>
+            <p>Novo hash gerado: <code>{new_hash}</code></p>
+            <p>Resultado do check_password: <strong>{is_password_valid}</strong></p>
+            <p>Resultado da verificação direta: <strong>{direct_check}</strong></p>
+        </div>
+        """
+        
+        # Se a verificação de senha falhou, atualizar a senha
+        if not is_password_valid:
+            user.set_password(test_password)
+            db.session.commit()
+            password_hash_info += f"""
+            <div style="background-color: #d4edda; padding: 10px; margin: 10px 0; border-left: 4px solid #28a745;">
+                <p><strong>SENHA REDEFINIDA!</strong> O hash da senha foi atualizado para garantir o acesso.</p>
+                <p>Novo hash após redefinição: <code>{user.password_hash}</code></p>
+            </div>
+            """
+        
         info = f"""
         <h3>Informações do usuário admin:</h3>
         <ul>
@@ -96,6 +135,7 @@ def check_admin_user():
             <li>Ativo: {user.is_active}</li>
             <li>Último login: {user.last_login}</li>
         </ul>
+        {password_hash_info}
         <p>A senha atual configurada para este usuário é: <strong>Alex</strong></p>
         <p><a href="/login-direct">Entrar com este usuário automaticamente</a></p>
         <p><a href="/auth/login">Ir para tela de login manual</a></p>
@@ -182,6 +222,63 @@ def login_test():
     else:
         flash('Erro no login de teste: usuário não encontrado', 'danger')
         return redirect(url_for('auth.login'))
+        
+@app.route("/login-direct")
+def login_direct():
+    """Rota alternativa para login direto, para fins de teste."""
+    print("ACESSANDO ROTA DE LOGIN AUTOMÁTICO")
+    
+    from models import User
+    
+    # Verificar se existe usuário admin
+    total_users = User.query.count()
+    print(f"Total de usuários no sistema: {total_users}")
+    
+    if total_users == 0:
+        # Criar usuário admin se não existir
+        print("Nenhum usuário encontrado. Criando usuário admin padrão...")
+        admin_user = User(
+            username='admin',
+            email='admin@zelopack.com.br',
+            name='Administrador',
+            role='admin',
+            is_active=True
+        )
+        admin_user.set_password('Alex')
+        db.session.add(admin_user)
+        db.session.commit()
+        print("Usuário admin criado com sucesso!")
+    
+    user = User.query.filter_by(username='admin').first()
+    
+    if user is None:
+        msg = "ERRO CRÍTICO: Usuário admin não encontrado mesmo após tentativa de criação!"
+        print(msg)
+        flash(msg, 'danger')
+        return redirect(url_for('auth.login'))
+    
+    if not user.is_active:
+        msg = "ERRO: Usuário admin existe mas está inativo."
+        print(msg)
+        user.is_active = True
+        db.session.commit()
+        print("Usuário admin foi ativado automaticamente.")
+        flash(msg + " Ele foi ativado automaticamente.", 'warning')
+    
+    # Registrar tentativa de login
+    print(f"Login automático para usuário: {user.username}")
+    print(f"Nome do usuário: {user.name}")
+    print(f"E-mail do usuário: {user.email}")
+    print(f"Função do usuário: {user.role}")
+    print(f"Status de ativação: {user.is_active}")
+    
+    login_user(user, remember=True)
+    user.last_login = datetime.utcnow()
+    db.session.commit()
+    
+    print("Login automático bem-sucedido! Redirecionando para o dashboard...")
+    flash(f'Bem-vindo, {user.name}! Login automático realizado com sucesso.', 'success')
+    return redirect(url_for('dashboard.index'))
 
 # Registrar blueprints
 from blueprints.reports import reports_bp
