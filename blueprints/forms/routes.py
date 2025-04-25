@@ -197,6 +197,82 @@ def get_preset_data(preset_id):
     })
 
 
+@forms_bp.route('/api/create-preset/<path:file_path>', methods=['POST'])
+@login_required
+def create_preset_ajax(file_path):
+    """API para criar um preset via AJAX."""
+    try:
+        full_path = os.path.join(FORMS_DIR, file_path)
+        
+        # Verificar se o arquivo existe
+        if not os.path.exists(full_path) or not os.path.isfile(full_path):
+            return jsonify({
+                'success': False,
+                'message': 'Arquivo não encontrado.'
+            }), 404
+        
+        file_name = os.path.basename(full_path)
+        
+        # Obter dados da requisição
+        data = request.json
+        
+        if not data or not data.get('name') or not data.get('data'):
+            return jsonify({
+                'success': False,
+                'message': 'Dados incompletos. Nome e campos são obrigatórios.'
+            }), 400
+        
+        preset_name = data.get('name')
+        preset_description = data.get('description', '')
+        is_default = data.get('is_default', False)
+        preset_data = data.get('data', {})
+        
+        # Verificar se já existe uma predefinição com esse nome
+        existing = FormPreset.query.filter_by(
+            form_type=file_name,
+            name=preset_name
+        ).first()
+        
+        if existing:
+            return jsonify({
+                'success': False,
+                'message': f'Já existe uma predefinição com o nome "{preset_name}".'
+            }), 400
+        
+        # Criar nova predefinição
+        preset = FormPreset(
+            name=preset_name,
+            description=preset_description,
+            form_type=file_name,
+            file_path=file_path,
+            created_by=current_user.id,
+            data=preset_data,
+            is_default=is_default
+        )
+        
+        # Se esta predefinição é marcada como padrão, desmarcar as demais
+        if is_default:
+            FormPreset.query.filter_by(
+                form_type=file_name,
+                is_default=True
+            ).update({'is_default': False})
+        
+        db.session.add(preset)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Predefinição "{preset_name}" criada com sucesso!',
+            'preset_id': preset.id
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': f'Erro ao criar predefinição: {str(e)}'
+        }), 500
+
+
 @forms_bp.route('/fill/<path:file_path>')
 @login_required
 def fill_form(file_path):
@@ -222,6 +298,40 @@ def fill_form(file_path):
     return render_template(
         'forms/fill_form.html',
         title=f"Preencher Formulário - {file_name}",
+        file_path=file_path,
+        file_name=file_name,
+        file_ext=file_ext,
+        fields=fields,
+        presets=presets
+    )
+
+
+@forms_bp.route('/interactive/<path:file_path>')
+@login_required
+def interactive_form(file_path):
+    """Interface interativa para visualizar e preencher formulários."""
+    full_path = os.path.join(FORMS_DIR, file_path)
+    
+    # Verificar se o arquivo existe
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        flash('Arquivo não encontrado.', 'danger')
+        return redirect(url_for('forms.index'))
+    
+    file_name = os.path.basename(full_path)
+    file_ext = os.path.splitext(file_name)[1].lower()
+    
+    # Obter campos disponíveis para preenchimento
+    fields = get_form_fields(full_path)
+    
+    # Obter predefinições disponíveis para esse formulário
+    presets = FormPreset.query.filter_by(
+        form_type=file_name,
+        is_active=True
+    ).order_by(FormPreset.is_default.desc(), FormPreset.name).all()
+    
+    return render_template(
+        'forms/interactive_form.html',
+        title=f"Preenchimento Interativo - {file_name}",
         file_path=file_path,
         file_name=file_name,
         file_ext=file_ext,
