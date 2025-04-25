@@ -1,0 +1,440 @@
+/**
+ * Estilos para o módulo de preenchimento automático
+ * Interface moderna e intuitiva para preenchimento de formulários
+ */
+
+/* Container principal */
+.autofill-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--zelopack-bg-main);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem var(--zelopack-shadow);
+}
+
+/* Cabeçalho do módulo */
+.autofill-header {
+    background: linear-gradient(135deg, var(--zelopack-primary-light) 0%, var(--zelopack-primary) 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.autofill-header h2 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+}
+
+.autofill-header h2 i {
+    margin-right: 0.75rem;
+    font-size: 1.5rem;
+}
+
+.autofill-header p {
+    margin-bottom: 0;
+    opacity: 0.9;
+    max-width: 80%;
+    position: relative;
+    z-index: 2;
+}
+
+.autofill-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/svg%3E");
+    z-index: 1;
+}
+
+/* Seções de formulário */
+.autofill-section {
+    background-color: var(--zelopack-bg-card);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.25rem 0.5rem var(--zelopack-shadow);
+    border-left: 4px solid var(--zelopack-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.autofill-section h3 {
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+    color: var(--zelopack-text-primary);
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.autofill-section h3 i {
+    margin-right: 0.75rem;
+    color: var(--zelopack-primary);
+    font-size: 1.25rem;
+}
+
+/* Formulário dinâmico */
+.dynamic-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+}
+
+/* Campos de formulário customizados */
+.custom-field {
+    position: relative;
+    margin-bottom: 0;
+}
+
+.custom-field label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    color: var(--zelopack-text-secondary);
+    transition: color 0.2s ease;
+}
+
+.custom-field label .field-icon {
+    margin-right: 0.5rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.custom-field:hover label,
+.custom-field:focus-within label {
+    color: var(--zelopack-primary);
+}
+
+.custom-field:hover label .field-icon,
+.custom-field:focus-within label .field-icon {
+    opacity: 1;
+}
+
+.custom-field-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--zelopack-border-color);
+    border-radius: 0.5rem;
+    background-color: var(--zelopack-bg-main);
+    color: var(--zelopack-text-primary);
+    transition: all 0.2s ease;
+}
+
+.custom-field-input:focus {
+    border-color: var(--zelopack-primary);
+    box-shadow: 0 0 0 3px rgba(var(--zelopack-primary-rgb), 0.15);
+    outline: none;
+}
+
+.custom-field-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.custom-field-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    cursor: pointer;
+}
+
+.field-suggestion {
+    position: absolute;
+    right: 0.75rem;
+    top: 0.75rem;
+    color: var(--zelopack-secondary);
+    cursor: pointer;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.custom-field:hover .field-suggestion {
+    opacity: 0.7;
+}
+
+.field-suggestion:hover {
+    opacity: 1 !important;
+    color: var(--zelopack-primary);
+}
+
+/* Botões de ação */
+.autofill-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-action {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-action i {
+    margin-right: 0.5rem;
+}
+
+.btn-primary-action {
+    background: linear-gradient(135deg, var(--zelopack-primary-light) 0%, var(--zelopack-primary) 100%);
+    color: white;
+    box-shadow: 0 0.25rem 0.5rem rgba(var(--zelopack-primary-rgb), 0.3);
+}
+
+.btn-primary-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.35rem 0.65rem rgba(var(--zelopack-primary-rgb), 0.4);
+}
+
+.btn-secondary-action {
+    background-color: transparent;
+    border: 2px solid var(--zelopack-primary);
+    color: var(--zelopack-primary);
+}
+
+.btn-secondary-action:hover {
+    background-color: rgba(var(--zelopack-primary-rgb), 0.1);
+}
+
+/* Templates salvos */
+.templates-section {
+    border-left-color: var(--zelopack-secondary);
+}
+
+.templates-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.template-card {
+    background-color: var(--zelopack-bg-main);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1px solid var(--zelopack-border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.template-card:hover {
+    box-shadow: 0 0.25rem 0.5rem var(--zelopack-shadow);
+    border-color: var(--zelopack-primary);
+    transform: translateY(-2px);
+}
+
+.template-default {
+    border-left: 3px solid var(--zelopack-warning);
+}
+
+.template-actions {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.template-card:hover .template-actions {
+    opacity: 1;
+}
+
+.template-action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--zelopack-bg-card);
+    color: var(--zelopack-text-secondary);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.template-action-btn:hover {
+    background-color: var(--zelopack-primary);
+    color: white;
+}
+
+.template-name {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.template-name i {
+    margin-right: 0.5rem;
+    color: var(--zelopack-primary);
+}
+
+.template-default .template-name i {
+    color: var(--zelopack-warning);
+}
+
+.template-description {
+    font-size: 0.85rem;
+    color: var(--zelopack-text-secondary);
+    margin-bottom: 0.5rem;
+    flex-grow: 1;
+}
+
+.template-meta {
+    font-size: 0.75rem;
+    color: var(--zelopack-text-tertiary);
+    border-top: 1px solid var(--zelopack-border-color);
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Animações */
+@keyframes slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.slide-in-up {
+    animation: slideInUp 0.4s ease forwards;
+}
+
+/* Toast de notificação para sugestões */
+.suggestion-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: var(--zelopack-bg-card);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    width: 300px;
+    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    display: flex;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.suggestion-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.suggestion-toast-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--zelopack-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+}
+
+.suggestion-toast-content {
+    flex: 1;
+}
+
+.suggestion-toast-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.suggestion-toast-text {
+    font-size: 0.875rem;
+    color: var(--zelopack-text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.suggestion-toast-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.suggestion-toast-btn {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+}
+
+.suggestion-toast-btn-accept {
+    background-color: var(--zelopack-primary);
+    color: white;
+}
+
+.suggestion-toast-btn-dismiss {
+    background-color: transparent;
+    color: var(--zelopack-text-secondary);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .autofill-container {
+        padding: 1rem;
+    }
+    
+    .autofill-header p {
+        max-width: 100%;
+    }
+    
+    .autofill-header::after {
+        display: none;
+    }
+    
+    .dynamic-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .templates-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .autofill-actions {
+        flex-direction: column;
+    }
+    
+    .btn-action {
+        width: 100%;
+    }
+}
