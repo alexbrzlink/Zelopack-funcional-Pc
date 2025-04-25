@@ -16,4 +16,6 @@ dependencies = [
     "pandas>=2.2.3",
     "sendgrid>=6.11.0",
     "twilio>=9.5.2",
+    "pillow>=11.2.1",
+    "reportlab>=4.4.0",
 ]

@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 import json
+import os
 
 class Report(db.Model):
     """Modelo para armazenar informações sobre laudos."""
@@ -527,4 +528,133 @@ class User(UserMixin, db.Model):
             'is_active': self.is_active,
             'last_login': self.last_login.strftime('%d/%m/%Y %H:%M') if self.last_login else None,
             'created_at': self.created_at.strftime('%d/%m/%Y %H:%M') if self.created_at else None
+        }
+
+
+class TechnicalDocument(db.Model):
+    """Modelo para documentos técnicos do laboratório (POPs, fichas técnicas, etc.)."""
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    document_type = db.Column(db.String(50), nullable=False)  # pop, ficha_tecnica, certificado, instrucao, planilha, manual, outro
+    
+    # Arquivos
+    filename = db.Column(db.String(255), nullable=False)
+    original_filename = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
+    file_type = db.Column(db.String(50), nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)
+    
+    # Metadados
+    revision = db.Column(db.String(20), nullable=True)
+    valid_until = db.Column(db.Date, nullable=True)
+    author = db.Column(db.String(100), nullable=True)
+    tags = db.Column(db.String(200), nullable=True)  # tags separadas por vírgula
+    
+    # Controle de status e acesso
+    status = db.Column(db.String(20), default='ativo')  # ativo, em_revisao, obsoleto
+    restricted_access = db.Column(db.Boolean, default=False)
+    
+    # Campos de controle
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    parent_id = db.Column(db.Integer, db.ForeignKey('technical_document.id'), nullable=True)  # Para versões
+    version = db.Column(db.Integer, default=1)
+    
+    # Relações
+    uploader = db.relationship('User', backref='uploaded_documents')
+    parent_document = db.relationship('TechnicalDocument', remote_side=[id], backref='versions')
+    
+    def __repr__(self):
+        return f"<TechnicalDocument {self.id}: {self.title} ({self.document_type})>"
+    
+    def to_dict(self):
+        """Converte o documento para dicionário."""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'document_type': self.document_type,
+            'filename': self.filename,
+            'original_filename': self.original_filename,
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'file_size': self.file_size,
+            'revision': self.revision,
+            'valid_until': self.valid_until.strftime('%d/%m/%Y') if self.valid_until else None,
+            'author': self.author,
+            'tags': self.tags,
+            'status': self.status,
+            'restricted_access': self.restricted_access,
+            'uploaded_by': self.uploaded_by,
+            'uploader_name': self.uploader.name if self.uploader else None,
+            'upload_date': self.upload_date.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'version': self.version,
+            'parent_id': self.parent_id
+        }
+    
+    def get_file_url(self):
+        """Retorna URL para acesso ao arquivo."""
+        from flask import url_for
+        return url_for('documents.download_document', document_id=self.id)
+    
+    def get_extension(self):
+        """Retorna a extensão do arquivo."""
+        if not self.file_type:
+            return ''
+        return self.file_type.lower()
+    
+    def get_icon_class(self):
+        """Retorna uma classe de ícone adequada para o tipo de documento."""
+        ext = self.get_extension()
+        if ext in ['pdf']:
+            return 'fa-file-pdf'
+        elif ext in ['doc', 'docx']:
+            return 'fa-file-word'
+        elif ext in ['xls', 'xlsx']:
+            return 'fa-file-excel'
+        elif ext in ['ppt', 'pptx']:
+            return 'fa-file-powerpoint'
+        elif ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
+            return 'fa-file-image'
+        else:
+            return 'fa-file'
+
+
+class DocumentAttachment(db.Model):
+    """Modelo para anexos de documentos técnicos."""
+    id = db.Column(db.Integer, primary_key=True)
+    document_id = db.Column(db.Integer, db.ForeignKey('technical_document.id', ondelete='CASCADE'), nullable=False)
+    filename = db.Column(db.String(255), nullable=False)
+    original_filename = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
+    file_type = db.Column(db.String(50), nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relações
+    document = db.relationship('TechnicalDocument', backref=db.backref('attachments', cascade='all, delete-orphan'))
+    uploader = db.relationship('User', backref='document_attachments')
+    
+    def __repr__(self):
+        return f"<DocumentAttachment {self.id}: {self.original_filename}>"
+    
+    def to_dict(self):
+        """Converte o anexo para dicionário."""
+        return {
+            'id': self.id,
+            'document_id': self.document_id,
+            'filename': self.filename,
+            'original_filename': self.original_filename,
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'file_size': self.file_size,
+            'description': self.description,
+            'uploaded_by': self.uploaded_by,
+            'uploader_name': self.uploader.name if self.uploader else None,
+            'upload_date': self.upload_date.strftime('%d/%m/%Y %H:%M')
         }
