@@ -5,8 +5,9 @@ import tempfile
 import shutil
 from flask import render_template, send_file, abort, Response, jsonify, request, redirect, url_for, flash
 from flask_login import login_required, current_user
+from flask_wtf.csrf import generate_csrf
 from . import forms_bp
-from app import db
+from app import db, csrf
 from models import FormPreset
 import openpyxl
 from openpyxl.styles import Font, PatternFill
@@ -199,6 +200,7 @@ def get_preset_data(preset_id):
 
 @forms_bp.route('/api/create-preset/<path:file_path>', methods=['POST'])
 @login_required
+@csrf.exempt  # Desabilitar CSRF para esta rota específica (API)
 def create_preset_ajax(file_path):
     """API para criar um preset via AJAX."""
     try:
@@ -329,6 +331,10 @@ def interactive_form(file_path):
         is_active=True
     ).order_by(FormPreset.is_default.desc(), FormPreset.name).all()
     
+    # Gerar CSRF token para o template
+    from flask_wtf.csrf import generate_csrf
+    csrf_token = generate_csrf()
+    
     return render_template(
         'forms/interactive_form.html',
         title=f"Preenchimento Interativo - {file_name}",
@@ -336,7 +342,8 @@ def interactive_form(file_path):
         file_name=file_name,
         file_ext=file_ext,
         fields=fields,
-        presets=presets
+        presets=presets,
+        csrf_token=csrf_token
     )
 
 

@@ -105,6 +105,7 @@
                 </div>
                 <div class="card-body">
                     <form id="interactive-form" action="{{ url_for('forms.download_filled_form', file_path=file_path) }}" method="post">
+                        {{ form.csrf_token if form else csrf_token() }}
                         {% if fields and fields|length > 0 %}
                         <div class="mb-3 d-flex justify-content-between align-items-center">
                             <span class="text-muted"><i class="fas fa-info-circle me-1"></i> {{ fields|length }} campos detectados.</span>
@@ -338,6 +339,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
                     },
                     body: JSON.stringify({
                         name: presetName,
@@ -384,7 +386,11 @@
                     ZelopackAnimations.showLoading('Carregando predefinição...');
                     
                     // Buscar os dados da predefinição via AJAX
-                    fetch(`/forms/api/preset/${presetId}`)
+                    fetch(`/forms/api/preset/${presetId}`, {
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    })
                         .then(response => response.json())
                         .then(data => {
                             ZelopackAnimations.hideLoading();
