@@ -46,15 +46,18 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 # Inicializar o banco de dados
 db.init_app(app)
 
-# Inicializar proteção CSRF, mas desabilitar para desenvolvimento
+# Inicializar proteção CSRF
 csrf = CSRFProtect()
 csrf.init_app(app)
-# Desabilitamos CSRF para facilitar os testes
-app.config['WTF_CSRF_ENABLED'] = False
-app.config['WTF_CSRF_TIME_LIMIT'] = 3600
 
-# Criar algumas isenções para CSRF (para rota de login direto)
+# Configuração do CSRF
+app.config['WTF_CSRF_ENABLED'] = True  # Habilitado para produção
+app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # 1 hora
+app.config['WTF_CSRF_SECRET_KEY'] = app.secret_key  # Usar a mesma chave da aplicação
+
+# Criar isenções para CSRF (para rotas de login direto e teste)
 csrf.exempt('blueprints.auth.login_direct')
+csrf.exempt('app.login_direct')
 
 # Configurar o Flask-Login
 login_manager = LoginManager()
@@ -229,6 +232,7 @@ def login_direct():
     print("ACESSANDO ROTA DE LOGIN AUTOMÁTICO")
     
     from models import User
+    from werkzeug.security import generate_password_hash, check_password_hash
     
     # Verificar se existe usuário admin
     total_users = User.query.count()
@@ -265,6 +269,24 @@ def login_direct():
         print("Usuário admin foi ativado automaticamente.")
         flash(msg + " Ele foi ativado automaticamente.", 'warning')
     
+    # Verificar senha
+    test_password = 'Alex'
+    is_password_valid = user.check_password(test_password)
+    
+    if not is_password_valid:
+        print(f"ERRO: A senha do usuário admin não está validando corretamente. Redefinindo...")
+        user.set_password(test_password)
+        db.session.commit()
+        
+        # Verificar novamente
+        if not user.check_password(test_password):
+            print("ERRO CRÍTICO: A senha não pôde ser redefinida corretamente!")
+            flash('Não foi possível redefinir a senha do admin. Entre em contato com o suporte.', 'danger')
+            return redirect(url_for('auth.login'))
+        else:
+            print("Senha redefinida com sucesso!")
+            flash('A senha do usuário admin foi redefinida para "Alex".', 'warning')
+    
     # Registrar tentativa de login
     print(f"Login automático para usuário: {user.username}")
     print(f"Nome do usuário: {user.name}")
@@ -279,6 +301,206 @@ def login_direct():
     print("Login automático bem-sucedido! Redirecionando para o dashboard...")
     flash(f'Bem-vindo, {user.name}! Login automático realizado com sucesso.', 'success')
     return redirect(url_for('dashboard.index'))
+    
+@app.route("/validar-sistema")
+def system_validation():
+    """Validação completa do sistema para diagnóstico"""
+    from models import User, Category, Supplier, Report
+    from werkzeug.security import generate_password_hash, check_password_hash
+    
+    results = []
+    
+    # Verificar conexão com banco de dados
+    try:
+        total_users = User.query.count()
+        results.append({
+            "test": "Conexão com Banco de Dados",
+            "result": "Sucesso",
+            "details": f"Total de usuários: {total_users}"
+        })
+    except Exception as e:
+        results.append({
+            "test": "Conexão com Banco de Dados",
+            "result": "Falha",
+            "details": str(e)
+        })
+        
+    # Verificar se o usuário admin existe
+    try:
+        admin = User.query.filter_by(username='admin').first()
+        if admin:
+            results.append({
+                "test": "Usuário Admin",
+                "result": "Encontrado",
+                "details": f"ID: {admin.id}, Email: {admin.email}, Ativo: {admin.is_active}"
+            })
+            
+            # Verificar senha do admin
+            if admin.check_password('Alex'):
+                results.append({
+                    "test": "Senha do Admin",
+                    "result": "Correta",
+                    "details": "A senha 'Alex' é válida para o usuário admin"
+                })
+            else:
+                # Tentar corrigir a senha
+                admin.set_password('Alex')
+                db.session.commit()
+                
+                if admin.check_password('Alex'):
+                    results.append({
+                        "test": "Senha do Admin",
+                        "result": "Corrigida",
+                        "details": "A senha foi redefinida para 'Alex'"
+                    })
+                else:
+                    results.append({
+                        "test": "Senha do Admin",
+                        "result": "Falha",
+                        "details": "Não foi possível validar ou corrigir a senha"
+                    })
+        else:
+            results.append({
+                "test": "Usuário Admin",
+                "result": "Não encontrado",
+                "details": "Usuário admin não existe no banco de dados"
+            })
+            
+            # Criar usuário admin
+            admin_user = User(
+                username='admin',
+                email='admin@zelopack.com.br',
+                name='Administrador',
+                role='admin',
+                is_active=True
+            )
+            admin_user.set_password('Alex')
+            db.session.add(admin_user)
+            db.session.commit()
+            
+            results.append({
+                "test": "Criação de Admin",
+                "result": "Sucesso",
+                "details": "Usuário admin foi criado com senha 'Alex'"
+            })
+    except Exception as e:
+        results.append({
+            "test": "Verificação de Usuário",
+            "result": "Erro",
+            "details": str(e)
+        })
+    
+    # Verificar demais modelos de dados
+    try:
+        cats = Category.query.count()
+        results.append({
+            "test": "Categorias",
+            "result": "Sucesso",
+            "details": f"Total de categorias: {cats}"
+        })
+    except Exception as e:
+        results.append({
+            "test": "Categorias",
+            "result": "Erro",
+            "details": str(e)
+        })
+        
+    try:
+        suppliers = Supplier.query.count()
+        results.append({
+            "test": "Fornecedores",
+            "result": "Sucesso",
+            "details": f"Total de fornecedores: {suppliers}"
+        })
+    except Exception as e:
+        results.append({
+            "test": "Fornecedores",
+            "result": "Erro",
+            "details": str(e)
+        })
+        
+    try:
+        reports = Report.query.count()
+        results.append({
+            "test": "Laudos",
+            "result": "Sucesso",
+            "details": f"Total de laudos: {reports}"
+        })
+    except Exception as e:
+        results.append({
+            "test": "Laudos",
+            "result": "Erro",
+            "details": str(e)
+        })
+        
+    # Gerar HTML com resultados
+    results_html = ""
+    for result in results:
+        status_class = "text-success" if result["result"] in ["Sucesso", "Encontrado", "Correta", "Corrigida"] else "text-danger"
+        results_html += f"""
+        <div class="card mb-2">
+            <div class="card-body">
+                <h5 class="card-title">{result["test"]}</h5>
+                <h6 class="card-subtitle mb-2 {status_class}">{result["result"]}</h6>
+                <p class="card-text small">{result["details"]}</p>
+            </div>
+        </div>
+        """
+    
+    # Gerar links para ações
+    actions_html = f"""
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Ações Disponíveis</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-grid gap-2">
+                <a href="/user-admin-info" class="btn btn-outline-primary">Visualizar Informações do Admin</a>
+                <a href="/login-direct" class="btn btn-success">Login Automático como Admin</a>
+                <a href="/auth/login" class="btn btn-primary">Ir para Tela de Login</a>
+                <a href="/" class="btn btn-secondary">Voltar para Página Inicial</a>
+            </div>
+        </div>
+    </div>
+    """
+    
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Validação do Sistema</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {{ padding: 20px; }}
+            .result-card {{ margin-bottom: 10px; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <h1 class="mb-4 text-center">Diagnóstico do Sistema</h1>
+                    
+                    <div class="alert alert-info">
+                        Esta página realiza testes de diagnóstico no sistema e mostra os resultados.
+                    </div>
+                    
+                    <h3 class="mb-3">Resultados dos Testes</h3>
+                    {results_html}
+                    
+                    <h3 class="mt-4 mb-3">Ações</h3>
+                    {actions_html}
+                    
+                    <p class="text-center text-muted mt-5">
+                        <small>Sistema de Gerenciamento de Laudos - Zelopack</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
 
 # Registrar blueprints
 from blueprints.reports import reports_bp
