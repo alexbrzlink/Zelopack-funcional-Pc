@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ZELOPACK Gerenciamento de Laudos</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Estilo personalizado -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <!-- Animações personalizadas -->
+    <link rel="stylesheet" href="/static/css/animations.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    
+<link rel="stylesheet" href="/static/css/login.css">
+<!-- Adicionar particles.js para o fundo interativo -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+</head>
+<body>
+    <!-- Header e Navegação -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/reports/">
+                <span style="font-size: 1.5rem; font-weight: bold; color: #0d6efd;">ZELOPACK</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports/">
+                            <i class="fas fa-home"></i> Início
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports/upload">
+                            <i class="fas fa-upload"></i> Enviar Laudo
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports/view">
+                            <i class="fas fa-file-alt"></i> Todos os Laudos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports/search">
+                            <i class="fas fa-search"></i> Busca Avançada
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/">
+                            <i class="fas fa-chart-bar"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/forms/">
+                            <i class="fas fa-file-signature"></i> Formulários
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Busca Rápida -->
+                <div class="position-relative d-none d-lg-block me-3">
+                    <input type="text" id="quickSearch" class="form-control" placeholder="Busca rápida..." aria-label="Busca rápida">
+                    <div id="quickSearchResults" class="quick-search-results d-none">
+                        <!-- Resultados serão adicionados via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Menu de Usuário -->
+                
+                <a href="/auth/login" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Mensagens Flash -->
+    <div class="container mt-3">
+        
+            
+        
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <main class="container py-4">
+        
+            <h1 class="mb-4">Login</h1>
+        
+        
+        
+<div class="login-container">
+    <div id="login-particles" class="particles-js position-absolute w-100 h-100"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7 col-sm-9">
+                <div class="login-card">
+                    <div class="login-header">
+                        <h3><i class="fas fa-lock me-2"></i> Acesso ao Sistema</h3>
+                    </div>
+                    
+                    <div class="login-body">
+                        <div class="login-brand">
+                            <h1>ZELOPACK</h1>
+                        </div>
+                        
+                        <div class="login-title">
+                            Sistema de Gerenciamento de Laudos
+                        </div>
+                        
+                        <!-- Área para mensagens de erro dinâmicas -->
+                        <div id="login-messages"></div>
+                        
+                        <form method="POST" action="" id="login-form" class="form-animate-in">
+                            <input id="csrf_token" name="csrf_token" type="hidden" value="ImNiNGRjNDA3N2YyMjQ3Nzg5YTJlOGNiNjNmZTBkNDI3ZjZiYjg4MDAi.aAtaTA.s46LpU-g7-Ti8Q7MlYnLMOhBuDA">
+                            
+                            <div class="form-floating position-relative">
+                                <input class="form-control" id="username" name="username" placeholder="Nome de Usuário" required type="text" value="">
+                                <i class="fas fa-user input-icon"></i>
+                                <label for="username">Nome de Usuário</label>
+                                
+                            </div>
+                            
+                            <div class="form-floating position-relative">
+                                <input class="form-control" id="password" name="password" placeholder="Senha" required type="password" value="">
+                                <i class="fas fa-key input-icon"></i>
+                                <label for="password">Senha</label>
+                                
+                            </div>
+                            
+                            <div class="form-check mb-3 mt-3">
+                                <input class="form-check-input" id="remember_me" name="remember_me" type="checkbox" value="y">
+                                <label class="form-check-label" for="remember_me">Lembrar-me</label>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <input class="btn btn-primary btn-lg login-button pulse-effect" id="submit" name="submit" type="submit" value="Entrar">
+                            </div>
+                        </form>
+                        
+                        <div class="forgot-password">
+                            <a href="/auth/reset-password-request">
+                                <i class="fas fa-question-circle me-1"></i> Esqueceu sua senha?
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="login-footer">
+                        <small>&copy; 2025 ZELOPACK. Todos os direitos reservados.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </main>
+    
+    <!-- Rodapé -->
+    <footer class="footer mt-auto py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>ZELOPACK</h5>
+                    <p>Sistema de Gerenciamento de Laudos</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p>© 2025 ZELOPACK. Todos os direitos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap 5 JS com Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyBFT3jOKSyR_xeJO0rIymMPVFmGsAQ83F0",
+          authDomain: "zelopack-industria.firebaseapp.com",
+          projectId: "zelopack-industria",
+          storageBucket: "zelopack-industria.firebasestorage.app",
+          messagingSenderId: "993227513134",
+          appId: "1:993227513134:web:f03edbada0110b07fa6ebf",
+          measurementId: "G-42RS8TZHZH"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        // Disponibilizar globalmente se necessário
+        window.firebaseApp = app;
+        window.firebaseAnalytics = analytics;
+    </script>
+    
+    <!-- Scripts personalizados -->
+    <script src="/static/js/main.js"></script>
+    <script src="/static/js/search.js"></script>
+    <script src="/static/js/animations.js"></script>
+    
+    
+<script src="/static/js/login.js"></script>
+
+</body>
+</html>

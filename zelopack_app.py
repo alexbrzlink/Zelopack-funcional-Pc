@@ -20,7 +20,9 @@ from contextlib import closing
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Configurar variáveis de ambiente necessárias
-os.environ['FLASK_ENV'] = 'production'
+os.environ['FLASK_ENV'] = 'development'  # Usar modo de desenvolvimento para facilitar autenticação 
+os.environ['FLASK_DEBUG'] = '1'
+os.environ['WTF_CSRF_ENABLED'] = 'False'  # Desabilitar CSRF para o aplicativo desktop
 
 # Importar a aplicação
 from app import app
@@ -58,7 +60,9 @@ def find_free_port():
 def open_browser(port):
     """Abrir o navegador apontando para a aplicação."""
     time.sleep(1.5)  # Aguardar o servidor iniciar
-    url = f"http://localhost:{port}"
+    
+    # Usar a rota de login direto para facilitar o acesso
+    url = f"http://localhost:{port}/login-direct"
     print(f"Abrindo navegador em: {url}")
     webbrowser.open(url)
 
