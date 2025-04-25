@@ -668,5 +668,17 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{{ url_for('static', filename='js/calculos_v2.js') }}"></script>
+<script src="{{ url_for('static', filename='js/calculos.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Garante que os cálculos são inicializados corretamente
+    try {
+        console.log("Inicializando cálculos...");
+        initCalculos();
+        console.log("Cálculos inicializados com sucesso!");
+    } catch(e) {
+        console.error("Erro ao inicializar cálculos:", e);
+    }
+});
+</script>
 {% endblock %}
