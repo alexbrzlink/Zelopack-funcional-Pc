@@ -27,9 +27,28 @@
                         </div>
                         
                         <!-- Área para mensagens de erro dinâmicas -->
-                        <div id="login-messages"></div>
+                        <div id="login-messages">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="alert alert-{{ category }}">
+                                            {% if category == 'danger' %}
+                                                <i class="fas fa-exclamation-circle me-2"></i>
+                                            {% elif category == 'success' %}
+                                                <i class="fas fa-check-circle me-2"></i>
+                                            {% elif category == 'warning' %}
+                                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                            {% else %}
+                                                <i class="fas fa-info-circle me-2"></i>
+                                            {% endif %}
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        </div>
                         
-                        <form method="POST" action="" id="login-form" class="form-animate-in">
+                        <form method="POST" action="{{ url_for('auth.login') }}" id="login-form" class="form-animate-in">
                             {{ form.hidden_tag() }}
                             
                             <div class="form-floating position-relative">

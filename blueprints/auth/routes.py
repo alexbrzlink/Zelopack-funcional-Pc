@@ -17,8 +17,9 @@ def login():
     """Página de login."""
     from werkzeug.security import generate_password_hash, check_password_hash
     
+    # Se o usuário já está autenticado, redirecionar para a página inicial
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard.index'))
+        return redirect(url_for('reports.index'))
     
     # Verificar se existe pelo menos um usuário admin (para fins de teste/dev)
     if User.query.count() == 0:
@@ -71,7 +72,7 @@ def login():
                 admin_user.last_login = datetime.utcnow()
                 db.session.commit()
                 flash(f'Bem-vindo, {admin_user.name}! Login direto como admin realizado com sucesso.', 'success')
-                return redirect(url_for('dashboard.index'))
+                return redirect(url_for('reports.index'))
         
         # Processo normal de login
         user = User.query.filter_by(username=username).first()
@@ -79,18 +80,18 @@ def login():
         if user is None:
             print(f"Erro de login: Usuário '{username}' não encontrado")
             flash(f"O usuário '{username}' não está cadastrado. Verifique se digitou corretamente.", 'danger')
-            return redirect(url_for('auth.login'))
+            return render_template('auth/login.html', form=form, title='Login')
             
         if not user.check_password(password):
             print(f"Erro de login: Senha incorreta para o usuário '{username}'")
             # Mensagem genérica que não revela informações sobre a senha
             flash("Credenciais inválidas. Por favor, verifique seu usuário e senha.", 'danger')
-            return redirect(url_for('auth.login'))
+            return render_template('auth/login.html', form=form, title='Login')
         
         if not user.is_active:
             print(f"Erro de login: Usuário '{username}' está inativo")
             flash(f"Esta conta ({username}) está desativada. Entre em contato com o administrador.", 'warning')
-            return redirect(url_for('auth.login'))
+            return render_template('auth/login.html', form=form, title='Login')
         
         login_user(user, remember=form.remember_me.data)
         print(f"Login bem-sucedido para o usuário '{username}'")

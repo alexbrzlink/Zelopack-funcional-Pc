@@ -49,42 +49,56 @@ document.addEventListener('DOMContentLoaded', function() {
         input.parentElement.classList.add('error-shake');
     });
     
-    // Animar alertas flash e mover para o login-messages container
+    // Animar alertas flash
+    const alerts = document.querySelectorAll('.alert');
+    const loginMessages = document.getElementById('login-messages');
+    
     if (alerts.length > 0) {
-        const loginMessages = document.getElementById('login-messages');
-        
         alerts.forEach(alert => {
-            // Adicionar ícone com base no tipo de alerta
-            const alertText = alert.innerHTML.replace(/<button.*?button>/g, '');
-            const alertType = alert.classList.contains('alert-danger') ? 'exclamation-circle' :
-                            alert.classList.contains('alert-success') ? 'check-circle' :
-                            alert.classList.contains('alert-warning') ? 'exclamation-triangle' : 'info-circle';
+            // Adicionar classe para animação
+            alert.classList.add('animate-fade-in');
             
-            // Criar novo alerta estilizado
-            const newAlert = document.createElement('div');
-            newAlert.className = `alert alert-${alert.classList.contains('alert-danger') ? 'danger' : 
-                                               alert.classList.contains('alert-success') ? 'success' : 
-                                               alert.classList.contains('alert-warning') ? 'warning' : 'info'} 
-                                  error-message`;
-            newAlert.innerHTML = `<i class="fas fa-${alertType} me-2"></i> ${alertText}`;
-            
-            // Adicionar ao container de mensagens
-            if (loginMessages) {
-                loginMessages.appendChild(newAlert);
+            // Adicionar ícone se não existir
+            if (!alert.querySelector('i')) {
+                const alertType = alert.classList.contains('alert-danger') ? 'exclamation-circle' :
+                                alert.classList.contains('alert-success') ? 'check-circle' :
+                                alert.classList.contains('alert-warning') ? 'exclamation-triangle' : 'info-circle';
+                
+                const icon = document.createElement('i');
+                icon.className = `fas fa-${alertType} me-2`;
+                alert.insertBefore(icon, alert.firstChild);
             }
             
-            // Remover o alerta original
-            alert.remove();
-            
-            // Fechar automaticamente após 5 segundos se não for um erro
-            if (!newAlert.classList.contains('alert-danger')) {
+            // Fazer as mensagens de sucesso e info desaparecerem após alguns segundos
+            if (!alert.classList.contains('alert-danger') && !alert.classList.contains('alert-warning')) {
                 setTimeout(() => {
-                    // Animar saída
-                    newAlert.style.animation = 'fadeOut 0.5s ease forwards';
+                    alert.style.animation = 'fadeOut 0.5s ease forwards';
                     setTimeout(() => {
-                        newAlert.remove();
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                        }
                     }, 500);
                 }, 5000);
+            }
+            
+            // Adicionar botão para fechar o alerta se não existir
+            if (!alert.querySelector('.btn-close')) {
+                const closeButton = document.createElement('button');
+                closeButton.type = 'button';
+                closeButton.className = 'btn-close';
+                closeButton.setAttribute('data-bs-dismiss', 'alert');
+                closeButton.setAttribute('aria-label', 'Close');
+                
+                closeButton.addEventListener('click', function() {
+                    alert.style.animation = 'fadeOut 0.3s ease forwards';
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                        }
+                    }, 300);
+                });
+                
+                alert.appendChild(closeButton);
             }
         });
     }
