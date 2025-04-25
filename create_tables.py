@@ -53,9 +53,9 @@ def initialize_default_data(db, models):
         # Fornecedores padrão
         if models.Supplier.query.count() == 0:
             default_suppliers = [
-                models.Supplier(name="Fornecedor Interno", contact="Laboratório Zelopack", email="lab@zelopack.com.br"),
-                models.Supplier(name="Laboratório Externo", contact="Contato do Laboratório", email="contato@labexterno.com.br"),
-                models.Supplier(name="Consultoria ABC", contact="Consultor", email="contato@consultoriaabc.com.br")
+                models.Supplier(name="Fornecedor Interno", contact_name="Laboratório Zelopack", email="lab@zelopack.com.br"),
+                models.Supplier(name="Laboratório Externo", contact_name="Contato do Laboratório", email="contato@labexterno.com.br"),
+                models.Supplier(name="Consultoria ABC", contact_name="Consultor", email="contato@consultoriaabc.com.br")
             ]
             db.session.add_all(default_suppliers)
             db.session.commit()
