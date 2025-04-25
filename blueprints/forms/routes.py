@@ -200,7 +200,6 @@ def get_preset_data(preset_id):
 
 @forms_bp.route('/api/create-preset/<path:file_path>', methods=['POST'])
 @login_required
-@csrf.exempt  # Desabilitar CSRF para esta rota específica (API)
 def create_preset_ajax(file_path):
     """API para criar um preset via AJAX."""
     try:
