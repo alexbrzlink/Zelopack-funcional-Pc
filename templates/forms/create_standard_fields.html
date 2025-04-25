@@ -1,0 +1,485 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header-banner {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.3;
+    }
+    
+    .card-form {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        color: white;
+        padding: 1.5rem;
+        border: none;
+    }
+    
+    .field-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        margin-right: 1rem;
+        color: white;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .form-floating {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-control {
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e3e6f0;
+        height: calc(3.5rem + 2px);
+        font-size: 1rem;
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-floating .form-control:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+    }
+    
+    .form-floating .form-control:focus ~ label,
+    .form-floating .form-control:not(:placeholder-shown) ~ label {
+        opacity: 0.65;
+        transform: scale(0.85) translateY(-0.75rem) translateX(0.15rem);
+    }
+    
+    .form-floating label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        padding: 1rem;
+        pointer-events: none;
+        border: 1px solid transparent;
+        transform-origin: 0 0;
+        transition: all 0.3s ease;
+        color: #6e707e;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-check {
+        padding-left: 1.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-top: 0.25rem;
+        margin-left: -1.75rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+    }
+    
+    .input-with-icon {
+        position: relative;
+    }
+    
+    .input-with-icon .form-control {
+        padding-left: 3rem;
+    }
+    
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6e707e;
+        z-index: 10;
+    }
+    
+    .input-with-icon .form-control:focus + .input-icon {
+        color: #4e73df;
+    }
+    
+    .btn-save {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 4px 15px rgba(78, 115, 223, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(78, 115, 223, 0.4);
+    }
+    
+    .btn-cancel {
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-cancel:hover {
+        transform: translateY(-3px);
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eaecf4;
+    }
+    
+    .form-section-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        color: #4e73df;
+    }
+    
+    .form-section-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-right: 1rem;
+        color: white;
+        font-size: 1.2rem;
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+    }
+    
+    /* Animações */
+    .fade-in-up {
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+    }
+    
+    .animated-icon {
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Cabeçalho da página -->
+    <div class="header-banner fade-in-up">
+        <div class="row align-items-center">
+            <div class="col-12">
+                <h1 class="text-white display-5 mb-2">
+                    <i class="fas fa-plus-circle me-3 animated-icon"></i>Novo Conjunto de Campos Padronizados
+                </h1>
+                <p class="text-white-50 lead mb-0">
+                    Crie campos que serão automaticamente preenchidos em todos os formulários
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Formulário de criação -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card card-form fade-in-up" style="animation-delay: 0.1s;">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <div class="field-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-1">Configuração dos Campos Padronizados</h4>
+                            <p class="mb-0 text-white-50">Defina os valores padrões para preenchimento automático</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" id="standardFieldsForm">
+                        <!-- Informações Básicas -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <div class="form-section-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <h5 class="mb-0">Informações Básicas</h5>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <div class="input-with-icon">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nome do Conjunto" required>
+                                    <i class="fas fa-tag input-icon"></i>
+                                </div>
+                                <label for="name">Nome do Conjunto</label>
+                            </div>
+                            
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="is_default" name="is_default">
+                                <label class="form-check-label" for="is_default">
+                                    <i class="fas fa-star me-2 text-warning"></i>Definir como conjunto padrão
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Campos Empresariais -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <div class="form-section-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <h5 class="mb-0">Dados da Empresa</h5>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <div class="input-with-icon">
+                                    <input type="text" class="form-control" id="empresa" name="empresa" value="Zelopack" placeholder="Nome da Empresa" required>
+                                    <i class="fas fa-building input-icon"></i>
+                                </div>
+                                <label for="empresa">Nome da Empresa</label>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <div class="input-with-icon">
+                                            <input type="text" class="form-control" id="departamento" name="departamento" placeholder="Departamento">
+                                            <i class="fas fa-sitemap input-icon"></i>
+                                        </div>
+                                        <label for="departamento">Departamento</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <div class="input-with-icon">
+                                            <input type="text" class="form-control" id="responsavel" name="responsavel" placeholder="Responsável">
+                                            <i class="fas fa-user-tie input-icon"></i>
+                                        </div>
+                                        <label for="responsavel">Responsável</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campos do Produto -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <div class="form-section-icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <h5 class="mb-0">Dados do Produto</h5>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <div class="input-with-icon">
+                                            <input type="text" class="form-control" id="produto" name="produto" placeholder="Nome do Produto">
+                                            <i class="fas fa-box input-icon"></i>
+                                        </div>
+                                        <label for="produto">Nome do Produto</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <div class="input-with-icon">
+                                            <input type="text" class="form-control" id="marca" name="marca" placeholder="Marca">
+                                            <i class="fas fa-tag input-icon"></i>
+                                        </div>
+                                        <label for="marca">Marca</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <div class="input-with-icon">
+                                            <input type="text" class="form-control" id="lote" name="lote" placeholder="Lote">
+                                            <i class="fas fa-barcode input-icon"></i>
+                                        </div>
+                                        <label for="lote">Lote</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <div class="input-with-icon">
+                                            <input type="text" class="form-control" id="linha_producao" name="linha_producao" placeholder="Linha de Produção">
+                                            <i class="fas fa-industry input-icon"></i>
+                                        </div>
+                                        <label for="linha_producao">Linha de Produção</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campos de Datas -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <div class="form-section-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <h5 class="mb-0">Datas</h5>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <div class="input-with-icon">
+                                            <input type="date" class="form-control" id="data_producao" name="data_producao">
+                                            <i class="fas fa-calendar-plus input-icon"></i>
+                                        </div>
+                                        <label for="data_producao">Data de Produção</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <div class="input-with-icon">
+                                            <input type="date" class="form-control" id="data_validade" name="data_validade">
+                                            <i class="fas fa-calendar-check input-icon"></i>
+                                        </div>
+                                        <label for="data_validade">Data de Validade</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botões de ação -->
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{{ url_for('forms.standard_fields_list') }}" class="btn btn-cancel btn-outline-secondary me-2">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-save">
+                                <i class="fas fa-save me-2"></i>Salvar Conjunto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar animação de pulsação aos ícones
+        document.querySelectorAll('.field-icon, .form-section-icon').forEach(function(icon) {
+            icon.addEventListener('mouseenter', function() {
+                ZelopackAnimations.pulse(this);
+            });
+        });
+        
+        // Adicionar efeito de foco aos campos
+        document.querySelectorAll('.form-control').forEach(function(input) {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('input-focused');
+                
+                // Animar o ícone
+                const icon = this.parentElement.querySelector('.input-icon');
+                if (icon) {
+                    ZelopackAnimations.pulse(icon);
+                }
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('input-focused');
+            });
+        });
+        
+        // Validação do formulário
+        const form = document.getElementById('standardFieldsForm');
+        
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const nameField = document.getElementById('name');
+                const empresaField = document.getElementById('empresa');
+                
+                if (!nameField.value.trim()) {
+                    e.preventDefault();
+                    ZelopackAnimations.shake(nameField);
+                    ZelopackAnimations.showMessage('O nome do conjunto é obrigatório', 'warning');
+                    nameField.focus();
+                    return false;
+                }
+                
+                if (!empresaField.value.trim()) {
+                    e.preventDefault();
+                    ZelopackAnimations.shake(empresaField);
+                    ZelopackAnimations.showMessage('O nome da empresa é obrigatório', 'warning');
+                    empresaField.focus();
+                    return false;
+                }
+                
+                // Se passou, exibir animação de processamento
+                ZelopackAnimations.showLoading('Salvando campos padronizados...', 'dots');
+                return true;
+            });
+        }
+        
+        // Adicionar animação aos botões
+        document.querySelectorAll('.btn').forEach(function(btn) {
+            btn.addEventListener('mouseenter', function() {
+                ZelopackAnimations.elementHoverIn(this);
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                ZelopackAnimations.elementHoverOut(this);
+            });
+        });
+    });
+</script>
+{% endblock %}

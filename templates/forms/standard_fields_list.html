@@ -1,0 +1,531 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .header-banner {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.3;
+    }
+    
+    .standard-fields-card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        border: none;
+        height: 100%;
+    }
+    
+    .standard-fields-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .standard-fields-header {
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .fields-list-container {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+    
+    .fields-list-container::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .fields-list-container::-webkit-scrollbar-track {
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .fields-list-container::-webkit-scrollbar-thumb {
+        background-color: #adb5bd;
+        border-radius: 10px;
+    }
+    
+    .standard-field-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0.25rem;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.2s ease;
+    }
+    
+    .standard-field-item:hover {
+        background-color: rgba(0,0,0,0.02);
+    }
+    
+    .standard-field-icon {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-right: 1rem;
+        color: white;
+        font-size: 1.2rem;
+    }
+    
+    .field-icon-empresa { background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%); }
+    .field-icon-produto { background: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%); }
+    .field-icon-marca { background: linear-gradient(to right, #43e97b 0%, #38f9d7 100%); }
+    .field-icon-lote { background: linear-gradient(to right, #fa709a 0%, #fee140 100%); }
+    .field-icon-data { background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); }
+    .field-icon-responsavel { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    
+    .standard-field-value {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    
+    .standard-field-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin: 0;
+    }
+    
+    .default-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: linear-gradient(45deg, #28a745, #20c997);
+        color: white;
+        font-size: 0.8rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 30px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .field-actions {
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .standard-fields-card:hover .field-actions {
+        opacity: 1;
+    }
+    
+    .btn-action {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 0.5rem;
+        transition: all 0.2s ease;
+        border: none;
+    }
+    
+    .btn-action:hover {
+        transform: scale(1.1);
+    }
+    
+    .btn-edit {
+        background: linear-gradient(45deg, #2196F3, #4FC3F7);
+        color: white;
+    }
+    
+    .btn-delete {
+        background: linear-gradient(45deg, #F44336, #FF7043);
+        color: white;
+    }
+    
+    .btn-view {
+        background: linear-gradient(45deg, #9C27B0, #BA68C8);
+        color: white;
+    }
+    
+    .animated-icon {
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .btn-create-new {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        color: white;
+        border-radius: 50px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 4px 15px rgba(78, 115, 223, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-create-new:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(78, 115, 223, 0.4);
+    }
+    
+    .info-tooltip {
+        font-size: 0.85rem;
+        margin-left: 0.5rem;
+        color: #6c757d;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .info-tooltip:hover {
+        color: #4e73df;
+    }
+    
+    /* Animações */
+    .fade-in-up {
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Cabeçalho da página -->
+    <div class="header-banner fade-in-up">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h1 class="text-white display-5 mb-2">
+                    <i class="fas fa-sliders-h me-3 animated-icon"></i>Campos Padronizados
+                </h1>
+                <p class="text-white-50 lead mb-0">
+                    Gerencie os campos padrão para preenchimento automático dos formulários
+                </p>
+            </div>
+            <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('forms.create_standard_fields') }}" class="btn btn-create-new btn-lg shadow-sm">
+                    <i class="fas fa-plus-circle me-2"></i>Novo Conjunto de Campos
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Informações e dicas -->
+    <div class="alert alert-info fade-in-up" style="animation-delay: 0.1s;">
+        <div class="d-flex">
+            <div class="me-3">
+                <i class="fas fa-info-circle fa-2x text-info"></i>
+            </div>
+            <div>
+                <h5 class="alert-heading">O que são campos padronizados?</h5>
+                <p class="mb-0">Os campos padronizados permitem o preenchimento automático de informações comuns como <strong>Empresa</strong>, <strong>Produto</strong>, <strong>Marca</strong> e <strong>Lote</strong> em todos os formulários, evitando a necessidade de digitá-las repetidamente.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lista de conjuntos de campos padronizados -->
+    <div class="row mt-4">
+        {% if standard_fields %}
+            {% for field_set in standard_fields %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card standard-fields-card fade-in-up" style="animation-delay: {{ loop.index0 * 0.1 + 0.2 }}s;">
+                        <div class="standard-fields-header bg-gradient-{{ 'primary' if loop.index0 % 5 == 0 else 'success' if loop.index0 % 5 == 1 else 'info' if loop.index0 % 5 == 2 else 'warning' if loop.index0 % 5 == 3 else 'danger' }}">
+                            <h3 class="text-white mb-1">{{ field_set.name }}</h3>
+                            <p class="text-white-50 mb-0">
+                                <i class="fas fa-user-edit me-1"></i>{{ field_set.creator.name if field_set.creator else 'Sistema' }}
+                            </p>
+                            {% if field_set.is_default %}
+                                <span class="default-badge">
+                                    <i class="fas fa-star me-1"></i>Padrão
+                                </span>
+                            {% endif %}
+                            
+                            <!-- Ações do conjunto -->
+                            <div class="field-actions">
+                                <a href="{{ url_for('forms.edit_standard_fields', fields_id=field_set.id) }}" class="btn-action btn-edit" title="Editar" data-bs-toggle="tooltip">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" 
+                                        class="btn-action btn-view" 
+                                        title="Visualizar detalhes" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#fieldsModal{{ field_set.id }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" 
+                                        class="btn-action btn-delete" 
+                                        title="Excluir" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#deleteConfirmModal{{ field_set.id }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="fields-list-container">
+                                <!-- Lista de campos do conjunto -->
+                                <div class="standard-field-item">
+                                    <div class="standard-field-icon field-icon-empresa">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                    <div>
+                                        <div class="standard-field-value">{{ field_set.empresa }}</div>
+                                        <p class="standard-field-label">Empresa</p>
+                                    </div>
+                                </div>
+                                
+                                {% if field_set.produto %}
+                                <div class="standard-field-item">
+                                    <div class="standard-field-icon field-icon-produto">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div>
+                                        <div class="standard-field-value">{{ field_set.produto }}</div>
+                                        <p class="standard-field-label">Produto</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if field_set.marca %}
+                                <div class="standard-field-item">
+                                    <div class="standard-field-icon field-icon-marca">
+                                        <i class="fas fa-tag"></i>
+                                    </div>
+                                    <div>
+                                        <div class="standard-field-value">{{ field_set.marca }}</div>
+                                        <p class="standard-field-label">Marca</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if field_set.lote %}
+                                <div class="standard-field-item">
+                                    <div class="standard-field-icon field-icon-lote">
+                                        <i class="fas fa-barcode"></i>
+                                    </div>
+                                    <div>
+                                        <div class="standard-field-value">{{ field_set.lote }}</div>
+                                        <p class="standard-field-label">Lote</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if field_set.data_producao or field_set.data_validade %}
+                                <div class="standard-field-item">
+                                    <div class="standard-field-icon field-icon-data">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <div>
+                                        {% if field_set.data_producao %}
+                                        <div class="standard-field-value">{{ field_set.data_producao.strftime('%d/%m/%Y') }}</div>
+                                        <p class="standard-field-label">Data de Produção</p>
+                                        {% elif field_set.data_validade %}
+                                        <div class="standard-field-value">{{ field_set.data_validade.strftime('%d/%m/%Y') }}</div>
+                                        <p class="standard-field-label">Data de Validade</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if field_set.responsavel %}
+                                <div class="standard-field-item">
+                                    <div class="standard-field-icon field-icon-responsavel">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div>
+                                        <div class="standard-field-value">{{ field_set.responsavel }}</div>
+                                        <p class="standard-field-label">Responsável</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-light p-3">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>Criado em {{ field_set.created_at.strftime('%d/%m/%Y') }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal de Detalhes -->
+                    <div class="modal fade" id="fieldsModal{{ field_set.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header bg-gradient-{{ 'primary' if loop.index0 % 5 == 0 else 'success' if loop.index0 % 5 == 1 else 'info' if loop.index0 % 5 == 2 else 'warning' if loop.index0 % 5 == 3 else 'danger' }}">
+                                    <h5 class="modal-title text-white">
+                                        <i class="fas fa-list-alt me-2"></i>Detalhes do Conjunto: {{ field_set.name }}
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3"><i class="fas fa-info-circle me-2"></i>Informações Básicas</h6>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Nome do Conjunto</label>
+                                                <div class="fw-bold">{{ field_set.name }}</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Criado por</label>
+                                                <div class="fw-bold">{{ field_set.creator.name if field_set.creator else 'Sistema' }}</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Data de Criação</label>
+                                                <div class="fw-bold">{{ field_set.created_at.strftime('%d/%m/%Y %H:%M') }}</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Última Atualização</label>
+                                                <div class="fw-bold">{{ field_set.updated_at.strftime('%d/%m/%Y %H:%M') }}</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Conjunto Padrão</label>
+                                                <div class="fw-bold">{{ 'Sim' if field_set.is_default else 'Não' }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3"><i class="fas fa-database me-2"></i>Campos Padronizados</h6>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Empresa</label>
+                                                <div class="fw-bold">{{ field_set.empresa }}</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Produto</label>
+                                                <div class="fw-bold">{{ field_set.produto or 'Não definido' }}</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Marca</label>
+                                                <div class="fw-bold">{{ field_set.marca or 'Não definido' }}</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Lote</label>
+                                                <div class="fw-bold">{{ field_set.lote or 'Não definido' }}</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Responsável</label>
+                                                <div class="fw-bold">{{ field_set.responsavel or 'Não definido' }}</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label text-muted">Departamento</label>
+                                                <div class="fw-bold">{{ field_set.departamento or 'Não definido' }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                    <a href="{{ url_for('forms.edit_standard_fields', fields_id=field_set.id) }}" class="btn btn-primary">
+                                        <i class="fas fa-edit me-1"></i>Editar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal de Confirmação de Exclusão -->
+                    <div class="modal fade" id="deleteConfirmModal{{ field_set.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Confirmar Exclusão
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Tem certeza que deseja excluir o conjunto de campos <strong>{{ field_set.name }}</strong>?</p>
+                                    <p class="text-danger mb-0"><i class="fas fa-exclamation-circle me-1"></i>Esta ação não pode ser desfeita.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <form action="{{ url_for('forms.delete_standard_fields', fields_id=field_set.id) }}" method="post">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-trash-alt me-1"></i>Excluir
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-light shadow-sm fade-in-up">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fas fa-info-circle fa-2x text-info"></i>
+                        </div>
+                        <div>
+                            <h5 class="alert-heading">Nenhum conjunto de campos padronizados</h5>
+                            <p class="mb-0">Você ainda não criou nenhum conjunto de campos padronizados. Clique no botão "Novo Conjunto de Campos" para começar.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Adicionar animação aos cards
+        document.querySelectorAll('.standard-fields-card').forEach(function(card) {
+            card.addEventListener('mouseenter', function() {
+                ZelopackAnimations.elementHoverIn(this);
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                ZelopackAnimations.elementHoverOut(this);
+            });
+        });
+        
+        // Adicionar animação aos botões
+        document.querySelectorAll('.btn-action').forEach(function(btn) {
+            btn.addEventListener('mouseenter', function() {
+                ZelopackAnimations.pulse(this);
+            });
+        });
+    });
+</script>
+{% endblock %}

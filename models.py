@@ -737,6 +737,60 @@ class ReportAttachment(db.Model):
     uploader = db.relationship('User', foreign_keys=[uploader_id])
 
 
+class StandardFields(db.Model):
+    """Modelo para armazenar campos padronizados para preenchimento automático."""
+    __tablename__ = 'standard_fields'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)  # Nome do conjunto de campos padrão
+    empresa = db.Column(db.String(100), nullable=False, default="Zelopack")
+    produto = db.Column(db.String(100), nullable=True)
+    marca = db.Column(db.String(100), nullable=True)
+    lote = db.Column(db.String(50), nullable=True)
+    
+    # Campos adicionais úteis
+    data_producao = db.Column(db.Date, nullable=True)
+    data_validade = db.Column(db.Date, nullable=True)
+    responsavel = db.Column(db.String(100), nullable=True)
+    departamento = db.Column(db.String(100), nullable=True)
+    linha_producao = db.Column(db.String(50), nullable=True)
+    
+    # Controle de versão e metadados
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+    is_default = db.Column(db.Boolean, default=False)
+    
+    # Relacionamentos
+    creator = db.relationship('User', backref='standard_fields')
+    
+    def __repr__(self):
+        return f"<StandardFields {self.id}: {self.name}>"
+    
+    def to_dict(self):
+        """Converte os campos padrão para dicionário."""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'empresa': self.empresa,
+            'produto': self.produto,
+            'marca': self.marca,
+            'lote': self.lote,
+            'data_producao': self.data_producao.strftime('%d/%m/%Y') if self.data_producao else None,
+            'data_validade': self.data_validade.strftime('%d/%m/%Y') if self.data_validade else None,
+            'responsavel': self.responsavel,
+            'departamento': self.departamento,
+            'linha_producao': self.linha_producao,
+            'created_by': self.created_by,
+            'creator_name': self.creator.name if self.creator else None,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'is_active': self.is_active,
+            'is_default': self.is_default
+        }
+
+
 class FormPreset(db.Model):
     """Modelo para armazenar predefinições de preenchimento de formulários."""
     __tablename__ = 'form_presets'
@@ -752,9 +806,12 @@ class FormPreset(db.Model):
     data = db.Column(db.JSON, nullable=False)  # Campos e valores predefinidos
     is_default = db.Column(db.Boolean, default=False)  # Se é a predefinição padrão para este formulário
     is_active = db.Column(db.Boolean, default=True)
+    use_standard_fields = db.Column(db.Boolean, default=True)  # Se deve usar campos padronizados
+    standard_fields_id = db.Column(db.Integer, db.ForeignKey('standard_fields.id'), nullable=True)
     
     # Relacionamentos
     creator = db.relationship('User', backref='form_presets')
+    standard_fields = db.relationship('StandardFields', backref='form_presets')
     
     def __repr__(self):
         return f"<FormPreset {self.id}: {self.name} for {self.form_type}>"
@@ -773,7 +830,10 @@ class FormPreset(db.Model):
             'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
             'data': self.data,
             'is_default': self.is_default,
-            'is_active': self.is_active
+            'is_active': self.is_active,
+            'use_standard_fields': self.use_standard_fields,
+            'standard_fields_id': self.standard_fields_id,
+            'standard_fields': self.standard_fields.to_dict() if self.standard_fields else None
         }
     
     def get_download_url(self):

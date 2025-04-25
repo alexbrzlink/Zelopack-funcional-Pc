@@ -3,11 +3,13 @@ import mimetypes
 import json
 import tempfile
 import shutil
+import datetime
 from flask import render_template, send_file, abort, Response, jsonify, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from . import forms_bp
 from app import db, csrf
+from models import StandardFields, FormPreset
 from models import FormPreset
 import openpyxl
 from openpyxl.styles import Font, PatternFill
@@ -330,6 +332,11 @@ def interactive_form(file_path):
         is_active=True
     ).order_by(FormPreset.is_default.desc(), FormPreset.name).all()
     
+    # Obter campos padronizados disponíveis
+    standard_fields = StandardFields.query.filter_by(
+        is_active=True
+    ).order_by(StandardFields.is_default.desc(), StandardFields.name).all()
+    
     # Gerar CSRF token para o template
     csrf_token = generate_csrf()
     
@@ -341,6 +348,7 @@ def interactive_form(file_path):
         file_ext=file_ext,
         fields=fields,
         presets=presets,
+        standard_fields=standard_fields,
         csrf_token=csrf_token
     )
 
@@ -575,7 +583,19 @@ def download_preset(preset_id):
         flash('O arquivo original não está mais disponível.', 'warning')
         return redirect(url_for('forms.index'))
     
-    filled_path = fill_form_with_data(full_path, preset.data)
+    # Se usa campos padronizados, incluir esses dados
+    form_data = dict(preset.data)  # Copiar para não modificar o original
+    
+    if preset.use_standard_fields and preset.standard_fields_id:
+        standard_fields = StandardFields.query.get(preset.standard_fields_id)
+        if standard_fields:
+            # Adicionar campos padronizados ao dicionário de dados
+            for field in ['empresa', 'produto', 'marca', 'lote', 'responsavel', 'departamento']:
+                if hasattr(standard_fields, field) and getattr(standard_fields, field):
+                    # Adicionar apenas ao dicionário de preenchimento, não modifica o objeto preset
+                    form_data[field] = getattr(standard_fields, field)
+    
+    filled_path = fill_form_with_data(full_path, form_data)
     
     if not filled_path:
         flash('Não foi possível preencher o formulário. Formato não suportado.', 'error')
@@ -589,6 +609,194 @@ def download_preset(preset_id):
         as_attachment=True,
         download_name=f'{preset.name}_{file_name}'
     )
+
+
+# Rotas para gerenciar campos padronizados
+@forms_bp.route('/standard-fields')
+@login_required
+def standard_fields_list():
+    """Lista todos os conjuntos de campos padronizados disponíveis."""
+    standard_fields = StandardFields.query.filter_by(
+        is_active=True
+    ).order_by(StandardFields.is_default.desc(), StandardFields.name).all()
+    
+    return render_template(
+        'forms/standard_fields_list.html',
+        title="Campos Padronizados",
+        standard_fields=standard_fields
+    )
+
+
+@forms_bp.route('/standard-fields/create', methods=['GET', 'POST'])
+@login_required
+def create_standard_fields():
+    """Criar um novo conjunto de campos padronizados."""
+    if request.method == 'POST':
+        name = request.form.get('name')
+        empresa = request.form.get('empresa', 'Zelopack')
+        produto = request.form.get('produto')
+        marca = request.form.get('marca')
+        lote = request.form.get('lote')
+        responsavel = request.form.get('responsavel')
+        departamento = request.form.get('departamento')
+        linha_producao = request.form.get('linha_producao')
+        is_default = request.form.get('is_default', 'off') == 'on'
+        
+        if not name:
+            flash('O nome é obrigatório.', 'warning')
+            return redirect(url_for('forms.create_standard_fields'))
+        
+        # Verificar se já existe um conjunto com este nome
+        existing = StandardFields.query.filter_by(name=name).first()
+        if existing:
+            flash(f'Já existe um conjunto de campos com o nome "{name}".', 'warning')
+            return redirect(url_for('forms.create_standard_fields'))
+        
+        # Converter datas se fornecidas
+        data_producao = None
+        data_validade = None
+        
+        if request.form.get('data_producao'):
+            try:
+                data_producao = datetime.datetime.strptime(
+                    request.form.get('data_producao'), '%Y-%m-%d').date()
+            except ValueError:
+                flash('Formato de data de produção inválido.', 'warning')
+        
+        if request.form.get('data_validade'):
+            try:
+                data_validade = datetime.datetime.strptime(
+                    request.form.get('data_validade'), '%Y-%m-%d').date()
+            except ValueError:
+                flash('Formato de data de validade inválido.', 'warning')
+        
+        # Criar novo conjunto de campos padronizados
+        std_fields = StandardFields(
+            name=name,
+            empresa=empresa,
+            produto=produto,
+            marca=marca,
+            lote=lote,
+            data_producao=data_producao,
+            data_validade=data_validade,
+            responsavel=responsavel,
+            departamento=departamento,
+            linha_producao=linha_producao,
+            created_by=current_user.id,
+            is_default=is_default
+        )
+        
+        # Se este conjunto está marcado como padrão, desmarcar os demais
+        if is_default:
+            StandardFields.query.filter_by(is_default=True).update({'is_default': False})
+        
+        db.session.add(std_fields)
+        db.session.commit()
+        
+        flash(f'Conjunto de campos "{name}" criado com sucesso!', 'success')
+        return redirect(url_for('forms.standard_fields_list'))
+    
+    return render_template(
+        'forms/create_standard_fields.html',
+        title="Criar Campos Padronizados"
+    )
+
+
+@forms_bp.route('/standard-fields/edit/<int:fields_id>', methods=['GET', 'POST'])
+@login_required
+def edit_standard_fields(fields_id):
+    """Editar um conjunto de campos padronizados existente."""
+    std_fields = StandardFields.query.get_or_404(fields_id)
+    
+    # Verificar se o usuário tem permissão (criador ou administrador)
+    if std_fields.created_by != current_user.id and not current_user.is_admin:
+        abort(403)
+    
+    if request.method == 'POST':
+        std_fields.name = request.form.get('name', std_fields.name)
+        std_fields.empresa = request.form.get('empresa', std_fields.empresa)
+        std_fields.produto = request.form.get('produto')
+        std_fields.marca = request.form.get('marca')
+        std_fields.lote = request.form.get('lote')
+        std_fields.responsavel = request.form.get('responsavel')
+        std_fields.departamento = request.form.get('departamento')
+        std_fields.linha_producao = request.form.get('linha_producao')
+        is_default = request.form.get('is_default', 'off') == 'on'
+        
+        # Converter datas se fornecidas
+        if request.form.get('data_producao'):
+            try:
+                std_fields.data_producao = datetime.datetime.strptime(
+                    request.form.get('data_producao'), '%Y-%m-%d').date()
+            except ValueError:
+                flash('Formato de data de produção inválido.', 'warning')
+        else:
+            std_fields.data_producao = None
+        
+        if request.form.get('data_validade'):
+            try:
+                std_fields.data_validade = datetime.datetime.strptime(
+                    request.form.get('data_validade'), '%Y-%m-%d').date()
+            except ValueError:
+                flash('Formato de data de validade inválido.', 'warning')
+        else:
+            std_fields.data_validade = None
+        
+        # Atualizar status padrão
+        if is_default and not std_fields.is_default:
+            # Se este conjunto agora é marcado como padrão, desmarcar os demais
+            StandardFields.query.filter_by(is_default=True).update({'is_default': False})
+            std_fields.is_default = True
+        elif not is_default and std_fields.is_default:
+            std_fields.is_default = False
+        
+        db.session.commit()
+        
+        flash(f'Conjunto de campos "{std_fields.name}" atualizado com sucesso!', 'success')
+        return redirect(url_for('forms.standard_fields_list'))
+    
+    return render_template(
+        'forms/edit_standard_fields.html',
+        title=f"Editar Campos Padronizados - {std_fields.name}",
+        fields=std_fields
+    )
+
+
+@forms_bp.route('/standard-fields/delete/<int:fields_id>', methods=['POST'])
+@login_required
+def delete_standard_fields(fields_id):
+    """Excluir um conjunto de campos padronizados."""
+    std_fields = StandardFields.query.get_or_404(fields_id)
+    
+    # Verificar se o usuário tem permissão (criador ou administrador)
+    if std_fields.created_by != current_user.id and not current_user.is_admin:
+        abort(403)
+    
+    name = std_fields.name
+    
+    # Verificar se está sendo usado em predefinições
+    presets_using = FormPreset.query.filter_by(standard_fields_id=fields_id).count()
+    if presets_using > 0:
+        flash(f'Este conjunto de campos está sendo usado em {presets_using} predefinições. Não é possível excluí-lo.', 'warning')
+        return redirect(url_for('forms.standard_fields_list'))
+    
+    db.session.delete(std_fields)
+    db.session.commit()
+    
+    flash(f'Conjunto de campos "{name}" excluído com sucesso!', 'success')
+    return redirect(url_for('forms.standard_fields_list'))
+
+
+@forms_bp.route('/api/standard-fields/<int:fields_id>')
+@login_required
+def get_standard_fields_data(fields_id):
+    """API para obter dados de um conjunto de campos padronizados."""
+    std_fields = StandardFields.query.get_or_404(fields_id)
+    
+    return jsonify({
+        'success': True,
+        'fields': std_fields.to_dict()
+    })
 
 
 # Funções auxiliares para manipulação de formulários
