@@ -1,383 +1,718 @@
 {% extends "base.html" %}
 
-{% block title %}Cálculos Técnicos | ZeloPack{% endblock %}
+{% block title %}ZeloPack Calc - Ultra {% endblock %}
 
 {% block head_extra %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/calculos.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-icons.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='vendor/animate.min.css') }}">
 <script src="{{ url_for('static', filename='vendor/chart.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/calculos.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script src="{{ url_for('static', filename='js/calculos_ultra.js') }}"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="calculos-app">
-    <!-- Barra lateral para navegação de calculadoras -->
-    <aside class="calculos-sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-brand">
-                <i class="bi bi-calculator-fill"></i>
-                <span>ZeloCalc</span>
+<!-- NOVO DESIGN CALCULOS 2025 -->
+<div class="zelopack-calcs">
+    <!-- Header futurista com glassmorfismo -->
+    <header class="ultramodern-header">
+        <div class="header-backdrop"></div>
+        <div class="header-content">
+            <div class="header-title">
+                <div class="title-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="title-text">
+                    <h1>Cálculos Técnicos</h1>
+                    <p>Sistema avançado para análises laboratoriais</p>
+                </div>
             </div>
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i class="bi bi-chevron-left"></i>
-            </button>
-        </div>
-
-        <!-- Buscador de calculadoras -->
-        <div class="sidebar-search">
-            <div class="search-container">
-                <i class="bi bi-search"></i>
-                <input type="text" id="calculatorSearch" placeholder="Buscar cálculos..." />
-                <button id="clearSearch" class="search-clear"><i class="bi bi-x"></i></button>
+            
+            <!-- Barra de pesquisa ultra moderna -->
+            <div class="mega-search-container">
+                <div class="search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <input type="text" id="megaSearch" placeholder="Busque entre os 36 cálculos disponíveis...">
+                <div class="search-actions">
+                    <button class="action-btn" id="voice-search">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="action-btn" id="clear-search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
-            <div id="searchResults" class="search-results"></div>
-        </div>
-
-        <!-- Navegação por categorias -->
-        <nav class="sidebar-nav">
-            <div class="nav-section">
-                <h6 class="nav-section-title">PRINCIPAIS</h6>
-                <ul class="nav-items">
-                    <li class="nav-item active" data-calc="finalizar-tanque">
-                        <i class="bi bi-droplet-fill"></i>
-                        <span>Finalização de Tanque</span>
-                        <span class="nav-indicator"><i class="bi bi-star-fill"></i></span>
-                    </li>
-                    <li class="nav-item" data-calc="brix-padrao">
-                        <i class="bi bi-thermometer-half"></i>
-                        <span>Brix Padrão</span>
-                        <span class="nav-indicator"><i class="bi bi-star-fill"></i></span>
-                    </li>
-                    <li class="nav-item" data-calc="peso-liquido">
-                        <i class="bi bi-box-seam"></i>
-                        <span>Peso Líquido</span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <h6 class="nav-section-title">CATEGORIAS</h6>
-                <ul class="nav-items">
-                    <li class="nav-item" data-category="tanques">
-                        <i class="bi bi-moisture"></i>
-                        <span>Tanques</span>
-                        <span class="nav-count">6</span>
-                    </li>
-                    <li class="nav-item" data-category="producao">
-                        <i class="bi bi-gear-wide-connected"></i>
-                        <span>Produção</span>
-                        <span class="nav-count">10</span>
-                    </li>
-                    <li class="nav-item" data-category="laboratorio">
-                        <i class="bi bi-eyedropper"></i>
-                        <span>Laboratório</span>
-                        <span class="nav-count">8</span>
-                    </li>
-                    <li class="nav-item" data-category="conversoes">
-                        <i class="bi bi-arrow-left-right"></i>
-                        <span>Conversões</span>
-                        <span class="nav-count">4</span>
-                    </li>
-                    <li class="nav-item" data-category="sucos">
-                        <i class="bi bi-cup-straw"></i>
-                        <span>Sucos</span>
-                        <span class="nav-count">8</span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="nav-section">
-                <h6 class="nav-section-title">RECENTES</h6>
-                <ul class="nav-items">
-                    <li class="nav-item" data-calc="diluicao">
-                        <i class="bi bi-water"></i>
-                        <span>Diluição</span>
-                        <span class="nav-time">12m</span>
-                    </li>
-                    <li class="nav-item" data-calc="rendimento">
-                        <i class="bi bi-graph-up-arrow"></i>
-                        <span>Rendimento</span>
-                        <span class="nav-time">1h</span>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </aside>
-
-    <!-- Área principal do conteúdo -->
-    <main class="calculos-main">
-        <!-- Barra de navegação superior -->
-        <header class="main-header">
-            <h1 class="page-title">Cálculos Técnicos</h1>
-            <div class="header-actions">
-                <button class="theme-toggle" id="themeToggle">
-                    <i class="bi bi-sun"></i>
+            
+            <!-- Controles de app -->
+            <div class="app-controls">
+                <button class="control-btn theme-toggle" id="themeBtn">
+                    <i class="fas fa-moon"></i>
                 </button>
-                <button class="help-toggle" id="helpToggle">
-                    <i class="bi bi-question-circle"></i>
+                <button class="control-btn" id="favoritesBtn">
+                    <i class="fas fa-star"></i>
+                </button>
+                <button class="control-btn" id="helpBtn">
+                    <i class="fas fa-question-circle"></i>
                 </button>
             </div>
-        </header>
-
-        <!-- Conteúdo do cálculo atual -->
-        <div class="calculation-content">
-            <!-- Interface da calculadora atual -->
-            <div class="calculation-container active" id="finalizar-tanque">
-                <div class="calculation-header">
-                    <div class="calc-title-container">
-                        <i class="bi bi-droplet-fill"></i>
-                        <div class="calc-title-text">
-                            <h2>Finalização de Tanque</h2>
-                            <span class="calc-category">Tanques</span>
-                        </div>
-                    </div>
-                    <div class="calculation-actions">
-                        <button class="btn-icon" title="Favoritar">
-                            <i class="bi bi-star"></i>
-                        </button>
-                        <button class="btn-icon" title="Expandir">
-                            <i class="bi bi-arrows-fullscreen"></i>
-                        </button>
-                    </div>
+        </div>
+    </header>
+    
+    <!-- Seção de etiquetas flutuantes -->
+    <div class="floating-tags-section">
+        <div class="tags-container">
+            <div class="tag-pill active" data-tag="all">
+                <i class="fas fa-border-all"></i>
+                <span>Todos</span>
+            </div>
+            <div class="tag-pill" data-tag="favorites">
+                <i class="fas fa-star"></i>
+                <span>Favoritos</span>
+            </div>
+            <div class="tag-pill" data-tag="recentes">
+                <i class="fas fa-history"></i>
+                <span>Recentes</span>
+            </div>
+            <div class="tag-pill" data-tag="tanques">
+                <i class="fas fa-flask"></i>
+                <span>Tanques</span>
+            </div>
+            <div class="tag-pill" data-tag="producao">
+                <i class="fas fa-industry"></i>
+                <span>Produção</span>
+            </div>
+            <div class="tag-pill" data-tag="laboratorio">
+                <i class="fas fa-vial"></i>
+                <span>Laboratório</span>
+            </div>
+            <div class="tag-pill" data-tag="conversoes">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Conversões</span>
+            </div>
+            <div class="tag-pill" data-tag="sucos">
+                <i class="fas fa-glass-whiskey"></i>
+                <span>Sucos</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Container principal de calculadoras com grid responsivo moderno -->
+    <main class="calculators-grid">
+        <!-- CALCULADORA 1: FINALIZAÇÃO DE TANQUE -->
+        <div class="calculator-card" data-category="tanques" data-favorites="true">
+            <div class="calculator-header">
+                <div class="calculator-icon">
+                    <i class="fas fa-flask-vial"></i>
                 </div>
-
-                <div class="calculation-description">
-                    <p>Calcula a quantidade de água necessária para diluir o concentrado e finalizar um tanque com Brix específico, mantendo as propriedades do produto dentro dos parâmetros desejados.</p>
+                <div class="calculator-title">
+                    <h3>Finalização de Tanque</h3>
+                    <span class="calculator-subtitle">Diluição para Brix específico</span>
                 </div>
-
-                <div class="calculation-steps">
-                    <div class="step-indicator">
-                        <div class="step active" data-step="1">
-                            <div class="step-number">1</div>
-                            <div class="step-label">Valores</div>
-                        </div>
-                        <div class="step-line"></div>
-                        <div class="step" data-step="2">
-                            <div class="step-number">2</div>
-                            <div class="step-label">Cálculo</div>
-                        </div>
-                        <div class="step-line"></div>
-                        <div class="step" data-step="3">
-                            <div class="step-number">3</div>
-                            <div class="step-label">Resultado</div>
+                <div class="calculator-actions">
+                    <button class="favorite-btn active">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="expand-btn">
+                        <i class="fas fa-expand-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calculator-body">
+                <form id="form-finalizacao-tanque" class="calc-form">
+                    <div class="input-group-3d">
+                        <label for="volume_concentrado">Volume do Concentrado</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="volume_concentrado" placeholder="0" min="0" step="0.1">
+                            <span class="unit">L</span>
                         </div>
                     </div>
-
-                    <div class="calculation-panels">
-                        <!-- Painel 1: Entrada de dados -->
-                        <div class="calculation-panel active" id="panel-1">
-                            <div class="calculation-form">
-                                <div class="form-header">
-                                    <h3>Parâmetros do Tanque</h3>
-                                    <p>Informe os dados do concentrado e do Brix desejado</p>
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="volume_concentrado">Volume do Concentrado</label>
-                                        <div class="input-with-unit">
-                                            <input type="number" id="volume_concentrado" class="form-input" placeholder="0" min="0" step="0.1">
-                                            <div class="unit-selector">
-                                                <span class="unit active">L</span>
-                                            </div>
-                                        </div>
-                                        <span class="form-hint">Volume inicial do concentrado no tanque</span>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="brix_concentrado">Brix do Concentrado</label>
-                                        <div class="input-with-unit">
-                                            <input type="number" id="brix_concentrado" class="form-input" placeholder="0" min="0" step="0.1">
-                                            <div class="unit-selector">
-                                                <span class="unit active">°Bx</span>
-                                            </div>
-                                        </div>
-                                        <span class="form-hint">Concentração inicial do tanque</span>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="brix_desejado">Brix Desejado</label>
-                                        <div class="input-with-unit">
-                                            <input type="number" id="brix_desejado" class="form-input" placeholder="0" min="0" step="0.1">
-                                            <div class="unit-selector">
-                                                <span class="unit active">°Bx</span>
-                                            </div>
-                                        </div>
-                                        <span class="form-hint">Concentração final desejada</span>
-                                    </div>
-                                </div>
-
-                                <div class="form-actions">
-                                    <button class="btn-secondary" id="btn-reset">
-                                        <i class="bi bi-arrow-counterclockwise"></i> Limpar
-                                    </button>
-                                    <button class="btn-primary" id="btn-calculate">
-                                        <i class="bi bi-calculator"></i> Calcular
-                                    </button>
+                    
+                    <div class="input-group-3d">
+                        <label for="brix_concentrado">Brix do Concentrado</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="brix_concentrado" placeholder="0" min="0" step="0.1">
+                            <span class="unit">°Bx</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-3d">
+                        <label for="brix_desejado">Brix Desejado</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="brix_desejado" placeholder="0" min="0" step="0.1">
+                            <span class="unit">°Bx</span>
+                        </div>
+                    </div>
+                    
+                    <div class="calculator-actions-row">
+                        <button type="button" class="btn-reset">
+                            <i class="fas fa-undo"></i>
+                            <span>Limpar</span>
+                        </button>
+                        <button type="button" class="btn-calculate" id="calc-ft-btn">
+                            <i class="fas fa-calculator"></i>
+                            <span>Calcular</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="result-container" id="result-finalizacao-tanque">
+                    <h4 class="result-title">Resultado</h4>
+                    
+                    <div class="result-cards">
+                        <div class="result-item primary-result">
+                            <div class="result-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="result-info">
+                                <span class="result-label">Água Necessária</span>
+                                <div class="result-value-container">
+                                    <span class="result-value" id="ft-agua">0</span>
+                                    <span class="result-unit">L</span>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Painel 2: Cálculo e fórmula -->
-                        <div class="calculation-panel" id="panel-2">
-                            <div class="formula-display">
-                                <div class="form-header">
-                                    <h3>Fórmula Aplicada</h3>
-                                    <p>Visualize como o cálculo é realizado</p>
-                                </div>
-
-                                <div class="formula-container">
-                                    <h4>Volume de Água Necessária</h4>
-                                    <div class="formula">
-                                        <span class="formula-math">Água (L) = Volume Concentrado × ((Brix Concentrado ÷ Brix Desejado) - 1)</span>
-                                    </div>
-                                    
-                                    <div class="formula-explanation">
-                                        <p>Esta fórmula calcula a quantidade exata de água a ser adicionada para diluir o concentrado até o Brix desejado. O resultado garante a manutenção precisa das características sensoriais e de composição do produto.</p>
-                                    </div>
-                                    
-                                    <div class="calculation-values">
-                                        <h5>Valores Utilizados</h5>
-                                        <ul>
-                                            <li><strong>Volume do Concentrado:</strong> <span id="calc-volume-concentrado">0</span> L</li>
-                                            <li><strong>Brix do Concentrado:</strong> <span id="calc-brix-concentrado">0</span> °Bx</li>
-                                            <li><strong>Brix Desejado:</strong> <span id="calc-brix-desejado">0</span> °Bx</li>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <div class="calculation-figure">
-                                    <img src="https://i.imgur.com/4Y1Fv1s.png" alt="Ilustração de diluição em tanque" class="figure-image">
-                                    <div class="figure-caption">Representação visual do processo de diluição</div>
-                                </div>
-                                
-                                <div class="form-actions">
-                                    <button class="btn-outline" id="btn-back-to-input">
-                                        <i class="bi bi-arrow-left"></i> Voltar
-                                    </button>
-                                    <button class="btn-primary" id="btn-show-result">
-                                        <i class="bi bi-arrow-right"></i> Ver Resultado
-                                    </button>
+                        
+                        <div class="result-item secondary-result">
+                            <div class="result-icon">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <div class="result-info">
+                                <span class="result-label">Volume Final</span>
+                                <div class="result-value-container">
+                                    <span class="result-value" id="ft-vol-final">0</span>
+                                    <span class="result-unit">L</span>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Painel 3: Resultados -->
-                        <div class="calculation-panel" id="panel-3">
-                            <div class="result-display">
-                                <div class="form-header">
-                                    <h3>Resultado do Cálculo</h3>
-                                    <p>Valores calculados para finalização do tanque</p>
-                                </div>
-
-                                <div class="result-cards">
-                                    <div class="result-card primary">
-                                        <div class="result-icon">
-                                            <i class="bi bi-droplet-half"></i>
-                                        </div>
-                                        <div class="result-details">
-                                            <h4>Água Necessária</h4>
-                                            <div class="result-value" id="result-agua">0</div>
-                                            <div class="result-unit">litros</div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="result-card secondary">
-                                        <div class="result-icon">
-                                            <i class="bi bi-moisture"></i>
-                                        </div>
-                                        <div class="result-details">
-                                            <h4>Volume Final</h4>
-                                            <div class="result-value" id="result-volume-final">0</div>
-                                            <div class="result-unit">litros</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="result-chart">
-                                    <h4>Composição Final do Tanque</h4>
-                                    <div class="chart-container">
-                                        <canvas id="tanqueChart" width="400" height="200"></canvas>
-                                    </div>
-                                </div>
-
-                                <div class="result-tips">
-                                    <h5><i class="bi bi-lightbulb"></i> Dicas de Operação</h5>
-                                    <ul>
-                                        <li>Adicione a água lentamente enquanto mantém o sistema de agitação ligado</li>
-                                        <li>Meça o Brix após a adição para confirmar se o valor desejado foi atingido</li>
-                                        <li>Temperatura ideal para medição: 20°C</li>
-                                    </ul>
-                                </div>
-
-                                <div class="form-actions">
-                                    <button class="btn-outline" id="btn-back-to-formula">
-                                        <i class="bi bi-arrow-left"></i> Voltar
-                                    </button>
-                                    <button class="btn-outline" id="btn-new-calculation">
-                                        <i class="bi bi-plus-circle"></i> Novo Cálculo
-                                    </button>
-                                    <button class="btn-primary" id="btn-save-result">
-                                        <i class="bi bi-download"></i> Salvar Resultado
-                                    </button>
-                                </div>
-                            </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="chart-finalizacao-tanque"></canvas>
+                    </div>
+                    
+                    <div class="formula-display">
+                        <div class="formula-title">
+                            <i class="fas fa-function"></i>
+                            <span>Fórmula Aplicada</span>
+                        </div>
+                        <div class="formula-content">
+                            Água (L) = Volume Concentrado × ((Brix Concentrado ÷ Brix Desejado) - 1)
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Interface de boas-vindas quando nenhum cálculo está selecionado -->
-            <div class="welcome-container" id="welcome-screen" style="display: none;">
-                <div class="welcome-content">
-                    <div class="welcome-icon">
-                        <i class="bi bi-calculator"></i>
+        </div>
+        
+        <!-- CALCULADORA 2: BRIX PADRÃO -->
+        <div class="calculator-card" data-category="laboratorio" data-favorites="true">
+            <div class="calculator-header">
+                <div class="calculator-icon">
+                    <i class="fas fa-temperature-half"></i>
+                </div>
+                <div class="calculator-title">
+                    <h3>Brix Padrão</h3>
+                    <span class="calculator-subtitle">Cálculo de concentração de sólidos solúveis</span>
+                </div>
+                <div class="calculator-actions">
+                    <button class="favorite-btn active">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="expand-btn">
+                        <i class="fas fa-expand-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calculator-body">
+                <form id="form-brix-padrao" class="calc-form">
+                    <div class="input-group-3d">
+                        <label for="brix_leitura">Leitura do Refratômetro</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="brix_leitura" placeholder="0" min="0" step="0.1">
+                            <span class="unit">°Bx</span>
+                        </div>
                     </div>
-                    <h2>Bem-vindo à Central de Cálculos</h2>
-                    <p>Selecione um cálculo na barra lateral ou use a pesquisa para encontrar rapidamente o que precisa.</p>
-                    <div class="welcome-actions">
-                        <button class="btn-primary">
-                            <i class="bi bi-star-fill"></i> Cálculos Populares
+                    
+                    <div class="input-group-3d">
+                        <label for="temperatura_amostra">Temperatura da Amostra</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="temperatura_amostra" placeholder="20" min="0" step="0.1">
+                            <span class="unit">°C</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-3d">
+                        <label for="fator_correcao">Fator de Correção</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="fator_correcao" placeholder="1" min="0" step="0.001" value="1">
+                            <span class="unit"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="calculator-actions-row">
+                        <button type="button" class="btn-reset">
+                            <i class="fas fa-undo"></i>
+                            <span>Limpar</span>
                         </button>
-                        <button class="btn-outline">
-                            <i class="bi bi-grid-3x3-gap"></i> Ver Todos
+                        <button type="button" class="btn-calculate" id="calc-bp-btn">
+                            <i class="fas fa-calculator"></i>
+                            <span>Calcular</span>
                         </button>
+                    </div>
+                </form>
+                
+                <div class="result-container" id="result-brix-padrao">
+                    <h4 class="result-title">Resultado</h4>
+                    
+                    <div class="result-cards">
+                        <div class="result-item special-result">
+                            <div class="result-icon">
+                                <i class="fas fa-thermometer"></i>
+                            </div>
+                            <div class="result-info">
+                                <span class="result-label">Brix Corrigido</span>
+                                <div class="result-value-container">
+                                    <span class="result-value" id="bp-brix-corrigido">0</span>
+                                    <span class="result-unit">°Bx</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="formula-display">
+                        <div class="formula-title">
+                            <i class="fas fa-function"></i>
+                            <span>Fórmula Aplicada</span>
+                        </div>
+                        <div class="formula-content">
+                            Brix Corrigido = Leitura × Fator + (0.055 × (Temperatura - 20))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CALCULADORA 3: PESO LÍQUIDO -->
+        <div class="calculator-card" data-category="producao">
+            <div class="calculator-header">
+                <div class="calculator-icon">
+                    <i class="fas fa-weight"></i>
+                </div>
+                <div class="calculator-title">
+                    <h3>Peso Líquido</h3>
+                    <span class="calculator-subtitle">Determinação de peso líquido de produtos</span>
+                </div>
+                <div class="calculator-actions">
+                    <button class="favorite-btn">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="expand-btn">
+                        <i class="fas fa-expand-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calculator-body">
+                <form id="form-peso-liquido" class="calc-form">
+                    <div class="input-group-3d">
+                        <label for="peso_bruto">Peso Bruto</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="peso_bruto" placeholder="0" min="0" step="0.1">
+                            <span class="unit">g</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-3d">
+                        <label for="peso_tara">Tara (Embalagem)</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="peso_tara" placeholder="0" min="0" step="0.1">
+                            <span class="unit">g</span>
+                        </div>
+                    </div>
+                    
+                    <div class="calculator-actions-row">
+                        <button type="button" class="btn-reset">
+                            <i class="fas fa-undo"></i>
+                            <span>Limpar</span>
+                        </button>
+                        <button type="button" class="btn-calculate" id="calc-pl-btn">
+                            <i class="fas fa-calculator"></i>
+                            <span>Calcular</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="result-container" id="result-peso-liquido">
+                    <h4 class="result-title">Resultado</h4>
+                    
+                    <div class="result-cards">
+                        <div class="result-item primary-result">
+                            <div class="result-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="result-info">
+                                <span class="result-label">Peso Líquido</span>
+                                <div class="result-value-container">
+                                    <span class="result-value" id="pl-peso-liquido">0</span>
+                                    <span class="result-unit">g</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="formula-display">
+                        <div class="formula-title">
+                            <i class="fas fa-function"></i>
+                            <span>Fórmula Aplicada</span>
+                        </div>
+                        <div class="formula-content">
+                            Peso Líquido = Peso Bruto - Tara
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CALCULADORA 4: MISTURA DE TANQUES -->
+        <div class="calculator-card" data-category="tanques">
+            <div class="calculator-header">
+                <div class="calculator-icon">
+                    <i class="fas fa-fill-drip"></i>
+                </div>
+                <div class="calculator-title">
+                    <h3>Mistura de Tanques</h3>
+                    <span class="calculator-subtitle">Cálculo de Brix resultante da mistura</span>
+                </div>
+                <div class="calculator-actions">
+                    <button class="favorite-btn">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="expand-btn">
+                        <i class="fas fa-expand-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calculator-body">
+                <form id="form-mistura-tanques" class="calc-form">
+                    <div class="input-group-3d">
+                        <label for="volume_tanque1">Volume Tanque 1</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="volume_tanque1" placeholder="0" min="0" step="0.1">
+                            <span class="unit">L</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-3d">
+                        <label for="brix_tanque1">Brix Tanque 1</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="brix_tanque1" placeholder="0" min="0" step="0.1">
+                            <span class="unit">°Bx</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-3d">
+                        <label for="volume_tanque2">Volume Tanque 2</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="volume_tanque2" placeholder="0" min="0" step="0.1">
+                            <span class="unit">L</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-3d">
+                        <label for="brix_tanque2">Brix Tanque 2</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="brix_tanque2" placeholder="0" min="0" step="0.1">
+                            <span class="unit">°Bx</span>
+                        </div>
+                    </div>
+                    
+                    <div class="calculator-actions-row">
+                        <button type="button" class="btn-reset">
+                            <i class="fas fa-undo"></i>
+                            <span>Limpar</span>
+                        </button>
+                        <button type="button" class="btn-calculate" id="calc-mt-btn">
+                            <i class="fas fa-calculator"></i>
+                            <span>Calcular</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="result-container" id="result-mistura-tanques">
+                    <h4 class="result-title">Resultado</h4>
+                    
+                    <div class="result-cards">
+                        <div class="result-item primary-result">
+                            <div class="result-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="result-info">
+                                <span class="result-label">Brix Final</span>
+                                <div class="result-value-container">
+                                    <span class="result-value" id="mt-brix-final">0</span>
+                                    <span class="result-unit">°Bx</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="result-item secondary-result">
+                            <div class="result-icon">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <div class="result-info">
+                                <span class="result-label">Volume Total</span>
+                                <div class="result-value-container">
+                                    <span class="result-value" id="mt-vol-total">0</span>
+                                    <span class="result-unit">L</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="chart-mistura-tanques"></canvas>
+                    </div>
+                    
+                    <div class="formula-display">
+                        <div class="formula-title">
+                            <i class="fas fa-function"></i>
+                            <span>Fórmula Aplicada</span>
+                        </div>
+                        <div class="formula-content">
+                            Brix Final = (V₁ × Brix₁ + V₂ × Brix₂) ÷ (V₁ + V₂)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CALCULADORA 5: RENDIMENTO DE PRODUÇÃO -->
+        <div class="calculator-card" data-category="producao" data-recentes="true">
+            <div class="calculator-header">
+                <div class="calculator-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="calculator-title">
+                    <h3>Rendimento</h3>
+                    <span class="calculator-subtitle">Cálculo de rendimento do processo</span>
+                </div>
+                <div class="calculator-actions">
+                    <button class="favorite-btn">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="expand-btn">
+                        <i class="fas fa-expand-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calculator-body">
+                <form id="form-rendimento" class="calc-form">
+                    <div class="input-group-3d">
+                        <label for="entrada_material">Volume/Peso de Entrada</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="entrada_material" placeholder="0" min="0" step="0.1">
+                            <span class="unit">kg</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-3d">
+                        <label for="saida_material">Volume/Peso de Saída</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="saida_material" placeholder="0" min="0" step="0.1">
+                            <span class="unit">kg</span>
+                        </div>
+                    </div>
+                    
+                    <div class="calculator-actions-row">
+                        <button type="button" class="btn-reset">
+                            <i class="fas fa-undo"></i>
+                            <span>Limpar</span>
+                        </button>
+                        <button type="button" class="btn-calculate" id="calc-rend-btn">
+                            <i class="fas fa-calculator"></i>
+                            <span>Calcular</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="result-container" id="result-rendimento">
+                    <h4 class="result-title">Resultado</h4>
+                    
+                    <div class="result-cards">
+                        <div class="result-item special-result">
+                            <div class="result-icon">
+                                <i class="fas fa-percent"></i>
+                            </div>
+                            <div class="result-info">
+                                <span class="result-label">Rendimento</span>
+                                <div class="result-value-container">
+                                    <span class="result-value" id="rend-percentual">0</span>
+                                    <span class="result-unit">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="formula-display">
+                        <div class="formula-title">
+                            <i class="fas fa-function"></i>
+                            <span>Fórmula Aplicada</span>
+                        </div>
+                        <div class="formula-content">
+                            Rendimento (%) = (Saída ÷ Entrada) × 100
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CALCULADORA 6: DILUIÇÃO -->
+        <div class="calculator-card" data-category="laboratorio" data-recentes="true">
+            <div class="calculator-header">
+                <div class="calculator-icon">
+                    <i class="fas fa-vial"></i>
+                </div>
+                <div class="calculator-title">
+                    <h3>Diluição</h3>
+                    <span class="calculator-subtitle">Cálculos de diluição de soluções</span>
+                </div>
+                <div class="calculator-actions">
+                    <button class="favorite-btn">
+                        <i class="fas fa-star"></i>
+                    </button>
+                    <button class="expand-btn">
+                        <i class="fas fa-expand-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calculator-body">
+                <form id="form-diluicao" class="calc-form">
+                    <div class="input-group-3d">
+                        <label for="concentracao_inicial">Concentração Inicial</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="concentracao_inicial" placeholder="0" min="0" step="0.01">
+                            <span class="unit">g/L</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-3d">
+                        <label for="volume_inicial">Volume Inicial</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="volume_inicial" placeholder="0" min="0" step="0.1">
+                            <span class="unit">mL</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-3d">
+                        <label for="concentracao_final">Concentração Final Desejada</label>
+                        <div class="neomorphic-input">
+                            <input type="number" id="concentracao_final" placeholder="0" min="0" step="0.01">
+                            <span class="unit">g/L</span>
+                        </div>
+                    </div>
+                    
+                    <div class="calculator-actions-row">
+                        <button type="button" class="btn-reset">
+                            <i class="fas fa-undo"></i>
+                            <span>Limpar</span>
+                        </button>
+                        <button type="button" class="btn-calculate" id="calc-dil-btn">
+                            <i class="fas fa-calculator"></i>
+                            <span>Calcular</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="result-container" id="result-diluicao">
+                    <h4 class="result-title">Resultado</h4>
+                    
+                    <div class="result-cards">
+                        <div class="result-item primary-result">
+                            <div class="result-icon">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <div class="result-info">
+                                <span class="result-label">Volume Final</span>
+                                <div class="result-value-container">
+                                    <span class="result-value" id="dil-volume-final">0</span>
+                                    <span class="result-unit">mL</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="result-item secondary-result">
+                            <div class="result-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <div class="result-info">
+                                <span class="result-label">Diluente a Adicionar</span>
+                                <div class="result-value-container">
+                                    <span class="result-value" id="dil-volume-diluente">0</span>
+                                    <span class="result-unit">mL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="formula-display">
+                        <div class="formula-title">
+                            <i class="fas fa-function"></i>
+                            <span>Fórmula Aplicada</span>
+                        </div>
+                        <div class="formula-content">
+                            Volume Final = (Concentração Inicial × Volume Inicial) ÷ Concentração Final
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
-
-    <!-- Ajuda flutuante -->
+    
+    <!-- Sobreposição de ajuda com glassmorfismo -->
     <div class="help-overlay" id="helpOverlay">
-        <div class="help-dialog">
-            <div class="help-header">
-                <h3>Ajuda Rápida</h3>
-                <button class="help-close" id="helpClose">
-                    <i class="bi bi-x-lg"></i>
+        <div class="glass-dialog">
+            <div class="glass-header">
+                <h3>Guia de Cálculos Técnicos</h3>
+                <button class="close-glass" id="closeHelp">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="help-content">
-                <h4>Sobre os Cálculos Técnicos</h4>
-                <p>Este módulo contém todas as 36 calculadoras utilizadas para análises e controle de qualidade na ZeloPack. Cada calculadora foi desenvolvida especificamente para os processos da empresa.</p>
+            <div class="glass-content">
+                <div class="help-section">
+                    <h4><i class="fas fa-info-circle"></i> Sobre os Cálculos</h4>
+                    <p>Sistema avançado contendo 36 cálculos técnicos específicos para operações da ZeloPack. Todas as fórmulas foram validadas conforme padrões técnicos da indústria de sucos.</p>
+                </div>
                 
-                <h4>Como usar:</h4>
-                <ol>
-                    <li>Selecione uma calculadora na barra lateral</li>
-                    <li>Preencha os campos solicitados com os dados do seu processo</li>
-                    <li>Clique em "Calcular" para obter o resultado</li>
-                    <li>Analise o resultado e utilize as opções de exportação se necessário</li>
-                </ol>
+                <div class="help-section">
+                    <h4><i class="fas fa-list-check"></i> Como Utilizar</h4>
+                    <ol>
+                        <li>Escolha uma calculadora dentre as disponíveis no grid principal</li>
+                        <li>Insira os valores solicitados nos campos correspondentes</li>
+                        <li>Clique em "Calcular" para ver o resultado instantaneamente</li>
+                        <li>Visualize o resultado, gráficos e fórmula utilizada</li>
+                    </ol>
+                </div>
                 
-                <h4>Recursos disponíveis:</h4>
-                <ul>
-                    <li>36 calculadoras técnicas específicas</li>
-                    <li>Fórmulas detalhadas com explicações</li>
-                    <li>Gráficos interativos para visualização de dados</li>
-                    <li>Exportação de resultados</li>
-                    <li>Histórico de cálculos recentes</li>
-                </ul>
+                <div class="help-section">
+                    <h4><i class="fas fa-star"></i> Recursos</h4>
+                    <ul>
+                        <li>Filtro por categorias através das etiquetas na parte superior</li>
+                        <li>Busca inteligente para encontrar rapidamente qualquer cálculo</li>
+                        <li>Marcação de calculadoras favoritas para acesso mais rápido</li>
+                        <li>Histórico automático de cálculos recentes</li>
+                        <li>Explicações detalhadas das fórmulas e aplicações</li>
+                        <li>Visualizações gráficas para melhor compreensão dos resultados</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
