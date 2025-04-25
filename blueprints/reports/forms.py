@@ -33,6 +33,16 @@ class ReportUploadForm(FlaskForm):
                                    validators=[Optional()])
     sample_code = StringField('Código da Amostra', validators=[Optional()])
     
+    # Tipo de laudo
+    report_type = SelectField('Tipo de Laudo', 
+                           choices=[('', 'Selecione uma categoria'),
+                                    ('materias_primas', 'Matérias Primas'),
+                                    ('edulcorantes', 'Edulcorantes'),
+                                    ('corantes', 'Corantes'),
+                                    ('acucar', 'Açúcar'),
+                                    ('embalagem', 'Embalagem')],
+                           validators=[Optional()])
+    
     # Datas e prazos
     report_date = DateField('Data do Laudo', validators=[Optional()], format='%Y-%m-%d')
     due_date = DateField('Data Limite', validators=[Optional()], format='%Y-%m-%d')
