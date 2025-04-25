@@ -105,7 +105,7 @@
                 </div>
                 <div class="card-body">
                     <form id="interactive-form" action="{{ url_for('forms.download_filled_form', file_path=file_path) }}" method="post">
-                        {{ form.csrf_token if form else csrf_token() }}
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         {% if fields and fields|length > 0 %}
                         <div class="mb-3 d-flex justify-content-between align-items-center">
                             <span class="text-muted"><i class="fas fa-info-circle me-1"></i> {{ fields|length }} campos detectados.</span>
@@ -216,36 +216,112 @@
 
 {% block extra_css %}
 <style>
+    /* Containers com efeitos de profundidade */
     .document-preview-container {
         height: 70vh;
         overflow: auto;
-        border: 1px solid #dee2e6;
+        border: none;
         background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(149, 157, 165, 0.2);
+        transition: all 0.3s ease;
     }
     
     .pdf-viewer {
         border: none;
+        border-radius: 10px;
     }
     
+    /* Estilização moderna para os campos */
     .interactive-fields-container {
         max-height: 60vh;
         overflow-y: auto;
         padding-right: 10px;
+        padding-left: 5px;
     }
     
-    .border-left-primary {
-        border-left: 4px solid #4e73df !important;
+    /* Melhorando Cards com efeitos modernos */
+    .field-card {
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .field-card .card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 6px rgba(32, 33, 36, 0.08);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     
     .field-card:hover .card {
-        transform: translateY(-3px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(32, 33, 36, 0.15);
+        border-color: #4e73df;
+    }
+    
+    .field-card.active .card {
+        border-left: 4px solid #4CAF50;
+        box-shadow: 0 8px 16px rgba(76, 175, 80, 0.3);
+    }
+    
+    /* Elementos de texto melhorados */
+    .form-floating label {
+        color: #566a7f;
+        font-weight: 500;
+    }
+    
+    .field-input {
+        border-radius: 8px;
         transition: all 0.3s ease;
     }
     
     .field-input:focus {
         border-color: #4e73df;
         box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+        transform: scale(1.01);
+    }
+    
+    /* Ícones contextuais para cada tipo de campo */
+    .field-icon {
+        position: absolute;
+        right: 15px;
+        top: 12px;
+        color: #adb5bd;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+    
+    .field-card:hover .field-icon {
+        color: #4e73df;
+        transform: scale(1.2);
+    }
+    
+    /* Efeitos de destaque ao editar */
+    .field-editing {
+        animation: pulseHighlight 1.5s infinite;
+    }
+    
+    @keyframes pulseHighlight {
+        0% { box-shadow: 0 0 0 0 rgba(78, 115, 223, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(78, 115, 223, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(78, 115, 223, 0); }
+    }
+    
+    /* Botões com efeitos */
+    .btn {
+        border-radius: 8px;
+        text-transform: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        box-shadow: 0 2px 6px rgba(78, 115, 223, 0.4);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(78, 115, 223, 0.6);
     }
     
     /* Estilos para scroll personalizado */
@@ -254,17 +330,71 @@
     }
     
     .interactive-fields-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: #f8f9fa;
         border-radius: 10px;
     }
     
     .interactive-fields-container::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
+        background: #adb5bd;
         border-radius: 10px;
     }
     
     .interactive-fields-container::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
+        background: #6c757d;
+    }
+    
+    /* Badges para status */
+    .field-status {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        z-index: 5;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .field-required {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .field-optional {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .field-filled {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    /* Animações para feedback */
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    .shake-animation {
+        animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    
+    /* Layout adaptativo */
+    @media (max-width: 768px) {
+        .document-preview-container {
+            height: 50vh;
+        }
+    }
+    
+    /* Tema de cores ajustado */
+    .bg-primary {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%) !important;
     }
 </style>
 {% endblock %}
@@ -279,20 +409,150 @@
         const savePresetConfirmBtn = document.getElementById('save-preset-confirm');
         const presetOptions = document.querySelectorAll('.preset-option');
         const formFields = document.querySelectorAll('.field-input');
+        const fieldsContainer = document.querySelector('.interactive-fields-container');
         
         // Modal de salvar preset
         const savePresetModal = new bootstrap.Modal(document.getElementById('savePresetModal'));
         
-        // Limpar todos os campos
+        // Adicionar ícones contextuais a cada campo
+        document.querySelectorAll('.field-card').forEach(card => {
+            const cardBody = card.querySelector('.card-body');
+            const input = card.querySelector('.field-input');
+            const inputType = input ? input.type : 'text';
+            
+            // Criar elemento de ícone
+            const iconEl = document.createElement('div');
+            iconEl.className = 'field-icon';
+            
+            // Definir ícone com base no tipo de campo
+            let iconClass = 'fa-keyboard';
+            if (inputType === 'checkbox') {
+                iconClass = 'fa-check-square';
+            } else if (inputType === 'select-one') {
+                iconClass = 'fa-list';
+            } else if (inputType === 'number') {
+                iconClass = 'fa-hashtag';
+            } else if (inputType === 'date') {
+                iconClass = 'fa-calendar-alt';
+            } else if (inputType === 'time') {
+                iconClass = 'fa-clock';
+            } else if (inputType === 'email') {
+                iconClass = 'fa-envelope';
+            } else if (inputType === 'tel') {
+                iconClass = 'fa-phone';
+            }
+            
+            // Adicionar ícone ao card
+            iconEl.innerHTML = `<i class="fas ${iconClass}"></i>`;
+            cardBody.appendChild(iconEl);
+            
+            // Adicionar badge de status (opcional/preenchido)
+            const badge = document.createElement('div');
+            badge.className = 'field-status field-optional';
+            badge.innerHTML = '<i class="fas fa-circle"></i>';
+            card.querySelector('.card').appendChild(badge);
+            
+            // Adicionar eventos de animação e feedback
+            if (input) {
+                // Animar quando o campo recebe foco
+                input.addEventListener('focus', () => {
+                    card.classList.add('active');
+                    iconEl.style.color = '#4e73df';
+                    iconEl.style.transform = 'scale(1.2)';
+                });
+                
+                // Restaurar quando perde o foco
+                input.addEventListener('blur', () => {
+                    card.classList.remove('active');
+                    iconEl.style.color = '';
+                    iconEl.style.transform = '';
+                    
+                    // Atualizar badge de status
+                    const hasValue = input.type === 'checkbox' ? input.checked : input.value.trim() !== '';
+                    if (hasValue) {
+                        badge.className = 'field-status field-filled';
+                        badge.innerHTML = '<i class="fas fa-check"></i>';
+                    } else {
+                        badge.className = 'field-status field-optional';
+                        badge.innerHTML = '<i class="fas fa-circle"></i>';
+                    }
+                });
+                
+                // Verificar se já está preenchido ao carregar
+                if ((input.type === 'checkbox' && input.checked) || 
+                    (input.type !== 'checkbox' && input.value.trim() !== '')) {
+                    badge.className = 'field-status field-filled';
+                    badge.innerHTML = '<i class="fas fa-check"></i>';
+                }
+            }
+        });
+        
+        // Função para rolar suavemente para o campo ao clicar
+        function scrollToField(fieldCard) {
+            // Se o container tiver rolagem
+            if (fieldsContainer) {
+                const containerTop = fieldsContainer.getBoundingClientRect().top;
+                const fieldTop = fieldCard.getBoundingClientRect().top;
+                const scrollOffset = fieldTop - containerTop - 20; // 20px de margem
+                
+                fieldsContainer.scrollBy({
+                    top: scrollOffset,
+                    behavior: 'smooth'
+                });
+            }
+        }
+        
+        // Adicionar evento de clique nos cartões para facilitar edição
+        document.querySelectorAll('.field-card').forEach(card => {
+            card.addEventListener('click', event => {
+                // Não prosseguir se o clique for direto no input
+                if (event.target.classList.contains('field-input')) return;
+                
+                // Focar no input dentro do card
+                const input = card.querySelector('.field-input');
+                if (input) {
+                    scrollToField(card);
+                    input.focus();
+                    
+                    // Destacar brevemente o cartão
+                    card.querySelector('.card').classList.add('field-editing');
+                    setTimeout(() => {
+                        card.querySelector('.card').classList.remove('field-editing');
+                    }, 1500);
+                }
+            });
+        });
+        
+        // Limpar todos os campos com animação 
         if (clearAllBtn) {
             clearAllBtn.addEventListener('click', function() {
                 if (confirm('Tem certeza que deseja limpar todos os campos?')) {
-                    document.querySelectorAll('.field-input').forEach(input => {
-                        if (input.type === 'checkbox') {
-                            input.checked = false;
-                        } else {
-                            input.value = '';
-                        }
+                    // Animar limpeza dos campos
+                    document.querySelectorAll('.field-input').forEach((input, index) => {
+                        setTimeout(() => {
+                            // Animar o card antes de limpar
+                            const card = input.closest('.field-card');
+                            card.classList.add('shake-animation');
+                            
+                            setTimeout(() => {
+                                // Limpar o campo
+                                if (input.type === 'checkbox') {
+                                    input.checked = false;
+                                } else {
+                                    input.value = '';
+                                }
+                                
+                                // Atualizar badge
+                                const badge = card.querySelector('.field-status');
+                                if (badge) {
+                                    badge.className = 'field-status field-optional';
+                                    badge.innerHTML = '<i class="fas fa-circle"></i>';
+                                }
+                                
+                                // Remover animação
+                                card.classList.remove('shake-animation');
+                            }, 300);
+                        }, index * 50); // Efeito cascata
                     });
                     
                     // Animar o botão
@@ -301,9 +561,10 @@
             });
         }
         
-        // Abrir modal para salvar preset
+        // Abrir modal para salvar preset com efeito
         if (savePresetBtn) {
             savePresetBtn.addEventListener('click', function() {
+                ZelopackAnimations.pulse(savePresetBtn);
                 savePresetModal.show();
             });
         }

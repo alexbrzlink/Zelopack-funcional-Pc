@@ -331,7 +331,6 @@ def interactive_form(file_path):
     ).order_by(FormPreset.is_default.desc(), FormPreset.name).all()
     
     # Gerar CSRF token para o template
-    from flask_wtf.csrf import generate_csrf
     csrf_token = generate_csrf()
     
     return render_template(
