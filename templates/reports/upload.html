@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-upload"></i> Upload de Laudo
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {{ form.csrf_token }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="{{ form.title.id }}" class="form-label">Título do Laudo *</label>
+                            {{ form.title(class="form-control", placeholder="Ex: Análise de Qualidade - Lote 123") }}
+                            {% if form.title.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.title.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="{{ form.report_date.id }}" class="form-label">Data do Laudo</label>
+                            {{ form.report_date(class="form-control", type="date") }}
+                            {% if form.report_date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.report_date.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id }}" class="form-label">Descrição</label>
+                        {{ form.description(class="form-control", rows=3, placeholder="Descrição detalhada do conteúdo do laudo") }}
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.description.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.category.id }}" class="form-label">Categoria</label>
+                            {{ form.category(class="form-select") }}
+                            {% if form.category.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.category.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.supplier.id }}" class="form-label">Fornecedor</label>
+                            {{ form.supplier(class="form-select") }}
+                            {% if form.supplier.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.supplier.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.batch_number.id }}" class="form-label">Número do Lote</label>
+                        {{ form.batch_number(class="form-control", placeholder="Ex: LOT-2023-0001") }}
+                        {% if form.batch_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.batch_number.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="{{ form.file.id }}" class="form-label">Arquivo do Laudo *</label>
+                        <div class="input-group">
+                            {{ form.file(class="form-control", accept=".pdf,.doc,.docx,.xls,.xlsx") }}
+                            {% if form.file.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.file.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <small class="text-muted">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX. Tamanho máximo: 16MB</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('reports.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Script para validação do formulário
+    (function() {
+        'use strict';
+        
+        // Fetch todos os formulários que precisamos validar
+        var forms = document.querySelectorAll('.needs-validation');
+        
+        // Loop para prevenir submissão
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80">
+  <style>
+    .logo-text { fill: #0067b3; font-family: 'Arial', sans-serif; font-weight: bold; }
+    .leaf { fill: #4d9e2f; }
+    .drop { fill: #0067b3; }
+    .cup { fill: #ff9800; }
+  </style>
+  
+  <!-- Cup Icon -->
+  <path class="cup" d="M60,15 C65,15 70,20 70,35 C70,50 65,55 60,55 L40,55 C35,55 30,50 30,35 C30,20 35,15 40,15 L60,15 Z"/>
+  
+  <!-- Leaf -->
+  <path class="leaf" d="M65,10 C75,0 90,5 85,20 C80,35 65,30 65,20 C65,15 68,12 70,15 C72,18 70,25 65,20 Z"/>
+  
+  <!-- Water Drop -->
+  <path class="drop" d="M50,25 C50,25 45,35 45,40 C45,45 47,50 50,50 C53,50 55,45 55,40 C55,35 50,25 50,25 Z"/>
+  
+  <!-- Text -->
+  <text x="85" y="45" class="logo-text" font-size="28">ZELOPACK</text>
+  <text x="85" y="65" class="logo-text" font-size="14">INDÚSTRIA DE SUCOS</text>
+</svg>

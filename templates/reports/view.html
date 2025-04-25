@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Visualização de um único laudo -->
+{% if single_view and report %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="report-detail">
+            <h2>{{ report.title }}</h2>
+            
+            <div class="report-meta mb-3">
+                {% if report.report_date %}
+                <span class="me-3">
+                    <i class="fas fa-calendar"></i> 
+                    <span class="date-br" data-date="{{ report.report_date }}">{{ report.report_date.strftime('%d/%m/%Y') }}</span>
+                </span>
+                {% endif %}
+                
+                <span class="me-3">
+                    <i class="fas fa-upload"></i> 
+                    <span class="datetime-br" data-date="{{ report.upload_date }}">{{ report.upload_date.strftime('%d/%m/%Y %H:%M') }}</span>
+                </span>
+                
+                {% if report.category %}
+                <span class="badge bg-primary me-1">{{ report.category }}</span>
+                {% endif %}
+                
+                {% if report.supplier %}
+                <span class="badge bg-secondary me-1">{{ report.supplier }}</span>
+                {% endif %}
+            </div>
+            
+            {% if report.description %}
+            <div class="mb-4">
+                <h5>Descrição</h5>
+                <p>{{ report.description }}</p>
+            </div>
+            {% endif %}
+            
+            <div class="mb-4">
+                <h5>Informações do Laudo</h5>
+                <table class="table table-striped">
+                    <tbody>
+                        {% if report.batch_number %}
+                        <tr>
+                            <th style="width: 30%">Número do Lote</th>
+                            <td>{{ report.batch_number }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <th>Arquivo</th>
+                            <td>
+                                <span class="badge bg-secondary me-2">{{ report.file_type.upper() }}</span>
+                                {{ report.original_filename }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Tamanho</th>
+                            <td id="fileSize" data-size="{{ report.file_size }}">
+                                <script>
+                                    document.getElementById('fileSize').innerText = formatFileSize({{ report.file_size }});
+                                </script>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('reports.view_all') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                
+                <div>
+                    <a href="{{ url_for('reports.download', id=report.id) }}" class="btn btn-success">
+                        <i class="fas fa-download"></i> Baixar Arquivo
+                    </a>
+                    
+                    <form action="{{ url_for('reports.delete', id=report.id) }}" method="POST" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger delete-confirm">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-clock"></i> Laudos Recentes
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for recent in recent_reports %}
+                        {% if recent.id != report.id %}
+                            <a href="{{ url_for('reports.view', id=recent.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ recent.title }}</h6>
+                                    <small class="text-muted datetime-br" data-date="{{ recent.upload_date }}">
+                                        {{ recent.upload_date.strftime('%d/%m/%Y') }}
+                                    </small>
+                                </div>
+                                <p class="mb-1">
+                                    {% if recent.category %}
+                                        <span class="badge bg-primary">{{ recent.category }}</span>
+                                    {% endif %}
+                                </p>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visualização de lista de laudos -->
+{% else %}
+<div class="mb-4 d-flex justify-content-between align-items-center">
+    <h2 class="mb-0">{% if title %}{{ title }}{% else %}Laudos{% endif %}</h2>
+    <a href="{{ url_for('reports.upload') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Novo Laudo
+    </a>
+</div>
+
+{% if reports %}
+    {% if reports.items is defined %}
+        <!-- Visualização paginada -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Título</th>
+                        <th>Categoria</th>
+                        <th>Fornecedor</th>
+                        <th>Data do Laudo</th>
+                        <th>Arquivo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports.items %}
+                    <tr>
+                        <td>{{ report.title }}</td>
+                        <td>{{ report.category or '-' }}</td>
+                        <td>{{ report.supplier or '-' }}</td>
+                        <td class="date-br" data-date="{{ report.report_date }}">
+                            {{ report.report_date.strftime('%d/%m/%Y') if report.report_date else '-' }}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ report.file_type.upper() }}</span>
+                            {{ report.original_filename }}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('reports.view', id=report.id) }}" class="btn btn-sm btn-info" title="Visualizar">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('reports.download', id=report.id) }}" class="btn btn-sm btn-success" title="Baixar">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Paginação -->
+        <nav aria-label="Navegação de páginas">
+            <ul class="pagination justify-content-center">
+                {% if reports.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('reports.view_all', page=reports.prev_num) }}">Anterior</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Anterior</span>
+                </li>
+                {% endif %}
+                
+                {% for page_num in reports.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        {% if page_num == reports.page %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('reports.view_all', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if reports.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('reports.view_all', page=reports.next_num) }}">Próximo</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Próximo</span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <!-- Lista simples sem paginação -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Título</th>
+                        <th>Categoria</th>
+                        <th>Fornecedor</th>
+                        <th>Data do Laudo</th>
+                        <th>Arquivo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>{{ report.title }}</td>
+                        <td>{{ report.category or '-' }}</td>
+                        <td>{{ report.supplier or '-' }}</td>
+                        <td class="date-br" data-date="{{ report.report_date }}">
+                            {{ report.report_date.strftime('%d/%m/%Y') if report.report_date else '-' }}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ report.file_type.upper() }}</span>
+                            {{ report.original_filename }}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('reports.view', id=report.id) }}" class="btn btn-sm btn-info" title="Visualizar">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('reports.download', id=report.id) }}" class="btn btn-sm btn-success" title="Baixar">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% else %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> Nenhum laudo encontrado.
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

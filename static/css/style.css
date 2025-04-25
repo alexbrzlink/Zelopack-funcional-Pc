@@ -1,0 +1,197 @@
+/* Estilos principais da aplicação Zelopack */
+
+:root {
+  /* Cores da identidade visual da Zelopack - adaptadas do logo */
+  --zelopack-primary: #0067b3; /* Azul principal */
+  --zelopack-secondary: #4d9e2f; /* Verde */
+  --zelopack-accent: #ff9800; /* Laranja */
+  --zelopack-dark: #333333;
+  --zelopack-light: #f5f5f5;
+  --zelopack-gray: #6c757d;
+}
+
+body {
+  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--zelopack-light);
+  color: var(--zelopack-dark);
+}
+
+/* Header e Navbar */
+.navbar {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.nav-link {
+  color: var(--zelopack-dark) !important;
+  font-weight: 500;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--zelopack-primary) !important;
+}
+
+/* Botões principais */
+.btn-primary {
+  background-color: var(--zelopack-primary);
+  border-color: var(--zelopack-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #005596;
+  border-color: #005596;
+}
+
+.btn-success {
+  background-color: var(--zelopack-secondary);
+  border-color: var(--zelopack-secondary);
+}
+
+.btn-success:hover,
+.btn-success:focus {
+  background-color: #3e7e25;
+  border-color: #3e7e25;
+}
+
+.btn-accent {
+  background-color: var(--zelopack-accent);
+  border-color: var(--zelopack-accent);
+  color: white;
+}
+
+.btn-accent:hover,
+.btn-accent:focus {
+  background-color: #e68a00;
+  border-color: #e68a00;
+  color: white;
+}
+
+/* Cards */
+.card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  background-color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  font-weight: 500;
+}
+
+/* Tabelas */
+.table thead th {
+  background-color: var(--zelopack-primary);
+  color: white;
+  border-bottom: none;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 103, 179, 0.05);
+}
+
+/* Upload de arquivos */
+.custom-file-label::after {
+  background-color: var(--zelopack-primary);
+  color: white;
+}
+
+/* Barra de pesquisa */
+.search-bar {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+/* Badges */
+.badge-primary {
+  background-color: var(--zelopack-primary);
+}
+
+.badge-success {
+  background-color: var(--zelopack-secondary);
+}
+
+.badge-warning {
+  background-color: var(--zelopack-accent);
+}
+
+/* Paginação */
+.page-item.active .page-link {
+  background-color: var(--zelopack-primary);
+  border-color: var(--zelopack-primary);
+}
+
+.page-link {
+  color: var(--zelopack-primary);
+}
+
+/* Rodapé */
+footer {
+  background-color: var(--zelopack-dark);
+  color: white;
+  padding: 30px 0;
+  margin-top: 60px;
+}
+
+/* Dashboard */
+.dashboard-card {
+  transition: transform 0.2s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+.dashboard-icon {
+  font-size: 2rem;
+  color: var(--zelopack-primary);
+}
+
+/* Visualização de laudo */
+.report-detail {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.report-meta {
+  color: var(--zelopack-gray);
+  font-size: 0.9rem;
+}
+
+/* Formulários */
+.form-control:focus {
+  border-color: var(--zelopack-primary);
+  box-shadow: 0 0 0 0.2rem rgba(0, 103, 179, 0.25);
+}
+
+label {
+  font-weight: 500;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .card-title {
+    font-size: 1.25rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.9rem;
+  }
+  
+  .navbar-brand img {
+    height: 30px;
+  }
+}

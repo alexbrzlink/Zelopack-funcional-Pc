@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Bem-vindo ao Sistema de Gerenciamento de Laudos</h2>
+                <p class="card-text">
+                    Este sistema foi desenvolvido para facilitar o gerenciamento, armazenamento e consulta de 
+                    laudos técnicos da Zelopack Indústria de Sucos.
+                </p>
+                <p class="card-text">
+                    Utilize o menu superior para acessar as diferentes funcionalidades:
+                </p>
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-body text-center">
+                                <div class="dashboard-icon mb-3">
+                                    <i class="fas fa-upload"></i>
+                                </div>
+                                <h5 class="card-title">Enviar Laudos</h5>
+                                <p class="card-text">Faça upload de novos laudos para o sistema</p>
+                                <a href="{{ url_for('reports.upload') }}" class="btn btn-primary">Upload</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-body text-center">
+                                <div class="dashboard-icon mb-3">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <h5 class="card-title">Buscar Laudos</h5>
+                                <p class="card-text">Pesquise laudos existentes com busca avançada</p>
+                                <a href="{{ url_for('reports.search') }}" class="btn btn-primary">Buscar</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-body text-center">
+                                <div class="dashboard-icon mb-3">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <h5 class="card-title">Ver Todos os Laudos</h5>
+                                <p class="card-text">Visualize todos os laudos no sistema</p>
+                                <a href="{{ url_for('reports.view_all') }}" class="btn btn-primary">Ver Laudos</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card dashboard-card h-100">
+                            <div class="card-body text-center">
+                                <div class="dashboard-icon mb-3">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <h5 class="card-title">Dashboard</h5>
+                                <p class="card-text">Visualize estatísticas e informações gerais</p>
+                                <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">Dashboard</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-clock"></i> Laudos Recentes
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% if recent_reports %}
+                        {% for report in recent_reports %}
+                            <a href="{{ url_for('reports.view', id=report.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ report.title }}</h6>
+                                    <small class="text-muted datetime-br" data-date="{{ report.upload_date }}">
+                                        {{ report.upload_date.strftime('%d/%m/%Y') }}
+                                    </small>
+                                </div>
+                                <p class="mb-1">
+                                    {% if report.category %}
+                                        <span class="badge bg-primary">{{ report.category }}</span>
+                                    {% endif %}
+                                    {% if report.supplier %}
+                                        <span class="badge bg-secondary">{{ report.supplier }}</span>
+                                    {% endif %}
+                                </p>
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="list-group-item">
+                            <p class="mb-0 text-muted">Nenhum laudo cadastrado ainda.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('reports.view_all') }}" class="btn btn-sm btn-outline-primary">Ver todos</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-info-circle"></i> Informações Rápidas
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    <strong>Sistema de Gerenciamento de Laudos</strong> da Zelopack Indústria de Sucos
+                </p>
+                <p class="card-text">
+                    <i class="fas fa-check-circle text-success"></i> Faça upload de laudos em diversos formatos
+                </p>
+                <p class="card-text">
+                    <i class="fas fa-check-circle text-success"></i> Organize-os por categorias e fornecedores
+                </p>
+                <p class="card-text">
+                    <i class="fas fa-check-circle text-success"></i> Busca flexível com correspondência parcial
+                </p>
+                <p class="card-text">
+                    <i class="fas fa-check-circle text-success"></i> Acesse quando e onde precisar
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

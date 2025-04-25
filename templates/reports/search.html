@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <!-- Formulário de busca -->
+        <div class="card search-bar mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-search"></i> Busca Avançada de Laudos
+                </h5>
+                
+                <form id="searchForm" method="POST" class="row g-3">
+                    {{ form.csrf_token }}
+                    
+                    <div class="col-md-6">
+                        <label for="{{ form.query.id }}" class="form-label">Termo de Busca</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            {{ form.query(class="form-control", placeholder="Buscar por título, descrição, lote...") }}
+                        </div>
+                        <small class="form-text text-muted">Busca parcial em título, descrição e número de lote</small>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="{{ form.category.id }}" class="form-label">Categoria</label>
+                        {{ form.category(class="form-select") }}
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="{{ form.supplier.id }}" class="form-label">Fornecedor</label>
+                        {{ form.supplier(class="form-select") }}
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="{{ form.date_from.id }}" class="form-label">Data Inicial</label>
+                        {{ form.date_from(class="form-control", type="date") }}
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="{{ form.date_to.id }}" class="form-label">Data Final</label>
+                        {{ form.date_to(class="form-control", type="date") }}
+                    </div>
+                    
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="d-grid gap-2 d-md-flex">
+                            <button type="button" id="resetSearch" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Limpar
+                            </button>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Indicador de Carregamento -->
+        <div id="loadingIndicator" class="text-center my-5 d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p>Buscando laudos, por favor aguarde...</p>
+        </div>
+        
+        <!-- Resultados da busca -->
+        <div id="searchResults">
+            {% if results %}
+                <h4 class="mb-3">Resultados da Busca</h4>
+                
+                {% if results|length > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Categoria</th>
+                                    <th>Fornecedor</th>
+                                    <th>Data do Laudo</th>
+                                    <th>Arquivo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in results %}
+                                <tr>
+                                    <td>{{ report.title }}</td>
+                                    <td>{{ report.category or '-' }}</td>
+                                    <td>{{ report.supplier or '-' }}</td>
+                                    <td class="date-br" data-date="{{ report.report_date }}">
+                                        {{ report.report_date.strftime('%d/%m/%Y') if report.report_date else '-' }}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ report.file_type.upper() }}</span>
+                                        {{ report.original_filename }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('reports.view', id=report.id) }}" class="btn btn-sm btn-info" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('reports.download', id=report.id) }}" class="btn btn-sm btn-success" title="Baixar">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-muted">Encontrados {{ results|length }} laudos.</p>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Nenhum laudo encontrado com os critérios informados.
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
