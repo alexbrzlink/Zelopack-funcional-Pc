@@ -214,6 +214,225 @@ def api_calcular_brix_padrao():
         }), 500
 
 
+@calculos_bp.route('/api/calcular/producao-litro', methods=['POST'])
+@login_required
+def api_calcular_producao_litro():
+    """API para cálculo de produção em litros baseado em peso e densidade."""
+    data = request.get_json()
+    
+    try:
+        peso_total = float(data.get('peso_total', 0))
+        densidade = float(data.get('densidade', 1.0))
+        
+        # Validar dados
+        if peso_total <= 0 or densidade <= 0:
+            return jsonify({
+                'success': False,
+                'message': 'Valores de peso total e densidade devem ser positivos.'
+            }), 400
+        
+        # Cálculo do volume produzido
+        volume_produzido = peso_total / densidade
+        
+        resultado = {
+            'success': True,
+            'volume_produzido': volume_produzido,
+            'peso_total': peso_total,
+            'densidade': densidade,
+            'formula': f'Volume = {peso_total} ÷ {densidade} = {volume_produzido:.2f} L'
+        }
+        
+        # Registrar o cálculo no histórico
+        registrar_historico_calculo('producao-litro', {
+            'peso_total': peso_total,
+            'densidade': densidade,
+            'resultado': resultado
+        })
+        
+        return jsonify(resultado)
+        
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'message': f'Erro de formato nos valores informados: {str(e)}'
+        }), 400
+    except Exception as e:
+        logging.error(f"Erro ao calcular produção em litros: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': 'Ocorreu um erro ao processar o cálculo.'
+        }), 500
+
+
+@calculos_bp.route('/api/calcular/densidade', methods=['POST'])
+@login_required
+def api_calcular_densidade():
+    """API para cálculo de densidade baseado em massa e volume."""
+    data = request.get_json()
+    
+    try:
+        massa = float(data.get('massa', 0))
+        volume = float(data.get('volume', 0))
+        
+        # Validar dados
+        if massa <= 0 or volume <= 0:
+            return jsonify({
+                'success': False,
+                'message': 'Valores de massa e volume devem ser positivos.'
+            }), 400
+        
+        # Cálculo da densidade
+        densidade = massa / volume
+        
+        resultado = {
+            'success': True,
+            'densidade': densidade,
+            'massa': massa,
+            'volume': volume,
+            'formula': f'Densidade = {massa} ÷ {volume} = {densidade:.4f} g/mL'
+        }
+        
+        # Registrar o cálculo no histórico
+        registrar_historico_calculo('densidade', {
+            'massa': massa,
+            'volume': volume,
+            'resultado': resultado
+        })
+        
+        return jsonify(resultado)
+        
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'message': f'Erro de formato nos valores informados: {str(e)}'
+        }), 400
+    except Exception as e:
+        logging.error(f"Erro ao calcular densidade: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': 'Ocorreu um erro ao processar o cálculo.'
+        }), 500
+
+
+@calculos_bp.route('/api/calcular/ratio', methods=['POST'])
+@login_required
+def api_calcular_ratio():
+    """API para cálculo de ratio (razão entre Brix e Acidez)."""
+    data = request.get_json()
+    
+    try:
+        brix = float(data.get('brix', 0))
+        acidez = float(data.get('acidez', 0))
+        
+        # Validar dados
+        if brix <= 0:
+            return jsonify({
+                'success': False,
+                'message': 'O valor de Brix deve ser positivo.'
+            }), 400
+            
+        if acidez <= 0:
+            return jsonify({
+                'success': False,
+                'message': 'O valor de Acidez deve ser positivo.'
+            }), 400
+        
+        # Cálculo do ratio
+        ratio = brix / acidez
+        
+        resultado = {
+            'success': True,
+            'ratio': ratio,
+            'brix': brix,
+            'acidez': acidez,
+            'formula': f'Ratio = {brix} ÷ {acidez} = {ratio:.2f}'
+        }
+        
+        # Classificação do ratio
+        if ratio < 12:
+            classificacao = "Ácido"
+        elif ratio >= 12 and ratio < 16:
+            classificacao = "Equilibrado"
+        else:
+            classificacao = "Doce"
+        
+        resultado['classificacao'] = classificacao
+        
+        # Registrar o cálculo no histórico
+        registrar_historico_calculo('ratio', {
+            'brix': brix,
+            'acidez': acidez,
+            'resultado': resultado
+        })
+        
+        return jsonify(resultado)
+        
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'message': f'Erro de formato nos valores informados: {str(e)}'
+        }), 400
+    except Exception as e:
+        logging.error(f"Erro ao calcular ratio: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': 'Ocorreu um erro ao processar o cálculo.'
+        }), 500
+
+
+@calculos_bp.route('/api/calcular/acidez', methods=['POST'])
+@login_required
+def api_calcular_acidez():
+    """API para cálculo padrão de acidez."""
+    data = request.get_json()
+    
+    try:
+        volume_amostra = float(data.get('volume_amostra', 0))
+        fator_titulacao = float(data.get('fator_titulacao', 0))
+        volume_naoh = float(data.get('volume_naoh', 0))
+        
+        # Validar dados
+        if volume_amostra <= 0 or fator_titulacao <= 0 or volume_naoh < 0:
+            return jsonify({
+                'success': False,
+                'message': 'Todos os valores devem ser positivos (volume NaOH pode ser zero).'
+            }), 400
+        
+        # Cálculo da acidez
+        acidez = (volume_naoh * fator_titulacao * 100) / volume_amostra
+        
+        resultado = {
+            'success': True,
+            'acidez': acidez,
+            'volume_amostra': volume_amostra,
+            'fator_titulacao': fator_titulacao,
+            'volume_naoh': volume_naoh,
+            'formula': f'Acidez (%) = ({volume_naoh} × {fator_titulacao} × 100) ÷ {volume_amostra} = {acidez:.4f}%'
+        }
+        
+        # Registrar o cálculo no histórico
+        registrar_historico_calculo('acidez', {
+            'volume_amostra': volume_amostra,
+            'fator_titulacao': fator_titulacao,
+            'volume_naoh': volume_naoh,
+            'resultado': resultado
+        })
+        
+        return jsonify(resultado)
+        
+    except ValueError as e:
+        return jsonify({
+            'success': False,
+            'message': f'Erro de formato nos valores informados: {str(e)}'
+        }), 400
+    except Exception as e:
+        logging.error(f"Erro ao calcular acidez: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': 'Ocorreu um erro ao processar o cálculo.'
+        }), 500
+
+
 @calculos_bp.route('/api/calcular/finalizacao-tanque', methods=['POST'])
 @login_required
 def api_calcular_finalizacao_tanque():

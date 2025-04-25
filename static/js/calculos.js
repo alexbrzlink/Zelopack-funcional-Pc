@@ -1,6 +1,6 @@
 /**
  * ZeloCalc - Módulo de cálculos técnicos para o Zelopack
- * Versão 2.0 - Redesenhado para uma experiência mais intuitiva
+ * Versão 2.1 - Atualizado com todos os cálculos do CALCULOS_LAB_RAFA.xlsx
  * 
  * Este arquivo contém as funções para os cálculos técnicos do sistema Zelopack,
  * focando em cálculos laboratoriais e de produção.
@@ -15,89 +15,198 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 'producao-200g', 
             nome: 'Produção 200g', 
             categoria: 'Produção', 
-            descricao: 'Determinação de peso líquido de embalagens', 
+            descricao: 'Determinação de peso líquido de embalagens de 200g, subtraindo a tara (peso da embalagem) do peso bruto', 
             icon: 'fas fa-balance-scale', 
             favorito: true,
-            frequencia: 60
+            frequencia: 60,
+            formula: 'Peso Líquido = Peso Bruto - Tara'
         },
         { 
-            id: 'finalizacao-tanque', 
-            nome: 'Finalização de Tanque', 
-            categoria: 'Finalização', 
-            descricao: 'Diluição para Brix específico', 
-            icon: 'fas fa-database', 
+            id: 'producao-litro', 
+            nome: 'Produção Litro', 
+            categoria: 'Produção', 
+            descricao: 'Calcula o volume final de produção com base no peso e densidade do produto', 
+            icon: 'fas fa-tint', 
             favorito: true,
-            frequencia: 58
+            frequencia: 58,
+            formula: 'Volume Produzido (L) = Peso / Densidade'
         },
         { 
-            id: 'brix-padrao', 
-            nome: 'Brix Padrão', 
+            id: 'abaixar-brix', 
+            nome: 'Abaixar Brix', 
             categoria: 'Laboratório', 
-            descricao: 'Padronização de valores Brix', 
+            descricao: 'Estima quanto de água é necessário adicionar para reduzir o Brix de uma solução até o valor desejado', 
+            icon: 'fas fa-water', 
+            favorito: true,
+            frequencia: 55,
+            formula: 'Água a Adicionar (L) = Volume Inicial × [(Brix Atual / Brix Desejado) - 1]'
+        },
+        { 
+            id: 'brix-corrigido', 
+            nome: 'Brix Corrigido', 
+            categoria: 'Laboratório', 
+            descricao: 'Aplica uma correção ao Brix medido levando em conta temperatura ou densidade', 
             icon: 'fas fa-thermometer-half', 
             favorito: true,
-            frequencia: 42
+            frequencia: 52,
+            formula: 'Brix Corrigido = Brix Medido × Fator'
         },
         { 
-            id: 'volume-producao', 
-            nome: 'Volume de Produção', 
+            id: 'peso-bruto', 
+            nome: 'Peso Bruto', 
             categoria: 'Produção', 
-            descricao: 'Cálculo de volume produzido', 
-            icon: 'fas fa-tint', 
+            descricao: 'Soma do peso líquido do produto e a tara (embalagem)', 
+            icon: 'fas fa-weight', 
             favorito: false,
-            frequencia: 38
+            frequencia: 50,
+            formula: 'Peso Bruto = Peso Líquido + Tara'
         },
         { 
-            id: 'rendimento', 
-            nome: 'Rendimento', 
-            categoria: 'Produção', 
-            descricao: 'Cálculo de rendimento percentual', 
-            icon: 'fas fa-percentage', 
-            favorito: false,
-            frequencia: 35
-        },
-        { 
-            id: 'diluicao', 
-            nome: 'Diluição', 
+            id: 'corantes', 
+            nome: 'Corantes', 
             categoria: 'Laboratório', 
-            descricao: 'Cálculos de diluição de amostras', 
-            icon: 'fas fa-vial', 
+            descricao: 'Quantifica a quantidade de corante a ser adicionado por litro ou por lote', 
+            icon: 'fas fa-fill-drip', 
             favorito: false,
-            frequencia: 30
+            frequencia: 48,
+            formula: 'Corante a Adicionar = Volume Total × Dosagem'
         },
         { 
-            id: 'mistura-tanques', 
-            nome: 'Mistura de Tanques', 
-            categoria: 'Finalização', 
-            descricao: 'Combinação de produtos em tanques', 
-            icon: 'fas fa-exchange-alt', 
-            favorito: false,
-            frequencia: 28
+            id: 'densidade', 
+            nome: 'Densidade', 
+            categoria: 'Laboratório', 
+            descricao: 'Calcula a densidade com base na razão entre massa e volume', 
+            icon: 'fas fa-atom', 
+            favorito: true,
+            frequencia: 47,
+            formula: 'Densidade = Massa / Volume'
+        },
+        { 
+            id: 'ratio', 
+            nome: 'Ratio', 
+            categoria: 'Laboratório', 
+            descricao: 'Relação simples entre Brix e Acidez', 
+            icon: 'fas fa-calculator', 
+            favorito: true,
+            frequencia: 45,
+            formula: 'Ratio = Brix / Acidez'
         },
         { 
             id: 'acidez', 
-            nome: 'Conversão de Acidez', 
+            nome: 'Acidez', 
             categoria: 'Laboratório', 
-            descricao: 'Medição de acidez em sucos', 
+            descricao: 'Cálculo padrão da acidez de um produto', 
             icon: 'fas fa-eye-dropper', 
-            favorito: false,
-            frequencia: 25
+            favorito: true,
+            frequencia: 44,
+            formula: 'Acidez (%) = (Volume NaOH × Fator × 100) / Volume da Amostra'
         },
         { 
-            id: 'ph-corrigido', 
-            nome: 'pH Corrigido', 
-            categoria: 'Qualidade', 
-            descricao: 'Cálculos de correção de pH', 
-            icon: 'fas fa-filter', 
-            favorito: false,
-            frequencia: 22
+            id: 'calcular-soda', 
+            nome: 'Cálculo de Soda', 
+            categoria: 'Laboratório', 
+            descricao: 'Estima a quantidade de soda (NaOH) necessária para ajustar o pH ou neutralizar a acidez', 
+            icon: 'fas fa-flask', 
+            favorito: true,
+            frequencia: 42,
+            formula: 'Soda a Adicionar = (Acidez Final - Acidez Inicial) × Volume × Fator'
         },
         { 
-            id: 'teor-solidos', 
-            nome: 'Teor de Sólidos', 
-            categoria: 'Qualidade', 
-            descricao: 'Análise de conteúdo sólido', 
+            id: 'vitamina-c', 
+            nome: 'Vitamina C', 
+            categoria: 'Laboratório', 
+            descricao: 'Determina o teor de vitamina C por titulação', 
+            icon: 'fas fa-apple-alt', 
+            favorito: true,
+            frequencia: 40,
+            formula: 'Vitamina C = (Volume × Fator) / Volume da amostra'
+        },
+        { 
+            id: 'perda-base', 
+            nome: 'Perda de Base', 
+            categoria: 'Produção', 
+            descricao: 'Verifica perda de produto durante o processo', 
+            icon: 'fas fa-chart-line', 
+            favorito: false,
+            frequencia: 38,
+            formula: 'Perda (%) = ((Peso Inicial - Peso Final) / Peso Inicial) × 100'
+        },
+        { 
+            id: 'acucar-puxar', 
+            nome: 'Quantidade de Açúcar Puxar', 
+            categoria: 'Produção', 
+            descricao: 'Calcula o açúcar necessário para atingir determinado Brix em um lote', 
             icon: 'fas fa-cubes', 
+            favorito: false,
+            frequencia: 37,
+            formula: 'Açúcar = (Brix Desejado - Brix Atual) × Volume × 10'
+        },
+        { 
+            id: 'aumentar-acidez', 
+            nome: 'Aumentar Acidez', 
+            categoria: 'Laboratório', 
+            descricao: 'Quantifica quanto ácido adicionar para alcançar uma acidez desejada', 
+            icon: 'fas fa-plus-circle', 
+            favorito: false,
+            frequencia: 36,
+            formula: 'Ácido = (Acidez Desejada - Acidez Atual) × Volume'
+        },
+        { 
+            id: 'diminuir-acidez', 
+            nome: 'Diminuir Acidez', 
+            categoria: 'Laboratório', 
+            descricao: 'Quantifica quanta água ou base neutralizante deve ser adicionada para reduzir a acidez', 
+            icon: 'fas fa-minus-circle', 
+            favorito: false,
+            frequencia: 35,
+            formula: 'Volume a adicionar = fórmula baseada no fator de diluição'
+        },
+        { 
+            id: 'conversao-acucar', 
+            nome: 'Conversão Cristal ⇄ Líquido', 
+            categoria: 'Produção', 
+            descricao: 'Converte massa de açúcar cristal em líquido e vice-versa', 
+            icon: 'fas fa-exchange-alt', 
+            favorito: false,
+            frequencia: 33,
+            formula: 'Açúcar líquido = Cristal × Fator (ou o inverso)'
+        },
+        { 
+            id: 'zeragem-embalagem', 
+            nome: 'Zeragem de Embalagem', 
+            categoria: 'Produção', 
+            descricao: 'Verifica e corrige o valor da tara de embalagens na linha de produção', 
+            icon: 'fas fa-box', 
+            favorito: false,
+            frequencia: 31,
+            formula: 'Tara Média = Média dos pesos vazios'
+        },
+        { 
+            id: 'ratio-brix', 
+            nome: 'Ratio - Brix', 
+            categoria: 'Laboratório', 
+            descricao: 'Compara o Brix de duas amostras diferentes ou de um mesmo produto em etapas diferentes', 
+            icon: 'fas fa-balance-scale-right', 
+            favorito: false,
+            frequencia: 30,
+            formula: 'Ratio Brix = Brix 1 / Brix 2'
+        },
+        { 
+            id: 'ratio-acidez', 
+            nome: 'Ratio - Acidez', 
+            categoria: 'Laboratório', 
+            descricao: 'Relação entre duas medições de acidez (ex: antes e depois de um ajuste)', 
+            icon: 'fas fa-balance-scale-left', 
+            favorito: false,
+            frequencia: 28,
+            formula: 'Ratio Acidez = Acidez 1 / Acidez 2'
+        },
+        { 
+            id: 'soda-diversey', 
+            nome: 'Soda - Diversey', 
+            categoria: 'Laboratório', 
+            descricao: 'Cálculo de dosagem de soda baseado em concentração (método Diversey)', 
+            icon: 'fas fa-tint', 
             favorito: false,
             frequencia: 20
         }
