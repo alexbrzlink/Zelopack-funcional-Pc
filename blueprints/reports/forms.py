@@ -14,9 +14,10 @@ class ReportUploadForm(FlaskForm):
     category = SelectField('Categoria', 
                          choices=[('', 'Selecione uma categoria'),
                                   ('materias_primas', 'Matérias Primas'),
+                                  ('edulcorantes', 'Edulcorantes'),
+                                  ('corantes', 'Corantes'),
                                   ('acucar', 'Açúcar'),
-                                  ('embalagens', 'Embalagens'),
-                                  ('adocantes', 'Adoçantes')],
+                                  ('embalagem', 'Embalagem')],
                          validators=[Optional()])
     supplier = SelectField('Fornecedor', validators=[Optional()])
     supplier_manual = StringField('Outro Fornecedor (digite se não estiver na lista)', validators=[Optional()])
@@ -98,9 +99,10 @@ class SearchForm(FlaskForm):
     category = SelectField('Categoria', 
                          choices=[('', 'Todas as categorias'),
                                   ('materias_primas', 'Matérias Primas'),
+                                  ('edulcorantes', 'Edulcorantes'),
+                                  ('corantes', 'Corantes'),
                                   ('acucar', 'Açúcar'),
-                                  ('embalagens', 'Embalagens'),
-                                  ('adocantes', 'Adoçantes')],
+                                  ('embalagem', 'Embalagem')],
                          validators=[Optional()])
     supplier = SelectField('Fornecedor', validators=[Optional()])
     date_from = DateField('Data Inicial', validators=[Optional()], format='%Y-%m-%d')
@@ -118,9 +120,10 @@ class SupplierForm(FlaskForm):
     notes = TextAreaField('Observações', validators=[Optional()])
     type = SelectField('Tipo', 
                      choices=[('materias_primas', 'Fornecedor de Matérias Primas'),
+                              ('edulcorantes', 'Fornecedor de Edulcorantes'),
+                              ('corantes', 'Fornecedor de Corantes'),
                               ('acucar', 'Fornecedor de Açúcar'),
-                              ('embalagens', 'Fornecedor de Embalagens'),
-                              ('adocantes', 'Fornecedor de Adoçantes'),
+                              ('embalagem', 'Fornecedor de Embalagem'),
                               ('outro', 'Outro')],
                      validators=[DataRequired()])
     submit = SubmitField('Salvar Fornecedor')
