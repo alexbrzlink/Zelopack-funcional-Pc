@@ -149,6 +149,33 @@
     <!-- Bootstrap 5 JS com Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+        
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyBFT3jOKSyR_xeJO0rIymMPVFmGsAQ83F0",
+          authDomain: "zelopack-industria.firebaseapp.com",
+          projectId: "zelopack-industria",
+          storageBucket: "zelopack-industria.firebasestorage.app",
+          messagingSenderId: "993227513134",
+          appId: "1:993227513134:web:f03edbada0110b07fa6ebf",
+          measurementId: "G-42RS8TZHZH"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        
+        // Disponibilizar globalmente se necessário
+        window.firebaseApp = app;
+        window.firebaseAnalytics = analytics;
+    </script>
+    
     <!-- Scripts personalizados -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>

@@ -7,6 +7,8 @@ import os
 
 class Report(db.Model):
     """Modelo para armazenar informações sobre laudos."""
+    __tablename__ = 'reports'
+    
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=True)
@@ -26,11 +28,11 @@ class Report(db.Model):
     # Novos campos para os módulos avançados
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=True)
     sample_id = db.Column(db.Integer, db.ForeignKey('sample.id'), nullable=True)
-    template_id = db.Column(db.Integer, db.ForeignKey('report_template.id'), nullable=True)
+    template_id = db.Column(db.Integer, db.ForeignKey('report_templates.id'), nullable=True)
     
     # Campos para versão do documento
     version = db.Column(db.Integer, default=1)
-    parent_id = db.Column(db.Integer, db.ForeignKey('report.id'), nullable=True)  # Para controle de versões
+    parent_id = db.Column(db.Integer, db.ForeignKey('reports.id'), nullable=True)  # Para controle de versões
     
     # Campos para impressão e visualização
     has_print_version = db.Column(db.Boolean, default=False)
@@ -75,8 +77,9 @@ class Report(db.Model):
     approver_user = db.relationship('User', foreign_keys=[approved_by], backref='approved_reports')
     creator_user = db.relationship('User', foreign_keys=[created_by], backref='created_reports')
     client = db.relationship('Client', backref='reports')
-    template = db.relationship('ReportTemplate', backref='reports')
+    # template = db.relationship('ReportTemplate')
     parent_report = db.relationship('Report', remote_side=[id], backref='versions')  # Para histórico de versões
+    attachments = db.relationship('ReportAttachment', back_populates='report')
     
     def __repr__(self):
         return f"<Report {self.id}: {self.title}>"
@@ -174,28 +177,7 @@ class Supplier(db.Model):
         return f"<Supplier {self.name}>"
 
 
-class ReportTemplate(db.Model):
-    """Modelo para templates de laudos."""
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(150), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
-    template_file = db.Column(db.String(255), nullable=True)
-    file_path = db.Column(db.String(500), nullable=True)
-    structure = db.Column(db.Text, nullable=True)  # JSON com a estrutura do template
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    version = db.Column(db.String(20), default='1.0')
-    is_active = db.Column(db.Boolean, default=True)
-    fields = db.Column(db.JSON, nullable=True)  # Para armazenar metadados sobre campos do template
-    
-    # Relações
-    category = db.relationship('Category', backref='report_templates')
-    creator = db.relationship('User', backref='created_templates')
-    
-    def __repr__(self):
-        return f"<ReportTemplate {self.id}: {self.name}>"
+# [Antiga definição de ReportTemplate removida para evitar duplicação]
     
     def to_dict(self):
         """Converte o template para dicionário."""
@@ -226,25 +208,7 @@ class ReportTemplate(db.Model):
         return data
 
 
-class ReportAttachment(db.Model):
-    """Modelo para anexos de laudos (fotos microscópio, documentos adicionais)."""
-    id = db.Column(db.Integer, primary_key=True)
-    report_id = db.Column(db.Integer, db.ForeignKey('report.id', ondelete='CASCADE'), nullable=False)
-    filename = db.Column(db.String(255), nullable=False)
-    original_filename = db.Column(db.String(255), nullable=False)
-    file_path = db.Column(db.String(500), nullable=False)
-    file_type = db.Column(db.String(50), nullable=False)
-    file_size = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Relações
-    report = db.relationship('Report', backref=db.backref('attachments', cascade='all, delete-orphan'))
-    uploader = db.relationship('User', backref='uploaded_attachments')
-    
-    def __repr__(self):
-        return f"<ReportAttachment {self.id}: {self.original_filename}>"
+# [Antiga definição de ReportAttachment removida para evitar duplicação]
     
     def to_dict(self):
         """Converte o anexo para dicionário."""
@@ -266,7 +230,7 @@ class ReportAttachment(db.Model):
 class ReportComment(db.Model):
     """Modelo para comentários internos em laudos."""
     id = db.Column(db.Integer, primary_key=True)
-    report_id = db.Column(db.Integer, db.ForeignKey('report.id', ondelete='CASCADE'), nullable=False)
+    report_id = db.Column(db.Integer, db.ForeignKey('reports.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     comment = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -297,7 +261,7 @@ class ReportComment(db.Model):
 class ReportHistory(db.Model):
     """Modelo para registrar histórico de modificações nos laudos."""
     id = db.Column(db.Integer, primary_key=True)
-    report_id = db.Column(db.Integer, db.ForeignKey('report.id', ondelete='CASCADE'), nullable=False)
+    report_id = db.Column(db.Integer, db.ForeignKey('reports.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     action = db.Column(db.String(50), nullable=False)  # create, update, approve, reject, etc.
     details = db.Column(db.Text, nullable=True)  # Detalhes da ação (opcional)
@@ -364,7 +328,7 @@ class CustomFormula(db.Model):
 class CalculationResult(db.Model):
     """Modelo para armazenar resultados de cálculos técnicos."""
     id = db.Column(db.Integer, primary_key=True)
-    report_id = db.Column(db.Integer, db.ForeignKey('report.id', ondelete='CASCADE'), nullable=False)
+    report_id = db.Column(db.Integer, db.ForeignKey('reports.id', ondelete='CASCADE'), nullable=False)
     formula_id = db.Column(db.Integer, db.ForeignKey('custom_formula.id'), nullable=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
@@ -688,7 +652,7 @@ class AutomaticReport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    template_id = db.Column(db.Integer, db.ForeignKey('report_template.id'), nullable=False)
+    template_id = db.Column(db.Integer, db.ForeignKey('report_templates.id'), nullable=False)
     data = db.Column(db.JSON, nullable=False)  # Dados preenchidos do template
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -747,3 +711,106 @@ class AutomaticReport(db.Model):
             'rejected': 'danger'
         }
         return status_map.get(self.status, 'primary')
+
+
+class ReportTemplate(db.Model):
+    """Modelo para templates de laudos."""
+    __tablename__ = 'report_templates'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    file_path = db.Column(db.String(255))
+    original_filename = db.Column(db.String(255))
+    structure = db.Column(db.Text)  # JSON como string
+    template_type = db.Column(db.String(50))  # quality, production, maintenance, etc.
+    version = db.Column(db.String(10))
+    is_active = db.Column(db.Boolean, default=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relacionamentos
+    creator = db.relationship('User', foreign_keys=[creator_id])
+    reports = db.relationship('Report', overlaps="template")
+    
+    def __repr__(self):
+        return f'<ReportTemplate {self.name} v{self.version}>'
+    
+    def to_dict(self):
+        """Converte o modelo para um dicionário."""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'file_path': self.file_path,
+            'original_filename': self.original_filename,
+            'template_type': self.template_type,
+            'version': self.version,
+            'is_active': self.is_active,
+            'creator_id': self.creator_id,
+            'creator_name': self.creator.name if self.creator else None,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M') if self.created_at else None,
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M') if self.updated_at else None
+        }
+    
+    def get_file_url(self):
+        """Retorna URL para acesso ao arquivo do template."""
+        if not self.file_path:
+            return None
+        
+        from flask import url_for
+        return url_for('templates.download_template', template_id=self.id)
+
+
+class ReportAttachment(db.Model):
+    """Modelo para anexos de laudos."""
+    __tablename__ = 'report_attachments'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    report_id = db.Column(db.Integer, db.ForeignKey('reports.id'), nullable=False)
+    file_path = db.Column(db.String(255), nullable=False)
+    original_filename = db.Column(db.String(255), nullable=False)
+    file_type = db.Column(db.String(50))
+    file_size = db.Column(db.Integer)  # em bytes
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+    uploader_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    
+    # Relacionamentos
+    report = db.relationship('Report', back_populates='attachments')
+    uploader = db.relationship('User', foreign_keys=[uploader_id])
+    
+    def __repr__(self):
+        return f'<ReportAttachment {self.original_filename}>'
+    
+    def to_dict(self):
+        """Converte o modelo para um dicionário."""
+        return {
+            'id': self.id,
+            'report_id': self.report_id,
+            'file_path': self.file_path,
+            'original_filename': self.original_filename,
+            'file_type': self.file_type,
+            'file_size': self.file_size,
+            'file_size_formatted': self.get_formatted_size(),
+            'upload_date': self.upload_date.strftime('%d/%m/%Y %H:%M') if self.upload_date else None,
+            'uploader_id': self.uploader_id,
+            'uploader_name': self.uploader.name if self.uploader else None
+        }
+    
+    def get_formatted_size(self):
+        """Retorna o tamanho do arquivo formatado."""
+        if not self.file_size:
+            return '0 KB'
+            
+        kb_size = self.file_size / 1024
+        if kb_size < 1000:
+            return f'{kb_size:.1f} KB'
+        else:
+            mb_size = kb_size / 1024
+            return f'{mb_size:.1f} MB'
+    
+    def get_download_url(self):
+        """Retorna a URL para download do anexo."""
+        from flask import url_for
+        return url_for('reports.download_attachment', attachment_id=self.id)

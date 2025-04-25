@@ -1,65 +1,134 @@
-from flask import render_template, redirect, url_for, request, flash, jsonify, current_app, send_file
-from flask_login import login_required, current_user
-from sqlalchemy import func, desc
-from werkzeug.utils import secure_filename
 import os
-import datetime
 import json
+import uuid
+from datetime import datetime
+from flask import render_template, redirect, url_for, flash, request, jsonify, current_app, send_file
+from flask_login import login_required, current_user
+from sqlalchemy import desc
+from werkzeug.utils import secure_filename
 import io
-import glob
+import pandas as pd
+import openpyxl
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
 
+from . import templates_bp
 from app import db
-from models import Report, ReportTemplate, ReportAttachment, Client, Sample, User, Category
-from blueprints.templates import templates_bp
-from blueprints.templates.forms import TemplateForm, AutoFillReportForm, ZelopackFormImportForm
+from blueprints.templates.forms import ImportTemplateForm, CreateTemplateForm, FillReportForm
+from models import ReportTemplate, Report, User, Client, Sample, ReportAttachment
 
 
 @templates_bp.route('/')
 @login_required
 def index():
-    """Página principal do módulo de templates e preenchimento automático."""
-    templates = ReportTemplate.query.filter_by(is_active=True).all()
-    recent_reports = Report.query.filter(
-        Report.template_id.isnot(None)
-    ).order_by(Report.updated_date.desc()).limit(5).all()
+    """Página principal do módulo de templates de laudos."""
+    templates = ReportTemplate.query.order_by(ReportTemplate.name).all()
     
     return render_template(
         'templates/index.html',
-        title='Preenchimento Automático de Laudos',
-        templates=templates,
-        recent_reports=recent_reports
+        title='Templates de Laudos',
+        templates=templates
+    )
+
+
+@templates_bp.route('/importar-template', methods=['GET', 'POST'])
+@login_required
+def import_template():
+    """Importar um template de formulário da Zelopack."""
+    form = ImportTemplateForm()
+    
+    if form.validate_on_submit():
+        try:
+            # Obter o arquivo enviado e gerar nome seguro
+            template_file = form.template_file.data
+            original_filename = secure_filename(template_file.filename)
+            file_ext = os.path.splitext(original_filename)[1]
+            
+            # Gerar nome único para o arquivo
+            unique_filename = f"{uuid.uuid4().hex}{file_ext}"
+            
+            # Caminho para salvar o arquivo
+            templates_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'templates')
+            os.makedirs(templates_folder, exist_ok=True)
+            file_path = os.path.join(templates_folder, unique_filename)
+            
+            # Salvar o arquivo
+            template_file.save(file_path)
+            
+            # Detectar o tipo de formulário automaticamente se não foi especificado
+            form_type = form.template_type.data
+            
+            # Criar o template no banco de dados
+            new_template = ReportTemplate(
+                name=form.name.data,
+                description=form.description.data,
+                file_path=file_path,
+                original_filename=original_filename,
+                template_type=form_type,
+                version=form.version.data,
+                is_active=form.is_active.data,
+                creator_id=current_user.id,
+                created_at=datetime.utcnow(),
+                updated_at=datetime.utcnow()
+            )
+            
+            db.session.add(new_template)
+            db.session.commit()
+            
+            flash(f'Template "{form.name.data}" importado com sucesso!', 'success')
+            return redirect(url_for('templates.index'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao importar o template: {str(e)}', 'danger')
+    
+    return render_template(
+        'templates/import_zelopack_form.html',
+        title='Importar Template',
+        form=form
     )
 
 
 @templates_bp.route('/criar-template', methods=['GET', 'POST'])
 @login_required
 def create_template():
-    """Criar um novo template para laudos."""
-    form = TemplateForm()
+    """Criar um novo template manualmente."""
+    form = CreateTemplateForm()
     
     if form.validate_on_submit():
-        template = ReportTemplate(
-            name=form.name.data,
-            description=form.description.data,
-            structure=json.dumps(form.structure.data),
-            created_by=current_user.id,
-            is_active=True
-        )
-        
-        db.session.add(template)
-        db.session.commit()
-        
-        flash('Template criado com sucesso!', 'success')
-        return redirect(url_for('templates.index'))
+        try:
+            # Criar estrutura do template
+            structure = json.loads(form.structure.data)
+            
+            # Criar o template no banco de dados
+            new_template = ReportTemplate(
+                name=form.name.data,
+                description=form.description.data,
+                structure=form.structure.data,  # JSON como string
+                template_type='custom',
+                version=form.version.data,
+                is_active=form.is_active.data,
+                creator_id=current_user.id,
+                created_at=datetime.utcnow(),
+                updated_at=datetime.utcnow()
+            )
+            
+            db.session.add(new_template)
+            db.session.commit()
+            
+            flash(f'Template "{form.name.data}" criado com sucesso!', 'success')
+            return redirect(url_for('templates.index'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao criar o template: {str(e)}', 'danger')
     
     return render_template(
         'templates/create_template.html',
-        title='Criar Template de Laudo',
+        title='Criar Template',
         form=form
     )
 
@@ -69,26 +138,34 @@ def create_template():
 def edit_template(template_id):
     """Editar um template existente."""
     template = ReportTemplate.query.get_or_404(template_id)
-    form = TemplateForm(obj=template)
+    form = CreateTemplateForm(obj=template)
+    
+    if request.method == 'GET':
+        # Se o template foi importado e não tem estrutura definida, criar estrutura vazia
+        if not template.structure:
+            form.structure.data = json.dumps({'fields': {}})
     
     if form.validate_on_submit():
-        template.name = form.name.data
-        template.description = form.description.data
-        template.structure = json.dumps(form.structure.data)
-        template.updated_at = datetime.datetime.utcnow()
-        
-        db.session.commit()
-        
-        flash('Template atualizado com sucesso!', 'success')
-        return redirect(url_for('templates.index'))
-    
-    # Preencher o campo structure com JSON do banco
-    if not form.is_submitted():
-        form.structure.data = json.loads(template.structure)
+        try:
+            template.name = form.name.data
+            template.description = form.description.data
+            template.structure = form.structure.data
+            template.is_active = form.is_active.data
+            template.version = form.version.data
+            template.updated_at = datetime.utcnow()
+            
+            db.session.commit()
+            
+            flash(f'Template "{template.name}" atualizado com sucesso!', 'success')
+            return redirect(url_for('templates.index'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao atualizar o template: {str(e)}', 'danger')
     
     return render_template(
         'templates/edit_template.html',
-        title='Editar Template de Laudo',
+        title=f'Editar Template - {template.name}',
         form=form,
         template=template
     )
@@ -97,88 +174,108 @@ def edit_template(template_id):
 @templates_bp.route('/preencher-laudo/<int:template_id>', methods=['GET', 'POST'])
 @login_required
 def fill_report(template_id):
-    """Preenchimento automático de um laudo a partir de um template."""
+    """Preencher um laudo com base em um template."""
     template = ReportTemplate.query.get_or_404(template_id)
-    form = AutoFillReportForm()
+    form = FillReportForm()
     
-    # Carregar opções para clientes e amostras
-    form.client_id.choices = [(c.id, c.name) for c in Client.query.filter_by(is_active=True).all()]
-    form.sample_id.choices = [(s.id, f"{s.code} - {s.description}") for s in Sample.query.all()]
+    # Carregar opções para os selects
+    clients = Client.query.order_by(Client.name).all()
+    form.client_id.choices = [(0, 'Selecione um cliente')] + [(c.id, c.name) for c in clients]
+    
+    samples = Sample.query.order_by(desc(Sample.created_at)).all()
+    form.sample_id.choices = [(0, 'Selecione uma amostra')] + [(s.id, f"{s.code} - {s.description[:30] + '...' if s.description and len(s.description) > 30 else s.description or ''} ({s.created_at.strftime('%d/%m/%Y')})") for s in samples]
+    
+    users = User.query.filter_by(is_active=True).order_by(User.name).all()
+    form.assigned_to.choices = [(0, 'Selecione um responsável')] + [(u.id, u.name) for u in users]
+    
+    # Valores padrão
+    if request.method == 'GET':
+        form.report_date.data = datetime.today()
+        form.title.data = f"Laudo - {template.name}"
+    
+    # Carregar a estrutura do template
+    template_structure = {}
+    if template.structure:
+        try:
+            template_structure = json.loads(template.structure)
+        except:
+            template_structure = {'fields': {}}
     
     if form.validate_on_submit():
-        # Criar novo relatório a partir do template
-        report = Report(
-            title=form.title.data,
-            description=form.description.data,
-            client_id=form.client_id.data,
-            sample_id=form.sample_id.data,
-            template_id=template.id,
-            report_date=form.report_date.data,
-            due_date=form.due_date.data,
-            status='pendente',
-            stage='rascunho',
-            priority=form.priority.data,
-            assigned_to=form.assigned_to.data,
-            created_by=current_user.id,
-            ph_value=form.ph_value.data,
-            brix_value=form.brix_value.data,
-            acidity_value=form.acidity_value.data,
-            color_value=form.color_value.data
-        )
-        
-        # Adicionar métricas adicionais como JSON
-        additional_metrics = {}
-        if form.additional_metrics.data:
-            additional_metrics = json.loads(form.additional_metrics.data)
-            report.additional_metrics = json.dumps(additional_metrics)
-        
-        db.session.add(report)
-        db.session.commit()
-        
-        # Processar os anexos
-        if form.attachments.data:
-            upload_folder = current_app.config['UPLOAD_FOLDER']
-            report_folder = os.path.join(upload_folder, f"report_{report.id}")
+        try:
+            # Extrair dados adicionais específicos do template
+            additional_metrics = {}
+            if form.additional_metrics.data:
+                additional_metrics = json.loads(form.additional_metrics.data)
             
-            os.makedirs(report_folder, exist_ok=True)
+            # Criar o relatório
+            new_report = Report(
+                title=form.title.data,
+                description=form.description.data,
+                report_date=form.report_date.data,
+                template_id=template.id,
+                client_id=form.client_id.data if form.client_id.data != 0 else None,
+                sample_id=form.sample_id.data if form.sample_id.data != 0 else None,
+                creator_id=current_user.id,
+                assigned_to=form.assigned_to.data if form.assigned_to.data != 0 else None,
+                status='pendente',
+                priority=form.priority.data,
+                due_date=form.due_date.data,
+                creation_date=datetime.utcnow(),
+                ph_value=form.ph_value.data,
+                brix_value=form.brix_value.data,
+                acidity_value=form.acidity_value.data,
+                color_value=form.color_value.data,
+                density_value=request.form.get('density_value', type=float),
+                additional_metrics=json.dumps(additional_metrics)
+            )
             
-            for attachment in form.attachments.data:
-                if attachment.filename:
-                    filename = secure_filename(attachment.filename)
-                    file_path = os.path.join(report_folder, filename)
-                    attachment.save(file_path)
-                    
-                    # Registrar o anexo no banco de dados
-                    file_size = os.path.getsize(file_path)
-                    file_type = os.path.splitext(filename)[1][1:].lower()
-                    
-                    report_attachment = ReportAttachment(
-                        report_id=report.id,
-                        filename=filename,
-                        original_filename=attachment.filename,
-                        file_path=file_path,
-                        file_type=file_type,
-                        file_size=file_size,
-                        description=f"Anexo de {filename}",
-                        uploaded_by=current_user.id,
-                    )
-                    
-                    db.session.add(report_attachment)
-        
-        # Gerar PDF do laudo
-        generate_pdf_report(report.id)
-        
-        db.session.commit()
-        
-        flash('Laudo preenchido e gerado com sucesso!', 'success')
-        return redirect(url_for('templates.view_report', report_id=report.id))
-    
-    # Pré-carregar estrutura do template 
-    template_structure = json.loads(template.structure)
+            db.session.add(new_report)
+            db.session.flush()  # Para obter o ID do relatório
+            
+            # Processar anexos
+            if form.attachments.data:
+                for attachment in form.attachments.data:
+                    if attachment and attachment.filename:
+                        filename = secure_filename(attachment.filename)
+                        
+                        # Criar pasta de anexos se não existir
+                        attachments_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'report_attachments')
+                        os.makedirs(attachments_folder, exist_ok=True)
+                        
+                        # Gerar nome único para o arquivo
+                        file_ext = os.path.splitext(filename)[1]
+                        unique_filename = f"{uuid.uuid4().hex}{file_ext}"
+                        file_path = os.path.join(attachments_folder, unique_filename)
+                        
+                        # Salvar arquivo
+                        attachment.save(file_path)
+                        
+                        # Criar registro de anexo
+                        new_attachment = ReportAttachment(
+                            report_id=new_report.id,
+                            file_path=file_path,
+                            original_filename=filename,
+                            file_type=file_ext.replace('.', ''),
+                            file_size=os.path.getsize(file_path),
+                            upload_date=datetime.utcnow(),
+                            uploader_id=current_user.id
+                        )
+                        
+                        db.session.add(new_attachment)
+            
+            db.session.commit()
+            
+            flash(f'Laudo "{form.title.data}" criado com sucesso!', 'success')
+            return redirect(url_for('templates.view_report', report_id=new_report.id))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao criar o laudo: {str(e)}', 'danger')
     
     return render_template(
         'templates/fill_report.html',
-        title='Preenchimento Automático de Laudo',
+        title=f'Preencher Laudo - {template.name}',
         form=form,
         template=template,
         template_structure=template_structure
@@ -188,374 +285,166 @@ def fill_report(template_id):
 @templates_bp.route('/visualizar-laudo/<int:report_id>')
 @login_required
 def view_report(report_id):
-    """Visualizar um laudo gerado."""
+    """Visualizar um laudo específico."""
     report = Report.query.get_or_404(report_id)
+    template = ReportTemplate.query.get(report.template_id) if report.template_id else None
+    
+    # Obter anexos
     attachments = ReportAttachment.query.filter_by(report_id=report.id).all()
     
-    template = None
-    template_structure = {}
-    if report.template_id:
-        template = ReportTemplate.query.get(report.template_id)
-        if template:
-            template_structure = json.loads(template.structure)
-    
-    # Converter métricas adicionais de JSON para dicionário
+    # Obter métricas adicionais
     additional_metrics = {}
     if report.additional_metrics:
         try:
             additional_metrics = json.loads(report.additional_metrics)
         except:
-            additional_metrics = {}
+            pass
     
     return render_template(
         'templates/view_report.html',
-        title=f'Laudo: {report.title}',
+        title=f'Laudo - {report.title}',
         report=report,
         template=template,
-        template_structure=template_structure,
-        additional_metrics=additional_metrics,
-        attachments=attachments
+        attachments=attachments,
+        additional_metrics=additional_metrics
     )
 
 
-@templates_bp.route('/baixar-pdf/<int:report_id>')
+@templates_bp.route('/download-pdf/<int:report_id>')
 @login_required
 def download_pdf(report_id):
-    """Baixar o PDF gerado para um laudo."""
+    """Gerar e baixar o PDF de um laudo."""
     report = Report.query.get_or_404(report_id)
+    template = ReportTemplate.query.get(report.template_id) if report.template_id else None
     
-    if report.has_print_version and report.print_version_path:
-        return send_file(
-            report.print_version_path,
-            as_attachment=True,
-            download_name=f"laudo_{report.id}_{report.title}.pdf"
-        )
-    else:
-        # Se não tiver uma versão PDF, gerar na hora
-        pdf_path = generate_pdf_report(report.id)
-        if pdf_path:
-            return send_file(
-                pdf_path,
-                as_attachment=True,
-                download_name=f"laudo_{report.id}_{report.title}.pdf"
-            )
-        else:
-            flash('Erro ao gerar o PDF do laudo.', 'danger')
-            return redirect(url_for('templates.view_report', report_id=report.id))
+    # Criar um buffer para o PDF
+    buffer = io.BytesIO()
+    
+    # Criar o documento PDF
+    doc = SimpleDocTemplate(buffer, pagesize=letter, title=report.title)
+    styles = getSampleStyleSheet()
+    elements = []
+    
+    # Título
+    title_style = ParagraphStyle(
+        'Title',
+        parent=styles['Heading1'],
+        fontSize=16,
+        alignment=1,
+        spaceAfter=20
+    )
+    elements.append(Paragraph(f"<b>{report.title}</b>", title_style))
+    elements.append(Spacer(1, 10))
+    
+    # Informações básicas
+    data = [
+        ["ID:", str(report.id)],
+        ["Data:", report.report_date.strftime('%d/%m/%Y') if report.report_date else 'N/A'],
+        ["Status:", report.get_status_label()],
+        ["Template:", template.name if template else 'N/A'],
+        ["Cliente:", report.client.name if report.client else 'N/A'],
+        ["Amostra:", report.sample.code if report.sample else 'N/A'],
+        ["Criado por:", report.creator_user.name if report.creator_user else 'N/A'],
+        ["Criado em:", report.creation_date.strftime('%d/%m/%Y %H:%M') if report.creation_date else 'N/A']
+    ]
+    
+    t = Table(data, colWidths=[100, 300])
+    t.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    elements.append(t)
+    elements.append(Spacer(1, 20))
+    
+    # Descrição
+    if report.description:
+        elements.append(Paragraph("<b>Descrição:</b>", styles['Heading3']))
+        elements.append(Paragraph(report.description, styles['Normal']))
+        elements.append(Spacer(1, 20))
+    
+    # Resultados da análise
+    elements.append(Paragraph("<b>Resultados da Análise:</b>", styles['Heading3']))
+    
+    analysis_data = [["Parâmetro", "Valor", "Unidade", "Referência"]]
+    
+    if report.ph_value is not None:
+        analysis_data.append(["pH", f"{report.ph_value:.2f}", "", "3.5 - 4.5"])
+    
+    if report.brix_value is not None:
+        analysis_data.append(["Brix", f"{report.brix_value:.1f}", "°Bx", "10.0 - 15.0"])
+    
+    if report.acidity_value is not None:
+        analysis_data.append(["Acidez", f"{report.acidity_value:.2f}", "g/100mL", "0.5 - 1.5"])
+    
+    if report.color_value:
+        analysis_data.append(["Cor", report.color_value, "", ""])
+    
+    if report.density_value is not None:
+        analysis_data.append(["Densidade", f"{report.density_value:.4f}", "g/cm³", ""])
+    
+    # Adicionar métricas adicionais
+    additional_metrics = {}
+    if report.additional_metrics:
+        try:
+            additional_metrics = json.loads(report.additional_metrics)
+            for key, value in additional_metrics.items():
+                analysis_data.append([key, str(value), "", ""])
+        except:
+            pass
+    
+    if len(analysis_data) == 1:
+        analysis_data.append(["Não há dados de análise disponíveis.", "", "", ""])
+    
+    at = Table(analysis_data, colWidths=[100, 150, 100, 100])
+    at.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    elements.append(at)
+    
+    # Rodapé
+    elements.append(Spacer(1, 30))
+    footer_text = f"Laudo gerado em {datetime.now().strftime('%d/%m/%Y %H:%M')} pelo sistema Zelopack"
+    elements.append(Paragraph(footer_text, styles['Normal']))
+    
+    # Construir o PDF
+    doc.build(elements)
+    
+    # Preparar o arquivo para download
+    buffer.seek(0)
+    
+    # Nome do arquivo para download
+    filename = f"Laudo-{report.id}-{datetime.now().strftime('%Y%m%d')}.pdf"
+    
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=filename,
+        mimetype='application/pdf'
+    )
 
 
-@templates_bp.route('/obter-dados-amostra/<int:sample_id>')
+@templates_bp.route('/obter-dados-amostra/<int:sample_id>', methods=['GET'])
 @login_required
 def get_sample_data(sample_id):
-    """API para obter dados de uma amostra para preenchimento automático."""
+    """API para obter dados de uma amostra específica."""
     sample = Sample.query.get_or_404(sample_id)
     
-    result = {
+    sample_data = {
+        'id': sample.id,
         'code': sample.code,
         'description': sample.description,
         'material_type': sample.material_type,
         'batch_number': sample.batch_number,
-        'client_id': sample.client_id
+        'client_id': sample.client_id,
+        'collection_date': sample.collection_date.strftime('%Y-%m-%d') if sample.collection_date else None,
+        'created_at': sample.created_at.strftime('%Y-%m-%d')
     }
     
-    return jsonify(result)
-
-
-@templates_bp.route('/obter-dados-cliente/<int:client_id>')
-@login_required
-def get_client_data(client_id):
-    """API para obter dados de um cliente para preenchimento automático."""
-    client = Client.query.get_or_404(client_id)
-    
-    result = {
-        'name': client.name,
-        'contact_name': client.contact_name,
-        'email': client.email,
-        'phone': client.phone,
-        'address': client.address
-    }
-    
-    return jsonify(result)
-
-
-@templates_bp.route('/obter-formularios-zelopack/<form_type>')
-@login_required
-def get_zelopack_forms(form_type):
-    """API para obter lista de formulários Zelopack disponíveis para um determinado tipo."""
-    # Diretório onde estão os formulários
-    forms_dir = current_app.config.get('ATTACHED_ASSETS_FOLDER', 'attached_assets')
-
-    # Lista padrão para tipos de formulários conhecidos
-    form_files = []
-    
-    if form_type == 'controle_qualidade':
-        # Procurar por formulários de controle de qualidade (F_QLD_*.*)
-        pattern = os.path.join(forms_dir, 'F_QLD_*.*')
-        form_files = glob.glob(pattern)
-    elif form_type == 'producao':
-        # Procurar por formulários de produção (F_PRD_*.*)
-        pattern = os.path.join(forms_dir, 'F_PRD_*.*')
-        form_files = glob.glob(pattern)
-    elif form_type == 'laboratorio':
-        # Procurar por formulários de laboratório
-        patterns = [
-            os.path.join(forms_dir, '*Laboratório*.*'),
-            os.path.join(forms_dir, '*Laboratorio*.*'),
-            os.path.join(forms_dir, '*Análise*.*'),
-            os.path.join(forms_dir, '*Analise*.*')
-        ]
-        for pattern in patterns:
-            form_files.extend(glob.glob(pattern))
-    else:
-        # Procurar por todos os formulários
-        pattern = os.path.join(forms_dir, '*.*')
-        form_files = glob.glob(pattern)
-        # Filtrar apenas arquivos Excel, Word e PDF
-        form_files = [f for f in form_files if f.lower().endswith(('.xlsx', '.xls', '.docx', '.doc', '.pdf'))]
-    
-    # Formatar os resultados para o frontend
-    result = []
-    for file_path in form_files:
-        file_name = os.path.basename(file_path)
-        result.append({
-            'value': file_name,
-            'label': file_name,
-            'path': file_path
-        })
-    
-    return jsonify(result)
-
-
-@templates_bp.route('/importar-formulario-zelopack', methods=['GET', 'POST'])
-@login_required
-def import_zelopack_form():
-    """Importar um formulário da Zelopack como template."""
-    form = ZelopackFormImportForm()
-    
-    # Carregar categorias para o select field
-    form.category_id.choices = [(c.id, c.name) for c in Category.query.all()]
-    form.category_id.choices.insert(0, (0, 'Sem categoria'))
-    
-    # Deixar a lista de formulários em branco inicialmente
-    # Será carregada via JavaScript quando o usuário selecionar um tipo
-    form.zelopack_form.choices = [('', 'Primeiro selecione um tipo de formulário')]
-    
-    if form.validate_on_submit():
-        # Obter o arquivo de formulário selecionado
-        form_file = form.zelopack_form.data
-        forms_dir = current_app.config.get('ATTACHED_ASSETS_FOLDER', 'attached_assets')
-        file_path = os.path.join(forms_dir, form_file)
-        
-        if not os.path.exists(file_path):
-            flash('Arquivo de formulário não encontrado.', 'danger')
-            return redirect(url_for('templates.import_zelopack_form'))
-        
-        # Determinar a extensão e tipo de arquivo
-        _, ext = os.path.splitext(file_path)
-        ext = ext.lower()
-        
-        # Fazer upload e copiar para a área de templates
-        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
-        template_folder = os.path.join(upload_folder, 'templates')
-        os.makedirs(template_folder, exist_ok=True)
-        
-        # Nome do arquivo de destino
-        dest_filename = secure_filename(f"template_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}{ext}")
-        dest_path = os.path.join(template_folder, dest_filename)
-        
-        # Copiar o arquivo para a pasta de uploads
-        import shutil
-        shutil.copy2(file_path, dest_path)
-        
-        # Gerar estrutura JSON simples para o template
-        structure = {
-            "form_type": form.form_type.data,
-            "source_file": form_file,
-            "fields": {}
-        }
-        
-        # Se opção de gerar campos automaticamente estiver marcada
-        if form.auto_generate_fields.data:
-            # Aqui faríamos a análise do arquivo para extrair campos
-            # Por enquanto, vamos adicionar alguns campos padrão
-            if ext in ['.xlsx', '.xls']:
-                structure["fields"] = {
-                    "data": {"type": "date", "label": "Data", "required": True},
-                    "responsavel": {"type": "text", "label": "Responsável", "required": True},
-                    "observacoes": {"type": "textarea", "label": "Observações", "required": False}
-                }
-            elif ext in ['.docx', '.doc']:
-                structure["fields"] = {
-                    "data": {"type": "date", "label": "Data", "required": True},
-                    "processo": {"type": "text", "label": "Processo", "required": True},
-                    "responsavel": {"type": "text", "label": "Responsável", "required": True}
-                }
-        
-        # Criar o template no banco de dados
-        template = ReportTemplate(
-            name=form.name.data,
-            description=form.description.data,
-            category_id=form.category_id.data if form.category_id.data != 0 else None,
-            template_file=dest_filename,
-            file_path=dest_path,
-            structure=json.dumps(structure),
-            created_by=current_user.id,
-            version=form.version.data,
-            is_active=form.is_active.data
-        )
-        
-        db.session.add(template)
-        db.session.commit()
-        
-        flash(f'Formulário "{form_file}" importado com sucesso como template!', 'success')
-        return redirect(url_for('templates.index'))
-    
-    return render_template(
-        'templates/import_zelopack_form.html',
-        title='Importar Formulário Zelopack',
-        form=form
-    )
-
-
-def generate_pdf_report(report_id):
-    """Função para gerar um PDF para um laudo a partir do template."""
-    try:
-        report = Report.query.get(report_id)
-        if not report:
-            return None
-        
-        # Verificar se o relatório tem um template associado
-        template = None
-        if report.template_id:
-            template = ReportTemplate.query.get(report.template_id)
-        
-        # Definir caminho para salvar o PDF
-        upload_folder = current_app.config['UPLOAD_FOLDER']
-        report_folder = os.path.join(upload_folder, f"report_{report.id}")
-        os.makedirs(report_folder, exist_ok=True)
-        
-        pdf_filename = f"laudo_{report.id}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-        pdf_path = os.path.join(report_folder, pdf_filename)
-        
-        # Criar o buffer para o PDF
-        buffer = io.BytesIO()
-        
-        # Criar o documento PDF
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
-        styles = getSampleStyleSheet()
-        elements = []
-        
-        # Título e cabeçalho
-        header_style = ParagraphStyle(
-            'Header',
-            parent=styles['Heading1'],
-            fontSize=16,
-            alignment=1,  # Centralizado
-        )
-        
-        # Adicionar título
-        elements.append(Paragraph(f"LAUDO TÉCNICO #{report.id}", header_style))
-        elements.append(Spacer(1, 12))
-        
-        # Adicionar data e informações básicas
-        elements.append(Paragraph(f"<b>Título:</b> {report.title}", styles["Normal"]))
-        elements.append(Paragraph(f"<b>Data:</b> {report.report_date.strftime('%d/%m/%Y') if report.report_date else 'N/A'}", styles["Normal"]))
-        if report.client:
-            elements.append(Paragraph(f"<b>Cliente:</b> {report.client.name}", styles["Normal"]))
-        elements.append(Spacer(1, 12))
-        
-        # Adicionar descrição
-        if report.description:
-            elements.append(Paragraph("<b>Descrição:</b>", styles["Normal"]))
-            elements.append(Paragraph(report.description, styles["Normal"]))
-            elements.append(Spacer(1, 12))
-        
-        # Adicionar informações da amostra
-        if report.sample:
-            elements.append(Paragraph("<b>Dados da Amostra:</b>", styles["Heading3"]))
-            elements.append(Paragraph(f"<b>Código:</b> {report.sample.code}", styles["Normal"]))
-            elements.append(Paragraph(f"<b>Tipo de Material:</b> {report.sample.material_type or 'N/A'}", styles["Normal"]))
-            elements.append(Paragraph(f"<b>Lote:</b> {report.sample.batch_number or 'N/A'}", styles["Normal"]))
-            elements.append(Spacer(1, 12))
-        
-        # Adicionar resultados das análises
-        elements.append(Paragraph("<b>Resultados da Análise:</b>", styles["Heading3"]))
-        
-        # Criar tabela com os valores de análise
-        data = [
-            ["Parâmetro", "Valor", "Unidade", "Referência"],
-        ]
-        
-        # Adicionar valores principais se disponíveis
-        if report.ph_value is not None:
-            data.append(["pH", f"{report.ph_value:.2f}", "", "3.5 - 4.5"])
-        
-        if report.brix_value is not None:
-            data.append(["Brix", f"{report.brix_value:.1f}", "°Bx", "10.0 - 15.0"])
-        
-        if report.acidity_value is not None:
-            data.append(["Acidez", f"{report.acidity_value:.2f}", "g/100mL", "0.5 - 1.5"])
-        
-        if report.color_value:
-            data.append(["Cor", report.color_value, "", ""])
-        
-        if report.density_value is not None:
-            data.append(["Densidade", f"{report.density_value:.4f}", "g/cm³", ""])
-        
-        # Adicionar métricas adicionais se houver
-        if report.additional_metrics:
-            try:
-                additional = json.loads(report.additional_metrics)
-                for key, value in additional.items():
-                    data.append([key, value, "", ""])
-            except:
-                pass
-                
-        # Criar a tabela
-        if len(data) > 1:  # Verificar se há dados além do cabeçalho
-            table = Table(data, colWidths=[120, 100, 80, 100])
-            table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ]))
-            elements.append(table)
-        else:
-            elements.append(Paragraph("Não há dados de análise disponíveis.", styles["Normal"]))
-            
-        elements.append(Spacer(1, 12))
-        
-        # Adicionar notas e observações
-        elements.append(Paragraph("<b>Observações:</b>", styles["Heading3"]))
-        elements.append(Paragraph("Este laudo foi gerado automaticamente pelo Sistema Zelopack.", styles["Normal"]))
-        
-        if report.approver_user:
-            elements.append(Spacer(1, 36))
-            elements.append(Paragraph(f"_______________________________", styles["Normal"]))
-            elements.append(Paragraph(f"{report.approver_user.name}", styles["Normal"]))
-            elements.append(Paragraph(f"Aprovado em: {report.signature_date.strftime('%d/%m/%Y') if report.signature_date else 'N/A'}", styles["Normal"]))
-        
-        # Construir o PDF
-        doc.build(elements)
-        
-        # Obter o PDF do buffer
-        buffer.seek(0)
-        pdf_content = buffer.getvalue()
-        
-        # Salvar o arquivo físico
-        with open(pdf_path, 'wb') as f:
-            f.write(pdf_content)
-        
-        # Atualizar o relatório com o caminho do PDF
-        report.has_print_version = True
-        report.print_version_path = pdf_path
-        db.session.commit()
-        
-        return pdf_path
-    
-    except Exception as e:
-        print(f"Erro ao gerar PDF: {e}")
-        return None
+    return jsonify(sample_data)
