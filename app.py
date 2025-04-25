@@ -140,7 +140,7 @@ def check_admin_user():
             <li>Último login: {user.last_login}</li>
         </ul>
         {password_hash_info}
-        <p>A senha atual configurada para este usuário é: <strong>Alex</strong></p>
+        <p>Este usuário possui credenciais configuradas e ativas.</p>
         <p><a href="/login-direct">Entrar com este usuário automaticamente</a></p>
         <p><a href="/auth/login">Ir para tela de login manual</a></p>
         """
@@ -164,7 +164,7 @@ def check_admin_user():
             <li>Nome: Administrador</li>
             <li>Função: admin</li>
             <li>Ativo: True</li>
-            <li>Senha: Alex</li>
+            <li>Senha: *****</li>
         </ul>
         <p><a href="/login-direct">Entrar com este usuário automaticamente</a></p>
         <p><a href="/auth/login">Ir para tela de login manual</a></p>
@@ -286,7 +286,7 @@ def login_direct():
             return redirect(url_for('auth.login'))
         else:
             print("Senha redefinida com sucesso!")
-            flash('A senha do usuário admin foi redefinida para "Alex".', 'warning')
+            flash('A senha do usuário admin foi redefinida.', 'warning')
     
     # Registrar tentativa de login
     print(f"Login automático para usuário: {user.username}")
