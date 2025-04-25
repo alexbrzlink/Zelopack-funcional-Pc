@@ -101,7 +101,8 @@
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light"><i class="fas fa-tag"></i></span>
-                                        {{ form.title(class="form-control", placeholder="Ex: Análise de Qualidade - Lote 123") }}
+                                        {{ form.title(class="form-control", placeholder="Ex: Análise de Qualidade - Lote 123", required=true) }}
+                                        <span class="input-group-text bg-danger text-white"><i class="fas fa-asterisk fa-xs"></i></span>
                                     </div>
                                     {% if form.title.errors %}
                                         <div class="invalid-feedback d-block">
@@ -110,7 +111,7 @@
                                             {% endfor %}
                                         </div>
                                     {% endif %}
-                                    <small class="text-muted">Nome descritivo para identificação do laudo</small>
+                                    <small class="text-danger fw-bold">O título é obrigatório para salvar o laudo</small>
                                 </div>
                                 <div class="col-md-4">
                                     <label for="{{ form.report_date.id }}" class="form-label">
@@ -221,7 +222,7 @@
                                         {% endfor %}
                                     </div>
                                 {% endif %}
-                                <small class="text-muted">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX. Tamanho máximo: 16MB</small>
+                                <small class="text-muted">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX. Tamanho máximo: 16MB. <span class="text-info">O arquivo não é obrigatório, mas o título sim.</span></small>
                             </div>
                         </div>
                     </div>

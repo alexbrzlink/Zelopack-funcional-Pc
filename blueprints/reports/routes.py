@@ -310,6 +310,11 @@ def upload():
         print("Formulário validado com sucesso!")
         current_app.logger.info("Formulário validado com sucesso!")
         
+        # Validação adicional para garantir que o título seja preenchido
+        if not form.title.data or form.title.data.strip() == "":
+            flash('Erro: O título do laudo é obrigatório!', 'danger')
+            return render_template('reports/upload.html', form=form, title="Upload de Laudo")
+            
         file = form.file.data
         
         # Se não tiver arquivo, criar um laudo sem arquivo
