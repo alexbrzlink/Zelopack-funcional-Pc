@@ -16,7 +16,6 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
     
     {% block extra_css %}{% endblock %}
@@ -69,12 +68,11 @@
                 
                 <!-- Menu de usuário e tema -->
                 <ul class="navbar-nav ms-auto">
-                    <!-- Alternador de tema -->
+                    <!-- Botão de configurações -->
                     <li class="nav-item">
-                        <button class="nav-link btn theme-toggle" id="theme-toggle">
-                            <i class="fas fa-sun me-1" id="theme-icon"></i>
-                            <span id="theme-text">Tema Claro</span>
-                        </button>
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-cog me-1"></i> Configurações
+                        </a>
                     </li>
                     
                     {% if current_user.is_authenticated %}
@@ -193,7 +191,6 @@
     
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/theme_manager.js') }}"></script>
     <script src="{{ url_for('static', filename='js/skeleton-loader.js') }}"></script>
     
     {% block scripts %}{% endblock %}
