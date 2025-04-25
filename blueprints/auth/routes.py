@@ -33,8 +33,8 @@ def login():
         admin_user.set_password('Alex')
         db.session.add(admin_user)
         db.session.commit()
-        print(f"ATENÇÃO: Usuário de teste criado! Login: admin / Senha: Alex")
-        flash('Usuário de teste criado! Login: admin / Senha: Alex', 'info')
+        print(f"ATENÇÃO: Usuário de teste criado! Login: admin")
+        flash('Usuário de teste criado com login "admin". Utilize suas credenciais para acesso.', 'info')
     
     # Verificar se o usuário admin existe e está com senha correta
     admin = User.query.filter_by(username='admin').first()
@@ -52,7 +52,7 @@ def login():
             print("ERRO: A senha do admin não está correta. Redefinindo...")
             admin.set_password('Alex')
             db.session.commit()
-            flash('A senha do usuário admin foi redefinida para "Alex".', 'warning')
+            flash('A senha do usuário admin foi redefinida.', 'warning')
     
     form = LoginForm()
     if form.validate_on_submit():
@@ -83,11 +83,8 @@ def login():
             
         if not user.check_password(password):
             print(f"Erro de login: Senha incorreta para o usuário '{username}'")
-            # Caso adicional para admin
-            if username.lower() == 'admin':
-                flash(f"Senha incorreta para o usuário admin. A senha correta é 'Alex'.", 'danger')
-            else:
-                flash(f"Senha incorreta para o usuário '{username}'. Por favor, tente novamente.", 'danger')
+            # Mensagem genérica que não revela informações sobre a senha
+            flash("Credenciais inválidas. Por favor, verifique seu usuário e senha.", 'danger')
             return redirect(url_for('auth.login'))
         
         if not user.is_active:
@@ -236,7 +233,7 @@ def change_password():
     form = ChangePasswordForm()
     if form.validate_on_submit():
         if not current_user.check_password(form.current_password.data):
-            flash('Senha atual incorreta.', 'danger')
+            flash('Não foi possível alterar a senha. Por favor, verifique suas credenciais.', 'danger')
             return redirect(url_for('auth.change_password'))
         
         current_user.set_password(form.password.data)

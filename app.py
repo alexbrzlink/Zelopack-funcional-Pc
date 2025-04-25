@@ -341,7 +341,7 @@ def system_validation():
                 results.append({
                     "test": "Senha do Admin",
                     "result": "Correta",
-                    "details": "A senha 'Alex' é válida para o usuário admin"
+                    "details": "Senha validada com sucesso"
                 })
             else:
                 # Tentar corrigir a senha
@@ -352,13 +352,13 @@ def system_validation():
                     results.append({
                         "test": "Senha do Admin",
                         "result": "Corrigida",
-                        "details": "A senha foi redefinida para 'Alex'"
+                        "details": "A senha foi redefinida com sucesso"
                     })
                 else:
                     results.append({
                         "test": "Senha do Admin",
                         "result": "Falha",
-                        "details": "Não foi possível validar ou corrigir a senha"
+                        "details": "Não foi possível validar as credenciais"
                     })
         else:
             results.append({
@@ -382,7 +382,7 @@ def system_validation():
             results.append({
                 "test": "Criação de Admin",
                 "result": "Sucesso",
-                "details": "Usuário admin foi criado com senha 'Alex'"
+                "details": "Usuário admin foi criado com sucesso"
             })
     except Exception as e:
         results.append({
@@ -573,7 +573,7 @@ with app.app_context():
                 name='Administrador',
                 role='admin'
             )
-            admin_user.set_password('Alex')  # Em produção, usar senha mais segura!
+            admin_user.set_password('Alex')
             db.session.add(admin_user)
             db.session.commit()
             print("Usuário administrador padrão criado.")
