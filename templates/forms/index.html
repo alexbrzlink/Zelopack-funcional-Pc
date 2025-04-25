@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="mb-3">Formulários Zelopack</h1>
+            <p class="lead text-muted">
+                Explore os formulários disponíveis organizados por categorias.
+            </p>
+        </div>
+        <div class="col-md-4">
+            <div class="input-group mb-3 mt-2">
+                <input type="text" id="search-input" class="form-control" placeholder="Pesquisar formulários..." aria-label="Pesquisar formulários">
+                <button class="btn btn-outline-secondary" type="button" id="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="search-results" class="mb-4" style="display: none;">
+        <h3>Resultados da Pesquisa</h3>
+        <div class="list-group search-results-list">
+            <!-- Os resultados da pesquisa serão exibidos aqui -->
+        </div>
+        <button id="clear-search" class="btn btn-secondary mt-3">Limpar Pesquisa</button>
+    </div>
+
+    <div id="categories-section">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for category in categories %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ category }}</h5>
+                        <p class="card-text">Formulários da categoria {{ category }}</p>
+                        <a href="{{ url_for('forms.category', category=category) }}" class="btn btn-primary">Ver Formulários</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const searchResults = document.getElementById('search-results');
+        const searchResultsList = document.querySelector('.search-results-list');
+        const categoriesSection = document.getElementById('categories-section');
+        const clearSearchButton = document.getElementById('clear-search');
+
+        // Função para pesquisar formulários
+        function searchForms() {
+            const query = searchInput.value.trim();
+            
+            if (query.length < 3) {
+                alert('Por favor, digite pelo menos 3 caracteres para pesquisar.');
+                return;
+            }
+            
+            // Fazer requisição AJAX para pesquisar
+            fetch(`/forms/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    searchResultsList.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        searchResultsList.innerHTML = '<div class="alert alert-info">Nenhum formulário encontrado para a pesquisa.</div>';
+                    } else {
+                        data.forEach(form => {
+                            const item = document.createElement('a');
+                            item.className = 'list-group-item list-group-item-action';
+                            item.href = `/forms/view/${encodeURIComponent(form.path)}`;
+                            item.innerHTML = `
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">
+                                        <i class="fas ${form.icon} me-2"></i> ${form.name}
+                                    </h5>
+                                    <small>${form.category}</small>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="/forms/fill/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i> Preencher
+                                    </a>
+                                    <a href="/forms/download/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i> Baixar
+                                    </a>
+                                </div>
+                            `;
+                            searchResultsList.appendChild(item);
+                        });
+                    }
+                    
+                    // Mostrar resultados e ocultar categorias
+                    searchResults.style.display = 'block';
+                    categoriesSection.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Erro ao pesquisar formulários:', error);
+                    searchResultsList.innerHTML = '<div class="alert alert-danger">Erro ao realizar a pesquisa. Tente novamente.</div>';
+                    searchResults.style.display = 'block';
+                });
+        }
+
+        // Função para limpar pesquisa
+        function clearSearch() {
+            searchInput.value = '';
+            searchResults.style.display = 'none';
+            categoriesSection.style.display = 'block';
+        }
+
+        // Eventos
+        searchButton.addEventListener('click', searchForms);
+        clearSearchButton.addEventListener('click', clearSearch);
+        
+        // Pesquisar ao pressionar Enter
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchForms();
+            }
+        });
+    });
+</script>
+{% endblock %}

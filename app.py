@@ -509,12 +509,14 @@ from blueprints.dashboard import dashboard_bp
 from blueprints.auth import auth_bp
 from blueprints.templates import templates_bp
 from blueprints.documents import documents_bp
+from blueprints.forms import forms_bp
 
 app.register_blueprint(reports_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(templates_bp, url_prefix='/templates')
 app.register_blueprint(documents_bp, url_prefix='/documents')
+app.register_blueprint(forms_bp, url_prefix='/forms')
 
 # Função para atualizar o banco de dados de forma incremental
 def setup_database():
