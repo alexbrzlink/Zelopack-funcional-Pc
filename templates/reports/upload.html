@@ -62,7 +62,12 @@
                         </div>
                         <div class="col-md-6">
                             <label for="{{ form.supplier.id }}" class="form-label">Fornecedor</label>
-                            {{ form.supplier(class="form-select") }}
+                            <div class="input-group">
+                                {{ form.supplier(class="form-select") }}
+                                <a href="{{ url_for('reports.suppliers') }}" class="btn btn-outline-primary" title="Gerenciar Fornecedores">
+                                    <i class="fas fa-building"></i>
+                                </a>
+                            </div>
                             {% if form.supplier.errors %}
                                 <div class="invalid-feedback d-block">
                                     {% for error in form.supplier.errors %}
@@ -70,6 +75,7 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
+                            <small class="text-muted">Clique no ícone para gerenciar a lista de fornecedores</small>
                         </div>
                     </div>
                     
@@ -98,6 +104,109 @@
                             {% endif %}
                         </div>
                         <small class="text-muted">Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX. Tamanho máximo: 16MB</small>
+                    </div>
+                    
+                    <!-- Seção de análises do laudo -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-flask"></i> Análises do Laudo
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="{{ form.ph.id }}" class="form-label">pH</label>
+                                    {{ form.ph(class="form-control", placeholder="Ex: 3.5") }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.brix.id }}" class="form-label">Brix (°Bx)</label>
+                                    {{ form.brix(class="form-control", placeholder="Ex: 12.5") }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.acidity.id }}" class="form-label">Acidez (g/100ml)</label>
+                                    {{ form.acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.manufacturing_date.id }}" class="form-label">Data de Fabricação</label>
+                                    {{ form.manufacturing_date(class="form-control", type="date") }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.expiration_date.id }}" class="form-label">Data de Validade</label>
+                                    {{ form.expiration_date(class="form-control", type="date") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de análises realizadas em laboratório -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-microscope"></i> Análises Realizadas em Laboratório
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="{{ form.lab_ph.id }}" class="form-label">pH - Laboratório</label>
+                                    {{ form.lab_ph(class="form-control", placeholder="Ex: 3.5") }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.lab_brix.id }}" class="form-label">Brix (°Bx) - Laboratório</label>
+                                    {{ form.lab_brix(class="form-control", placeholder="Ex: 12.5") }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.lab_acidity.id }}" class="form-label">Acidez (g/100ml) - Laboratório</label>
+                                    {{ form.lab_acidity(class="form-control", placeholder="Ex: 0.5") }}
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.physicochemical_validation.id }}" class="form-label">Validação Físico-Química</label>
+                                    {{ form.physicochemical_validation(class="form-select") }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.report_time.id }}" class="form-label">Hora do Laudo</label>
+                                    {{ form.report_time(class="form-control", type="time") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Informações adicionais -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle"></i> Informações Adicionais
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        {{ form.report_archived(class="form-check-input") }}
+                                        <label class="form-check-label" for="{{ form.report_archived.id }}">
+                                            Laudo Arquivado
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        {{ form.microbiology_collected(class="form-check-input") }}
+                                        <label class="form-check-label" for="{{ form.microbiology_collected.id }}">
+                                            Microbiologia Coletada
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        {{ form.has_report_document(class="form-check-input") }}
+                                        <label class="form-check-label" for="{{ form.has_report_document.id }}">
+                                            Possui Documento do Laudo
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">

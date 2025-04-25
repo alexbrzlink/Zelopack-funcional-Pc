@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
-from wtforms import StringField, TextAreaField, SelectField, DateField, TimeField, SubmitField, DecimalField
+from wtforms import StringField, TextAreaField, SelectField, DateField, TimeField, SubmitField, DecimalField, BooleanField
 from wtforms.validators import DataRequired, Optional, NumberRange
 
 class ReportUploadForm(FlaskForm):
@@ -64,6 +64,24 @@ class ReportUploadForm(FlaskForm):
     manufacturing_date = DateField('Data de Fabricação', validators=[Optional()], format='%Y-%m-%d')
     expiration_date = DateField('Data de Validade', validators=[Optional()], format='%Y-%m-%d')
     report_time = TimeField('Hora do Laudo', validators=[Optional()], format='%H:%M')
+    
+    # Análises realizadas em laboratório
+    lab_brix = DecimalField('Brix (°Bx) - Laboratório', validators=[Optional(), NumberRange(min=0, max=100)])
+    lab_ph = DecimalField('pH - Laboratório', validators=[Optional(), NumberRange(min=0, max=14)])
+    lab_acidity = DecimalField('Acidez (g/100ml) - Laboratório', validators=[Optional(), NumberRange(min=0)])
+    
+    # Validação físico-química
+    physicochemical_validation = SelectField('Validação Físico-Química', 
+                                         choices=[('não verificado', 'Não Verificado'),
+                                                  ('ok', 'OK'),
+                                                  ('não padrão', 'Não Padrão')],
+                                         default='não verificado',
+                                         validators=[Optional()])
+    
+    # Campos adicionais de rastreabilidade
+    report_archived = BooleanField('Laudo Arquivado', default=False)
+    microbiology_collected = BooleanField('Microbiologia Coletada', default=False)
+    has_report_document = BooleanField('Possui Documento do Laudo', default=False)
     
     # Indicadores técnicos (mantidos para compatibilidade)
     ph_value = DecimalField('Valor de pH (antigo)', validators=[Optional()])
