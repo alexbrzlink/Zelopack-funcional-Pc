@@ -1,5 +1,8 @@
 import os
 import logging
+
+# Configuração do logging
+logger = logging.getLogger(__name__)
 # Define uma senha segura baseada em variável de ambiente ou senha padrão
 DEFAULT_ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or "ChangeThis2024!"
 from datetime import datetime
@@ -529,17 +532,17 @@ from blueprints.documents import documents_bp
 from blueprints.forms import forms_bp
 from blueprints.calculos import calculos_bp
 
-app.register_bluelogger.debug(reports_bp)
-app.register_bluelogger.debug(dashboard_bp)
-app.register_bluelogger.debug(auth_bp)
-app.register_bluelogger.debug(templates_bp, url_prefix='/templates')
-app.register_bluelogger.debug(documents_bp, url_prefix='/documents')
-app.register_bluelogger.debug(forms_bp, url_prefix='/forms')
-app.register_bluelogger.debug(calculos_bp, url_prefix='/calculos')
+app.register_blueprint(reports_bp)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(auth_bp)
+app.register_blueprint(templates_bp)
+app.register_blueprint(documents_bp)
+app.register_blueprint(forms_bp)
+app.register_blueprint(calculos_bp)
 
 # Registrar blueprint do editor universal
 from blueprints.forms.routes_editor import editor_bp
-app.register_bluelogger.debug(editor_bp)
+app.register_blueprint(editor_bp)
 
 # Função para atualizar o banco de dados de forma incremental
 def setup_database():
