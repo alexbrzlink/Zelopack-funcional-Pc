@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<!-- Bootstrap Icons e CSS personalizado para dashboard -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    .nav-dashboard .nav-link.active {
+        background-color: #3498db;
+        color: white !important;
+    }
+    
+    .activity-timeline {
+        position: relative;
+        padding-left: 40px;
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-bottom: 30px;
+    }
+    
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+    
+    .timeline-item:before {
+        content: '';
+        position: absolute;
+        left: -30px;
+        top: 0;
+        height: 100%;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    
+    .timeline-item:last-child:before {
+        height: 15px;
+    }
+    
+    .timeline-point {
+        position: absolute;
+        left: -36px;
+        top: 0;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: #3498db;
+        border: 2px solid white;
+        box-shadow: 0 0 0 1px #3498db;
+    }
+    
+    .timeline-point-success {
+        background-color: #2ecc71;
+        box-shadow: 0 0 0 1px #2ecc71;
+    }
+    
+    .timeline-point-warning {
+        background-color: #f39c12;
+        box-shadow: 0 0 0 1px #f39c12;
+    }
+    
+    .timeline-point-danger {
+        background-color: #e74c3c;
+        box-shadow: 0 0 0 1px #e74c3c;
+    }
+    
+    .timeline-content {
+        padding: 15px;
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    
+    .timeline-content:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .timeline-date {
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+    
+    .timeline-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .timeline-user {
+        font-weight: 500;
+    }
+    
+    .activity-filter {
+        margin-bottom: 30px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+    }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #3498db;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        margin-right: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Menu de navegação do dashboard -->
+<div class="mb-4">
+    <ul class="nav nav-tabs nav-dashboard">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.index') }}">Visão Geral</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.quality_indicators') }}">Qualidade</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.operational_efficiency') }}">Eficiência</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.documents') }}">Documentos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('dashboard.activities') }}">Atividades</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.backup_information') }}">Backups</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Título da página -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Atividades Recentes</h1>
+    <div>
+        <button class="btn btn-sm btn-outline-secondary me-2">
+            <i class="fas fa-filter"></i> Filtrar
+        </button>
+        <button class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-download"></i> Exportar
+        </button>
+    </div>
+</div>
+
+<!-- Filtros de atividades -->
+<div class="activity-filter">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar atividades..." id="activity-search">
+                <button class="btn btn-primary" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex justify-content-md-end mt-3 mt-md-0">
+                <select class="form-select me-2">
+                    <option selected>Todas as ações</option>
+                    <option>Aprovação</option>
+                    <option>Rejeição</option>
+                    <option>Atualização</option>
+                </select>
+                <select class="form-select">
+                    <option selected>Todos os usuários</option>
+                    <option>Analistas</option>
+                    <option>Gestores</option>
+                    <option>Administradores</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Timeline de atividades -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Histórico de Atividades</h6>
+            </div>
+            <div class="card-body">
+                <div class="activity-timeline">
+                    {% for activity in activities %}
+                        <div class="timeline-item">
+                            {% if activity.action == 'aprovou' %}
+                                <div class="timeline-point timeline-point-success"></div>
+                            {% elif activity.action == 'rejeitou' %}
+                                <div class="timeline-point timeline-point-danger"></div>
+                            {% else %}
+                                <div class="timeline-point"></div>
+                            {% endif %}
+                            
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar">{{ activity.user[0] }}</div>
+                                        <span class="timeline-user">{{ activity.user }}</span>
+                                    </div>
+                                    <span class="timeline-date">{{ activity.timestamp }}</span>
+                                </div>
+                                <p class="timeline-title">
+                                    {% if activity.action == 'aprovou' %}
+                                        <span class="text-success">{{ activity.action }}</span>
+                                    {% elif activity.action == 'rejeitou' %}
+                                        <span class="text-danger">{{ activity.action }}</span>
+                                    {% else %}
+                                        <span class="text-primary">{{ activity.action }}</span>
+                                    {% endif %}
+                                    o laudo "<a href="{{ url_for('reports.view', id=activity.report_id) }}">{{ activity.report_title }}</a>"
+                                </p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Nenhuma atividade recente registrada</h5>
+                            <p>As atividades dos usuários serão exibidas aqui quando disponíveis</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estatísticas de atividades -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Atividades por Usuário</h6>
+            </div>
+            <div class="card-body">
+                {% set user_stats = {} %}
+                {% for activity in activities %}
+                    {% if activity.user in user_stats %}
+                        {% set _ = user_stats.update({activity.user: user_stats[activity.user] + 1}) %}
+                    {% else %}
+                        {% set _ = user_stats.update({activity.user: 1}) %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% if user_stats %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Usuário</th>
+                                    <th>Atividades</th>
+                                    <th>Porcentagem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user, count in user_stats.items() %}
+                                    <tr>
+                                        <td>{{ user }}</td>
+                                        <td>{{ count }}</td>
+                                        <td>
+                                            {% set percentage = (count / activities|length * 100)|round %}
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                                    <div class="progress-bar" role="progressbar" style="width: {{ percentage }}%" 
+                                                         aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span>{{ percentage }}%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted my-4">Dados insuficientes para gerar estatísticas</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Tipos de Ação</h6>
+            </div>
+            <div class="card-body">
+                {% set action_stats = {} %}
+                {% for activity in activities %}
+                    {% if activity.action in action_stats %}
+                        {% set _ = action_stats.update({activity.action: action_stats[activity.action] + 1}) %}
+                    {% else %}
+                        {% set _ = action_stats.update({activity.action: 1}) %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% if action_stats %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Tipo de Ação</th>
+                                    <th>Quantidade</th>
+                                    <th>Porcentagem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for action, count in action_stats.items() %}
+                                    <tr>
+                                        <td>
+                                            {% if action == 'aprovou' %}
+                                                <span class="text-success">{{ action|capitalize }}</span>
+                                            {% elif action == 'rejeitou' %}
+                                                <span class="text-danger">{{ action|capitalize }}</span>
+                                            {% else %}
+                                                <span class="text-primary">{{ action|capitalize }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ count }}</td>
+                                        <td>
+                                            {% set percentage = (count / activities|length * 100)|round %}
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                                    <div class="progress-bar 
+                                                        {% if action == 'aprovou' %}bg-success
+                                                        {% elif action == 'rejeitou' %}bg-danger
+                                                        {% else %}bg-primary{% endif %}" 
+                                                         role="progressbar" style="width: {{ percentage }}%" 
+                                                         aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <span>{{ percentage }}%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-center text-muted my-4">Dados insuficientes para gerar estatísticas</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Scripts adicionais se necessário -->
+{% endblock %}

@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<!-- Bootstrap Icons e CSS personalizado para dashboard -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    .nav-dashboard .nav-link.active {
+        background-color: #3498db;
+        color: white !important;
+    }
+    
+    .document-card {
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+    
+    .document-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .status-badge {
+        padding: 0.35em 0.65em;
+        border-radius: 0.25rem;
+        font-size: 0.75em;
+    }
+    .status-pendente { background-color: #f39c12; color: white; }
+    .status-aprovado { background-color: #2ecc71; color: white; }
+    .status-rejeitado { background-color: #e74c3c; color: white; }
+    
+    .priority-badge {
+        padding: 0.35em 0.65em;
+        border-radius: 0.25rem;
+        font-size: 0.75em;
+    }
+    .priority-baixa { background-color: #3498db; color: white; }
+    .priority-normal { background-color: #2ecc71; color: white; }
+    .priority-alta { background-color: #f39c12; color: white; }
+    .priority-urgente { background-color: #e74c3c; color: white; }
+    
+    .document-header {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 0.5rem 0.5rem 0 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .document-footer {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 0 0 0.5rem 0.5rem;
+        border-top: 1px solid #e9ecef;
+    }
+    
+    .document-content {
+        padding: 15px;
+    }
+    
+    .document-meta {
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+    
+    .filter-box {
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Menu de navegação do dashboard -->
+<div class="mb-4">
+    <ul class="nav nav-tabs nav-dashboard">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.index') }}">Visão Geral</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.quality_indicators') }}">Qualidade</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.operational_efficiency') }}">Eficiência</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('dashboard.documents') }}">Documentos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.activities') }}">Atividades</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.backup_information') }}">Backups</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Título da página -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Documentos e Laudos</h1>
+    <a href="{{ url_for('reports.upload') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-upload fa-sm text-white-50"></i> Novo Laudo
+    </a>
+</div>
+
+<!-- Filtros de documentos -->
+<div class="filter-box mb-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Buscar documentos..." id="document-search">
+                <button class="btn btn-primary" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex justify-content-end">
+                <div class="dropdown me-2">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Filtrar por
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                        <li><a class="dropdown-item" href="#">Status</a></li>
+                        <li><a class="dropdown-item" href="#">Tipo de Material</a></li>
+                        <li><a class="dropdown-item" href="#">Prioridade</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Limpar Filtros</a></li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Ordenar
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                        <li><a class="dropdown-item" href="#">Mais Recentes</a></li>
+                        <li><a class="dropdown-item" href="#">Mais Antigos</a></li>
+                        <li><a class="dropdown-item" href="#">Prioridade</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Abas de documentos -->
+<ul class="nav nav-pills mb-4">
+    <li class="nav-item">
+        <a class="nav-link active" href="#recent-tab" data-bs-toggle="tab">Documentos Recentes</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#pending-tab" data-bs-toggle="tab">Pendentes para Revisão</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <!-- Aba de documentos recentes -->
+    <div class="tab-pane fade show active" id="recent-tab">
+        <div class="row">
+            {% for report in recent_reports %}
+                <div class="col-lg-6">
+                    <div class="card document-card shadow-sm">
+                        <div class="document-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ report.title }}</h5>
+                            {% if report.status %}
+                                <span class="status-badge status-{{ report.status }}">{{ report.status|capitalize }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="document-content">
+                            <div class="document-meta mb-3">
+                                <div><strong>Data:</strong> {{ report.report_date.strftime('%d/%m/%Y') if report.report_date else 'Não definida' }}</div>
+                                <div><strong>Upload:</strong> {{ report.upload_date.strftime('%d/%m/%Y %H:%M') if report.upload_date else 'Desconhecido' }}</div>
+                                {% if report.assigned_user %}
+                                    <div><strong>Responsável:</strong> {{ report.assigned_user.name }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {% if report.description %}
+                                    <p class="mb-2">{{ report.description|truncate(100) }}</p>
+                                {% else %}
+                                    <p class="text-muted mb-2 fst-italic">Sem descrição disponível</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                {% if report.raw_material_type %}
+                                    <span class="badge bg-secondary me-1">{{ report.raw_material_type|capitalize }}</span>
+                                {% endif %}
+                                {% if report.batch_number %}
+                                    <span class="badge bg-info me-1">Lote: {{ report.batch_number }}</span>
+                                {% endif %}
+                                {% if report.priority %}
+                                    <span class="priority-badge priority-{{ report.priority }}">{{ report.priority|capitalize }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="document-footer d-flex justify-content-between">
+                            <a href="{{ url_for('reports.download', id=report.id) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            <a href="{{ url_for('reports.view', id=report.id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> Visualizar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i> Nenhum documento recente encontrado
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Aba de documentos pendentes -->
+    <div class="tab-pane fade" id="pending-tab">
+        <div class="row">
+            {% for report in pending_reports %}
+                <div class="col-lg-6">
+                    <div class="card document-card shadow-sm">
+                        <div class="document-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ report.title }}</h5>
+                            <span class="badge bg-warning text-white">{{ report.stage|capitalize }}</span>
+                        </div>
+                        <div class="document-content">
+                            <div class="document-meta mb-3">
+                                <div><strong>Data:</strong> {{ report.report_date.strftime('%d/%m/%Y') if report.report_date else 'Não definida' }}</div>
+                                {% if report.due_date %}
+                                    <div><strong>Prazo:</strong> {{ report.due_date.strftime('%d/%m/%Y') }}</div>
+                                {% endif %}
+                                {% if report.assigned_user %}
+                                    <div><strong>Responsável:</strong> {{ report.assigned_user.name }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                {% if report.description %}
+                                    <p class="mb-2">{{ report.description|truncate(100) }}</p>
+                                {% else %}
+                                    <p class="text-muted mb-2 fst-italic">Sem descrição disponível</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                {% if report.raw_material_type %}
+                                    <span class="badge bg-secondary me-1">{{ report.raw_material_type|capitalize }}</span>
+                                {% endif %}
+                                {% if report.priority %}
+                                    <span class="priority-badge priority-{{ report.priority }}">{{ report.priority|capitalize }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="document-footer d-flex justify-content-between">
+                            <a href="{{ url_for('reports.download', id=report.id) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            <a href="{{ url_for('reports.view', id=report.id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> Visualizar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i> Nenhum documento pendente para revisão
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Paginação -->
+<div class="d-flex justify-content-center mt-4">
+    <nav aria-label="Navegação de página">
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Próximo</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Ativação das abas via JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        // Selecionar todas as abas
+        const tabLinks = document.querySelectorAll('.nav-pills .nav-link');
+        const tabContents = document.querySelectorAll('.tab-pane');
+        
+        // Adicionar evento de clique a cada aba
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remover classe 'active' de todas as abas
+                tabLinks.forEach(tab => tab.classList.remove('active'));
+                
+                // Adicionar classe 'active' à aba clicada
+                this.classList.add('active');
+                
+                // Obter o ID do painel associado
+                const tabId = this.getAttribute('href').substring(1);
+                
+                // Ocultar todos os painéis
+                tabContents.forEach(pane => {
+                    pane.classList.remove('show', 'active');
+                });
+                
+                // Mostrar o painel associado à aba clicada
+                const tabPane = document.getElementById(tabId);
+                if (tabPane) {
+                    tabPane.classList.add('show', 'active');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<!-- Bootstrap Icons e CSS personalizado para dashboard -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    .dashboard-card {
+        border-left: 4px solid;
+        border-radius: 0.25rem;
+    }
+    .border-left-primary { border-left-color: #3498db !important; }
+    .border-left-success { border-left-color: #2ecc71 !important; }
+    .border-left-info { border-left-color: #3498db !important; }
+    .border-left-warning { border-left-color: #f39c12 !important; }
+    .border-left-danger { border-left-color: #e74c3c !important; }
+    
+    .quality-alert {
+        padding: 10px;
+        border-left: 4px solid #e74c3c;
+        background-color: rgba(231, 76, 60, 0.1);
+        margin-bottom: 10px;
+        border-radius: 0.25rem;
+    }
+    
+    .chart-container {
+        position: relative; 
+        height: 300px;
+        margin-bottom: 15px;
+    }
+    
+    .status-badge {
+        padding: 0.35em 0.65em;
+        border-radius: 0.25rem;
+        font-size: 0.75em;
+    }
+    
+    .nav-dashboard .nav-link.active {
+        background-color: #3498db;
+        color: white !important;
+    }
+    
+    .quality-indicator-card {
+        text-align: center;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        transition: all 0.3s;
+    }
+    
+    .quality-indicator-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    .indicator-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    
+    .indicator-title {
+        font-size: 1rem;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+    
+    .historical-data-table th {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Menu de navegação do dashboard -->
+<div class="mb-4">
+    <ul class="nav nav-tabs nav-dashboard">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.index') }}">Visão Geral</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('dashboard.quality_indicators') }}">Qualidade</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.operational_efficiency') }}">Eficiência</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.documents') }}">Documentos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.activities') }}">Atividades</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.backup_information') }}">Backups</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Título da página -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Indicadores de Qualidade</h1>
+    <a href="{{ url_for('reports.upload') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-upload fa-sm text-white-50"></i> Novo Laudo
+    </a>
+</div>
+
+<!-- Alertas de qualidade -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Alertas de Qualidade</h6>
+            </div>
+            <div class="card-body">
+                {% set has_alerts = quality_data.alerts.ph|length > 0 or quality_data.alerts.brix|length > 0 or quality_data.alerts.acidity|length > 0 %}
+                
+                {% if has_alerts %}
+                    {% for alert in quality_data.alerts.ph %}
+                        <div class="quality-alert mb-2">
+                            <i class="fas fa-exclamation-triangle text-danger mr-2"></i> {{ alert }}
+                        </div>
+                    {% endfor %}
+                    
+                    {% for alert in quality_data.alerts.brix %}
+                        <div class="quality-alert mb-2">
+                            <i class="fas fa-exclamation-triangle text-danger mr-2"></i> {{ alert }}
+                        </div>
+                    {% endfor %}
+                    
+                    {% for alert in quality_data.alerts.acidity %}
+                        <div class="quality-alert mb-2">
+                            <i class="fas fa-exclamation-triangle text-danger mr-2"></i> {{ alert }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                        <h5 class="text-success">Todos os parâmetros estão dentro das especificações</h5>
+                        <p class="text-muted">Não há alertas de qualidade ativos no momento</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Indicadores de Qualidade -->
+<div class="row mb-4">
+    <!-- Cartão pH -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="quality-indicator-card bg-white">
+            <div class="indicator-title">pH Médio</div>
+            {% if quality_data.ph and quality_data.ph|length > 0 %}
+                <div class="indicator-value" id="ph-value">{{ "%.2f"|format(quality_data.ph[-1]) }}</div>
+                <div class="text-muted small">Faixa Ideal: 3.5 - 4.5</div>
+                {% if quality_data.alerts.ph|length > 0 %}
+                    <div class="mt-2 text-danger"><i class="fas fa-arrow-down"></i> Fora da especificação</div>
+                {% else %}
+                    <div class="mt-2 text-success"><i class="fas fa-check"></i> Dentro da especificação</div>
+                {% endif %}
+            {% else %}
+                <div class="indicator-value">--</div>
+                <div class="text-muted small">Sem dados disponíveis</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Cartão Brix -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="quality-indicator-card bg-white">
+            <div class="indicator-title">Brix Médio</div>
+            {% if quality_data.brix and quality_data.brix|length > 0 %}
+                <div class="indicator-value" id="brix-value">{{ "%.1f"|format(quality_data.brix[-1]) }}</div>
+                <div class="text-muted small">Faixa Ideal: 10.0 - 15.0</div>
+                {% if quality_data.alerts.brix|length > 0 %}
+                    <div class="mt-2 text-danger"><i class="fas fa-arrow-up"></i> Fora da especificação</div>
+                {% else %}
+                    <div class="mt-2 text-success"><i class="fas fa-check"></i> Dentro da especificação</div>
+                {% endif %}
+            {% else %}
+                <div class="indicator-value">--</div>
+                <div class="text-muted small">Sem dados disponíveis</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Cartão Acidez -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="quality-indicator-card bg-white">
+            <div class="indicator-title">Acidez Média</div>
+            {% if quality_data.acidity and quality_data.acidity|length > 0 %}
+                <div class="indicator-value" id="acidez-value">{{ "%.2f"|format(quality_data.acidity[-1]) }}</div>
+                <div class="text-muted small">Faixa Ideal: 0.5 - 1.5</div>
+                {% if quality_data.alerts.acidity|length > 0 %}
+                    <div class="mt-2 text-danger"><i class="fas fa-arrow-down"></i> Fora da especificação</div>
+                {% else %}
+                    <div class="mt-2 text-success"><i class="fas fa-check"></i> Dentro da especificação</div>
+                {% endif %}
+            {% else %}
+                <div class="indicator-value">--</div>
+                <div class="text-muted small">Sem dados disponíveis</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Cartão Tendência -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="quality-indicator-card bg-white">
+            <div class="indicator-title">Tendência Geral</div>
+            {% if quality_data.ph and quality_data.ph|length > 1 %}
+                {% set trend = quality_data.ph[-1] > quality_data.ph[-2] %}
+                {% if trend %}
+                    <div class="indicator-value text-success"><i class="fas fa-arrow-up fa-lg"></i></div>
+                    <div class="text-success">Em Melhoria</div>
+                {% else %}
+                    <div class="indicator-value text-warning"><i class="fas fa-arrow-down fa-lg"></i></div>
+                    <div class="text-warning">Em Queda</div>
+                {% endif %}
+            {% else %}
+                <div class="indicator-value"><i class="fas fa-minus fa-lg text-muted"></i></div>
+                <div class="text-muted small">Dados insuficientes</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico de indicadores ao longo do tempo -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Tendência de Qualidade (Últimos 6 Meses)</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ quality_chart }}" class="img-fluid" alt="Gráfico de indicadores de qualidade">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dados históricos em tabela -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Histórico de Indicadores de Qualidade</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover historical-data-table" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Mês</th>
+                                <th>pH Médio</th>
+                                <th>Brix Médio</th>
+                                <th>Acidez Média</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in range(quality_data.months|length) %}
+                                {% set month = quality_data.months[i] if i < quality_data.months|length else "" %}
+                                {% set ph = quality_data.ph[i] if i < quality_data.ph|length else 0 %}
+                                {% set brix = quality_data.brix[i] if i < quality_data.brix|length else 0 %}
+                                {% set acidity = quality_data.acidity[i] if i < quality_data.acidity|length else 0 %}
+                                
+                                {% set status = "success" %}
+                                {% if ph < 3.5 or ph > 4.5 or brix < 10.0 or brix > 15.0 or acidity < 0.5 or acidity > 1.5 %}
+                                    {% set status = "danger" %}
+                                {% endif %}
+                                
+                                <tr>
+                                    <td>{{ month }}</td>
+                                    <td>{{ "%.2f"|format(ph) }}</td>
+                                    <td>{{ "%.1f"|format(brix) }}</td>
+                                    <td>{{ "%.2f"|format(acidity) }}</td>
+                                    <td>
+                                        {% if status == "success" %}
+                                            <span class="badge bg-success text-white">Dentro das especificações</span>
+                                        {% else %}
+                                            <span class="badge bg-danger text-white">Fora das especificações</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Nenhum dado histórico disponível</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Scripts adicionais se necessário -->
+{% endblock %}

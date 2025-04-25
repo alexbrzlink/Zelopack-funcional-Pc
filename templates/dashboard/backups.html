@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<!-- Bootstrap Icons e CSS personalizado para dashboard -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    .nav-dashboard .nav-link.active {
+        background-color: #3498db;
+        color: white !important;
+    }
+    
+    .backup-info-card {
+        border-radius: 0.5rem;
+        transition: all 0.3s;
+        margin-bottom: 20px;
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .backup-info-value {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 10px 0;
+    }
+    
+    .backup-info-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .backup-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #3498db;
+    }
+    
+    .backup-history-table th {
+        background-color: #f8f9fa;
+    }
+    
+    .backup-status-success {
+        color: #2ecc71;
+    }
+    
+    .backup-status-warning {
+        color: #f39c12;
+    }
+    
+    .backup-status-danger {
+        color: #e74c3c;
+    }
+    
+    .info-card {
+        border-left: 4px solid;
+        padding: 15px;
+        border-radius: 0.25rem;
+        margin-bottom: 20px;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    .info-primary {
+        border-left-color: #3498db;
+    }
+    
+    .info-success {
+        border-left-color: #2ecc71;
+    }
+    
+    .info-warning {
+        border-left-color: #f39c12;
+    }
+    
+    .info-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Menu de navegação do dashboard -->
+<div class="mb-4">
+    <ul class="nav nav-tabs nav-dashboard">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.index') }}">Visão Geral</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.quality_indicators') }}">Qualidade</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.operational_efficiency') }}">Eficiência</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.documents') }}">Documentos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.activities') }}">Atividades</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('dashboard.backup_information') }}">Backups</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Título da página -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Informações de Backup</h1>
+    <form action="{{ url_for('dashboard.manual_backup') }}" method="POST">
+        <button type="submit" class="btn btn-primary shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50 me-2"></i> Iniciar Backup Manual
+        </button>
+    </form>
+</div>
+
+<!-- Cards com informações -->
+<div class="row mb-4">
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="backup-info-card text-center">
+            <div class="backup-icon">
+                <i class="fas fa-history"></i>
+            </div>
+            <div class="backup-info-label">Último Backup</div>
+            <div class="backup-info-value">{{ backup_info.last_backup_date }}</div>
+        </div>
+    </div>
+    
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="backup-info-card text-center">
+            <div class="backup-icon">
+                <i class="fas fa-file-archive"></i>
+            </div>
+            <div class="backup-info-label">Arquivo</div>
+            <div class="backup-info-value">{{ backup_info.last_backup_file }}</div>
+        </div>
+    </div>
+    
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="backup-info-card text-center">
+            <div class="backup-icon">
+                <i class="fas fa-hdd"></i>
+            </div>
+            <div class="backup-info-label">Tamanho do Arquivo</div>
+            <div class="backup-info-value">{{ backup_info.backup_size }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Informações sobre backup -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Política de Backup</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="info-card info-primary">
+                            <div class="info-title">Frequência</div>
+                            <p class="mb-0">Backup automático diário às 02:00</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="info-card info-success">
+                            <div class="info-title">Retenção</div>
+                            <p class="mb-0">Últimos 30 dias (completos)<br>Últimos 12 meses (mensais)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="info-card info-warning">
+                            <div class="info-title">Armazenamento</div>
+                            <p class="mb-0">Servidor local + nuvem (criptografado)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <h6 class="font-weight-bold">O que é salvo no backup?</h6>
+                    <ul>
+                        <li>Banco de dados completo (incluindo dados de usuários e laudos)</li>
+                        <li>Arquivos de laudos e documentos anexos</li>
+                        <li>Configurações do sistema</li>
+                        <li>Logs de atividades e transações</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Histórico de backups -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Histórico de Backups</h6>
+                <button class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-sync-alt me-1"></i> Atualizar
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered backup-history-table" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Data e Hora</th>
+                                <th>Arquivo</th>
+                                <th>Tamanho</th>
+                                <th>Tipo</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ backup_info.last_backup_date }}</td>
+                                <td>{{ backup_info.last_backup_file }}</td>
+                                <td>{{ backup_info.backup_size }}</td>
+                                <td>Completo</td>
+                                <td><span class="backup-status-success"><i class="fas fa-check-circle me-1"></i> Concluído</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary me-1" title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" title="Restaurar">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <!-- Backups fictícios para ilustração -->
+                            <tr>
+                                <td>24/04/2025 09:00</td>
+                                <td>backup_zelopack_db_20240424_0900.sql</td>
+                                <td>41.5 MB</td>
+                                <td>Completo</td>
+                                <td><span class="backup-status-success"><i class="fas fa-check-circle me-1"></i> Concluído</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary me-1" title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" title="Restaurar">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>23/04/2025 09:00</td>
+                                <td>backup_zelopack_db_20240423_0900.sql</td>
+                                <td>40.9 MB</td>
+                                <td>Completo</td>
+                                <td><span class="backup-status-success"><i class="fas fa-check-circle me-1"></i> Concluído</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary me-1" title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" title="Restaurar">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>22/04/2025 09:00</td>
+                                <td>backup_zelopack_db_20240422_0900.sql</td>
+                                <td>40.2 MB</td>
+                                <td>Completo</td>
+                                <td><span class="backup-status-warning"><i class="fas fa-exclamation-circle me-1"></i> Parcial</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary me-1" title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" title="Restaurar">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>21/04/2025 09:00</td>
+                                <td>backup_zelopack_db_20240421_0900.sql</td>
+                                <td>39.8 MB</td>
+                                <td>Completo</td>
+                                <td><span class="backup-status-success"><i class="fas fa-check-circle me-1"></i> Concluído</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary me-1" title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" title="Restaurar">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Instruções para restauração -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Instruções para Restauração</h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning mb-4">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Atenção:</strong> Restaurar um backup irá substituir todos os dados atuais pelo conteúdo do backup selecionado.
+                    Esta operação não pode ser desfeita.
+                </div>
+                
+                <h6 class="font-weight-bold mb-3">Passos para restauração:</h6>
+                <ol>
+                    <li>Selecione o backup que deseja restaurar na tabela acima</li>
+                    <li>Clique no botão de restauração <i class="fas fa-undo text-primary"></i></li>
+                    <li>Confirme a operação na janela de diálogo que aparecerá</li>
+                    <li>Aguarde a conclusão do processo de restauração</li>
+                    <li>Faça login novamente no sistema após a conclusão</li>
+                </ol>
+                
+                <div class="mt-4">
+                    <h6 class="font-weight-bold mb-2">Precisa de ajuda?</h6>
+                    <p>Em caso de dúvidas ou problemas com backups, entre em contato com o suporte técnico:</p>
+                    <ul>
+                        <li>Email: suporte@zelopack.com.br</li>
+                        <li>Telefone: (XX) XXXX-XXXX</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Scripts adicionais se necessário -->
+{% endblock %}
