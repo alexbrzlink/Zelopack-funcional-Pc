@@ -2,6 +2,7 @@ from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
+import json
 
 class Report(db.Model):
     """Modelo para armazenar informações sobre laudos."""
@@ -21,6 +22,19 @@ class Report(db.Model):
     raw_material_type = db.Column(db.String(100), nullable=True)  # Tipo de matéria-prima (laranja, maçã, etc)
     sample_code = db.Column(db.String(50), nullable=True)  # Código de rastreio da amostra
     
+    # Novos campos para os módulos avançados
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=True)
+    sample_id = db.Column(db.Integer, db.ForeignKey('sample.id'), nullable=True)
+    template_id = db.Column(db.Integer, db.ForeignKey('report_template.id'), nullable=True)
+    
+    # Campos para versão do documento
+    version = db.Column(db.Integer, default=1)
+    parent_id = db.Column(db.Integer, db.ForeignKey('report.id'), nullable=True)  # Para controle de versões
+    
+    # Campos para impressão e visualização
+    has_print_version = db.Column(db.Boolean, default=False)
+    print_version_path = db.Column(db.String(500), nullable=True)
+    
     # Campos de datas e prazos
     report_date = db.Column(db.Date, nullable=True)
     upload_date = db.Column(db.DateTime, default=datetime.utcnow)
@@ -35,6 +49,11 @@ class Report(db.Model):
     # Campos para atribuição e responsabilidade
     assigned_to = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     approved_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    
+    # Campos para assinatura digital
+    signature_date = db.Column(db.DateTime, nullable=True)
+    signature_hash = db.Column(db.String(256), nullable=True)
     
     # Indicadores técnicos/padrões de qualidade
     ph_value = db.Column(db.Float, nullable=True)
@@ -43,6 +62,9 @@ class Report(db.Model):
     color_value = db.Column(db.String(50), nullable=True)
     density_value = db.Column(db.Float, nullable=True)
     
+    # Campo para armazenar resultados de cálculos adicionais em formato JSON
+    additional_metrics = db.Column(db.Text, nullable=True)  # JSON com métricas adicionais
+    
     # Análise de tempo e eficiência
     analysis_start_time = db.Column(db.DateTime, nullable=True)
     analysis_end_time = db.Column(db.DateTime, nullable=True)
@@ -50,6 +72,10 @@ class Report(db.Model):
     # Relações com outras tabelas
     assigned_user = db.relationship('User', foreign_keys=[assigned_to], backref='assigned_reports')
     approver_user = db.relationship('User', foreign_keys=[approved_by], backref='approved_reports')
+    creator_user = db.relationship('User', foreign_keys=[created_by], backref='created_reports')
+    client = db.relationship('Client', backref='reports')
+    template = db.relationship('ReportTemplate', backref='reports')
+    parent_report = db.relationship('Report', remote_side=[id], backref='versions')  # Para histórico de versões
     
     def __repr__(self):
         return f"<Report {self.id}: {self.title}>"
@@ -145,6 +171,325 @@ class Supplier(db.Model):
     
     def __repr__(self):
         return f"<Supplier {self.name}>"
+
+
+class ReportTemplate(db.Model):
+    """Modelo para templates de laudos."""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    structure = db.Column(db.Text, nullable=False)  # JSON com a estrutura do template
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    # Relações
+    creator = db.relationship('User', foreign_keys=[created_by], backref='created_templates')
+    
+    def __repr__(self):
+        return f"<ReportTemplate {self.id}: {self.name}>"
+    
+    def to_dict(self):
+        """Converte o template para dicionário."""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'structure': json.loads(self.structure) if self.structure else {},
+            'created_by': self.created_by,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'is_active': self.is_active,
+            'creator_name': self.creator.name if self.creator else None
+        }
+
+
+class ReportAttachment(db.Model):
+    """Modelo para anexos de laudos (fotos microscópio, documentos adicionais)."""
+    id = db.Column(db.Integer, primary_key=True)
+    report_id = db.Column(db.Integer, db.ForeignKey('report.id', ondelete='CASCADE'), nullable=False)
+    filename = db.Column(db.String(255), nullable=False)
+    original_filename = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
+    file_type = db.Column(db.String(50), nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relações
+    report = db.relationship('Report', backref=db.backref('attachments', cascade='all, delete-orphan'))
+    uploader = db.relationship('User', backref='uploaded_attachments')
+    
+    def __repr__(self):
+        return f"<ReportAttachment {self.id}: {self.original_filename}>"
+    
+    def to_dict(self):
+        """Converte o anexo para dicionário."""
+        return {
+            'id': self.id,
+            'report_id': self.report_id,
+            'filename': self.filename,
+            'original_filename': self.original_filename,
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'file_size': self.file_size,
+            'description': self.description,
+            'uploaded_by': self.uploaded_by,
+            'uploader_name': self.uploader.name if self.uploader else None,
+            'upload_date': self.upload_date.strftime('%d/%m/%Y %H:%M')
+        }
+
+
+class ReportComment(db.Model):
+    """Modelo para comentários internos em laudos."""
+    id = db.Column(db.Integer, primary_key=True)
+    report_id = db.Column(db.Integer, db.ForeignKey('report.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    comment = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_internal = db.Column(db.Boolean, default=True)  # Indica se o comentário é somente para equipe interna
+    
+    # Relações
+    report = db.relationship('Report', backref=db.backref('comments', cascade='all, delete-orphan'))
+    user = db.relationship('User', backref='report_comments')
+    
+    def __repr__(self):
+        return f"<ReportComment {self.id} by {self.user_id} on {self.report_id}>"
+    
+    def to_dict(self):
+        """Converte o comentário para dicionário."""
+        return {
+            'id': self.id,
+            'report_id': self.report_id,
+            'user_id': self.user_id,
+            'user_name': self.user.name if self.user else None,
+            'comment': self.comment,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'is_internal': self.is_internal
+        }
+
+
+class ReportHistory(db.Model):
+    """Modelo para registrar histórico de modificações nos laudos."""
+    id = db.Column(db.Integer, primary_key=True)
+    report_id = db.Column(db.Integer, db.ForeignKey('report.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    action = db.Column(db.String(50), nullable=False)  # create, update, approve, reject, etc.
+    details = db.Column(db.Text, nullable=True)  # Detalhes da ação (opcional)
+    data_before = db.Column(db.Text, nullable=True)  # JSON com dados antes da modificação
+    data_after = db.Column(db.Text, nullable=True)  # JSON com dados após a modificação
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relações
+    report = db.relationship('Report', backref=db.backref('history', cascade='all, delete-orphan'))
+    user = db.relationship('User', backref='report_actions')
+    
+    def __repr__(self):
+        return f"<ReportHistory {self.id}: {self.action} on {self.report_id}>"
+    
+    def to_dict(self):
+        """Converte o registro de histórico para dicionário."""
+        return {
+            'id': self.id,
+            'report_id': self.report_id,
+            'user_id': self.user_id,
+            'user_name': self.user.name if self.user else None,
+            'action': self.action,
+            'details': self.details,
+            'data_before': json.loads(self.data_before) if self.data_before else None,
+            'data_after': json.loads(self.data_after) if self.data_after else None,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M')
+        }
+
+
+class CustomFormula(db.Model):
+    """Modelo para fórmulas personalizadas para cálculos técnicos."""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    formula = db.Column(db.Text, nullable=False)  # Fórmula em formato Python ou expressão matemática
+    parameters = db.Column(db.Text, nullable=False)  # JSON com parâmetros da fórmula
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    # Relações
+    creator = db.relationship('User', backref='created_formulas')
+    
+    def __repr__(self):
+        return f"<CustomFormula {self.id}: {self.name}>"
+    
+    def to_dict(self):
+        """Converte a fórmula para dicionário."""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'formula': self.formula,
+            'parameters': json.loads(self.parameters) if self.parameters else {},
+            'created_by': self.created_by,
+            'creator_name': self.creator.name if self.creator else None,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'is_active': self.is_active
+        }
+
+
+class CalculationResult(db.Model):
+    """Modelo para armazenar resultados de cálculos técnicos."""
+    id = db.Column(db.Integer, primary_key=True)
+    report_id = db.Column(db.Integer, db.ForeignKey('report.id', ondelete='CASCADE'), nullable=False)
+    formula_id = db.Column(db.Integer, db.ForeignKey('custom_formula.id'), nullable=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    input_data = db.Column(db.Text, nullable=False)  # JSON com dados de entrada
+    result = db.Column(db.Text, nullable=False)  # JSON com resultados do cálculo
+    calculated_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    calculated_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relações
+    report = db.relationship('Report', backref=db.backref('calculations', cascade='all, delete-orphan'))
+    formula = db.relationship('CustomFormula', backref='calculation_results')
+    calculator = db.relationship('User', backref='performed_calculations')
+    
+    def __repr__(self):
+        return f"<CalculationResult {self.id}: {self.name} for {self.report_id}>"
+    
+    def to_dict(self):
+        """Converte o resultado de cálculo para dicionário."""
+        return {
+            'id': self.id,
+            'report_id': self.report_id,
+            'formula_id': self.formula_id,
+            'formula_name': self.formula.name if self.formula else None,
+            'name': self.name,
+            'description': self.description,
+            'input_data': json.loads(self.input_data) if self.input_data else {},
+            'result': json.loads(self.result) if self.result else {},
+            'calculated_by': self.calculated_by,
+            'calculator_name': self.calculator.name if self.calculator else None,
+            'calculated_at': self.calculated_at.strftime('%d/%m/%Y %H:%M')
+        }
+
+
+class Client(db.Model):
+    """Modelo para clientes/fornecedores."""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=False)
+    type = db.Column(db.String(20), nullable=False)  # cliente, fornecedor
+    contact_name = db.Column(db.String(100), nullable=True)
+    email = db.Column(db.String(150), nullable=True)
+    phone = db.Column(db.String(20), nullable=True)
+    address = db.Column(db.Text, nullable=True)
+    notes = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    def __repr__(self):
+        return f"<Client {self.id}: {self.name} ({self.type})>"
+    
+    def to_dict(self):
+        """Converte o cliente/fornecedor para dicionário."""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'type': self.type,
+            'contact_name': self.contact_name,
+            'email': self.email,
+            'phone': self.phone,
+            'address': self.address,
+            'notes': self.notes,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'is_active': self.is_active
+        }
+
+
+class Sample(db.Model):
+    """Modelo para registro de amostras a serem analisadas."""
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(50), nullable=False, unique=True)
+    description = db.Column(db.Text, nullable=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=True)
+    material_type = db.Column(db.String(100), nullable=True)
+    quantity = db.Column(db.String(50), nullable=True)
+    batch_number = db.Column(db.String(100), nullable=True)
+    received_date = db.Column(db.DateTime, default=datetime.utcnow)
+    expiration_date = db.Column(db.Date, nullable=True)
+    status = db.Column(db.String(20), default='recebida')  # recebida, em_analise, finalizada, arquivada
+    received_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    storage_location = db.Column(db.String(100), nullable=True)
+    notes = db.Column(db.Text, nullable=True)
+    
+    # Relações
+    client = db.relationship('Client', backref='samples')
+    receiver = db.relationship('User', backref='received_samples')
+    
+    def __repr__(self):
+        return f"<Sample {self.id}: {self.code}>"
+    
+    def to_dict(self):
+        """Converte a amostra para dicionário."""
+        # Consultar a contagem de relatórios relacionados
+        reports_count = 0  # Implementaremos isso depois para evitar problemas circulares
+        
+        return {
+            'id': self.id,
+            'code': self.code,
+            'description': self.description,
+            'client_id': self.client_id,
+            'client_name': self.client.name if self.client else None,
+            'material_type': self.material_type,
+            'quantity': self.quantity,
+            'batch_number': self.batch_number,
+            'received_date': self.received_date.strftime('%d/%m/%Y %H:%M'),
+            'expiration_date': self.expiration_date.strftime('%d/%m/%Y') if self.expiration_date else None,
+            'status': self.status,
+            'received_by': self.received_by,
+            'receiver_name': self.receiver.name if self.receiver else None,
+            'storage_location': self.storage_location,
+            'notes': self.notes,
+            'reports_count': reports_count
+        }
+
+
+class Notification(db.Model):
+    """Modelo para notificações do sistema."""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    title = db.Column(db.String(150), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    link = db.Column(db.String(255), nullable=True)  # Link para redirecionamento
+    type = db.Column(db.String(20), default='info')  # info, warning, alert, success
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    read_at = db.Column(db.DateTime, nullable=True)
+    is_read = db.Column(db.Boolean, default=False)
+    
+    # Relações
+    user = db.relationship('User', backref='notifications')
+    
+    def __repr__(self):
+        return f"<Notification {self.id} for {self.user_id}: {self.title}>"
+    
+    def to_dict(self):
+        """Converte a notificação para dicionário."""
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'title': self.title,
+            'message': self.message,
+            'link': self.link,
+            'type': self.type,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'read_at': self.read_at.strftime('%d/%m/%Y %H:%M') if self.read_at else None,
+            'is_read': self.is_read
+        }
 
 
 class User(UserMixin, db.Model):

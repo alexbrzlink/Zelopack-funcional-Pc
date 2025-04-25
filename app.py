@@ -511,43 +511,65 @@ app.register_blueprint(reports_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(auth_bp)
 
-# Criar tabelas do banco de dados
-with app.app_context():
+# Função para atualizar o banco de dados de forma incremental
+def setup_database():
     import models
+    import sqlalchemy as sa
+    from sqlalchemy import inspect
+    
+    # Criar tabelas do banco de dados
     db.create_all()
     
-    # Adicionar categorias e fornecedores iniciais se tabelas estiverem vazias
-    if models.Category.query.count() == 0:
-        default_categories = [
-            models.Category(name="Microbiológico", description="Laudos de análises microbiológicas"),
-            models.Category(name="Físico-Químico", description="Laudos de análises físico-químicas"),
-            models.Category(name="Sensorial", description="Laudos de análises sensoriais"),
-            models.Category(name="Embalagem", description="Laudos de análises de embalagens"),
-            models.Category(name="Shelf-life", description="Laudos de testes de vida útil")
-        ]
-        db.session.add_all(default_categories)
-        db.session.commit()
-        print("Categorias padrão adicionadas.")
+    # Adicionar categorias iniciais se tabelas estiverem vazias
+    try:
+        if models.Category.query.count() == 0:
+            default_categories = [
+                models.Category(name="Microbiológico", description="Laudos de análises microbiológicas"),
+                models.Category(name="Físico-Químico", description="Laudos de análises físico-químicas"),
+                models.Category(name="Sensorial", description="Laudos de análises sensoriais"),
+                models.Category(name="Embalagem", description="Laudos de análises de embalagens"),
+                models.Category(name="Shelf-life", description="Laudos de testes de vida útil")
+            ]
+            db.session.add_all(default_categories)
+            db.session.commit()
+            print("Categorias padrão adicionadas.")
+    except Exception as e:
+        print(f"Erro ao adicionar categorias: {e}")
+        db.session.rollback()
+
+# Inicializar o banco de dados
+with app.app_context():
+    setup_database()
     
-    if models.Supplier.query.count() == 0:
-        default_suppliers = [
-            models.Supplier(name="Fornecedor Interno", contact="Laboratório Zelopack", email="lab@zelopack.com.br"),
-            models.Supplier(name="Laboratório Externo", contact="Contato do Laboratório", email="contato@labexterno.com.br"),
-            models.Supplier(name="Consultoria ABC", contact="Consultor", email="contato@consultoriaabc.com.br")
-        ]
-        db.session.add_all(default_suppliers)
-        db.session.commit()
-        print("Fornecedores padrão adicionados.")
+    try:
+        import models
+        if models.Supplier.query.count() == 0:
+            default_suppliers = [
+                models.Supplier(name="Fornecedor Interno", contact="Laboratório Zelopack", email="lab@zelopack.com.br"),
+                models.Supplier(name="Laboratório Externo", contact="Contato do Laboratório", email="contato@labexterno.com.br"),
+                models.Supplier(name="Consultoria ABC", contact="Consultor", email="contato@consultoriaabc.com.br")
+            ]
+            db.session.add_all(default_suppliers)
+            db.session.commit()
+            print("Fornecedores padrão adicionados.")
+    except Exception as e:
+        print(f"Erro ao adicionar fornecedores: {e}")
+        db.session.rollback()
     
-    # Criar usuário admin padrão se não existir nenhum usuário
-    if models.User.query.count() == 0:
-        admin_user = models.User(
-            username='admin',
-            email='admin@zelopack.com.br',
-            name='Administrador',
-            role='admin'
-        )
-        admin_user.set_password('Alex')  # Em produção, usar senha mais segura!
-        db.session.add(admin_user)
-        db.session.commit()
-        print("Usuário administrador padrão criado.")
+    try:
+        import models
+        # Criar usuário admin padrão se não existir nenhum usuário
+        if models.User.query.count() == 0:
+            admin_user = models.User(
+                username='admin',
+                email='admin@zelopack.com.br',
+                name='Administrador',
+                role='admin'
+            )
+            admin_user.set_password('Alex')  # Em produção, usar senha mais segura!
+            db.session.add(admin_user)
+            db.session.commit()
+            print("Usuário administrador padrão criado.")
+    except Exception as e:
+        print(f"Erro ao criar usuário admin: {e}")
+        db.session.rollback()
