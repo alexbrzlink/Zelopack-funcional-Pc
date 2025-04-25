@@ -28,8 +28,9 @@ def index():
     today = datetime.utcnow()
     six_months_ago = today - timedelta(days=180)
     
+    # Usando to_char para PostgreSQL em vez de strftime
     reports_by_month = db.session.query(
-        func.strftime('%Y-%m', Report.upload_date).label('month'),
+        func.to_char(Report.upload_date, 'YYYY-MM').label('month'),
         func.count(Report.id).label('count')
     ).filter(Report.upload_date >= six_months_ago).group_by('month').all()
     
