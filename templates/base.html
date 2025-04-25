@@ -24,10 +24,10 @@
 </head>
 <body>
     <!-- Barra de navegação -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <span class="zelopack-logo">ZELOPACK</span>
+                <span>ZELOPACK</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
@@ -138,25 +138,25 @@
     </main>
     
     <!-- Rodapé -->
-    <footer class="footer mt-auto py-3 bg-light">
+    <footer class="footer mt-auto py-3">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5 class="text-primary">ZeloPack</h5>
-                    <p class="text-muted">
+                    <h5>ZELOPACK</h5>
+                    <p>
                         Sistema de gerenciamento de laudos e cálculos para indústria de sucos.
                     </p>
                 </div>
                 <div class="col-md-3">
-                    <h5 class="text-primary">Links</h5>
+                    <h5>Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="{{ url_for('index') }}" class="text-decoration-none">Início</a></li>
-                        <li><a href="{{ url_for('reports.index') }}" class="text-decoration-none">Laudos</a></li>
-                        <li><a href="{{ url_for('calculos.index') }}" class="text-decoration-none">Cálculos</a></li>
+                        <li><a href="{{ url_for('index') }}">Início</a></li>
+                        <li><a href="{{ url_for('reports.index') }}">Laudos</a></li>
+                        <li><a href="{{ url_for('calculos.index') }}">Cálculos</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">
-                    <h5 class="text-primary">Contato</h5>
+                    <h5>Contato</h5>
                     <ul class="list-unstyled">
                         <li><i class="fas fa-envelope me-2"></i> suporte@zelopack.com.br</li>
                         <li><i class="fas fa-phone me-2"></i> (11) 5555-1234</li>
@@ -166,17 +166,17 @@
             <hr>
             <div class="row">
                 <div class="col-md-6">
-                    <p class="mb-0">&copy; 2025 ZeloPack. Todos os direitos reservados.</p>
+                    <p class="mb-0">&copy; 2025 ZELOPACK. Todos os direitos reservados.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div class="btn-group" role="group">
-                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                        <a href="#" class="btn btn-sm">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                        <a href="#" class="btn btn-sm">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="btn btn-outline-secondary btn-sm">
+                        <a href="#" class="btn btn-sm">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
                     </div>

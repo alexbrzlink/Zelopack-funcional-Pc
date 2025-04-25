@@ -1,4 +1,14 @@
-/* Melhorias nas cores - Ajustes sutis para melhor legibilidade */
+/* Esquema de cores ZeloPack - Baseado na identidade visual turquesa */
+
+:root {
+    --zelopack-primary: #00A19A;  /* Turquesa/Verde-azulado */
+    --zelopack-primary-dark: #008e88;
+    --zelopack-primary-light: #33b5af;
+    --zelopack-secondary: #f8f9fa;
+    --zelopack-text: #333333;
+    --zelopack-text-light: #ffffff;
+    --zelopack-accent: #FF9500;
+}
 
 /* Estilo do logo */
 .zelopack-logo {
@@ -7,19 +17,31 @@
     font-size: 1.5em;
     letter-spacing: 0.5px;
     font-family: 'Inter', sans-serif;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-    background: -webkit-linear-gradient(#ffffff, #cceeff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
 }
 
-/* Barra de navegação - melhorias leves */
+/* Barra de navegação - Esquema turquesa */
+.navbar-dark.bg-primary {
+    background-color: var(--zelopack-primary) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.navbar-dark .navbar-brand {
+    color: var(--zelopack-text-light) !important;
+}
+
 .navbar-dark .navbar-nav .nav-link {
     color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
-.navbar-dark .navbar-nav .nav-link:hover {
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
     color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Tema alternador */
@@ -35,23 +57,80 @@
     border-radius: 4px;
 }
 
-/* Rodapé - apenas ajustes básicos */
+/* Rodapé - Esquema turquesa */
 .footer {
-    background-color: #f8f9fa !important;
+    background-color: var(--zelopack-primary) !important;
+    color: var(--zelopack-text-light) !important;
+    padding-top: 2rem !important;
+    padding-bottom: 1.5rem !important;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05) !important;
 }
 
-.footer h5.text-primary {
-    color: #0d6efd !important;
+.footer h5 {
+    color: #ffffff !important;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.footer .text-primary {
+    color: #ffffff !important;
 }
 
 .footer .text-muted {
-    color: #6c757d !important;
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .footer a {
-    color: #0d6efd !important;
+    color: #ffffff !important;
+    text-decoration: none;
+    transition: all 0.2s ease;
 }
 
 .footer a:hover {
-    color: #0a58ca !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    text-decoration: underline !important;
+}
+
+.footer hr {
+    border-color: rgba(255, 255, 255, 0.2);
+    margin: 1.5rem 0;
+}
+
+.footer .btn-outline-secondary {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.5);
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.footer .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
+/* Estilo geral de cards e painéis - similar à página de login */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.btn-primary {
+    background-color: var(--zelopack-primary) !important;
+    border-color: var(--zelopack-primary) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--zelopack-primary-dark) !important;
+    border-color: var(--zelopack-primary-dark) !important;
+}
+
+.text-primary {
+    color: var(--zelopack-primary) !important;
 }
