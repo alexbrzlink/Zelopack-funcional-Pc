@@ -1,0 +1,328 @@
+/* 
+ * Estilos modernos para tabelas
+ * Seguindo as diretrizes de design sugeridas
+ */
+
+/* Importar fontes modernas */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Aplicar tipografia moderna */
+.modern-table {
+    font-family: 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+}
+
+/* Estilos para cabeçalho da tabela */
+.modern-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #f9fafb;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modern-table th {
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+/* Estilos para linhas da tabela */
+.modern-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.2s ease;
+}
+
+.modern-table tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+.modern-table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+}
+
+/* Estilos para colunas específicas */
+.modern-table .column-name {
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modern-table .column-name i {
+    color: #9ca3af;
+    font-size: 1rem;
+}
+
+.modern-table .column-type {
+    font-weight: 400;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.modern-table .column-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Botões de ação modernos */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-action:focus {
+    outline: 2px solid rgba(37, 99, 235, 0.2);
+    outline-offset: 2px;
+}
+
+.btn-action i {
+    font-size: 0.875rem;
+}
+
+/* Variantes de botões */
+.btn-primary {
+    background-color: #2563eb;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.btn-success {
+    background-color: #22c55e;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #16a34a;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+}
+
+.btn-secondary {
+    background-color: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #4b5563;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(107, 114, 128, 0.2);
+}
+
+.btn-info {
+    background-color: #0ea5e9;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #0284c7;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2);
+}
+
+.btn-light {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+}
+
+.btn-light:hover {
+    background-color: #e5e7eb;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Filtros modernos */
+.modern-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.modern-filter:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.1), 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.modern-filter input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0.5rem;
+    background: transparent;
+    color: #1f2937;
+}
+
+.modern-filter i {
+    color: #9ca3af;
+}
+
+/* Ordenação com ícones */
+.sort-icon {
+    cursor: pointer;
+    margin-left: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.sort-icon:hover {
+    background-color: rgba(107, 114, 128, 0.1);
+}
+
+.sort-active {
+    color: #2563eb;
+}
+
+/* Tema escuro (opcional) */
+.dark .modern-table thead {
+    background-color: #1f2937;
+}
+
+.dark .modern-table th {
+    color: #e5e7eb;
+    border-bottom-color: #374151;
+}
+
+.dark .modern-table tbody tr {
+    border-bottom-color: #374151;
+}
+
+.dark .modern-table tbody tr:hover {
+    background-color: #374151;
+}
+
+.dark .modern-table .column-name {
+    color: #f9fafb;
+}
+
+.dark .modern-table .column-type {
+    color: #9ca3af;
+}
+
+.dark .modern-filter {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+.dark .modern-filter input {
+    color: #f9fafb;
+}
+
+.dark .btn-light {
+    background-color: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+.dark .btn-light:hover {
+    background-color: #4b5563;
+}
+
+/* Badge para tipo de arquivo */
+.file-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.625rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.file-badge-docx {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+}
+
+.file-badge-xlsx {
+    background-color: #ecfdf5;
+    color: #047857;
+}
+
+.file-badge-pdf {
+    background-color: #fef2f2;
+    color: #b91c1c;
+}
+
+.file-badge-default {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+/* Adaptação responsiva */
+@media (max-width: 768px) {
+    .modern-table thead {
+        display: none;
+    }
+    
+    .modern-table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    .modern-table td {
+        display: block;
+        padding: 0.5rem 0;
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+    }
+    
+    .modern-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .modern-table .column-actions {
+        text-align: center;
+        padding-left: 0;
+    }
+    
+    .modern-table .column-actions::before {
+        display: none;
+    }
+}

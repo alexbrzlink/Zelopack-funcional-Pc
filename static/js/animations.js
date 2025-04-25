@@ -6,6 +6,14 @@
 // Namespace global para as animações
 window.ZelopackAnimations = {
     // Animações para elementos
+    pulseElement: function(element) {
+        if (!element) return;
+        element.classList.add('animate-pulse');
+        setTimeout(() => {
+            element.classList.remove('animate-pulse');
+        }, 1000);
+    },
+    
     pulse: function(element) {
         if (!element) return;
         element.classList.add('animate-pulse');

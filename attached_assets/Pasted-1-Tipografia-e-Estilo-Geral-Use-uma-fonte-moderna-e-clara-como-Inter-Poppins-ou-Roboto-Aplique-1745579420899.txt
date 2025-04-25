@@ -1,0 +1,94 @@
+1. Tipografia e Estilo Geral
+Use uma fonte moderna e clara, como Inter, Poppins, ou Roboto.
+
+Aplique pesos diferentes nas colunas, como:
+
+Nome: semibold
+
+Tipo: regular, cinza
+
+Ações: ícones com texto menor, cores vivas
+
+2. Ícones com Ações
+Utilize ícones ao lado de cada ação com lucide-react, heroicons ou Font Awesome.
+
+
+Ação	Ícone sugerido
+Visualizar	👁️ ou Eye
+Preencher	✏️ ou Edit
+Baixar	⬇️ ou Download
+Predefinições	🧩 ou Settings, List
+🔧 Use tooltips (title) ou hover com animações para dar feedback visual leve.
+
+3. Cores e Botões
+Use tons suaves e coerentes com tema corporativo, como:
+
+css
+Copiar
+Editar
+.bg-primary { background-color: #2563eb; } /* azul suave */
+.bg-secondary { background-color: #22c55e; } /* verde ação */
+.bg-neutral { background-color: #f1f5f9; } /* fundo da tabela */
+Botões pequenos e com ícones embutidos:
+
+jsx
+Copiar
+Editar
+<button className="flex items-center gap-1 bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">
+  <EyeIcon size={16} />
+  Visualizar
+</button>
+4. Organização da Tabela
+Reorganize as colunas para dar mais foco ao nome:
+
+plaintext
+Copiar
+Editar
+| 📄 Nome do Formulário         | 🗂 Tipo  | 🧭 Ações                         |
+|-------------------------------|---------|----------------------------------|
+| F_PRD_002_TBA.docx            | DOCX    | 👁 Visualizar ✏ Preencher ⬇ Baixar |
+Sugestão de cabeçalhos sticky para melhorar UX:
+
+css
+Copiar
+Editar
+thead {
+  position: sticky;
+  top: 0;
+  background-color: #f9fafb;
+  z-index: 10;
+}
+5. Melhorias de UX
+Filtro mais clean com bordas suaves e ícone de busca.
+
+Botões de ordenação (alfabética/data) com ícones: 🔠 / 📅
+
+Use hover, focus, e active para dar feedback visual
+
+6. Exemplo Visual Moderno
+Aqui vai um exemplo da aparência modernizada:
+
+jsx
+Copiar
+Editar
+<tr className="border-b hover:bg-gray-50 transition">
+  <td className="py-2 px-4 flex items-center gap-2 font-semibold text-gray-800">
+    <FileTextIcon className="text-gray-400" /> F_PRD_002_TBA.docx
+  </td>
+  <td className="text-sm text-gray-500">DOCX</td>
+  <td className="flex gap-2 flex-wrap text-sm">
+    <button className="btn-blue"><EyeIcon /> Visualizar</button>
+    <button className="btn-green"><EditIcon /> Preencher</button>
+    <button className="btn-gray"><DownloadIcon /> Baixar</button>
+    <button className="btn-light"><SettingsIcon /> Predefinições</button>
+  </td>
+</tr>
+7. Tema Claro & Escuro (opcional)
+Para ainda mais sofisticação, adicione modo escuro com um toggle switch:
+
+js
+Copiar
+Editar
+const [dark, setDark] = useState(false);
+document.documentElement.classList.toggle('dark', dark);
+Use Tailwind com dark: prefixos para temas.

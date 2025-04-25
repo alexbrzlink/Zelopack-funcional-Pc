@@ -4,82 +4,148 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 fadeIn">
-        <h1>{{ category }}</h1>
-        <a href="{{ url_for('forms.index') }}" class="btn btn-outline-secondary btn-animated">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </a>
+    <!-- Cabeçalho com estilo moderno -->
+    <div class="category-header rounded-lg p-4 mb-4 animate-fade-in">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="text-white fw-bold mb-1 d-flex align-items-center">
+                    <div class="category-icon-wrapper me-3">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    {{ category }}
+                </h1>
+                <p class="text-white-50 mb-0">
+                    Formulários disponíveis nesta categoria para preenchimento e download
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('forms.index') }}" class="btn btn-outline-light btn-rounded animate-fade-in-left">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar
+                </a>
+                <a href="{{ url_for('forms.standard_fields_list') }}" class="btn btn-glass animate-fade-in-left">
+                    <i class="fas fa-sliders-h me-1"></i> Campos Padrão
+                </a>
+            </div>
+        </div>
     </div>
 
-    <div class="card mb-4 card-hover fadeIn">
+    <!-- Filtro e ordenação com design moderno -->
+    <div class="card shadow-sm mb-4 animate-fade-in-up" style="animation-delay: 0.1s;">
         <div class="card-body">
-            <div class="row mb-3">
+            <div class="row align-items-center">
                 <div class="col-md-8">
-                    <div class="input-group">
-                        <input type="text" id="filter-table" class="form-control form-animated" placeholder="Filtrar formulários..." aria-label="Filtrar formulários">
-                        <button class="btn btn-outline-secondary btn-animated" type="button" id="clear-filter">
-                            <i class="fas fa-times"></i>
+                    <div class="modern-filter">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="filter-table" placeholder="Pesquisar formulários..." aria-label="Filtrar formulários">
+                        <button id="clear-filter" class="filter-clear-btn">
+                            <i class="fas fa-times-circle"></i>
                         </button>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="btn-group w-100" role="group" aria-label="Ordenação">
-                        <input type="radio" class="btn-check" name="sort_by" id="sort_alpha" value="alpha" checked>
-                        <label class="btn btn-outline-primary btn-animated" for="sort_alpha">
-                            <i class="fas fa-sort-alpha-down"></i> Alfabética
-                        </label>
-                        
-                        <input type="radio" class="btn-check" name="sort_by" id="sort_date" value="date">
-                        <label class="btn btn-outline-primary btn-animated" for="sort_date">
-                            <i class="fas fa-calendar-alt"></i> Data
-                        </label>
+                    <div class="sort-controls">
+                        <span class="sort-label">Ordenar por:</span>
+                        <div class="sort-buttons">
+                            <input type="radio" class="btn-check" name="sort_by" id="sort_alpha" value="alpha" checked>
+                            <label class="sort-btn active" for="sort_alpha" title="Ordenação alfabética">
+                                <i class="fas fa-sort-alpha-down"></i>
+                            </label>
+                            
+                            <input type="radio" class="btn-check" name="sort_by" id="sort_date" value="date">
+                            <label class="sort-btn" for="sort_date" title="Ordenação por data">
+                                <i class="fas fa-calendar-alt"></i>
+                            </label>
+                            
+                            <span class="sort-divider"></span>
+                            
+                            <button id="refresh-table" class="sort-btn" title="Atualizar lista">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            
+        </div>
+    </div>
+    
+    <!-- Tabela de formulários com design moderno -->
+    <div class="card shadow-sm mb-4 animate-fade-in-up" style="animation-delay: 0.2s;">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table modern-table">
                     <thead>
                         <tr>
-                            <th scope="col">Nome</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Ações</th>
+                            <th>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file-alt me-2 text-primary"></i>
+                                    Nome do Formulário
+                                    <span class="sort-icon" id="sort-name-icon">
+                                        <i class="fas fa-sort-amount-down-alt"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-tag me-2 text-muted"></i>
+                                    Tipo
+                                </div>
+                            </th>
+                            <th>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-tools me-2 text-muted"></i>
+                                    Ações
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for form in forms %}
-                        <tr class="form-row fadeIn" style="animation-delay: {{ loop.index0 * 0.05 }}s">
-                            <td>
-                                <i class="fas {{ form.icon }} me-2"></i>
-                                {{ form.name }}
+                        <tr class="form-row animate-fade-in" style="animation-delay: {{ loop.index0 * 0.05 }}s" data-label="{{ form.name }}">
+                            <td class="column-name">
+                                <i class="fas {{ form.icon }}"></i>
+                                <span class="ms-2">{{ form.name }}</span>
                             </td>
-                            <td>{{ form.name.split('.')[-1].upper() }}</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ url_for('forms.view_form', file_path=form.path) }}" class="btn btn-sm btn-outline-primary btn-animated" target="_blank">
-                                        <i class="fas fa-eye"></i> Visualizar
-                                    </a>
-                                    <a href="{{ url_for('forms.interactive_form', file_path=form.path) }}" class="btn btn-sm btn-success btn-animated">
-                                        <i class="fas fa-file-edit"></i> Interativo
-                                    </a>
-                                    <a href="{{ url_for('forms.fill_form', file_path=form.path) }}" class="btn btn-sm btn-primary btn-animated">
-                                        <i class="fas fa-edit"></i> Preencher
-                                    </a>
-                                    <a href="{{ url_for('forms.download_form', file_path=form.path) }}" class="btn btn-sm btn-outline-secondary btn-animated">
-                                        <i class="fas fa-download"></i> Baixar
-                                    </a>
-                                    <a href="{{ url_for('forms.list_presets', file_path=form.path) }}" class="btn btn-sm btn-outline-info btn-animated">
-                                        <i class="fas fa-list"></i> Predefinições
-                                    </a>
-                                </div>
+                            <td class="column-type">
+                                {% set ext = form.name.split('.')[-1].upper() %}
+                                <span class="file-badge 
+                                    {% if ext == 'DOCX' %}file-badge-docx
+                                    {% elif ext == 'XLSX' %}file-badge-xlsx
+                                    {% elif ext == 'PDF' %}file-badge-pdf
+                                    {% else %}file-badge-default{% endif %}">
+                                    {{ ext }}
+                                </span>
+                            </td>
+                            <td class="column-actions">
+                                <a href="{{ url_for('forms.view_form', file_path=form.path) }}" class="btn-action btn-primary" target="_blank" title="Visualizar formulário">
+                                    <i class="fas fa-eye"></i> Visualizar
+                                </a>
+                                <a href="{{ url_for('forms.interactive_form', file_path=form.path) }}" class="btn-action btn-success" title="Abrir editor interativo">
+                                    <i class="fas fa-file-signature"></i> Interativo
+                                </a>
+                                <a href="{{ url_for('forms.fill_form', file_path=form.path) }}" class="btn-action btn-info" title="Preencher formulário">
+                                    <i class="fas fa-edit"></i> Preencher
+                                </a>
+                                <a href="{{ url_for('forms.download_form', file_path=form.path) }}" class="btn-action btn-secondary" title="Baixar formulário original">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                <a href="{{ url_for('forms.list_presets', file_path=form.path) }}" class="btn-action btn-light" title="Ver predefinições">
+                                    <i class="fas fa-bookmark"></i>
+                                </a>
                             </td>
                         </tr>
                         {% endfor %}
                         
                         <tr id="no-results" style="display: none;">
-                            <td colspan="3" class="text-center py-3">
-                                <div class="alert alert-info mb-0">
-                                    <i class="fas fa-info-circle me-2"></i> Nenhum formulário encontrado com os critérios de filtro.
+                            <td colspan="3" class="text-center py-5">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <h4>Nenhum formulário encontrado</h4>
+                                    <p class="text-muted">Tente usar outros termos na pesquisa</p>
+                                    <button id="clear-search" class="btn btn-primary btn-rounded mt-3">
+                                        <i class="fas fa-redo-alt me-1"></i> Limpar filtros
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -91,19 +157,223 @@
 </div>
 {% endblock %}
 
+{% block extra_css %}
+<!-- Importar CSS para tabelas modernas -->
+<link href="/static/css/modern_tables.css" rel="stylesheet">
+
+<style>
+    /* Estilos para o cabeçalho com gradiente da categoria */
+    .category-header {
+        background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(78, 115, 223, 0.15);
+    }
+    
+    .category-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.3;
+    }
+    
+    .category-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.2);
+        font-size: 1.5rem;
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+    
+    /* Botões modernos com efeitos de vidro */
+    .btn-glass {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 50px;
+        padding: 0.6rem 1.2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-glass:hover {
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .btn-rounded {
+        border-radius: 50px;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    .btn-outline-light {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Controles de ordenação modernos */
+    .sort-controls {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+    
+    .sort-label {
+        font-size: 0.875rem;
+        color: #6c757d;
+        white-space: nowrap;
+    }
+    
+    .sort-buttons {
+        display: flex;
+        align-items: center;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 0.25rem;
+        border: 1px solid #e9ecef;
+    }
+    
+    .sort-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        background: transparent;
+        color: #6c757d;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .sort-btn:hover, .sort-btn.active {
+        background: #e9ecef;
+        color: #495057;
+    }
+    
+    .sort-btn.active {
+        background: #4e73df;
+        color: white;
+    }
+    
+    .sort-divider {
+        width: 1px;
+        height: 20px;
+        background: #dee2e6;
+        margin: 0 0.25rem;
+    }
+    
+    /* Estilo para o estado vazio */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3rem 1rem;
+    }
+    
+    .empty-state-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #9ca3af;
+        margin-bottom: 1.5rem;
+    }
+    
+    .filter-clear-btn {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: all 0.2s ease;
+    }
+    
+    .filter-clear-btn:hover {
+        opacity: 1;
+        color: #4e73df;
+    }
+    
+    /* Animações */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .pulse-once {
+        animation: pulse 0.5s ease-in-out;
+    }
+    
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .sort-controls {
+            flex-direction: column;
+            align-items: stretch;
+            margin-top: 1rem;
+        }
+        
+        .sort-label {
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .sort-buttons {
+            justify-content: center;
+        }
+        
+        .column-actions {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: flex-start;
+        }
+        
+        .btn-action {
+            flex: 1 1 calc(50% - 0.5rem);
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Filtro de tabela
+        // Elementos da tabela modernizada
         const filterInput = document.getElementById('filter-table');
         const clearFilterBtn = document.getElementById('clear-filter');
+        const clearSearchBtn = document.getElementById('clear-search');
         const formRows = document.querySelectorAll('.form-row');
         const noResultsRow = document.getElementById('no-results');
+        const sortNameIcon = document.getElementById('sort-name-icon');
+        const refreshTableBtn = document.getElementById('refresh-table');
         
         // Animar entrada da tabela
-        document.querySelector('table').classList.add('fadeIn');
+        document.querySelector('.modern-table').classList.add('animate-fade-in');
         
-        // Ordenação da tabela
+        // Configurar botões de ordenação
         const sortButtons = document.querySelectorAll('input[name="sort_by"]');
         const tableBody = document.querySelector('tbody');
         const tableRows = Array.from(document.querySelectorAll('.form-row'));
@@ -114,7 +384,26 @@
             row.setAttribute('data-date', row.getAttribute('style').split('animation-delay:')[1].split('s')[0].trim());
         });
         
+        // Tooltips para botões de ação
+        document.querySelectorAll('.btn-action').forEach(btn => {
+            const tooltipText = btn.getAttribute('title');
+            if (tooltipText) {
+                btn.addEventListener('mouseenter', function() {
+                    ZelopackAnimations.showTooltip(this, tooltipText);
+                    ZelopackAnimations.elementHoverIn(this);
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    ZelopackAnimations.elementHoverOut(this);
+                });
+            }
+        });
+        
+        // Função para ordenar tabela
         function sortTable(sortType) {
+            // Mostrar feedback visual de carregamento
+            ZelopackAnimations.pulseElement(document.querySelector('.modern-table'));
+            
             // Salvar todas as linhas em um array
             const rows = Array.from(document.querySelectorAll('.form-row'));
             
@@ -122,9 +411,9 @@
             rows.sort((a, b) => {
                 if (sortType === 'alpha') {
                     // Ordenação alfabética pelo nome do arquivo
-                    const textA = a.querySelector('td:first-child').textContent.trim();
-                    const textB = b.querySelector('td:first-child').textContent.trim();
-                    return textA.localeCompare(textB);
+                    const textA = a.getAttribute('data-label') || a.querySelector('.column-name').textContent.trim();
+                    const textB = b.getAttribute('data-label') || b.querySelector('.column-name').textContent.trim();
+                    return textA.localeCompare(textB, 'pt-BR');
                 } else {
                     // Ordenação por data (usando os valores originais)
                     const dateA = parseFloat(a.getAttribute('data-date'));
@@ -140,28 +429,38 @@
             rows.forEach((row, index) => {
                 // Atualizar o delay de animação
                 row.style.animationDelay = `${index * 0.05}s`;
-                tableBody.insertBefore(row, tableBody.firstChild);
+                tableBody.appendChild(row);
             });
             
             // Adicionar animação aos itens reordenados
             rows.forEach(row => {
-                row.classList.add('pulse-once');
-                setTimeout(() => {
-                    row.classList.remove('pulse-once');
-                }, 500);
+                ZelopackAnimations.pulseElement(row);
             });
+            
+            // Atualizar ícone de ordenação
+            if (sortType === 'alpha') {
+                sortNameIcon.innerHTML = '<i class="fas fa-sort-alpha-down"></i>';
+                sortNameIcon.classList.add('sort-active');
+            } else {
+                sortNameIcon.innerHTML = '<i class="fas fa-sort-numeric-down"></i>';
+                sortNameIcon.classList.add('sort-active');
+            }
         }
         
         // Evento para os botões de ordenação
         sortButtons.forEach(button => {
             button.addEventListener('change', function() {
                 if (this.checked) {
-                    // Animação no botão selecionado
+                    // Atualizar aparência dos botões
+                    document.querySelectorAll('.sort-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
                     const label = document.querySelector(`label[for="${this.id}"]`);
-                    label.classList.add('pulse-once');
-                    setTimeout(() => {
-                        label.classList.remove('pulse-once');
-                    }, 500);
+                    label.classList.add('active');
+                    
+                    // Animação no botão selecionado
+                    ZelopackAnimations.pulseElement(label);
                     
                     // Ordenar a tabela
                     sortTable(this.value);
@@ -169,10 +468,17 @@
             });
         });
         
-        // Função para filtrar a tabela
+        // Função para filtrar a tabela com pesquisa moderna
         function filterTable() {
             const query = filterInput.value.toLowerCase().trim();
             let visible = 0;
+            
+            // Atualizar botão de limpar filtro
+            if (query.length > 0) {
+                clearFilterBtn.style.opacity = '1';
+            } else {
+                clearFilterBtn.style.opacity = '0.5';
+            }
             
             formRows.forEach(row => {
                 const text = row.textContent.toLowerCase();
@@ -201,19 +507,52 @@
         // Função para limpar o filtro
         function clearFilter() {
             filterInput.value = '';
+            filterInput.focus();
             formRows.forEach(row => {
                 row.style.display = '';
             });
             noResultsRow.style.display = 'none';
+            clearFilterBtn.style.opacity = '0.5';
+            
+            // Animar tabela restaurada
+            ZelopackAnimations.pulseElement(document.querySelector('.modern-table'));
         }
         
-        // Eventos
+        // Função para atualizar a tabela
+        function refreshTable() {
+            // Animação no botão
+            ZelopackAnimations.pulseElement(refreshTableBtn);
+            
+            // Animar tabela
+            ZelopackAnimations.showLoading('Atualizando tabela...');
+            
+            // Simular atualização (em produção, aqui seria uma requisição AJAX)
+            setTimeout(() => {
+                ZelopackAnimations.hideLoading();
+                ZelopackAnimations.pulseElement(document.querySelector('.modern-table'));
+            }, 800);
+        }
+        
+        // Eventos de interação
         filterInput.addEventListener('input', filterTable);
         clearFilterBtn.addEventListener('click', clearFilter);
+        if (clearSearchBtn) clearSearchBtn.addEventListener('click', clearFilter);
+        if (refreshTableBtn) refreshTableBtn.addEventListener('click', refreshTable);
+        
+        // Tooltips para cabeçalhos da tabela
+        document.querySelectorAll('th').forEach(th => {
+            th.addEventListener('mouseenter', function() {
+                ZelopackAnimations.elementHoverIn(this);
+            });
+            
+            th.addEventListener('mouseleave', function() {
+                ZelopackAnimations.elementHoverOut(this);
+            });
+        });
         
         // Adicionar animação aos downloads
         document.querySelectorAll('a[href*="download"]').forEach(link => {
-            link.addEventListener('click', function() {
+            link.addEventListener('click', function(e) {
                 ZelopackAnimations.showLoading('Preparando download...', 'flow');
                 
                 // Esconder o loading após um tempo
@@ -236,6 +575,9 @@
                 ZelopackAnimations.showLoading('Preparando interface interativa...');
             });
         });
+        
+        // Ordenar a tabela inicialmente (alfabética)
+        sortTable('alpha');
     });
 </script>
 {% endblock %}
