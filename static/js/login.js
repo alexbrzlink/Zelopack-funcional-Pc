@@ -92,19 +92,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adicionar animação quando o formulário for enviado
     if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
-            const formValid = loginForm.checkValidity();
+            // NÃO INTERROMPER O ENVIO NORMAL DO FORMULÁRIO
+            // Apenas adicionar efeitos visuais
             
-            if (!formValid) {
-                e.preventDefault();
-                
-                // Verificar campos vazios
-                if (!usernameInput.value.trim()) {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            // Verificar campos vazios - mas não impedir o envio do formulário
+            // para preservar o token CSRF e o processamento do servidor
+            if (!username || !password) {
+                if (!username) {
                     showError(usernameInput, 'Por favor, digite seu nome de usuário');
                 }
                 
-                if (!passwordInput.value.trim()) {
+                if (!password) {
                     showError(passwordInput, 'Por favor, digite sua senha');
                 }
+                // O próprio navegador bloqueará o envio se campos required estiverem vazios
             } else {
                 // Adicionar efeito ao botão
                 loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Entrando...';
