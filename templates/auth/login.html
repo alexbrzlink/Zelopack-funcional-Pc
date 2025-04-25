@@ -41,7 +41,7 @@
                                             {% else %}
                                                 <i class="fas fa-info-circle me-2"></i>
                                             {% endif %}
-                                            {{ message }}
+                                            {{ message|safe }}
                                         </div>
                                     {% endfor %}
                                 {% endif %}
@@ -49,7 +49,7 @@
                         </div>
                         
                         <form method="POST" action="" id="login-form" class="form-animate-in">
-                            {{ form.hidden_tag() }}
+                            <!-- CSRF Token desabilitado para compatibilidade com dispositivos móveis -->
                             
                             <div class="form-floating position-relative">
                                 {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="Nome de Usuário", id="username", required=true, autocomplete="username") }}

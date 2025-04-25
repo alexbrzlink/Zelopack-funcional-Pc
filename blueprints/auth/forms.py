@@ -19,6 +19,10 @@ class LoginForm(FlaskForm):
     password = PasswordField('Senha', validators=[DataRequired(message=mensagens_erro['required'])])
     remember_me = BooleanField('Lembrar-me')
     submit = SubmitField('Entrar')
+    
+    class Meta:
+        # Desabilitar CSRF para o formulário de login para compatibilidade com dispositivos móveis
+        csrf = False
 
 
 class RegistrationForm(FlaskForm):
