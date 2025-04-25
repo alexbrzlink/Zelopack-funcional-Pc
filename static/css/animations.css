@@ -244,6 +244,56 @@
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2) !important;
 }
 
+/* Animações para entrada de formulários */
+@keyframes formInputFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-animate-in .form-group,
+.form-animate-in .form-floating,
+.form-animate-in .mb-3 {
+    animation: formInputFadeIn 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+/* Definir delay de animação para cada campo em sequência */
+.form-animate-in > *:nth-child(1) { animation-delay: 0.1s; }
+.form-animate-in > *:nth-child(2) { animation-delay: 0.2s; }
+.form-animate-in > *:nth-child(3) { animation-delay: 0.3s; }
+.form-animate-in > *:nth-child(4) { animation-delay: 0.4s; }
+.form-animate-in > *:nth-child(5) { animation-delay: 0.5s; }
+.form-animate-in > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* Animação para shake em caso de erro */
+@keyframes errorShake {
+    0%, 100% {transform: translateX(0);}
+    10%, 30%, 50%, 70%, 90% {transform: translateX(-5px);}
+    20%, 40%, 60%, 80% {transform: translateX(5px);}
+}
+
+.error-shake {
+    animation: errorShake 0.6s ease-in-out;
+}
+
+/* Animação para fade out */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
 /* Animação para Cards */
 .card-hover {
     transition: all 0.3s ease;

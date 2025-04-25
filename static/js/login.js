@@ -1,9 +1,22 @@
 /**
  * Script para interatividade e animações da página de login
  * Sistema de gerenciamento de laudos ZELOPACK 
+ * Implementa animações avançadas e feedback visual para o usuário
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Animar o card de login na entrada
+    const loginCard = document.querySelector('.login-card');
+    if (loginCard) {
+        loginCard.style.opacity = '0';
+        loginCard.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            loginCard.style.transition = 'all 0.5s ease-out';
+            loginCard.style.opacity = '1';
+            loginCard.style.transform = 'translateY(0)';
+        }, 300);
+    }
     // Elementos da página
     const loginForm = document.getElementById('login-form');
     const usernameInput = document.getElementById('username');
