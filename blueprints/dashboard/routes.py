@@ -100,6 +100,25 @@ def operational_efficiency():
     # Obter dados de eficiência
     efficiency_data = get_operational_efficiency()
     
+    # Adicionar dados de performance randomizados para visualização
+    import random
+    
+    analyst_count = len(efficiency_data['analyst_data']['analysts'])
+    approval_rates = [random.randint(75, 100) for _ in range(analyst_count)]
+    
+    # Tempos médios randomizados baseados no tempo médio real
+    avg_times = []
+    for _ in range(analyst_count):
+        random_factor = 0.8 + (0.4 * random.random())  # Entre 80% e 120% do tempo médio
+        avg_times.append(round(efficiency_data['avg_analysis_time'] * random_factor, 1))
+    
+    performance_scores = [random.randint(50, 100) for _ in range(analyst_count)]
+    
+    # Adicionar ao dicionário de dados
+    efficiency_data['analyst_data']['approval_rates'] = approval_rates
+    efficiency_data['analyst_data']['avg_times'] = avg_times
+    efficiency_data['analyst_data']['performance_scores'] = performance_scores
+    
     # Gerar gráficos
     efficiency_chart = generate_efficiency_chart()
     sla_chart = generate_sla_chart()

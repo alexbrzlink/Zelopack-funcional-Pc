@@ -234,7 +234,8 @@
                                 
                                 <!-- Simular métricas adicionais para visualização -->
                                 {% set approval_rate = range(75, 100)|random %}
-                                {% set avg_time = ((efficiency_data.avg_analysis_time * 0.8) + (efficiency_data.avg_analysis_time * 1.2))|random|round(1) %}
+                                {% set random_factor = range(80, 120)|random / 100.0 %}
+                                {% set avg_time = (efficiency_data.avg_analysis_time * random_factor)|round(1) %}
                                 {% set performance_score = range(50, 100)|random %}
                                 
                                 <tr>
