@@ -100,24 +100,46 @@ def logout():
 @login_required
 def register():
     """Página de registro de novo usuário (apenas para administradores)."""
+    print("Acessando rota de registro")
+    
+    # Verificar se é administrador
     if not current_user.role == 'admin':
+        print(f"Acesso negado: Usuário {current_user.username} não é administrador")
         flash('Acesso negado. Você não tem permissão para registrar novos usuários.', 'danger')
         return redirect(url_for('dashboard.index'))
     
     form = RegistrationForm()
+    
+    # Debugar a submissão do formulário
+    if request.method == 'POST':
+        print(f"Recebido POST para registro. Dados: {request.form}")
+    
+    # Processar o formulário
     if form.validate_on_submit():
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            name=form.name.data,
-            role=form.role.data
-        )
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        
-        flash(f'Usuário {user.username} registrado com sucesso!', 'success')
-        return redirect(url_for('auth.users'))
+        print(f"Formulário validado. Criando usuário: {form.username.data}")
+        try:
+            # Criar novo usuário
+            user = User(
+                username=form.username.data,
+                email=form.email.data,
+                name=form.name.data,
+                role=form.role.data,
+                is_active=True
+            )
+            user.set_password(form.password.data)
+            db.session.add(user)
+            db.session.commit()
+            
+            print(f"Usuário {user.username} criado com sucesso!")
+            flash(f'Usuário {user.username} registrado com sucesso!', 'success')
+            return redirect(url_for('auth.users'))
+        except Exception as e:
+            print(f"ERRO ao criar usuário: {str(e)}")
+            db.session.rollback()
+            flash(f'Erro ao registrar usuário: {str(e)}', 'danger')
+    elif request.method == 'POST' and not form.validate():
+        print(f"Erros de validação no formulário: {form.errors}")
+        flash('Verifique os erros no formulário e tente novamente.', 'warning')
     
     return render_template('auth/register.html', title='Registrar Usuário', form=form)
 

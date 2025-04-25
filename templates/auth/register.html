@@ -9,7 +9,7 @@
                     <h4 class="mb-0">Cadastrar Novo Usuário</h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="">
+                    <form method="POST" action="{{ url_for('auth.register') }}">
                         {{ form.hidden_tag() }}
                         
                         <div class="row">
@@ -80,4 +80,25 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const submitBtn = document.querySelector('button[type="submit"]');
+        
+        // Adicionar evento de submissão
+        form.addEventListener('submit', function(e) {
+            // Evitar múltiplos envios
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Registrando...';
+            }
+            
+            // Não bloquear o envio do formulário
+            return true;
+        });
+    });
+</script>
 {% endblock %}
