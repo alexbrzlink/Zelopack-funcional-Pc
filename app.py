@@ -5,6 +5,7 @@ from datetime import datetime
 from flask import Flask, flash, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
+from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import DeclarativeBase
 
 # Configurar logging
@@ -44,6 +45,9 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 # Inicializar o banco de dados
 db.init_app(app)
+
+# Inicializar proteção CSRF
+csrf = CSRFProtect(app)
 
 # Configurar o Flask-Login
 login_manager = LoginManager()
