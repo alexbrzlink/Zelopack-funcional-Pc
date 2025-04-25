@@ -1,645 +1,1909 @@
 /**
- * ZELOPACK - Estilos para a Seção de Cálculos
- * Arquivo CSS focado na experiência interativa da área de cálculos
+ * ZELOPACK - Estilos Modernos para a Seção de Cálculos
+ * Design visualmente impactante e altamente interativo
  */
 
-/* Estilos gerais da área de cálculos */
-.calculos-container {
-    font-family: 'Poppins', 'Inter', sans-serif;
-    color: #333;
-    padding: 20px 0;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --primary-transparent: rgba(37, 99, 235, 0.1);
+  
+  --secondary: #06b6d4;
+  --secondary-dark: #0891b2;
+  
+  --success: #10b981;
+  --success-transparent: rgba(16, 185, 129, 0.1);
+  
+  --warning: #f59e0b;
+  --warning-transparent: rgba(245, 158, 11, 0.1);
+  
+  --danger: #ef4444;
+  --danger-transparent: rgba(239, 68, 68, 0.1);
+  
+  --dark: #334155;
+  --dark-light: #475569;
+  --light: #f8fafc;
+  --light-off: #e2e8f0;
+  
+  --gradient-primary: linear-gradient(135deg, #3b82f6, #2563eb, #1d4ed8);
+  --gradient-secondary: linear-gradient(135deg, #22d3ee, #06b6d4, #0891b2);
+  --gradient-tertiary: linear-gradient(135deg, #a855f7, #9333ea, #7e22ce);
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  --border-radius-sm: 0.25rem;
+  --border-radius: 0.5rem;
+  --border-radius-md: 0.75rem;
+  --border-radius-lg: 1rem;
+  --border-radius-xl: 1.5rem;
+  --border-radius-full: 9999px;
+  
+  --transition-fast: 0.2s;
+  --transition: 0.3s;
+  --transition-slow: 0.5s;
+  
+  --font-family: 'Poppins', 'Montserrat', sans-serif;
+  --font-family-mono: 'Courier New', monospace;
 }
 
-/* Seção introdutória com animação */
+/* ===== Estilo Global da Seção ===== */
+.calculos-container {
+  font-family: var(--font-family);
+  color: var(--dark);
+  background-color: #fbfbfd;
+  padding: 0;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+.calculos-container * {
+  box-sizing: border-box;
+}
+
+/* ===== Cabeçalho com Efeitos Especiais ===== */
 .calculos-intro {
-    background: linear-gradient(135deg, #2980b9, #3498db, #2980b9);
-    color: white;
-    padding: 30px;
-    border-radius: 12px;
-    margin-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.5s ease;
+  background: var(--gradient-primary);
+  color: white;
+  padding: 3rem 2.5rem;
+  border-radius: var(--border-radius-lg);
+  margin: 0 0 3rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition) ease;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .calculos-intro:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.18);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
 }
 
 .calculos-intro::before {
-    content: "";
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    top: -50%;
-    left: -50%;
-    z-index: 0;
-    background: url('../img/pattern-light.svg') repeat;
-    background-size: 10px;
-    opacity: 0.1;
-    animation: bg-animation 30s linear infinite;
+  content: "";
+  position: absolute;
+  width: 250%;
+  height: 250%;
+  top: -75%;
+  left: -75%;
+  z-index: -1;
+  background: url('../img/pattern-light.svg') repeat;
+  background-size: 12px;
+  opacity: 0.1;
+  animation: intro-pattern 40s linear infinite;
 }
 
-@keyframes bg-animation {
-    0% { transform: translateX(0) translateY(0); }
-    100% { transform: translateX(-20%) translateY(-20%); }
+.calculos-intro::after {
+  content: "";
+  position: absolute;
+  right: -15%;
+  top: -20%;
+  width: 50%;
+  height: 160%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(-20deg);
+  z-index: 0;
+  animation: light-sweep 8s ease-in-out infinite;
+}
+
+@keyframes intro-pattern {
+  0% { transform: rotate(0deg) translateX(0) translateY(0); }
+  100% { transform: rotate(5deg) translateX(-20%) translateY(-10%); }
+}
+
+@keyframes light-sweep {
+  0% { transform: translateX(-100%) rotate(-20deg); }
+  100% { transform: translateX(200%) rotate(-20deg); }
 }
 
 .calculos-intro h2 {
-    position: relative;
-    z-index: 1;
-    font-weight: 700;
-    margin-bottom: 15px;
-    font-size: 2.2rem;
+  position: relative;
+  z-index: 2;
+  margin: 0 0 1rem;
+  font-size: 2.75rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #ffffff, #e2e8f0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  letter-spacing: -0.5px;
+  animation: fadeInUp 1s ease;
 }
 
 .calculos-intro p {
-    position: relative;
-    z-index: 1;
-    font-size: 1.1rem;
-    opacity: 0.9;
-    max-width: 800px;
+  position: relative;
+  z-index: 2;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  opacity: 0.95;
+  max-width: 85%;
+  animation: fadeInUp 1.2s ease;
+  animation-fill-mode: both;
+  margin-bottom: 1.5rem;
 }
 
-/* Abas de navegação de cálculos */
+.intro-badges {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 0.5rem;
+  animation: fadeInUp 1.4s ease;
+  animation-fill-mode: both;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 15px;
+  border-radius: var(--border-radius-full);
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-fast) ease;
+}
+
+.badge:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+}
+
+.badge i {
+  font-size: 1rem;
+}
+
+.badge.bg-primary {
+  background: linear-gradient(to right, var(--primary), var(--primary-dark));
+}
+
+.badge.bg-success {
+  background: linear-gradient(to right, var(--success), #059669);
+}
+
+.badge.bg-info {
+  background: linear-gradient(to right, var(--secondary), var(--secondary-dark));
+}
+
+.badge.bg-warning {
+  background: linear-gradient(to right, var(--warning), #d97706);
+}
+
+/* ===== Navegação em Abas Reinventada ===== */
 .calculation-tabs {
-    position: relative;
-    margin-bottom: 30px;
-    z-index: 1;
+  position: relative;
+  margin-bottom: 0;
+  display: flex;
+  gap: 5px;
+  border: none;
+  padding: 0 15px;
+  z-index: 10;
+}
+
+.calculation-tabs .nav-item {
+  position: relative;
 }
 
 .calculation-tabs .nav-link {
-    color: #495057;
-    font-weight: 500;
-    padding: 14px 22px;
-    border-radius: 0;
-    border: 1px solid transparent;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    font-size: 1.05rem;
+  color: var(--dark-light);
+  font-weight: 500;
+  padding: 1rem 1.25rem;
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+  border: 1px solid transparent;
+  transition: all var(--transition) ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .calculation-tabs .nav-link::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 3px;
-    background-color: #0d6efd;
-    transition: width 0.3s;
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--transition) ease;
+  z-index: 1;
 }
 
 .calculation-tabs .nav-link:hover::before {
-    width: 100%;
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 .calculation-tabs .nav-link.active {
-    color: #0d6efd;
-    background-color: #fff;
-    border-color: #dee2e6 #dee2e6 #fff;
-    border-top: 3px solid #0d6efd;
-    font-weight: 600;
+  color: var(--primary);
+  background-color: #fff;
+  border-color: #e2e8f0 #e2e8f0 #fff;
+  font-weight: 600;
+  box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.03);
 }
 
 .calculation-tabs .nav-link.active::before {
-    width: 100%;
+  transform: scaleX(1);
+  height: 4px;
+  background-color: var(--primary);
 }
 
-.calculation-tabs .nav-link:hover:not(.active) {
-    border-color: transparent;
-    background-color: rgba(13, 110, 253, 0.05);
-}
-
+.calculation-tabs .nav-link i,
 .calculation-tabs .nav-link .tab-icon {
-    margin-right: 8px;
-    font-size: 1.1rem;
-    position: relative;
-    top: 1px;
+  font-size: 1.25rem;
+  transition: all var(--transition-fast) ease;
 }
 
-/* Conteúdo das abas */
+.calculation-tabs .nav-link:hover i,
+.calculation-tabs .nav-link:hover .tab-icon,
+.calculation-tabs .nav-link.active i,
+.calculation-tabs .nav-link.active .tab-icon {
+  color: var(--primary);
+  transform: scale(1.2);
+}
+
+.calculation-tabs .nav-link::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: -1;
+}
+
+.calculation-tabs .nav-link:hover::after {
+  transform: translate(-50%, -50%) scale(1.5);
+  opacity: 0;
+}
+
+/* ===== Estilo do Conteúdo das Abas ===== */
 .tab-content {
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-    border-radius: 0 0 12px 12px;
-    padding: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    min-height: 400px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
+  padding: 2.5rem;
+  box-shadow: var(--shadow);
+  min-height: 400px;
+  position: relative;
+  z-index: 5;
+  animation: fadeIn 0.5s ease;
 }
 
-/* Cabeçalho visual da seção de cada cálculo */
+.tab-pane {
+  animation: fadeIn 0.5s ease;
+}
+
+.tab-pane.active {
+  animation: fadeIn 0.5s ease;
+}
+
+/* ===== Cabeçalho de Seção ===== */
 .calculation-visual {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    border-left: 5px solid #0d6efd;
-    transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-radius: var(--border-radius);
+  border-left: 5px solid var(--primary);
+  transition: all var(--transition) ease;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.8s ease;
+}
+
+.calculation-visual::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.5) 25%, 
+                               rgba(255, 255, 255, 0.5) 50%, transparent 50%, 
+                               transparent 75%, rgba(255, 255, 255, 0.5) 75%);
+  background-size: 20px 20px;
+  opacity: 0.3;
+  transition: all var(--transition) ease;
 }
 
 .calculation-visual:hover {
-    background-color: #e9ecef;
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+}
+
+.calculation-visual:hover::before {
+  animation: moveStripes 20s linear infinite;
+}
+
+@keyframes moveStripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
 }
 
 .calculation-icon {
-    font-size: 2.5rem;
-    color: #0d6efd;
-    width: 70px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(13, 110, 253, 0.1);
-    border-radius: 50%;
-    margin-right: 20px;
-    transition: all 0.3s ease;
+  font-size: 2.5rem;
+  color: var(--primary);
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: var(--border-radius-full);
+  margin-right: 1.5rem;
+  transition: all var(--transition) ease;
+  box-shadow: var(--shadow);
+  position: relative;
+  z-index: 1;
+}
+
+.calculation-visual:hover .calculation-icon {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: var(--shadow-md);
 }
 
 .calculation-details {
-    flex-grow: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .calculation-details h3 {
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #212529;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--dark);
+  font-size: 1.6rem;
 }
 
 .calculation-details p {
-    color: #6c757d;
-    margin-bottom: 0;
+  color: var(--dark-light);
+  margin-bottom: 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  max-width: 90%;
 }
 
-/* Cards de calculadoras */
+/* ===== Cards de Calculadoras Modernos ===== */
 .card-calculator {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    margin-bottom: 25px;
-    border: none;
-    transition: all 0.3s ease;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.8rem;
+  border: none;
+  transition: all var(--transition) ease;
+  position: relative;
+  background: white;
+  animation: fadeInUp 0.6s ease;
+  animation-fill-mode: both;
+}
+
+.card-calculator:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.card-calculator:nth-child(3) {
+  animation-delay: 0.3s;
 }
 
 .card-calculator:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-header-calculator {
-    background: linear-gradient(to right, #2c3e50, #3498db);
-    color: white;
-    padding: 15px 20px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background: var(--gradient-primary);
+  color: white;
+  padding: 1.25rem 1.5rem;
+  font-weight: 600;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  transition: all var(--transition) ease;
+}
+
+.card-header-calculator::before {
+  content: "";
+  position: absolute;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: translateX(-100%) skewX(-15deg);
+  top: 0;
+  left: 0;
+  z-index: -1;
+  transition: transform 0.7s ease;
+}
+
+.card-calculator:hover .card-header-calculator::before {
+  transform: translateX(100%) skewX(-15deg);
+}
+
+.card-header-calculator i {
+  font-size: 1.4rem;
+  margin-right: 0.5rem;
+  position: relative;
+  top: 1px;
+  transition: transform var(--transition-fast) ease;
+}
+
+.card-calculator:hover .card-header-calculator i {
+  transform: scale(1.2);
 }
 
 .card-body-calculator {
-    padding: 25px;
-    background-color: #fff;
+  padding: 1.8rem;
+  background-color: #fff;
+  position: relative;
 }
 
-/* Descrição dos cálculos */
+/* ===== Descrições e Fórmulas ===== */
 .calculation-description {
-    margin-bottom: 20px;
-    color: #6c757d;
-    font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  color: var(--dark-light);
+  font-size: 1rem;
+  line-height: 1.6;
+  position: relative;
+  padding-left: 1.5rem;
+  border-left: 3px solid var(--light-off);
 }
 
-/* Caixa de fórmula */
 .formula-box {
-    background-color: #e9ecef;
-    border-left: 4px solid #0d6efd;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
+  background-color: #f8fafc;
+  border-left: 4px solid var(--primary);
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.8rem;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: 1rem;
+  position: relative;
+  transition: all var(--transition) ease;
 }
 
-/* Formulários de cálculos */
+.formula-box:hover {
+  background-color: #f1f5f9;
+  transform: scale(1.02);
+  box-shadow: var(--shadow-sm);
+}
+
+.formula-box strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+  font-family: var(--font-family);
+}
+
+/* ===== Formulários Interativos ===== */
 .form-group {
-    margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  position: relative;
 }
 
 .form-label {
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: #495057;
-    display: block;
+  font-weight: 500;
+  margin-bottom: 0.6rem;
+  color: var(--dark);
+  display: block;
+  font-size: 1rem;
+  transition: all var(--transition-fast) ease;
 }
 
-.form-control {
-    border-radius: 6px;
-    padding: 10px 15px;
-    border: 1px solid #ced4da;
-    transition: all 0.3s;
-}
-
-.form-control:focus {
-    border-color: #80bdff;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
+.form-control, 
 .form-select {
-    border-radius: 6px;
-    padding: 10px 15px;
-    border: 1px solid #ced4da;
-    transition: all 0.3s;
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  transition: all var(--transition) ease;
+  background-color: #f8fafc;
+  font-size: 1rem;
+  color: var(--dark);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* Validação de formulários */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px var(--primary-transparent);
+  background-color: white;
+}
+
+.form-control::placeholder {
+  color: #94a3b8;
+  opacity: 0.8;
+}
+
+.form-group:focus-within .form-label {
+  color: var(--primary);
+  transform: translateY(-3px);
+}
+
+/* ===== Validação de Formulários ===== */
 .form-control.is-invalid {
-    border-color: #dc3545;
-    box-shadow: none;
+  border-color: var(--danger);
+  background-color: var(--danger-transparent);
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.1);
 }
 
 .form-control.is-valid {
-    border-color: #28a745;
-    box-shadow: none;
+  border-color: var(--success);
+  background-color: var(--success-transparent);
+  box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.1);
 }
 
 .error-message {
-    display: none;
-    color: #dc3545;
-    font-size: 0.85rem;
-    margin-top: 5px;
+  display: none;
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  animation: fadeIn 0.3s ease;
+  padding-left: 0.5rem;
 }
 
-/* Botões de cálculo */
+/* ===== Botões de Cálculo Modernos ===== */
 .btn-calculate {
-    background-color: #0d6efd;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: all 0.3s;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: 0.85rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  transition: all var(--transition) ease;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-calculate::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  z-index: -1;
 }
 
 .btn-calculate:hover {
-    background-color: #0b5ed7;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-calculate:hover::before {
+  transform: translateX(100%);
 }
 
 .btn-calculate:active {
-    transform: translateY(0);
-    box-shadow: none;
+  transform: translateY(1px);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Caixa de resultados */
+.btn-calculate i {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+  position: relative;
+  top: 1px;
+  transition: transform var(--transition-fast) ease;
+}
+
+.btn-calculate:hover i {
+  transform: rotate(10deg);
+}
+
+/* ===== Caixa de Resultados Impressionante ===== */
 .result-box {
-    background: linear-gradient(to right, #f1f9ff, #e6f7ff);
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 20px;
-    display: none;
-    border-left: 4px solid #0d6efd;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #f1f9ff, #e6f7ff);
+  border-radius: var(--border-radius);
+  padding: 1.8rem;
+  margin-top: 2rem;
+  display: none;
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.result-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.6) 30%, 
+                               rgba(255, 255, 255, 0.6) 40%, transparent 40%, 
+                               transparent 70%, rgba(255, 255, 255, 0.6) 70%, 
+                               rgba(255, 255, 255, 0.6) 80%, transparent 80%);
+  background-size: 60px 60px;
+  opacity: 0.5;
+  animation: moveResultStripes 15s linear infinite;
+}
+
+@keyframes moveResultStripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 60px 60px; }
 }
 
 .result-header {
-    color: #0d6efd;
-    font-weight: 600;
-    margin-bottom: 15px;
-    font-size: 1.1rem;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
 }
 
 .result-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .result-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
 }
 
 .result-label {
-    font-size: 0.9rem;
-    color: #6c757d;
-    margin-bottom: 5px;
+  font-size: 1rem;
+  color: var(--dark-light);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
 }
 
 .result-value {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #0d6efd;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+  background: linear-gradient(to right, var(--primary-dark), var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
 }
 
-/* Botões de ação */
+.result-unit {
+  font-size: 0.9rem;
+  color: var(--dark-light);
+  font-weight: 500;
+  text-transform: lowercase;
+}
+
+/* ===== Botões de Ação Aprimorados ===== */
 .action-buttons {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 15px;
-    gap: 10px;
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .action-button {
-    cursor: pointer;
-    padding: 8px 15px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
+  cursor: pointer;
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  transition: all var(--transition) ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  min-width: 120px;
+  box-shadow: var(--shadow-sm);
 }
 
 .action-button i {
-    margin-right: 5px;
+  margin-right: 0.5rem;
+  font-size: 1rem;
+  transition: transform var(--transition-fast) ease;
 }
 
 .action-button.copy {
-    background-color: #e9ecef;
-    color: #495057;
+  background-color: var(--light);
+  color: var(--dark);
+  border: 1px solid #cbd5e1;
 }
 
 .action-button.copy:hover {
-    background-color: #ced4da;
+  background-color: white;
+  box-shadow: var(--shadow);
+  transform: translateY(-3px);
+}
+
+.action-button.copy:hover i {
+  transform: translateY(-2px);
 }
 
 .action-button.reset {
-    background-color: #f8d7da;
-    color: #842029;
+  background-color: var(--danger-transparent);
+  color: var(--danger);
+  border: 1px solid var(--danger);
 }
 
 .action-button.reset:hover {
-    background-color: #f5c2c7;
+  background-color: var(--danger);
+  color: white;
+  box-shadow: var(--shadow);
+  transform: translateY(-3px);
 }
 
-/* Gráficos */
+.action-button.reset:hover i {
+  transform: rotate(15deg);
+}
+
+/* ===== Containers de Gráficos ===== */
 .graph-container {
-    margin-top: 30px;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    height: 300px;
+  margin: 2rem 0;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  min-height: 300px;
+  position: relative;
+  border: 1px solid #e2e8f0;
+  transition: all var(--transition) ease;
 }
 
-/* Estilos para entrada com unidade */
-.input-group-text {
-    background-color: #e9ecef;
-    border: 1px solid #ced4da;
-    border-radius: 0 6px 6px 0;
-    color: #495057;
+.graph-container:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
 }
 
-/* Animações */
-.animate-fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+.graph-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 25%, transparent 25%, 
+                               transparent 50%, rgba(255,255,255,0.1) 50%, 
+                               rgba(255,255,255,0.1) 75%, transparent 75%, transparent);
+  background-size: 20px 20px;
+  opacity: 0.5;
+  animation: moveGraphPattern 30s linear infinite;
+  border-radius: var(--border-radius);
+  z-index: 0;
 }
 
-.animate-fade-in-up {
-    animation: fadeInUp 0.5s ease-in-out;
+@keyframes moveGraphPattern {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
 }
 
-.animate-pulse {
-    animation: pulse 1s ease-in-out;
+.graph-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+  padding-left: 1rem;
+  border-left: 3px solid var(--primary);
 }
 
-.animate-shake {
-    animation: shake 0.5s ease-in-out;
+.graph-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--dark-light);
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
-/* Subtabs */
+/* ===== Subtabs Elegantes ===== */
 .sub-tabs {
-    margin-bottom: 20px;
+  margin: 1.5rem 0;
+  display: flex;
+  overflow-x: auto;
+  background-color: var(--light);
+  border-radius: var(--border-radius);
+  padding: 0.5rem;
 }
 
 .sub-tabs .nav-link {
-    padding: 8px 15px;
-    color: #6c757d;
-    border-radius: 6px;
-    margin-right: 10px;
-    font-size: 0.95rem;
-    transition: all 0.3s;
+  padding: 0.75rem 1.25rem;
+  color: var(--dark-light);
+  border-radius: var(--border-radius);
+  margin-right: 0.5rem;
+  font-size: 0.95rem;
+  transition: all var(--transition) ease;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .sub-tabs .nav-link.active {
-    background-color: #f8f9fa;
-    color: #0d6efd;
-    font-weight: 500;
+  background-color: white;
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
 .sub-tabs .nav-link:hover:not(.active) {
-    background-color: rgba(13, 110, 253, 0.05);
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Grupo de cálculos relacionados */
-.calculation-group {
-    margin-bottom: 40px;
+.sub-tabs .nav-link i {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+  opacity: 0.8;
+  transition: all var(--transition-fast) ease;
 }
 
-.calculation-group-title {
-    font-weight: 600;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e9ecef;
-    color: #212529;
+.sub-tabs .nav-link.active i,
+.sub-tabs .nav-link:hover i {
+  opacity: 1;
+  transform: scale(1.1);
 }
 
-/* Dicas e informações */
-.tips-box {
-    background-color: #fff3cd;
-    border-left: 4px solid #ffc107;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-}
-
-.tips-box h5 {
-    color: #856404;
-    margin-bottom: 10px;
-    font-size: 1.1rem;
-}
-
-.tips-box p {
-    color: #856404;
-    margin-bottom: 5px;
-}
-
-/* Tooltips personalizados */
+/* ===== Tooltips Personalizados ===== */
 .custom-tooltip {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    max-width: 250px;
-    z-index: 9999;
-    pointer-events: none;
+  position: absolute;
+  background-color: var(--dark);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  max-width: 300px;
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Animações para tooltips */
-.animate-fade-in {
-    animation: fadeIn 0.3s ease-in-out;
+.custom-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0;
+  border-style: solid;
+  border-color: var(--dark) transparent transparent;
 }
 
-.animate-fade-out {
-    animation: fadeOut 0.3s ease-in-out;
+/* ===== Animações Avançadas ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-20px); }
+  60% { transform: translateY(-10px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
 @keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
-/* Responsividade */
+/* ===== Responsividade Aprimorada ===== */
+@media (max-width: 992px) {
+  .calculos-intro {
+    padding: 2.5rem 2rem;
+  }
+  
+  .calculos-intro h2 {
+    font-size: 2.25rem;
+  }
+  
+  .calculos-intro p {
+    max-width: 100%;
+    font-size: 1.1rem;
+  }
+  
+  .intro-badges {
+    flex-wrap: wrap;
+  }
+  
+  .tab-content {
+    padding: 2rem 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
-    .calculation-tabs .nav-link {
-        padding: 10px 15px;
-        font-size: 0.9rem;
-    }
-    
-    .tab-content {
-        padding: 20px;
-    }
-    
-    .calculation-visual {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .calculation-icon {
-        margin-right: 0;
-        margin-bottom: 15px;
-    }
-    
-    .result-content {
-        flex-direction: column;
-    }
-    
-    .result-item {
-        margin-bottom: 15px;
-    }
-}
-
-/* Destaque com acessibilidade */
-.accessible-highlight {
-    background-color: rgba(13, 110, 253, 0.1);
-    border-radius: 4px;
-    padding: 2px 5px;
-    color: #0d6efd;
-}
-
-/* Personalização para temas de cores */
-.theme-blue {
-    --primary-color: #0d6efd;
-    --primary-light: rgba(13, 110, 253, 0.1);
-    --primary-dark: #0b5ed7;
-}
-
-.theme-green {
-    --primary-color: #198754;
-    --primary-light: rgba(25, 135, 84, 0.1);
-    --primary-dark: #157347;
-}
-
-.theme-purple {
-    --primary-color: #6f42c1;
-    --primary-light: rgba(111, 66, 193, 0.1);
-    --primary-dark: #6610f2;
-}
-
-/* Indicadores visuais para alertas */
-.value-indicator {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.value-indicator.good {
-    background-color: #d1e7dd;
-    color: #0f5132;
-}
-
-.value-indicator.warning {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.value-indicator.bad {
-    background-color: #f8d7da;
-    color: #842029;
-}
-
-/* Efeitos de hover para elementos interativos */
-.interactive-element {
-    transition: all 0.3s ease;
-}
-
-.interactive-element:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilos específicos para tabelas de referência */
-.reference-table {
+  .calculation-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 0 10px;
+  }
+  
+  .calculation-tabs .nav-link {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+  
+  .tab-content {
+    padding: 1.5rem 1.25rem;
+  }
+  
+  .calculation-visual {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.25rem;
+  }
+  
+  .calculation-icon {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .calculation-details h3 {
+    font-size: 1.4rem;
+  }
+  
+  .calculation-details p {
+    max-width: 100%;
+    font-size: 1rem;
+  }
+  
+  .card-header-calculator {
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+  }
+  
+  .card-body-calculator {
+    padding: 1.25rem;
+  }
+  
+  .result-content {
+    flex-direction: column;
+  }
+  
+  .result-item {
+    margin-bottom: 1rem;
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-bottom: 20px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .action-button {
+    width: 100%;
+  }
 }
 
-.reference-table th, 
-.reference-table td {
-    padding: 10px 15px;
-    text-align: left;
-    border-bottom: 1px solid #e9ecef;
+@media (max-width: 576px) {
+  .calculos-intro {
+    padding: 2rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .calculos-intro h2 {
+    font-size: 1.8rem;
+  }
+  
+  .calculos-intro p {
+    font-size: 1rem;
+  }
+  
+  .calculation-tabs .nav-link {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .tab-content {
+    padding: 1.25rem 1rem;
+  }
+  
+  .calculation-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.8rem;
+  }
+  
+  .formula-box {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .btn-calculate {
+    width: 100%;
+  }
+  
+  .result-value {
+    font-size: 1.8rem;
+  }
 }
 
-.reference-table thead th {
-    background-color: #f8f9fa;
-    font-weight: 600;
-    color: #495057;
-    border-bottom: 2px solid #dee2e6;
+/* ===== Elementos Interativos Adicionais ===== */
+.tooltip-trigger {
+  cursor: help;
+  color: var(--primary);
+  margin-left: 5px;
+  font-size: 0.9rem;
+  transition: all var(--transition-fast) ease;
 }
 
-.reference-table tbody tr:hover {
-    background-color: #f8f9fa;
+.tooltip-trigger:hover {
+  transform: scale(1.2);
+}
+
+.info-box {
+  background-color: var(--light);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+  margin-top: 1.5rem;
+  border-left: 4px solid var(--primary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--dark-light);
+}
+
+.info-box-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.info-box-title i {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.info-box-content {
+  padding-left: 1.6rem;
+}
+
+.info-box-content p:last-child {
+  margin-bottom: 0;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon input {
+  padding-left: 2.5rem;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: var(--dark-light);
+  pointer-events: none;
+  transition: all var(--transition-fast) ease;
+}
+
+.input-with-icon input:focus + i {
+  color: var(--primary);
+}
+
+.unit-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.unit-selector label {
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  background-color: var(--light);
+  color: var(--dark-light);
+  cursor: pointer;
+  transition: all var(--transition-fast) ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unit-selector input[type="radio"] {
+  display: none;
+}
+
+.unit-selector input[type="radio"]:checked + label {
+  background-color: var(--primary);
+  color: white;
+}
+
+.range-slider {
+  width: 100%;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.range-slider input[type="range"] {
+  width: 100%;
+  height: 5px;
+  appearance: none;
+  background: linear-gradient(to right, var(--primary-light), var(--primary-dark));
+  border-radius: var(--border-radius-full);
+  outline: none;
+}
+
+.range-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 2px solid var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast) ease;
+}
+
+.range-slider input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--primary);
+}
+
+.range-values {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--dark-light);
+  margin-top: 0.5rem;
+}
+
+/* === Elementos de Busca e Navegação Rápida === */
+.calculator-search-container {
+  margin: 1.5rem 0;
+  position: relative;
+  z-index: 100;
+  width: 100%;
+  max-width: 700px;
+}
+
+.calculator-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.calculator-search-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border-radius: var(--border-radius-full);
+  border: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.1rem;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  transition: all var(--transition) ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.calculator-search-input:focus {
+  background-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  outline: none;
+}
+
+.calculator-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1.2rem;
+  font-size: 1.2rem;
+  color: white;
+  pointer-events: none;
+  opacity: 0.8;
+  transition: all var(--transition-fast) ease;
+}
+
+.calculator-search-input:focus + .search-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.search-clear {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.1rem;
+  opacity: 0.7;
+  transition: all var(--transition-fast) ease;
+  display: none;
+}
+
+.search-clear:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.calculator-search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  margin-top: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  padding: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.calculator-search-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.calculator-search-results::-webkit-scrollbar-track {
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.calculator-search-results::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
+}
+
+.search-result-item {
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-fast) ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-result-item:hover {
+  background-color: var(--light);
+}
+
+.search-result-icon {
+  color: var(--primary);
+  font-size: 1.1rem;
+  min-width: 20px;
+  text-align: center;
+}
+
+.search-result-text {
+  flex-grow: 1;
+  font-size: 0.95rem;
+  color: var(--dark);
+}
+
+.search-result-category {
+  font-size: 0.75rem;
+  color: var(--dark-light);
+  background-color: var(--light);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  white-space: nowrap;
+}
+
+.search-result-highlight {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.quick-access-container {
+  margin: 2.5rem 0;
+  padding: 1.5rem;
+  background-color: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.quick-access-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quick-access-title i {
+  color: var(--primary);
+  font-size: 1.4rem;
+}
+
+.quick-access-subtitle {
+  font-size: 0.85rem;
+  color: var(--dark-light);
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
+.quick-access-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.quick-access-item {
+  background-color: var(--light);
+  border-radius: var(--border-radius);
+  padding: 1.25rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition) ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-access-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: all var(--transition) ease;
+}
+
+.quick-access-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  background-color: white;
+}
+
+.quick-access-item:hover::before {
+  opacity: 1;
+}
+
+.quick-access-icon {
+  font-size: 1.8rem;
+  color: var(--primary);
+  height: 50px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-transparent);
+  border-radius: var(--border-radius-full);
+  transition: all var(--transition) ease;
+}
+
+.quick-access-item:hover .quick-access-icon {
+  transform: scale(1.1);
+  background-color: var(--primary);
+  color: white;
+}
+
+.quick-access-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--dark);
+  transition: all var(--transition-fast) ease;
+  line-height: 1.2;
+}
+
+.quick-access-item:hover .quick-access-label {
+  color: var(--primary-dark);
+}
+
+.quick-access-item.show-all {
+  background-color: var(--primary-transparent);
+}
+
+.quick-access-item.show-all .quick-access-icon {
+  background-color: white;
+}
+
+.quick-access-item.show-all:hover {
+  background-color: var(--primary-light);
+}
+
+.quick-access-item.show-all:hover .quick-access-label {
+  color: white;
+}
+
+.highlight-gradient {
+  background: linear-gradient(to right, #2563eb, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline;
+}
+
+.calculation-help {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all var(--transition-fast) ease;
+  z-index: 10;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.calculation-help:hover {
+  background-color: white;
+  color: var(--primary);
+}
+
+.help-box {
+  position: absolute;
+  top: 3rem;
+  right: 1rem;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  padding: 1.25rem;
+  width: 300px;
+  z-index: 1000;
+  display: none;
+}
+
+.help-box.active {
+  display: block;
+  animation: fadeInDown 0.3s ease;
+}
+
+.help-box-title {
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--light-off);
+  padding-bottom: 0.5rem;
+}
+
+.help-box-content {
+  font-size: 0.9rem;
+  color: var(--dark-light);
+  line-height: 1.6;
+}
+
+.help-box-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--dark-light);
+  transition: all var(--transition-fast) ease;
+}
+
+.help-box-close:hover {
+  color: var(--danger);
+  transform: rotate(90deg);
+}
+
+.visual-result {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  min-height: 100px;
+}
+
+/* ===== Componentes Específicos para Cálculos ===== */
+.temperature-gradient {
+  height: 10px;
+  background: linear-gradient(to right, blue, green, yellow, orange, red);
+  border-radius: var(--border-radius-full);
+  margin: 1rem 0;
+  position: relative;
+}
+
+.temperature-marker {
+  position: absolute;
+  top: -15px;
+  width: 2px;
+  height: 20px;
+  background-color: black;
+  transform: translateX(-50%);
+}
+
+.temperature-marker::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 50%;
+}
+
+.ratio-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.ratio-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.ratio-quality {
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--border-radius);
+}
+
+.ratio-quality.optimal {
+  background-color: var(--success-transparent);
+  color: var(--success);
+}
+
+.ratio-quality.good {
+  background-color: var(--primary-transparent);
+  color: var(--primary);
+}
+
+.ratio-quality.acceptable {
+  background-color: var(--warning-transparent);
+  color: var(--warning);
+}
+
+.ratio-quality.poor {
+  background-color: var(--danger-transparent);
+  color: var(--danger);
+}
+
+.calculation-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.calculation-card {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: all var(--transition) ease;
+  cursor: pointer;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.calculation-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.calculation-card-header {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.calculation-card-body {
+  padding: 1.25rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.calculation-card-description {
+  font-size: 0.9rem;
+  color: var(--dark-light);
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.calculation-card-action {
+  text-align: center;
+}
+
+.btn-card {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--border-radius);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  transition: all var(--transition) ease;
+}
+
+.btn-card:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* ===== Elementos Adicionais de Alta Interatividade ===== */
+.progress-circular {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  transform: rotate(-90deg);
+}
+
+.progress-circular__circle {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transform: translate(5px, 5px);
+}
+
+.progress-circular__circle-bg {
+  stroke: #e2e8f0;
+}
+
+.progress-circular__circle-value {
+  stroke: var(--primary);
+  transition: stroke-dashoffset 1s ease;
+}
+
+.progress-circular__text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.typing-effect::after {
+  content: "|";
+  animation: typing 1s infinite;
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.hover-zoom {
+  transition: transform var(--transition) ease;
+}
+
+.hover-zoom:hover {
+  transform: scale(1.05);
+}
+
+.flip-card {
+  perspective: 1000px;
+  height: 200px;
+  margin-bottom: 1.5rem;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+}
+
+.flip-card-front {
+  background-color: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.flip-card-back {
+  background-color: var(--primary-light);
+  color: white;
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calculator-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.calculator-button {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--border-radius-sm);
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast) ease;
+}
+
+.calculator-button:hover {
+  background-color: #f1f5f9;
+  transform: translateY(-2px);
+}
+
+.calculator-button.operator {
+  background-color: var(--primary-transparent);
+  color: var(--primary);
+}
+
+.calculator-button.equals {
+  background-color: var(--primary);
+  color: white;
+  grid-column: span 2;
+}
+
+.calculator-button.clear {
+  background-color: var(--danger-transparent);
+  color: var(--danger);
 }

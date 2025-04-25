@@ -4,6 +4,8 @@
 
 {% block head_extra %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/calculos.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-icons.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/animate.min.css') }}">
 <script src="{{ url_for('static', filename='vendor/chart.min.js') }}"></script>
 {% endblock %}
 
@@ -12,37 +14,100 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <div class="calculos-intro">
-                    <h2>Cálculos de Laboratório</h2>
-                    <p>Utilize ferramentas de cálculo precisas e interativas para análises de laboratório e controle do processo de produção. Todos os cálculos são baseados em fórmulas validadas e fatores de conversão configuráveis para o ambiente específico da ZeloPack.</p>
+                <div class="calculos-intro animate__animated animate__fadeIn">
+                    <div class="calculation-help" id="helpToggle">
+                        <i class="bi bi-question-circle"></i>
+                    </div>
+                    <div class="help-box" id="helpBox">
+                        <div class="help-box-close" id="helpClose"><i class="bi bi-x"></i></div>
+                        <div class="help-box-title">Ajuda Rápida</div>
+                        <div class="help-box-content">
+                            <p>Esta área contém todas as calculadoras usadas no laboratório da ZeloPack. Use o buscador para encontrar rapidamente o cálculo desejado ou navegue pelas abas para explorar os diferentes tipos de cálculos.</p>
+                            <p>Cada calculadora inclui a fórmula utilizada e pode ser visualizada em formato expandido para melhor aproveitamento.</p>
+                        </div>
+                    </div>
+                    
+                    <h2>Cálculos <span class="highlight-gradient">Laboratoriais</span></h2>
+                    <p>Gerencie seus processos com precisão através das nossas calculadoras interativas para análises de laboratório e controle de produção. Todos os cálculos são baseados em fórmulas validadas e utilizam fatores de conversão específicos do ambiente ZeloPack.</p>
+                    
+                    <!-- Buscador de cálculos -->
+                    <div class="calculator-search-container">
+                        <div class="calculator-search-box">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" id="calculatorSearch" class="calculator-search-input" placeholder="Buscar entre os 36 cálculos disponíveis..." autocomplete="off">
+                            <button class="search-clear" id="clearSearch"><i class="bi bi-x-circle"></i></button>
+                        </div>
+                        <div class="calculator-search-results" id="searchResults"></div>
+                    </div>
+                    
                     <div class="intro-badges mt-3">
-                        <span class="badge bg-primary">36 Calculadoras Disponíveis</span>
-                        <span class="badge bg-success">Resultados em Tempo Real</span>
-                        <span class="badge bg-info">Fatores de Conversão Personalizáveis</span>
-                        <span class="badge bg-warning text-dark">Visualizações Gráficas</span>
+                        <span class="badge bg-primary"><i class="bi bi-calculator"></i> 36 Calculadoras Avançadas</span>
+                        <span class="badge bg-success"><i class="bi bi-lightning-charge"></i> Resultados em Tempo Real</span>
+                        <span class="badge bg-info"><i class="bi bi-sliders"></i> Fatores Personalizáveis</span>
+                        <span class="badge bg-warning"><i class="bi bi-graph-up"></i> Visualizações Interativas</span>
                     </div>
                 </div>
                 
-                <!-- Abas principais -->
+                <!-- Atalhos rápidos para os cálculos mais usados -->
+                <div class="quick-access-container animate__animated animate__fadeInUp">
+                    <h3 class="quick-access-title">
+                        <i class="bi bi-lightning"></i> Cálculos Frequentes
+                        <span class="quick-access-subtitle">Acesso rápido aos cálculos mais utilizados</span>
+                    </h3>
+                    
+                    <div class="quick-access-grid">
+                        <div class="quick-access-item" data-calculator="tanque-finalizacao">
+                            <div class="quick-access-icon"><i class="bi bi-tank"></i></div>
+                            <div class="quick-access-label">Finalização de Tanque</div>
+                        </div>
+                        <div class="quick-access-item" data-calculator="brix-padrao">
+                            <div class="quick-access-icon"><i class="bi bi-droplet-half"></i></div>
+                            <div class="quick-access-label">Brix Padrão</div>
+                        </div>
+                        <div class="quick-access-item" data-calculator="diluicao">
+                            <div class="quick-access-icon"><i class="bi bi-water"></i></div>
+                            <div class="quick-access-label">Diluição</div>
+                        </div>
+                        <div class="quick-access-item" data-calculator="peso-liquido">
+                            <div class="quick-access-icon"><i class="bi bi-clipboard-data"></i></div>
+                            <div class="quick-access-label">Peso Líquido</div>
+                        </div>
+                        <div class="quick-access-item" data-calculator="rendimento-producao">
+                            <div class="quick-access-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                            <div class="quick-access-label">Rendimento</div>
+                        </div>
+                        <div class="quick-access-item show-all">
+                            <div class="quick-access-icon"><i class="bi bi-grid-3x3-gap"></i></div>
+                            <div class="quick-access-label">Ver Todos</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Abas principais com ícones modernos -->
                 <ul class="nav nav-tabs calculation-tabs" id="calculationTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="producao-tab" data-bs-toggle="tab" data-bs-target="#producao" type="button" role="tab" aria-controls="producao" aria-selected="true">
-                            <i class="fas fa-industry me-2"></i>Produção
+                            <i class="bi bi-gear-wide-connected"></i> Produção
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="laboratorio-tab" data-bs-toggle="tab" data-bs-target="#laboratorio" type="button" role="tab" aria-controls="laboratorio" aria-selected="false">
-                            <i class="fas fa-flask me-2"></i>Laboratório
+                            <i class="bi bi-eyedropper"></i> Laboratório
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="tanques-tab" data-bs-toggle="tab" data-bs-target="#tanques" type="button" role="tab" aria-controls="tanques" aria-selected="false">
+                            <i class="bi bi-moisture"></i> Tanques
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="conversoes-tab" data-bs-toggle="tab" data-bs-target="#conversoes" type="button" role="tab" aria-controls="conversoes" aria-selected="false">
-                            <i class="fas fa-exchange-alt me-2"></i>Conversões
+                            <i class="bi bi-arrow-left-right"></i> Conversões
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="juice-tab" data-bs-toggle="tab" data-bs-target="#juice" type="button" role="tab" aria-controls="juice" aria-selected="false">
-                            <i class="fas fa-tint me-2"></i>Sucos
+                            <i class="bi bi-cup-straw"></i> Sucos
                         </button>
                     </li>
                 </ul>
@@ -54,7 +119,7 @@
                 <div class="tab-pane fade show active" id="producao" role="tabpanel" aria-labelledby="producao-tab">
                     <div class="calculation-visual">
                         <div class="calculation-icon">
-                            <i class="fas fa-industry"></i>
+                            <i class="bi bi-gear-wide-connected"></i>
                         </div>
                         <div class="calculation-details">
                             <h3>Cálculos de Produção</h3>
@@ -62,8 +127,32 @@
                         </div>
                     </div>
                     
-                    <div class="row">
-                        <!-- Calculadora 1: Produção 200g -->
+                    <!-- Sub navegação por categorias -->
+                    <div class="sub-tabs">
+                        <ul class="nav nav-pills" id="subTabsProducao" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="peso-tab" data-bs-toggle="pill" data-bs-target="#peso-content" type="button" role="tab">
+                                    <i class="bi bi-speedometer2"></i> Peso e Volume
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="rendimento-tab" data-bs-toggle="pill" data-bs-target="#rendimento-content" type="button" role="tab">
+                                    <i class="bi bi-bar-chart-line"></i> Rendimento
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="controle-tab" data-bs-toggle="pill" data-bs-target="#controle-content" type="button" role="tab">
+                                    <i class="bi bi-clipboard-check"></i> Controle
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <!-- Conteúdo Peso e Volume -->
+                        <div class="tab-pane fade show active" id="peso-content" role="tabpanel">
+                            <div class="row">
+                                <!-- Calculadora 1: Produção 200g -->
                         <div class="col-md-6">
                             <div class="card card-calculator">
                                 <div class="card-header-calculator">
