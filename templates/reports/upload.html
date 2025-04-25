@@ -168,6 +168,24 @@
                                     {% endif %}
                                     <small class="text-muted">Tipo de material analisado</small>
                                 </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="{{ form.report_type.id }}" class="form-label">
+                                        <i class="fas fa-clipboard-list me-1"></i> Tipo de Laudo
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-tasks"></i></span>
+                                        {{ form.report_type(class="form-select") }}
+                                    </div>
+                                    {% if form.report_type.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.report_type.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="text-muted">Selecione o tipo específico de laudo</small>
+                                </div>
                                 <div class="col-md-4">
                                     <label for="{{ form.supplier.id }}" class="form-label">
                                         <i class="fas fa-truck me-1"></i> Fornecedor
