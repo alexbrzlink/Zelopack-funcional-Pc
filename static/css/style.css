@@ -1,19 +1,77 @@
-/* Estilos principais da aplicação Zelopack */
+/* Estilos principais da aplicação Zelopack - 2025 Redesign */
 
 :root {
-  /* Cores da identidade visual da Zelopack - adaptadas do logo */
-  --zelopack-primary: #0067b3; /* Azul principal */
-  --zelopack-secondary: #4d9e2f; /* Verde */
-  --zelopack-accent: #ff9800; /* Laranja */
-  --zelopack-dark: #333333;
-  --zelopack-light: #f5f5f5;
-  --zelopack-gray: #6c757d;
+  /* Paleta principal modernizada - com tons complementares */
+  --zelopack-primary: #0057a3; /* Azul principal mais profundo */
+  --zelopack-primary-light: #1a73e8; /* Azul mais claro para hover/destaque */
+  --zelopack-primary-dark: #004080; /* Azul escuro para elementos ativos */
+  --zelopack-primary-subtle: rgba(0, 87, 163, 0.1); /* Azul sutil para backgrounds */
+  
+  --zelopack-secondary: #2e9e41; /* Verde refinado */
+  --zelopack-secondary-light: #4caf50; /* Verde claro para hover/destaque */
+  --zelopack-secondary-dark: #1b7e2c; /* Verde escuro para elementos ativos */
+  --zelopack-secondary-subtle: rgba(46, 158, 65, 0.1); /* Verde sutil para backgrounds */
+  
+  --zelopack-accent: #f57c00; /* Laranja refinado */
+  --zelopack-accent-light: #ff9800; /* Laranja claro para hover/destaque */
+  --zelopack-accent-dark: #e65100; /* Laranja escuro para elementos ativos */
+  --zelopack-accent-subtle: rgba(245, 124, 0, 0.1); /* Laranja sutil para backgrounds */
+  
+  /* Cores de feedback para o usuário */
+  --zelopack-success: #2e7d32; /* Verde para sucesso */
+  --zelopack-success-light: #4caf50;
+  --zelopack-warning: #f9a825; /* Amarelo para avisos */
+  --zelopack-warning-light: #ffc107;
+  --zelopack-error: #d32f2f; /* Vermelho para erros */
+  --zelopack-error-light: #f44336;
+  --zelopack-info: #0288d1; /* Azul info para notificações */
+  --zelopack-info-light: #03a9f4;
+  
+  /* Cores neutras refinadas */
+  --zelopack-dark: #1d2939; /* Quase preto, mais suave que #000 */
+  --zelopack-gray-900: #212b36; /* Cinza muito escuro */
+  --zelopack-gray-800: #323f4b; /* Cinza escuro */
+  --zelopack-gray-700: #4a5568; /* Cinza médio-escuro */
+  --zelopack-gray-600: #637381; /* Cinza médio */
+  --zelopack-gray-500: #919eab; /* Cinza médio-claro */
+  --zelopack-gray-400: #c4cdd5; /* Cinza claro */
+  --zelopack-gray-300: #dfe3e8; /* Cinza muito claro */
+  --zelopack-gray-200: #f0f4f8; /* Cinza quase branco */
+  --zelopack-gray-100: #f8fafc; /* Cinza sutilmente off-white */
+  --zelopack-light: #ffffff; /* Branco puro */
+  
+  /* Variáveis para elementos comuns de UI */
+  --card-border-radius: 12px;
+  --btn-border-radius: 8px;
+  --input-border-radius: 8px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.04), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.04), 0 10px 10px rgba(0, 0, 0, 0.03);
+  
+  /* Espaçamentos padronizados */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Transições */
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.25s ease-in-out;
+  --transition-slow: 0.4s ease-in-out;
 }
 
+/* Tipografia moderna e hierárquica */
 body {
-  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-  background-color: var(--zelopack-light);
-  color: var(--zelopack-dark);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: var(--zelopack-gray-100);
+  color: var(--zelopack-gray-900);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Header e Navbar */
@@ -37,40 +95,124 @@ body {
   color: var(--zelopack-primary) !important;
 }
 
-/* Botões principais */
+/* Botões modernizados com microinterações */
+.btn {
+  border-radius: var(--btn-border-radius);
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+
+.btn:active::after {
+  opacity: 0.32;
+  transform: scale(80, 80) translate(-50%, -50%);
+  transition: transform 0.6s, opacity 0.4s;
+}
+
+/* Botão primário */
 .btn-primary {
   background-color: var(--zelopack-primary);
   border-color: var(--zelopack-primary);
+  box-shadow: 0 2px 4px rgba(0, 87, 163, 0.2);
 }
 
-.btn-primary:hover,
-.btn-primary:focus {
-  background-color: #005596;
-  border-color: #005596;
+.btn-primary:hover {
+  background-color: var(--zelopack-primary-light);
+  border-color: var(--zelopack-primary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 87, 163, 0.3);
 }
 
+.btn-primary:focus, .btn-primary:active {
+  background-color: var(--zelopack-primary-dark);
+  border-color: var(--zelopack-primary-dark);
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 87, 163, 0.2), 0 0 0 3px var(--zelopack-primary-subtle);
+}
+
+/* Botão secundário */
 .btn-success {
   background-color: var(--zelopack-secondary);
   border-color: var(--zelopack-secondary);
+  box-shadow: 0 2px 4px rgba(46, 158, 65, 0.2);
 }
 
-.btn-success:hover,
-.btn-success:focus {
-  background-color: #3e7e25;
-  border-color: #3e7e25;
+.btn-success:hover {
+  background-color: var(--zelopack-secondary-light);
+  border-color: var(--zelopack-secondary-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(46, 158, 65, 0.3);
 }
 
+.btn-success:focus, .btn-success:active {
+  background-color: var(--zelopack-secondary-dark);
+  border-color: var(--zelopack-secondary-dark);
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(46, 158, 65, 0.2), 0 0 0 3px var(--zelopack-secondary-subtle);
+}
+
+/* Botão de destaque */
 .btn-accent {
   background-color: var(--zelopack-accent);
   border-color: var(--zelopack-accent);
   color: white;
+  box-shadow: 0 2px 4px rgba(245, 124, 0, 0.2);
 }
 
-.btn-accent:hover,
-.btn-accent:focus {
-  background-color: #e68a00;
-  border-color: #e68a00;
+.btn-accent:hover {
+  background-color: var(--zelopack-accent-light);
+  border-color: var(--zelopack-accent-light);
   color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(245, 124, 0, 0.3);
+}
+
+.btn-accent:focus, .btn-accent:active {
+  background-color: var(--zelopack-accent-dark);
+  border-color: var(--zelopack-accent-dark);
+  color: white;
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(245, 124, 0, 0.2), 0 0 0 3px var(--zelopack-accent-subtle);
+}
+
+/* Botão outline */
+.btn-outline-primary {
+  color: var(--zelopack-primary);
+  border-color: var(--zelopack-primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--zelopack-primary-subtle);
+  color: var(--zelopack-primary-dark);
+  border-color: var(--zelopack-primary);
+  transform: translateY(-2px);
+}
+
+.btn-outline-secondary {
+  color: var(--zelopack-gray-700);
+  border-color: var(--zelopack-gray-400);
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--zelopack-gray-200);
+  color: var(--zelopack-gray-800);
+  border-color: var(--zelopack-gray-500);
+  transform: translateY(-2px);
 }
 
 /* Cards */
