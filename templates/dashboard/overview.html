@@ -1,21 +1,85 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-<!-- Chart.js para gráficos -->
+<!-- Bootstrap Icons e CSS personalizado para dashboard -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    .dashboard-card {
+        border-left: 4px solid;
+        border-radius: 0.25rem;
+    }
+    .border-left-primary { border-left-color: #3498db !important; }
+    .border-left-success { border-left-color: #2ecc71 !important; }
+    .border-left-info { border-left-color: #3498db !important; }
+    .border-left-warning { border-left-color: #f39c12 !important; }
+    .border-left-danger { border-left-color: #e74c3c !important; }
+    
+    .quality-alert {
+        padding: 10px;
+        border-left: 4px solid #e74c3c;
+        background-color: rgba(231, 76, 60, 0.1);
+        margin-bottom: 10px;
+        border-radius: 0.25rem;
+    }
+    
+    .chart-container {
+        position: relative; 
+        height: 250px;
+        margin-bottom: 15px;
+    }
+    
+    .status-badge {
+        padding: 0.35em 0.65em;
+        border-radius: 0.25rem;
+        font-size: 0.75em;
+    }
+    .status-pendente { background-color: #f39c12; color: white; }
+    .status-aprovado { background-color: #2ecc71; color: white; }
+    .status-rejeitado { background-color: #e74c3c; color: white; }
+    
+    .nav-dashboard .nav-link.active {
+        background-color: #3498db;
+        color: white !important;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
+<!-- Menu de navegação do dashboard -->
+<div class="mb-4">
+    <ul class="nav nav-tabs nav-dashboard">
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('dashboard.index') }}">Visão Geral</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.quality_indicators') }}">Qualidade</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.operational_efficiency') }}">Eficiência</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.documents') }}">Documentos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.activities') }}">Atividades</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('dashboard.backup_information') }}">Backups</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Cards com resumo -->
 <div class="row mb-4">
-    <!-- Card com total de laudos -->
+    <!-- Card com total de laudos no mês -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card dashboard-card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Total de Laudos</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_reports }}</div>
+                            Total de Laudos no Mês</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ monthly_stats.total_reports }}</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-file-alt fa-2x text-gray-300"></i>
@@ -25,61 +89,54 @@
         </div>
     </div>
 
-    <!-- Card com laudos por categoria -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card dashboard-card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                            Categorias</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ categories|length }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-tag fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Card com laudos por fornecedor -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card dashboard-card border-left-info shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Fornecedores</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ suppliers|length }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-industry fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Card com ações rápidas -->
+    <!-- Card com laudos pendentes -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card dashboard-card border-left-warning shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Ações Rápidas</div>
-                        <div class="mt-2">
-                            <a href="{{ url_for('reports.upload') }}" class="btn btn-sm btn-primary">
-                                <i class="fas fa-upload"></i> Novo Laudo
-                            </a>
-                            <a href="{{ url_for('reports.search') }}" class="btn btn-sm btn-info">
-                                <i class="fas fa-search"></i> Buscar
-                            </a>
-                        </div>
+                            Laudos Pendentes</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ monthly_stats.pendentes }}</div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-bolt fa-2x text-gray-300"></i>
+                        <i class="fas fa-clock fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card com laudos aprovados -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Laudos Aprovados</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ monthly_stats.aprovados }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card com laudos rejeitados -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            Laudos Rejeitados</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ monthly_stats.rejeitados }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-times-circle fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
@@ -87,95 +144,254 @@
     </div>
 </div>
 
+<!-- Seção 1: Resumo de Laudos Recebidos -->
 <div class="row">
-    <!-- Gráfico de laudos por mês -->
-    <div class="col-xl-8 col-lg-7">
+    <!-- Gráfico de status de laudos -->
+    <div class="col-xl-6 col-lg-6">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Laudos por Mês</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Status dos Laudos</h6>
             </div>
             <div class="card-body">
-                <div class="chart-area">
-                    <canvas id="monthlyReportsChart"></canvas>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ status_chart }}" class="img-fluid" alt="Gráfico de status">
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Gráfico de laudos por categoria -->
-    <div class="col-xl-4 col-lg-5">
+    <!-- Gráfico de laudos por matéria-prima -->
+    <div class="col-xl-6 col-lg-6">
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Laudos por Categoria</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Laudos por Tipo de Matéria-Prima</h6>
             </div>
             <div class="card-body">
-                <div class="chart-pie">
-                    <canvas id="categoriesChart"></canvas>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ material_chart }}" class="img-fluid" alt="Gráfico por tipo de matéria-prima">
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Seção 2: Indicadores de Qualidade -->
 <div class="row">
-    <!-- Laudos Recentes -->
-    <div class="col-lg-6 mb-4">
+    <!-- Gráfico de indicadores de qualidade -->
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Indicadores de Qualidade</h6>
+                <a href="{{ url_for('dashboard.quality_indicators') }}" class="btn btn-sm btn-primary">Ver detalhes</a>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ quality_chart }}" class="img-fluid" alt="Gráfico de indicadores de qualidade">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas de qualidade -->
+    <div class="col-lg-4">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Laudos Recentes</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Alertas de Qualidade</h6>
+            </div>
+            <div class="card-body">
+                {% set has_alerts = quality_alerts.ph|length > 0 or quality_alerts.brix|length > 0 or quality_alerts.acidity|length > 0 %}
+                
+                {% if has_alerts %}
+                    {% for alert in quality_alerts.ph %}
+                        <div class="quality-alert">
+                            <i class="fas fa-exclamation-triangle text-danger mr-2"></i> {{ alert }}
+                        </div>
+                    {% endfor %}
+                    
+                    {% for alert in quality_alerts.brix %}
+                        <div class="quality-alert">
+                            <i class="fas fa-exclamation-triangle text-danger mr-2"></i> {{ alert }}
+                        </div>
+                    {% endfor %}
+                    
+                    {% for alert in quality_alerts.acidity %}
+                        <div class="quality-alert">
+                            <i class="fas fa-exclamation-triangle text-danger mr-2"></i> {{ alert }}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center text-success">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i><br>
+                        Todos os parâmetros estão dentro das especificações
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 3: Eficiência Operacional -->
+<div class="row">
+    <!-- Gráfico de eficiência -->
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Volume de Análises por Técnico</h6>
+                <a href="{{ url_for('dashboard.operational_efficiency') }}" class="btn btn-sm btn-primary">Ver detalhes</a>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ efficiency_chart }}" class="img-fluid" alt="Gráfico de eficiência">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de SLA -->
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Cumprimento de Prazo (SLA)</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ sla_chart }}" class="img-fluid" alt="Gráfico de SLA">
+                </div>
+                <div class="text-center mt-3">
+                    <h5>Tempo médio de análise: {{ avg_analysis_time }} horas</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 4: Documentos e Atividades Recentes -->
+<div class="row">
+    <!-- Documentos Recentes -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Documentos Recentes</h6>
+                <a href="{{ url_for('dashboard.documents') }}" class="btn btn-sm btn-primary">Ver todos</a>
             </div>
             <div class="card-body p-0">
                 <div class="list-group list-group-flush">
-                    {% for report in recent_reports %}
+                    {% for report in recent_reports[:5] %}
                         <a href="{{ url_for('reports.view', id=report.id) }}" class="list-group-item list-group-item-action">
                             <div class="d-flex w-100 justify-content-between">
                                 <h6 class="mb-1">{{ report.title }}</h6>
-                                <small class="text-muted datetime-br" data-date="{{ report.upload_date }}">
-                                    {{ report.upload_date.strftime('%d/%m/%Y') }}
+                                <small class="text-muted">
+                                    {{ report.upload_date.strftime('%d/%m/%Y') if report.upload_date else 'Data desconhecida' }}
                                 </small>
                             </div>
                             <p class="mb-1">
-                                {% if report.category %}
-                                    <span class="badge bg-primary">{{ report.category }}</span>
+                                {% if report.status %}
+                                    <span class="status-badge status-{{ report.status }}">{{ report.status|capitalize }}</span>
                                 {% endif %}
-                                {% if report.supplier %}
-                                    <span class="badge bg-secondary">{{ report.supplier }}</span>
+                                {% if report.raw_material_type %}
+                                    <span class="badge bg-secondary">{{ report.raw_material_type|capitalize }}</span>
                                 {% endif %}
                             </p>
                         </a>
+                    {% else %}
+                        <div class="list-group-item">
+                            <p class="text-center text-muted mb-0">Nenhum documento encontrado</p>
+                        </div>
                     {% endfor %}
                 </div>
-            </div>
-            <div class="card-footer">
-                <a href="{{ url_for('reports.view_all') }}" class="btn btn-sm btn-outline-primary">Ver todos</a>
             </div>
         </div>
     </div>
 
-    <!-- Top Fornecedores -->
+    <!-- Atividades Recentes -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Atividades Recentes</h6>
+                <a href="{{ url_for('dashboard.activities') }}" class="btn btn-sm btn-primary">Ver todas</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for activity in recent_activities[:5] %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ activity.user }}</h6>
+                                <small class="text-muted">{{ activity.timestamp }}</small>
+                            </div>
+                            <p class="mb-1">
+                                {{ activity.action }} o laudo "{{ activity.report_title }}"
+                            </p>
+                        </div>
+                    {% else %}
+                        <div class="list-group-item">
+                            <p class="text-center text-muted mb-0">Nenhuma atividade recente</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 5: Backups e Ações Rápidas -->
+<div class="row">
+    <!-- Informações de Backup -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Informações de Backup</h6>
+                <a href="{{ url_for('dashboard.backup_information') }}" class="btn btn-sm btn-primary">Detalhes</a>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-3">
+                    <span><strong>Último backup:</strong></span>
+                    <span>{{ backup_info.last_backup_date }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span><strong>Arquivo:</strong></span>
+                    <span>{{ backup_info.last_backup_file }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span><strong>Tamanho:</strong></span>
+                    <span>{{ backup_info.backup_size }}</span>
+                </div>
+                <form action="{{ url_for('dashboard.manual_backup') }}" method="POST" class="mt-3">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-download mr-2"></i> Iniciar Backup Manual
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
     <div class="col-lg-6 mb-4">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Laudos por Fornecedor</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Ações Rápidas</h6>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover" width="100%" cellspacing="0">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Fornecedor</th>
-                                <th>Quantidade de Laudos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for supplier, count in suppliers %}
-                                <tr>
-                                    <td>{{ supplier or 'Não especificado' }}</td>
-                                    <td>{{ count }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ url_for('reports.upload') }}" class="btn btn-primary btn-block">
+                            <i class="fas fa-upload mr-2"></i> Novo Laudo
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ url_for('reports.search') }}" class="btn btn-info btn-block">
+                            <i class="fas fa-search mr-2"></i> Buscar Laudos
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ url_for('reports.view_all') }}" class="btn btn-success btn-block">
+                            <i class="fas fa-list mr-2"></i> Ver Todos Laudos
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ url_for('auth.users') }}" class="btn btn-secondary btn-block">
+                            <i class="fas fa-users mr-2"></i> Gerenciar Usuários
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -184,100 +400,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Script para Chart.js -->
+<!-- Scripts adicionais necessários -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Dados para gráfico de laudos por mês
-    const monthlyData = {
-        labels: [
-            {% for month, count in reports_by_month %}
-                '{{ month }}',
-            {% endfor %}
-        ],
-        datasets: [{
-            label: 'Laudos',
-            backgroundColor: 'rgba(0, 103, 179, 0.2)',
-            borderColor: 'rgba(0, 103, 179, 1)',
-            borderWidth: 1,
-            data: [
-                {% for month, count in reports_by_month %}
-                    {{ count }},
-                {% endfor %}
-            ],
-        }]
-    };
-
-    // Dados para gráfico de laudos por categoria
-    const categoryData = {
-        labels: [
-            {% for category, count in categories %}
-                '{{ category or "Não especificado" }}',
-            {% endfor %}
-        ],
-        datasets: [{
-            data: [
-                {% for category, count in categories %}
-                    {{ count }},
-                {% endfor %}
-            ],
-            backgroundColor: [
-                '#0067b3',
-                '#4d9e2f',
-                '#ff9800',
-                '#e74c3c',
-                '#9b59b6',
-                '#34495e',
-                '#16a085',
-                '#f1c40f'
-            ],
-            hoverBorderColor: "rgba(234, 236, 244, 1)",
-        }]
-    };
-
-    // Renderizar gráfico de laudos por mês
-    const monthlyCtx = document.getElementById('monthlyReportsChart');
-    if (monthlyCtx) {
-        new Chart(monthlyCtx, {
-            type: 'bar',
-            data: monthlyData,
-            options: {
-                maintainAspectRatio: false,
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-    }
-
-    // Renderizar gráfico de laudos por categoria
-    const categoryCtx = document.getElementById('categoriesChart');
-    if (categoryCtx) {
-        new Chart(categoryCtx, {
-            type: 'doughnut',
-            data: categoryData,
-            options: {
-                maintainAspectRatio: false,
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-    }
-});
-</script>
 {% endblock %}
