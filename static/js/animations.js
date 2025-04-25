@@ -3,6 +3,92 @@
  * Este arquivo contém as animações JavaScript utilizadas em todo o sistema
  */
 
+// Namespace global para as animações
+window.ZelopackAnimations = {
+    // Animações para elementos
+    pulse: function(element) {
+        if (!element) return;
+        element.classList.add('animate-pulse');
+        setTimeout(() => {
+            element.classList.remove('animate-pulse');
+        }, 1000);
+    },
+    
+    shake: function(element) {
+        if (!element) return;
+        element.classList.add('animate-shake');
+        setTimeout(() => {
+            element.classList.remove('animate-shake');
+        }, 800);
+    },
+    
+    elementHoverIn: function(element) {
+        if (!element) return;
+        element.classList.add('element-hovered');
+        element.style.transform = 'translateY(-3px)';
+        element.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
+        element.style.transition = 'all 0.3s ease';
+    },
+    
+    elementHoverOut: function(element) {
+        if (!element) return;
+        element.classList.remove('element-hovered');
+        element.style.transform = '';
+        element.style.boxShadow = '';
+    },
+    
+    // Outros efeitos visuais
+    showMessage: function(message, type = 'info') {
+        return showFlashMessage(message, type);
+    },
+    
+    showLoading: function(message = 'Carregando...', type = 'spinner') {
+        showLoading(message, type);
+    },
+    
+    hideLoading: function() {
+        hideLoading();
+    },
+    
+    showTooltip: function(element, message) {
+        if (!element) return;
+        
+        // Criar tooltip temporário
+        const tooltip = document.createElement('div');
+        tooltip.className = 'custom-tooltip animate-fade-in';
+        tooltip.style.position = 'absolute';
+        tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        tooltip.style.color = 'white';
+        tooltip.style.padding = '8px 12px';
+        tooltip.style.borderRadius = '6px';
+        tooltip.style.fontSize = '0.9rem';
+        tooltip.style.maxWidth = '250px';
+        tooltip.style.zIndex = '9999';
+        tooltip.style.pointerEvents = 'none';
+        tooltip.textContent = message;
+        
+        // Inserir no documento
+        document.body.appendChild(tooltip);
+        
+        // Posicionar tooltip
+        const rect = element.getBoundingClientRect();
+        tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+        tooltip.style.left = (rect.left + (rect.width/2) - (tooltip.offsetWidth/2)) + 'px';
+        
+        // Remover após alguns segundos
+        setTimeout(() => {
+            tooltip.classList.remove('animate-fade-in');
+            tooltip.classList.add('animate-fade-out');
+            
+            setTimeout(() => {
+                if (tooltip.parentNode) {
+                    tooltip.parentNode.removeChild(tooltip);
+                }
+            }, 300);
+        }, 3000);
+    }
+};
+
 // Inicialização quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Zelopack Animations: Inicializado com sucesso!');

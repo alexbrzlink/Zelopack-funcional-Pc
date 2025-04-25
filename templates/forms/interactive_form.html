@@ -642,11 +642,29 @@
         // Referências aos elementos principais
         const interactiveForm = document.getElementById('interactive-form');
         const clearAllBtn = document.getElementById('clear-all-fields');
+        const autofillBtn = document.getElementById('autofill-button');
         const savePresetBtn = document.getElementById('save-preset-button');
         const savePresetConfirmBtn = document.getElementById('save-preset-confirm');
         const presetOptions = document.querySelectorAll('.preset-option');
+        const standardFieldsOptions = document.querySelectorAll('.standard-fields-option');
         const formFields = document.querySelectorAll('.field-input');
         const fieldsContainer = document.querySelector('.interactive-fields-container');
+        const searchInput = document.getElementById('field-search');
+        const clearSearchBtn = document.getElementById('clear-search');
+        const categoryBadges = document.querySelectorAll('.category-badge');
+        const toggleFullscreen = document.getElementById('toggle-fullscreen');
+        const fieldCards = document.querySelectorAll('.field-card');
+        const btnClearFields = document.querySelectorAll('.btn-clear-field');
+        
+        // Inicialização de componentes Bootstrap
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        
+        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, {
+            html: true,
+            trigger: 'hover'
+        }));
         
         // Modal de salvar preset
         const savePresetModal = new bootstrap.Modal(document.getElementById('savePresetModal'));

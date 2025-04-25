@@ -1,0 +1,393 @@
+/* 
+ * Estilos específicos para o formulário TBA
+ * Baseado nas diretrizes do documento de especificação
+ */
+
+/* Layout em grid para formulários */
+.tba-form-container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1rem;
+    background-color: #f8f9fc;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+/* Cabeçalho do formulário */
+.tba-form-header {
+    grid-column: span 12;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.tba-form-title {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.tba-form-title h3 {
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.tba-form-title .form-icon {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(45deg, #4e73df, #36b9cc);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.tba-field-group {
+    grid-column: span 6;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .tba-field-group {
+        grid-column: span 12;
+    }
+}
+
+/* Estilos para os campos do cabeçalho */
+.header-field {
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.header-field label {
+    display: block;
+    font-size: 0.8rem;
+    color: #6e707e;
+    margin-bottom: 0.25rem;
+}
+
+.header-field input,
+.header-field select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d3e2;
+    border-radius: 10px;
+    background-color: #fff;
+    transition: all 0.2s ease;
+}
+
+.header-field input:focus,
+.header-field select:focus {
+    border-color: #4e73df;
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+}
+
+/* Verificação dos líderes */
+.liders-section {
+    grid-column: span 12;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.15rem 1.75rem rgba(58, 59, 69, 0.07);
+}
+
+.liders-section h4 {
+    margin: 0 0 1rem 0;
+    color: #4e73df;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.liders-section h4 i {
+    margin-right: 0.5rem;
+}
+
+.liders-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 992px) {
+    .liders-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .liders-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Turnos */
+.shift-section {
+    grid-column: span 12;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.15rem 1.75rem rgba(58, 59, 69, 0.07);
+}
+
+.shift-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.shift-badge {
+    background: linear-gradient(45deg, #4e73df, #2e59d9);
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    margin-right: 1rem;
+    box-shadow: 0 4px 10px rgba(46, 89, 217, 0.3);
+}
+
+.shift-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 992px) {
+    .shift-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .shift-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Seção de Hermeticidade, Peso e Controle de Qualidade */
+.quality-section {
+    grid-column: span 12;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.15rem 1.75rem rgba(58, 59, 69, 0.07);
+}
+
+.quality-tabs {
+    margin-bottom: 1.5rem;
+}
+
+.quality-tabs .nav-link {
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    margin-right: 0.5rem;
+    font-weight: 500;
+    color: #6e707e;
+    transition: all 0.2s ease;
+}
+
+.quality-tabs .nav-link.active {
+    background: linear-gradient(45deg, #1cc88a, #36b9cc);
+    color: white;
+    box-shadow: 0 4px 10px rgba(28, 200, 138, 0.3);
+}
+
+.quality-tabs .nav-link:hover:not(.active) {
+    background-color: #f8f9fc;
+    transform: translateY(-2px);
+}
+
+/* Tabela de Monitoramento das Mandíbulas */
+.monitoring-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0.15rem 1.75rem rgba(58, 59, 69, 0.07);
+}
+
+.monitoring-table th {
+    background-color: #4e73df;
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+
+.monitoring-table td {
+    padding: 0.75rem;
+    background-color: #fff;
+    border: 1px solid #f2f2f2;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.monitoring-table tr:nth-child(even) td {
+    background-color: #f8f9fc;
+}
+
+.monitoring-table input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d3e2;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.monitoring-table input:focus {
+    border-color: #4e73df;
+    outline: none;
+    box-shadow: 0 0 0 0.15rem rgba(78, 115, 223, 0.25);
+}
+
+/* Observações finais */
+.observations-section {
+    grid-column: span 12;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.15rem 1.75rem rgba(58, 59, 69, 0.07);
+}
+
+.observations-section h4 {
+    margin: 0 0 1rem 0;
+    color: #4e73df;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.observations-section textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.75rem;
+    border: 1px solid #d1d3e2;
+    border-radius: 10px;
+    resize: vertical;
+}
+
+.observations-section textarea:focus {
+    border-color: #4e73df;
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+}
+
+/* Botões de ação na parte inferior */
+.form-actions {
+    grid-column: span 12;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e3e6f0;
+}
+
+.form-actions .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 30px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.form-actions .btn i {
+    margin-right: 0.5rem;
+}
+
+.form-actions .btn-primary {
+    background: linear-gradient(45deg, #4e73df, #224abe);
+    border: none;
+    box-shadow: 0 4px 15px rgba(78, 115, 223, 0.3);
+}
+
+.form-actions .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(78, 115, 223, 0.4);
+}
+
+.form-actions .btn-outline-secondary {
+    border: 1px solid #d1d3e2;
+    color: #6e707e;
+    background-color: white;
+}
+
+.form-actions .btn-outline-secondary:hover {
+    background-color: #f8f9fc;
+    transform: translateY(-2px);
+}
+
+/* Elementos com animações */
+.animate-field {
+    transition: all 0.3s ease;
+}
+
+.animate-field:focus-within {
+    transform: translateY(-5px);
+}
+
+/* Status de preenchimento */
+.field-status {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #e74a3b;
+    transition: all 0.2s ease;
+}
+
+.field-status.filled {
+    background-color: #1cc88a;
+}
+
+/* Modo de impressão */
+@media print {
+    .tba-form-container {
+        box-shadow: none;
+        padding: 0;
+    }
+    
+    .form-actions, 
+    .btn, 
+    button {
+        display: none !important;
+    }
+    
+    .monitoring-table th {
+        background-color: #f2f2f2 !important;
+        color: #333 !important;
+        -webkit-print-color-adjust: exact;
+    }
+    
+    .tba-form-container,
+    .liders-section,
+    .shift-section,
+    .quality-section,
+    .observations-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
