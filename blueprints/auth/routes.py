@@ -18,19 +18,49 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
     
+    # Verificar se existe pelo menos um usuário admin (para fins de teste/dev)
+    if User.query.count() == 0:
+        # Criar usuário admin padrão para testes
+        admin_user = User(
+            username='admin',
+            email='admin@zelopack.com.br',
+            name='Administrador',
+            role='admin',
+            is_active=True
+        )
+        admin_user.set_password('Alex')
+        db.session.add(admin_user)
+        db.session.commit()
+        print(f"ATENÇÃO: Usuário de teste criado! Login: admin / Senha: Alex")
+        flash('Usuário de teste criado! Login: admin / Senha: Alex', 'info')
+    
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        username = form.username.data if form.username.data else ""
+        password = form.password.data if form.password.data else ""
         
-        if user is None or not user.check_password(form.password.data):
-            flash('Nome de usuário ou senha inválidos', 'danger')
+        # Logging para debug
+        print(f"Tentativa de login: Usuário={username}, Senha={'*' * len(password)}")
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user is None:
+            print(f"Erro de login: Usuário '{username}' não encontrado")
+            flash(f"O usuário '{username}' não está cadastrado. Verifique se digitou corretamente.", 'danger')
+            return redirect(url_for('auth.login'))
+            
+        if not user.check_password(password):
+            print(f"Erro de login: Senha incorreta para o usuário '{username}'")
+            flash(f"Senha incorreta para o usuário '{username}'. Por favor, tente novamente.", 'danger')
             return redirect(url_for('auth.login'))
         
         if not user.is_active:
-            flash('Esta conta está desativada. Contate o administrador.', 'warning')
+            print(f"Erro de login: Usuário '{username}' está inativo")
+            flash(f"Esta conta ({username}) está desativada. Entre em contato com o administrador.", 'warning')
             return redirect(url_for('auth.login'))
         
         login_user(user, remember=form.remember_me.data)
+        print(f"Login bem-sucedido para o usuário '{username}'")
         
         # Atualizar último login
         user.last_login = datetime.utcnow()
@@ -41,7 +71,7 @@ def login():
         if not next_page or urlparse(next_page).netloc != '':
             next_page = url_for('dashboard.index')
             
-        flash(f'Bem-vindo, {user.name}!', 'success')
+        flash(f'Bem-vindo, {user.name}! Login realizado com sucesso.', 'success')
         return redirect(next_page)
     
     return render_template('auth/login.html', title='Login', form=form)
@@ -223,16 +253,55 @@ def reset_password(token):
 @csrf.exempt
 def login_direct():
     """Rota alternativa para login direto, para fins de teste."""
+    print("ACESSANDO ROTA DE LOGIN AUTOMÁTICO")
+    
     # Rota para login direto sem CSRF para fins de teste
+    # Verificar se existe usuário admin
+    total_users = User.query.count()
+    print(f"Total de usuários no sistema: {total_users}")
+    
+    if total_users == 0:
+        # Criar usuário admin se não existir
+        print("Nenhum usuário encontrado. Criando usuário admin padrão...")
+        admin_user = User(
+            username='admin',
+            email='admin@zelopack.com.br',
+            name='Administrador',
+            role='admin',
+            is_active=True
+        )
+        admin_user.set_password('Alex')
+        db.session.add(admin_user)
+        db.session.commit()
+        print("Usuário admin criado com sucesso!")
+    
     user = User.query.filter_by(username='admin').first()
     
-    if user and user.is_active:
-        login_user(user, remember=True)
-        user.last_login = datetime.utcnow()
-        db.session.commit()
-        
-        flash(f'Bem-vindo, {user.name}!', 'success')
-        return redirect(url_for('dashboard.index'))
+    if user is None:
+        msg = "ERRO CRÍTICO: Usuário admin não encontrado mesmo após tentativa de criação!"
+        print(msg)
+        flash(msg, 'danger')
+        return redirect(url_for('auth.login'))
     
-    flash('Usuário não encontrado ou inativo.', 'danger')
-    return redirect(url_for('auth.login'))
+    if not user.is_active:
+        msg = "ERRO: Usuário admin existe mas está inativo."
+        print(msg)
+        user.is_active = True
+        db.session.commit()
+        print("Usuário admin foi ativado automaticamente.")
+        flash(msg + " Ele foi ativado automaticamente.", 'warning')
+    
+    # Registrar tentativa de login
+    print(f"Login automático para usuário: {user.username}")
+    print(f"Nome do usuário: {user.name}")
+    print(f"E-mail do usuário: {user.email}")
+    print(f"Função do usuário: {user.role}")
+    print(f"Status de ativação: {user.is_active}")
+    
+    login_user(user, remember=True)
+    user.last_login = datetime.utcnow()
+    db.session.commit()
+    
+    print("Login automático bem-sucedido! Redirecionando para o dashboard...")
+    flash(f'Bem-vindo, {user.name}! Login automático realizado com sucesso.', 'success')
+    return redirect(url_for('dashboard.index'))

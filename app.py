@@ -76,11 +76,106 @@ def inject_variables():
     }
 
 # Rota para login de teste
+@app.route("/user-admin-info")
+def check_admin_user():
+    """Rota para verificar se o usuário admin existe e mostrar suas informações."""
+    from models import User
+    
+    # Verificar se existe usuário admin
+    user = User.query.filter_by(username='admin').first()
+    
+    if user:
+        info = f"""
+        <h3>Informações do usuário admin:</h3>
+        <ul>
+            <li>ID: {user.id}</li>
+            <li>Username: {user.username}</li>
+            <li>Email: {user.email}</li>
+            <li>Nome: {user.name}</li>
+            <li>Função: {user.role}</li>
+            <li>Ativo: {user.is_active}</li>
+            <li>Último login: {user.last_login}</li>
+        </ul>
+        <p>A senha atual configurada para este usuário é: <strong>Alex</strong></p>
+        <p><a href="/login-direct">Entrar com este usuário automaticamente</a></p>
+        <p><a href="/auth/login">Ir para tela de login manual</a></p>
+        """
+    else:
+        # Criar usuário admin
+        admin_user = User(
+            username='admin',
+            email='admin@zelopack.com.br',
+            name='Administrador',
+            role='admin',
+            is_active=True
+        )
+        admin_user.set_password('Alex')
+        db.session.add(admin_user)
+        db.session.commit()
+        info = f"""
+        <h3>Usuário admin não existia e foi criado:</h3>
+        <ul>
+            <li>Username: admin</li>
+            <li>Email: admin@zelopack.com.br</li>
+            <li>Nome: Administrador</li>
+            <li>Função: admin</li>
+            <li>Ativo: True</li>
+            <li>Senha: Alex</li>
+        </ul>
+        <p><a href="/login-direct">Entrar com este usuário automaticamente</a></p>
+        <p><a href="/auth/login">Ir para tela de login manual</a></p>
+        """
+    
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Informações do Usuário Admin</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 40px; }}
+            h2 {{ color: #2c3e50; }}
+            ul {{ list-style-type: none; padding: 0; }}
+            li {{ margin-bottom: 8px; }}
+            a {{ display: inline-block; margin-top: 10px; 
+                padding: 8px 16px; background-color: #3498db; 
+                color: white; text-decoration: none; border-radius: 4px; }}
+            a:hover {{ background-color: #2980b9; }}
+        </style>
+    </head>
+    <body>
+        <h2>Status do Usuário Administrador</h2>
+        {info}
+    </body>
+    </html>
+    """
+
 @app.route("/login-test")
 def login_test():
+    # Primeiro, precisamos verificar se já existe algum usuário
     from models import User
+    
+    # Se não existir usuário, criamos um
+    if User.query.count() == 0:
+        admin_user = User(
+            username='admin',
+            email='admin@zelopack.com.br',
+            name='Administrador',
+            role='admin',
+            is_active=True
+        )
+        admin_user.set_password('Alex')
+        db.session.add(admin_user)
+        db.session.commit()
+        print("Usuário admin criado com sucesso!")
+    
+    # Agora buscamos o usuário admin
     user = User.query.filter_by(username='admin').first()
     if user:
+        if not user.is_active:
+            user.is_active = True
+            db.session.commit()
+            print("Usuário admin foi ativado")
+        
         login_user(user)
         flash('Login realizado com sucesso via rota de teste!', 'success')
         return redirect(url_for('dashboard.index'))
@@ -133,7 +228,7 @@ with app.app_context():
             name='Administrador',
             role='admin'
         )
-        admin_user.set_password('admin123')  # Em produção, usar senha mais segura!
+        admin_user.set_password('Alex')  # Em produção, usar senha mais segura!
         db.session.add(admin_user)
         db.session.commit()
         print("Usuário administrador padrão criado.")
