@@ -37,8 +37,13 @@ def generate_icon():
         # Desenhar a letra "Z" centralizada
         letter = "Z"
         try:
-            # Obter o tamanho do texto
-            text_width, text_height = draw.textsize(letter, font=font)
+            # Obter o tamanho do texto - método mais recente
+            try:
+                text_width, text_height = font.getsize(letter)
+            except AttributeError:
+                # Fallback para métodos mais novos do PIL
+                text_width, text_height = draw.textbbox((0, 0), letter, font=font)[2:4]
+                
             # Posicionar o texto no centro
             position = ((size - text_width) // 2, (size - text_height) // 2)
             # Desenhar o texto

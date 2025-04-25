@@ -15,8 +15,7 @@ if %errorlevel% neq 0 (
 )
 
 echo 1. Instalando dependências necessárias...
-pip install -r requirements.txt
-pip install pyinstaller
+pip install -r dependencies.txt
 echo.
 
 echo 2. Gerando ícone do aplicativo...

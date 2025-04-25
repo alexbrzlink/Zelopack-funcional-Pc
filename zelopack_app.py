@@ -24,12 +24,20 @@ os.environ['FLASK_ENV'] = 'production'
 
 # Importar a aplicação
 from app import app
-import main  # noqa
+# Importar o arquivo main para inicializar rotas
+try:
+    import main  # noqa
+except ImportError:
+    print("Aviso: Não foi possível importar o módulo 'main'.")
 
 # Definir o caminho base para os recursos (importante para PyInstaller)
 if getattr(sys, 'frozen', False):
     # Se estiver executando como executável congelado (PyInstaller)
-    base_dir = sys._MEIPASS
+    # PyInstaller cria uma variável temporária e a armazena em _MEIPASS
+    try:
+        base_dir = sys._MEIPASS
+    except AttributeError:
+        base_dir = os.path.dirname(sys.executable)
 else:
     # Se estiver executando em modo de desenvolvimento
     base_dir = os.path.dirname(os.path.abspath(__file__))

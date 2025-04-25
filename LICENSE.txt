@@ -1,0 +1,26 @@
+ZELOPACK - SISTEMA DE GERENCIAMENTO DE LAUDOS
+CONTRATO DE LICENÇA DE USO DE SOFTWARE
+======================================
+
+Ao instalar este software, você concorda com os seguintes termos:
+
+1. CONCESSÃO DE LICENÇA:
+   Este software é licenciado, não vendido. Esta licença concede a você o direito não exclusivo de usar o software.
+
+2. DIREITOS AUTORAIS:
+   Todos os direitos, título e interesse no software permanecem com a ZELOPACK.
+
+3. LIMITAÇÕES:
+   Você não pode:
+   - Reverter a engenharia, descompilar ou desmontar o software.
+   - Alugar, arrendar ou emprestar o software.
+   - Transferir o software ou este acordo para terceiros.
+
+4. ISENÇÃO DE GARANTIAS:
+   Este software é fornecido "como está" sem garantias de qualquer tipo.
+
+5. LIMITAÇÃO DE RESPONSABILIDADE:
+   Em nenhum caso a ZELOPACK será responsável por quaisquer danos consequenciais, 
+   especiais, indiretos ou incidentais relacionados ao uso do software.
+
+© 2025 ZELOPACK. Todos os direitos reservados.

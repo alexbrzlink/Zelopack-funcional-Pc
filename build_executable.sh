@@ -13,8 +13,7 @@ if ! command -v python3 &> /dev/null; then
 fi
 
 echo "1. Instalando dependências necessárias..."
-pip3 install -r requirements.txt
-pip3 install pyinstaller
+pip3 install -r dependencies.txt
 echo
 
 echo "2. Gerando ícone do aplicativo..."
