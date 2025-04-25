@@ -178,53 +178,9 @@ class Supplier(db.Model):
 
 
 # [Antiga definição de ReportTemplate removida para evitar duplicação]
-    
-    def to_dict(self):
-        """Converte o template para dicionário."""
-        data = {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'category_id': self.category_id,
-            'category_name': self.category.name if self.category else None,
-            'created_by': self.created_by,
-            'creator_name': self.creator.name if self.creator else None,
-            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
-            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
-            'version': self.version,
-            'is_active': self.is_active,
-            'fields': self.fields
-        }
-        
-        # Adicionar informações do arquivo se presentes
-        if self.template_file:
-            data['template_file'] = self.template_file
-            data['file_path'] = self.file_path
-            
-        # Adicionar estrutura se presente
-        if self.structure:
-            data['structure'] = json.loads(self.structure) if self.structure else {}
-            
-        return data
 
 
 # [Antiga definição de ReportAttachment removida para evitar duplicação]
-    
-    def to_dict(self):
-        """Converte o anexo para dicionário."""
-        return {
-            'id': self.id,
-            'report_id': self.report_id,
-            'filename': self.filename,
-            'original_filename': self.original_filename,
-            'file_path': self.file_path,
-            'file_type': self.file_type,
-            'file_size': self.file_size,
-            'description': self.description,
-            'uploaded_by': self.uploaded_by,
-            'uploader_name': self.uploader.name if self.uploader else None,
-            'upload_date': self.upload_date.strftime('%d/%m/%Y %H:%M')
-        }
 
 
 class ReportComment(db.Model):
