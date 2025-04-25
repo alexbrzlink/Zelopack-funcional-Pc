@@ -1,5 +1,6 @@
 import os
 import logging
+from datetime import datetime
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -37,6 +38,13 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 # Inicializar o banco de dados
 db.init_app(app)
+
+# Adicionar variáveis de contexto para todas as templates
+@app.context_processor
+def inject_variables():
+    return {
+        'current_year': datetime.now().year
+    }
 
 # Registrar blueprints
 from blueprints.reports import reports_bp
