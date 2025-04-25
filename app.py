@@ -104,7 +104,8 @@ def check_admin_user():
     user = User.query.filter_by(username='admin').first()
     
     # Verificação de senha para testes
-    test_password = 'Alex'
+    # Obter senha de administrador a partir de variáveis de ambiente ou usar valor padrão apenas para desenvolvimento
+    test_password = os.environ.get('ADMIN_PASSWORD') or 'ChangeThis2024!'
     is_password_valid = False
     password_hash_info = "Não foi possível verificar o hash"
     
