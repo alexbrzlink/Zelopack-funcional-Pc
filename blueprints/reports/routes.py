@@ -497,7 +497,18 @@ def delete_supplier(id):
 @reports_bp.route('/print/<int:id>')
 @login_required
 def print_report(id):
-    """Gera ou exibe a versão para impressão do laudo."""
+    """Exibe a página de impressão do laudo."""
+    report = Report.query.get_or_404(id)
+    
+    # Oferece duas opções: visualização no HTML ou download do PDF
+    # Se o usuário quiser o PDF, ele poderá usar o botão na página
+    now = datetime.now()
+    return render_template('reports/print.html', report=report, now=now, title=f"Impressão - {report.title}")
+    
+@reports_bp.route('/print-pdf/<int:id>')
+@login_required
+def print_report_pdf(id):
+    """Gera ou exibe a versão PDF para impressão do laudo."""
     report = Report.query.get_or_404(id)
     
     # Verificar se já existe uma versão para impressão

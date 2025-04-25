@@ -287,7 +287,10 @@
         <button class="btn btn-primary" onclick="window.print()">
             <i class="fas fa-print me-2"></i> Imprimir Relatório
         </button>
-        <a href="{{ url_for('reports.download_print_report', id=report.id) }}" class="btn btn-success">
+        <a href="{{ url_for('reports.print_report_pdf', id=report.id) }}" target="_blank" class="btn btn-success">
+            <i class="fas fa-file-pdf me-2"></i> Ver PDF
+        </a>
+        <a href="{{ url_for('reports.download_print_report', id=report.id) }}" class="btn btn-warning">
             <i class="fas fa-download me-2"></i> Baixar PDF
         </a>
         <a href="{{ url_for('reports.view', id=report.id) }}" class="btn btn-secondary">
