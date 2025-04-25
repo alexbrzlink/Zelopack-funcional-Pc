@@ -682,23 +682,36 @@ def edit_supplier(id):
     
     return render_template('reports/supplier_form.html', form=form, supplier=supplier, title="Editar Fornecedor")
 
-@reports_bp.route('/suppliers/delete/<int:id>', methods=['POST', 'GET'])
+@reports_bp.route('/excluir-fornecedor/<int:supplier_id>', methods=['POST', 'GET'])
 @login_required
-def delete_supplier(id):
-    """Excluir um fornecedor."""
-    supplier = Supplier.query.get_or_404(id)
+def excluir_fornecedor(supplier_id):
+    """Excluir um fornecedor de forma simplificada."""
+    try:
+        # Buscar o fornecedor pelo ID
+        supplier = Supplier.query.get_or_404(supplier_id)
+        
+        # Verificar se há laudos associados a este fornecedor
+        reports_count = Report.query.filter_by(supplier=supplier.name).count()
+        
+        if reports_count > 0:
+            flash(f'Não é possível excluir este fornecedor. Existem {reports_count} laudos associados a ele.', 'danger')
+            return redirect(url_for('reports.suppliers'))
+        
+        # Salvar o nome para a mensagem de confirmação
+        nome_fornecedor = supplier.name
+        
+        # Excluir o fornecedor
+        db.session.delete(supplier)
+        db.session.commit()
+        
+        # Mensagem de sucesso
+        flash(f'Fornecedor "{nome_fornecedor}" excluído com sucesso!', 'success')
+    except Exception as e:
+        # Em caso de erro, exibir mensagem e fazer rollback
+        db.session.rollback()
+        flash(f'Erro ao excluir fornecedor: {str(e)}', 'danger')
     
-    # Verificar se há laudos associados a este fornecedor
-    reports_count = Report.query.filter_by(supplier=supplier.name).count()
-    
-    if reports_count > 0:
-        flash(f'Não é possível excluir este fornecedor. Existem {reports_count} laudos associados a ele.', 'danger')
-        return redirect(url_for('reports.suppliers'))
-    
-    db.session.delete(supplier)
-    db.session.commit()
-    
-    flash('Fornecedor excluído com sucesso!', 'success')
+    # Redirecionar para a lista de fornecedores
     return redirect(url_for('reports.suppliers'))
 
 @reports_bp.route('/print/<int:id>')

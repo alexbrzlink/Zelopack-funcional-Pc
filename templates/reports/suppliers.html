@@ -74,7 +74,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                <a href="{{ url_for('reports.delete_supplier', id=supplier.id) }}" class="btn btn-danger">Excluir</a>
+                                                <a href="{{ url_for('reports.excluir_fornecedor', supplier_id=supplier.id) }}" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este fornecedor?')">Excluir</a>
                                             </div>
                                         </div>
                                     </div>
