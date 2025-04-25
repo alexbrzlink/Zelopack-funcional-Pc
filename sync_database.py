@@ -181,12 +181,12 @@ def initialize_default_data(db, models):
         db.session.rollback()
 
 if __name__ == "__main__":
-    print("Iniciando sincronização do banco de dados...")
+    logger.debug("Iniciando sincronização do banco de dados...")
     success = sync_database()
     
     if success:
-        print("Sincronização concluída com sucesso!")
+        logger.debug("Sincronização concluída com sucesso!")
         sys.exit(0)
     else:
-        print("Ocorreram erros durante a sincronização. Verifique os logs.")
+        logger.debug("Ocorreram erros durante a sincronização. Verifique os logs.")
         sys.exit(1)

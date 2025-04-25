@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 import mimetypes
 import json
@@ -840,10 +843,10 @@ def get_form_fields(file_path):
                                     'value': ''
                                 })
                         except Exception as cell_error:
-                            print(f"Erro ao processar célula ({row},{col}): {cell_error}")
+                            logger.debug(f"Erro ao processar célula ({row},{col}): {cell_error}")
                             continue
             except Exception as excel_error:
-                print(f"Erro ao processar arquivo Excel: {excel_error}")
+                logger.debug(f"Erro ao processar arquivo Excel: {excel_error}")
                 fields.append({
                     'id': 'error_field',
                     'name': 'Erro ao ler o arquivo Excel (clique para ver detalhes)',
@@ -867,10 +870,10 @@ def get_form_fields(file_path):
                                 'value': ''
                             })
                     except Exception as para_error:
-                        print(f"Erro ao processar parágrafo {para_index}: {para_error}")
+                        logger.debug(f"Erro ao processar parágrafo {para_index}: {para_error}")
                         continue
             except Exception as docx_error:
-                print(f"Erro ao processar arquivo Word: {docx_error}")
+                logger.debug(f"Erro ao processar arquivo Word: {docx_error}")
                 fields.append({
                     'id': 'error_field',
                     'name': 'Erro ao ler o arquivo Word (clique para ver detalhes)',
@@ -908,10 +911,10 @@ def get_form_fields(file_path):
                                     'value': ''
                                 })
                         except Exception as page_error:
-                            print(f"Erro ao processar página {page_num} do PDF: {page_error}")
+                            logger.debug(f"Erro ao processar página {page_num} do PDF: {page_error}")
                             continue
             except Exception as pdf_error:
-                print(f"Erro ao processar arquivo PDF: {pdf_error}")
+                logger.debug(f"Erro ao processar arquivo PDF: {pdf_error}")
                 fields.append({
                     'id': 'error_field',
                     'name': 'Erro ao ler o arquivo PDF (clique para ver detalhes)',
@@ -925,7 +928,7 @@ def get_form_fields(file_path):
                 'value': 'Este tipo de arquivo não pode ser processado automaticamente.'
             })
     except Exception as e:
-        print(f"Erro ao extrair campos do formulário: {e}")
+        logger.debug(f"Erro ao extrair campos do formulário: {e}")
         fields.append({
             'id': 'general_error',
             'name': 'Erro ao processar o formulário (clique para ver detalhes)',
@@ -991,13 +994,13 @@ def fill_form_with_data(file_path, form_data):
                                     # Aplicar estilo para destacar o campo preenchido
                                     cell.font = Font(bold=True, color="0000FF")
                             except Exception as cell_error:
-                                print(f"Erro ao preencher célula ({field_id}): {cell_error}")
+                                logger.debug(f"Erro ao preencher célula ({field_id}): {cell_error}")
                                 continue
                 
                 # Salvar a planilha preenchida
                 workbook.save(output_path)
             except Exception as excel_error:
-                print(f"Erro ao processar arquivo Excel para preenchimento: {excel_error}")
+                logger.debug(f"Erro ao processar arquivo Excel para preenchimento: {excel_error}")
                 raise ValueError(f"Não foi possível preencher o formulário Excel: {str(excel_error)}")
             
         elif file_ext == '.docx':
@@ -1023,13 +1026,13 @@ def fill_form_with_data(file_path, form_data):
                                     para.clear()
                                     para.add_run(new_text)
                         except Exception as para_error:
-                            print(f"Erro ao preencher parágrafo {field_id}: {para_error}")
+                            logger.debug(f"Erro ao preencher parágrafo {field_id}: {para_error}")
                             continue
                 
                 # Salvar o documento preenchido
                 doc.save(output_path)
             except Exception as docx_error:
-                print(f"Erro ao processar arquivo Word para preenchimento: {docx_error}")
+                logger.debug(f"Erro ao processar arquivo Word para preenchimento: {docx_error}")
                 raise ValueError(f"Não foi possível preencher o documento Word: {str(docx_error)}")
             
         elif file_ext == '.pdf':
@@ -1057,14 +1060,14 @@ def fill_form_with_data(file_path, form_data):
                             try:
                                 writer.update_page_form_field_values(page_num, update_fields)
                             except Exception as page_error:
-                                print(f"Erro ao preencher página {page_num} do PDF: {page_error}")
+                                logger.debug(f"Erro ao preencher página {page_num} do PDF: {page_error}")
                                 continue
                 
                 # Salvar o PDF preenchido
                 with open(output_path, 'wb') as output_file:
                     writer.write(output_file)
             except Exception as pdf_error:
-                print(f"Erro ao processar arquivo PDF para preenchimento: {pdf_error}")
+                logger.debug(f"Erro ao processar arquivo PDF para preenchimento: {pdf_error}")
                 raise ValueError(f"Não foi possível preencher o documento PDF: {str(pdf_error)}")
                 
         else:
@@ -1072,7 +1075,7 @@ def fill_form_with_data(file_path, form_data):
             raise ValueError(f"Formato de arquivo não suportado: {file_ext}")
     
     except Exception as e:
-        print(f"Erro ao preencher formulário: {e}")
+        logger.debug(f"Erro ao preencher formulário: {e}")
         try:
             # Limpar recursos temporários
             shutil.rmtree(temp_dir)

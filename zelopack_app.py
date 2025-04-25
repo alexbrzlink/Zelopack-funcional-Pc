@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 #!/usr/bin/env python3
 """
 ZELOPACK - Sistema de Gerenciamento de Laudos
@@ -30,7 +33,7 @@ from app import app
 try:
     import main  # noqa
 except ImportError:
-    print("Aviso: Não foi possível importar o módulo 'main'.")
+    logger.debug("Aviso: Não foi possível importar o módulo 'main'.")
 
 # Definir o caminho base para os recursos (importante para PyInstaller)
 if getattr(sys, 'frozen', False):
@@ -63,13 +66,13 @@ def open_browser(port):
     
     # Usar a rota de login direto para facilitar o acesso
     url = f"http://localhost:{port}/login-direct"
-    print(f"Abrindo navegador em: {url}")
+    logger.debug(f"Abrindo navegador em: {url}")
     webbrowser.open(url)
 
 # Função para encerrar a aplicação com Ctrl+C
 def signal_handler(sig, frame):
     """Manipular sinais de interrupção para desligamento limpo."""
-    print('\nEncerrando aplicação ZELOPACK...')
+    logger.debug('\nEncerrando aplicação ZELOPACK...')
     sys.exit(0)
 
 def main():
@@ -81,12 +84,12 @@ def main():
     port = find_free_port()
     
     # Informar ao usuário
-    print("=" * 60)
-    print("ZELOPACK - Sistema de Gerenciamento de Laudos")
-    print("=" * 60)
-    print(f"Iniciando servidor em http://localhost:{port}")
-    print("Pressione Ctrl+C para encerrar a aplicação")
-    print("=" * 60)
+    logger.debug("=" * 60)
+    logger.debug("ZELOPACK - Sistema de Gerenciamento de Laudos")
+    logger.debug("=" * 60)
+    logger.debug(f"Iniciando servidor em http://localhost:{port}")
+    logger.debug("Pressione Ctrl+C para encerrar a aplicação")
+    logger.debug("=" * 60)
     
     # Iniciar navegador em uma thread separada
     browser_thread = threading.Thread(target=open_browser, args=(port,))

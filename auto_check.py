@@ -439,9 +439,9 @@ class ZelopackAutoCheck:
                 break
         
         # Verificar print statements (deveriam ser logs em produção)
-        if 'print(' in content and not file_path.endswith('test_'):
-            self._add_issue(file_path, "code_quality", "Uso de print() em código de produção",
-                           "Use logging ao invés de print() em código de produção")
+        if 'logger.debug(' in content and not file_path.endswith('test_'):
+            self._add_issue(file_path, "code_quality", "Uso de logger.debug() em código de produção",
+                           "Use logging ao invés de logger.debug() em código de produção")
     
     def _check_js_content(self, file_path, content):
         """Verifica problemas em código JavaScript"""
@@ -611,7 +611,7 @@ class ZelopackAutoCheck:
                     # Comentar console.log
                     new_content = re.sub(r'(console\.log\(.*?\);?)', r'// \1', content)
                 
-                elif "print()" in message and file_path.endswith('.py'):
+                elif "logger.debug()" in message and file_path.endswith('.py'):
                     # Substituir print por logger
                     if "import logging" not in content:
                         new_content = "import logging\nlogger = logging.getLogger(__name__)\n\n" + content
@@ -688,26 +688,26 @@ class ZelopackAutoCheck:
     
     def _display_summary(self):
         """Exibe um resumo dos problemas encontrados"""
-        print("\n" + "=" * 70)
-        print(f"{Colors.BOLD}RESUMO DA VERIFICAÇÃO AUTOMÁTICA{Colors.END}".center(70))
-        print("=" * 70)
+        logger.debug("\n" + "=" * 70)
+        logger.debug(f"{Colors.BOLD}RESUMO DA VERIFICAÇÃO AUTOMÁTICA{Colors.END}".center(70))
+        logger.debug("=" * 70)
         
         # Estatísticas gerais
-        print(f"\n{Colors.BOLD}Estatísticas:{Colors.END}")
-        print(f"  • Data/hora: {self.timestamp.replace('_', ' ')}")
-        print(f"  • Componentes verificados: {sum(self.components_checked.values())}")
-        print(f"  • Problemas encontrados: {len(self.found_issues)}")
-        print(f"  • Correções aplicadas: {len(self.applied_fixes)}")
+        logger.debug(f"\n{Colors.BOLD}Estatísticas:{Colors.END}")
+        logger.debug(f"  • Data/hora: {self.timestamp.replace('_', ' ')}")
+        logger.debug(f"  • Componentes verificados: {sum(self.components_checked.values())}")
+        logger.debug(f"  • Problemas encontrados: {len(self.found_issues)}")
+        logger.debug(f"  • Correções aplicadas: {len(self.applied_fixes)}")
         
         # Resultados dos testes
-        print(f"\n{Colors.BOLD}Testes de componentes:{Colors.END}")
+        logger.debug(f"\n{Colors.BOLD}Testes de componentes:{Colors.END}")
         if self.test_results:
             status = f"{Colors.GREEN}SUCESSO{Colors.END}" if self.test_results.get("success") else f"{Colors.RED}FALHA{Colors.END}"
-            print(f"  • Status: {status}")
-            print(f"  • Testes passaram: {len(self.test_results.get('passed_tests', []))}")
-            print(f"  • Testes falharam: {len(self.test_results.get('failed_tests', []))}")
+            logger.debug(f"  • Status: {status}")
+            logger.debug(f"  • Testes passaram: {len(self.test_results.get('passed_tests', []))}")
+            logger.debug(f"  • Testes falharam: {len(self.test_results.get('failed_tests', []))}")
         else:
-            print(f"  • {Colors.YELLOW}Testes não executados{Colors.END}")
+            logger.debug(f"  • {Colors.YELLOW}Testes não executados{Colors.END}")
         
         # Categorias de problemas
         if self.found_issues:
@@ -718,32 +718,32 @@ class ZelopackAutoCheck:
                     issues_by_type[issue_type] = []
                 issues_by_type[issue_type].append(issue)
             
-            print(f"\n{Colors.BOLD}Problemas por categoria:{Colors.END}")
+            logger.debug(f"\n{Colors.BOLD}Problemas por categoria:{Colors.END}")
             for issue_type, issues in issues_by_type.items():
                 if issue_type == "security":
-                    print(f"  • {Colors.RED}Segurança:{Colors.END} {len(issues)} problemas")
+                    logger.debug(f"  • {Colors.RED}Segurança:{Colors.END} {len(issues)} problemas")
                 elif issue_type == "code_quality":
-                    print(f"  • {Colors.YELLOW}Qualidade de código:{Colors.END} {len(issues)} problemas")
+                    logger.debug(f"  • {Colors.YELLOW}Qualidade de código:{Colors.END} {len(issues)} problemas")
                 else:
-                    print(f"  • {issue_type.title()}: {len(issues)} problemas")
+                    logger.debug(f"  • {issue_type.title()}: {len(issues)} problemas")
             
             # Mostrar os primeiros problemas de cada categoria
-            print(f"\n{Colors.BOLD}Exemplos de problemas encontrados:{Colors.END}")
+            logger.debug(f"\n{Colors.BOLD}Exemplos de problemas encontrados:{Colors.END}")
             for issue_type, issues in issues_by_type.items():
                 if len(issues) > 0:
                     title = issue_type.replace("_", " ").title()
                     color = Colors.RED if issue_type == "security" else Colors.YELLOW
-                    print(f"\n  {color}{title}:{Colors.END}")
+                    logger.debug(f"\n  {color}{title}:{Colors.END}")
                     for i, issue in enumerate(issues[:3]):
-                        print(f"    - {issue['message']} ({issue['file']})")
+                        logger.debug(f"    - {issue['message']} ({issue['file']})")
                     if len(issues) > 3:
-                        print(f"    - ... e mais {len(issues) - 3} problemas")
+                        logger.debug(f"    - ... e mais {len(issues) - 3} problemas")
         
         # Detalhes do relatório
-        print(f"\n{Colors.BOLD}Relatório completo:{Colors.END}")
-        print(f"  • Salvo em: {self.report_file}")
-        print("=" * 70)
-        print()
+        logger.debug(f"\n{Colors.BOLD}Relatório completo:{Colors.END}")
+        logger.debug(f"  • Salvo em: {self.report_file}")
+        logger.debug("=" * 70)
+        logger.debug()
 
 def watch_changes(seconds=5):
     """Monitora alterações nos arquivos e executa verificações automaticamente"""
@@ -794,10 +794,10 @@ def watch_changes(seconds=5):
                 if len(changes) > 5:
                     logger.info(f"  - ... e mais {len(changes) - 5} alterações")
                 
-                print("\n" + "=" * 70)
-                print(f"{Colors.BOLD}ALTERAÇÕES DETECTADAS{Colors.END}".center(70))
-                print("=" * 70)
-                print(f"\nExecutando verificação automática...\n")
+                logger.debug("\n" + "=" * 70)
+                logger.debug(f"{Colors.BOLD}ALTERAÇÕES DETECTADAS{Colors.END}".center(70))
+                logger.debug("=" * 70)
+                logger.debug(f"\nExecutando verificação automática...\n")
                 
                 checker = ZelopackAutoCheck()
                 checker.run_checks(fix_issues=False)
@@ -806,10 +806,10 @@ def watch_changes(seconds=5):
             time.sleep(seconds)
     except KeyboardInterrupt:
         logger.info("Monitoramento interrompido pelo usuário")
-        print("\nMonitoramento encerrado.")
+        logger.debug("\nMonitoramento encerrado.")
     except Exception as e:
         logger.error(f"Erro no monitoramento: {e}")
-        print(f"\n{Colors.RED}Erro no monitoramento: {e}{Colors.END}")
+        logger.debug(f"\n{Colors.RED}Erro no monitoramento: {e}{Colors.END}")
 
 def schedule_checks(minutes=5):
     """Agenda verificações periódicas"""
@@ -818,26 +818,26 @@ def schedule_checks(minutes=5):
     try:
         while True:
             # Executar verificação
-            print("\n" + "=" * 70)
-            print(f"{Colors.BOLD}VERIFICAÇÃO AGENDADA{Colors.END}".center(70))
-            print("=" * 70)
-            print(f"\nExecutando verificação automática...\n")
+            logger.debug("\n" + "=" * 70)
+            logger.debug(f"{Colors.BOLD}VERIFICAÇÃO AGENDADA{Colors.END}".center(70))
+            logger.debug("=" * 70)
+            logger.debug(f"\nExecutando verificação automática...\n")
             
             checker = ZelopackAutoCheck()
             checker.run_checks(fix_issues=True)
             
             # Aguardar até a próxima verificação
             next_check = datetime.datetime.now() + datetime.timedelta(minutes=minutes)
-            print(f"\nPróxima verificação agendada para: {next_check.strftime('%Y-%m-%d %H:%M:%S')}")
+            logger.debug(f"\nPróxima verificação agendada para: {next_check.strftime('%Y-%m-%d %H:%M:%S')}")
             
             # Dormir até a próxima verificação
             time.sleep(minutes * 60)
     except KeyboardInterrupt:
         logger.info("Agendamento interrompido pelo usuário")
-        print("\nAgendamento encerrado.")
+        logger.debug("\nAgendamento encerrado.")
     except Exception as e:
         logger.error(f"Erro no agendamento: {e}")
-        print(f"\n{Colors.RED}Erro no agendamento: {e}{Colors.END}")
+        logger.debug(f"\n{Colors.RED}Erro no agendamento: {e}{Colors.END}")
 
 def setup_cron_job():
     """Configura um job cron para verificações automatizadas"""
@@ -852,7 +852,7 @@ def setup_cron_job():
             
             # Verificar se o script já está configurado
             if script_path in current_crontab:
-                print("Job cron já está configurado")
+                logger.debug("Job cron já está configurado")
                 return
             
             # Configurar o cron para executar a cada 5 minutos
@@ -867,10 +867,10 @@ def setup_cron_job():
             subprocess.run("crontab /tmp/zelopack_crontab", shell=True, check=True)
             os.remove("/tmp/zelopack_crontab")
             
-            print("Job cron configurado com sucesso para executar a cada 5 minutos")
+            logger.debug("Job cron configurado com sucesso para executar a cada 5 minutos")
         except Exception as e:
             logger.error(f"Erro ao configurar cron job: {e}")
-            print(f"{Colors.RED}Erro ao configurar cron job: {e}{Colors.END}")
+            logger.debug(f"{Colors.RED}Erro ao configurar cron job: {e}{Colors.END}")
     else:
         # Para Windows
         try:
@@ -884,10 +884,10 @@ def setup_cron_job():
             cmd = f'schtasks /create /sc MINUTE /mo 5 /tn "{task_name}" /tr "{batch_file}" /f'
             subprocess.run(cmd, shell=True, check=True)
             
-            print("Job agendado no Task Scheduler para executar a cada 5 minutos")
+            logger.debug("Job agendado no Task Scheduler para executar a cada 5 minutos")
         except Exception as e:
             logger.error(f"Erro ao configurar Task Scheduler: {e}")
-            print(f"{Colors.RED}Erro ao configurar Task Scheduler: {e}{Colors.END}")
+            logger.debug(f"{Colors.RED}Erro ao configurar Task Scheduler: {e}{Colors.END}")
 
 def main():
     """Função principal"""
@@ -910,7 +910,7 @@ def main():
     # Verificar opções conflitantes
     options_count = sum([args.test, args.fix, args.watch, args.schedule, args.setup_cron])
     if options_count > 1:
-        print(f"{Colors.RED}Erro: Escolha apenas uma das opções principales{Colors.END}")
+        logger.debug(f"{Colors.RED}Erro: Escolha apenas uma das opções principales{Colors.END}")
         parser.print_help()
         return
     
@@ -936,7 +936,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\nOperação cancelada pelo usuário")
+        logger.debug("\nOperação cancelada pelo usuário")
     except Exception as e:
         logger.error(f"Erro inesperado: {e}")
-        print(f"\n{Colors.RED}Erro inesperado: {e}{Colors.END}")
+        logger.debug(f"\n{Colors.RED}Erro inesperado: {e}{Colors.END}")

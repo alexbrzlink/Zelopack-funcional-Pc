@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 #!/usr/bin/env python3
 """
 Gera um ícone para o aplicativo ZELOPACK
@@ -57,15 +60,15 @@ def generate_icon():
     # Salvar como ICO (Windows)
     icon_path = os.path.join("static", "img", "favicon.ico")
     images[0].save(icon_path, format='ICO', sizes=[(size, size) for size in sizes])
-    print(f"Ícone gerado: {icon_path}")
+    logger.debug(f"Ícone gerado: {icon_path}")
     
     # Salvar também como PNG para web e outros sistemas
     png_path = os.path.join("static", "img", "favicon.png")
     images[-1].save(png_path)  # Salva o maior tamanho como PNG
-    print(f"Ícone PNG gerado: {png_path}")
+    logger.debug(f"Ícone PNG gerado: {png_path}")
     
     return icon_path
 
 if __name__ == "__main__":
     icon_path = generate_icon()
-    print(f"Ícone salvo em: {icon_path}")
+    logger.debug(f"Ícone salvo em: {icon_path}")

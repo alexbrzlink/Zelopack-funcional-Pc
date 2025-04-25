@@ -5,7 +5,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('ZeloCalc: Inicializando módulo de cálculos técnicos 2.0...');
+    // // console.log('ZeloCalc: Inicializando módulo de cálculos técnicos 2.0...');
     
     // Catálogo de todos os cálculos disponíveis para busca
     const calculosDisponiveis = [
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
     
-    console.log('ZeloCalc: Módulo inicializado com sucesso!');
+    // // console.log('ZeloCalc: Módulo inicializado com sucesso!');
     
     /**
      * Inicialização do aplicativo
@@ -555,7 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Se for uma categoria, mostrar lista de calculadoras dessa categoria
                 if (this.dataset.category) {
                     const categoria = this.dataset.category;
-                    console.log(`Mostrando calculadoras da categoria: ${categoria}`);
+                    // // console.log(`Mostrando calculadoras da categoria: ${categoria}`);
                     // Implementar a lógica de navegação para categoria
                     // TODO...
                     return;
@@ -721,7 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * Cada calculadora precisa implementar sua própria função de cálculo
  */
 function calculate(calculatorType) {
-    console.log(`Calculando: ${calculatorType}`);
+    // // console.log(`Calculando: ${calculatorType}`);
     
     switch(calculatorType) {
         case 'producao_200':

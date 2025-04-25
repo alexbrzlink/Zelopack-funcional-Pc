@@ -24,4 +24,5 @@ dependencies = [
     "pyinstaller>=6.13.0",
     "beautifulsoup4>=4.13.4",
     "openai>=1.76.0",
+    "anthropic>=0.50.0",
 ]

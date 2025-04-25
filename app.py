@@ -227,7 +227,7 @@ def login_test():
         admin_user.set_password(DEFAULT_ADMIN_PASSWORD)
         db.session.add(admin_user)
         db.session.commit()
-        print("Usuário admin criado com sucesso!")
+        logger.debug("Usuário admin criado com sucesso!")
     
     # Agora buscamos o usuário admin
     user = User.query.filter_by(username='admin').first()
@@ -235,7 +235,7 @@ def login_test():
         if not user.is_active:
             user.is_active = True
             db.session.commit()
-            print("Usuário admin foi ativado")
+            logger.debug("Usuário admin foi ativado")
         
         login_user(user)
         flash('Login realizado com sucesso via rota de teste!', 'success')
@@ -247,18 +247,18 @@ def login_test():
 @app.route("/login-direct")
 def login_direct():
     """Rota alternativa para login direto, para fins de teste."""
-    print("ACESSANDO ROTA DE LOGIN AUTOMÁTICO")
+    logger.debug("ACESSANDO ROTA DE LOGIN AUTOMÁTICO")
     
     from models import User
     from werkzeug.security import generate_password_hash, check_password_hash
     
     # Verificar se existe usuário admin
     total_users = User.query.count()
-    print(f"Total de usuários no sistema: {total_users}")
+    logger.debug(f"Total de usuários no sistema: {total_users}")
     
     if total_users == 0:
         # Criar usuário admin se não existir
-        print("Nenhum usuário encontrado. Criando usuário admin padrão...")
+        logger.debug("Nenhum usuário encontrado. Criando usuário admin padrão...")
         admin_user = User(
             username='admin',
             email='admin@zelopack.com.br',
@@ -269,22 +269,22 @@ def login_direct():
         admin_user.set_password(DEFAULT_ADMIN_PASSWORD)
         db.session.add(admin_user)
         db.session.commit()
-        print("Usuário admin criado com sucesso!")
+        logger.debug("Usuário admin criado com sucesso!")
     
     user = User.query.filter_by(username='admin').first()
     
     if user is None:
         msg = "ERRO CRÍTICO: Usuário admin não encontrado mesmo após tentativa de criação!"
-        print(msg)
+        logger.debug(msg)
         flash(msg, 'danger')
         return redirect(url_for('auth.login'))
     
     if not user.is_active:
         msg = "ERRO: Usuário admin existe mas está inativo."
-        print(msg)
+        logger.debug(msg)
         user.is_active = True
         db.session.commit()
-        print("Usuário admin foi ativado automaticamente.")
+        logger.debug("Usuário admin foi ativado automaticamente.")
         flash(msg + " Ele foi ativado automaticamente.", 'warning')
     
     # Verificar senha
@@ -292,31 +292,31 @@ def login_direct():
     is_password_valid = user.check_password(test_password)
     
     if not is_password_valid:
-        print(f"ERRO: A senha do usuário admin não está validando corretamente. Redefinindo...")
+        logger.debug(f"ERRO: A senha do usuário admin não está validando corretamente. Redefinindo...")
         user.set_password(test_password)
         db.session.commit()
         
         # Verificar novamente
         if not user.check_password(test_password):
-            print("ERRO CRÍTICO: A senha não pôde ser redefinida corretamente!")
+            logger.debug("ERRO CRÍTICO: A senha não pôde ser redefinida corretamente!")
             flash('Não foi possível redefinir a senha do admin. Entre em contato com o suporte.', 'danger')
             return redirect(url_for('auth.login'))
         else:
-            print("Senha redefinida com sucesso!")
+            logger.debug("Senha redefinida com sucesso!")
             flash('A senha do usuário admin foi redefinida.', 'warning')
     
     # Registrar tentativa de login
-    print(f"Login automático para usuário: {user.username}")
-    print(f"Nome do usuário: {user.name}")
-    print(f"E-mail do usuário: {user.email}")
-    print(f"Função do usuário: {user.role}")
-    print(f"Status de ativação: {user.is_active}")
+    logger.debug(f"Login automático para usuário: {user.username}")
+    logger.debug(f"Nome do usuário: {user.name}")
+    logger.debug(f"E-mail do usuário: {user.email}")
+    logger.debug(f"Função do usuário: {user.role}")
+    logger.debug(f"Status de ativação: {user.is_active}")
     
     login_user(user, remember=True)
     user.last_login = datetime.utcnow()
     db.session.commit()
     
-    print("Login automático bem-sucedido! Redirecionando para o dashboard...")
+    logger.debug("Login automático bem-sucedido! Redirecionando para o dashboard...")
     flash(f'Bem-vindo, {user.name}! Login automático realizado com sucesso.', 'success')
     return redirect(url_for('dashboard.index'))
     
@@ -529,17 +529,17 @@ from blueprints.documents import documents_bp
 from blueprints.forms import forms_bp
 from blueprints.calculos import calculos_bp
 
-app.register_blueprint(reports_bp)
-app.register_blueprint(dashboard_bp)
-app.register_blueprint(auth_bp)
-app.register_blueprint(templates_bp, url_prefix='/templates')
-app.register_blueprint(documents_bp, url_prefix='/documents')
-app.register_blueprint(forms_bp, url_prefix='/forms')
-app.register_blueprint(calculos_bp, url_prefix='/calculos')
+app.register_bluelogger.debug(reports_bp)
+app.register_bluelogger.debug(dashboard_bp)
+app.register_bluelogger.debug(auth_bp)
+app.register_bluelogger.debug(templates_bp, url_prefix='/templates')
+app.register_bluelogger.debug(documents_bp, url_prefix='/documents')
+app.register_bluelogger.debug(forms_bp, url_prefix='/forms')
+app.register_bluelogger.debug(calculos_bp, url_prefix='/calculos')
 
 # Registrar blueprint do editor universal
 from blueprints.forms.routes_editor import editor_bp
-app.register_blueprint(editor_bp)
+app.register_bluelogger.debug(editor_bp)
 
 # Função para atualizar o banco de dados de forma incremental
 def setup_database():
@@ -563,10 +563,10 @@ def setup_database():
             ]
             db.session.add_all(default_categories)
             db.session.commit()
-            print("Categorias padrão adicionadas.")
+            logger.debug("Categorias padrão adicionadas.")
     except Exception as e:
         error_info = handle_database_error(e, db.session, "adicionar_categorias")
-        print(f"Erro ao adicionar categorias: {error_info['user_message']}")
+        logger.debug(f"Erro ao adicionar categorias: {error_info['user_message']}")
         db.session.rollback()
     
     # Adicionar fornecedores padrão se não existirem
@@ -579,10 +579,10 @@ def setup_database():
             ]
             db.session.add_all(default_suppliers)
             db.session.commit()
-            print("Fornecedores padrão adicionados.")
+            logger.debug("Fornecedores padrão adicionados.")
     except Exception as e:
         error_info = handle_database_error(e, db.session, "adicionar_fornecedores")
-        print(f"Erro ao adicionar fornecedores: {error_info['user_message']}")
+        logger.debug(f"Erro ao adicionar fornecedores: {error_info['user_message']}")
         db.session.rollback()
 
 # Inicializar o banco de dados
@@ -599,9 +599,9 @@ with app.app_context():
             ]
             db.session.add_all(default_suppliers)
             db.session.commit()
-            print("Fornecedores padrão adicionados.")
+            logger.debug("Fornecedores padrão adicionados.")
     except Exception as e:
-        print(f"Erro ao adicionar fornecedores: {e}")
+        logger.debug(f"Erro ao adicionar fornecedores: {e}")
         db.session.rollback()
     
     try:
@@ -617,7 +617,7 @@ with app.app_context():
             admin_user.set_password(DEFAULT_ADMIN_PASSWORD)
             db.session.add(admin_user)
             db.session.commit()
-            print("Usuário administrador padrão criado.")
+            logger.debug("Usuário administrador padrão criado.")
     except Exception as e:
-        print(f"Erro ao criar usuário admin: {e}")
+        logger.debug(f"Erro ao criar usuário admin: {e}")
         db.session.rollback()

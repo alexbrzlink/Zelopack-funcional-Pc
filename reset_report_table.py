@@ -96,12 +96,12 @@ def reset_report_table():
 
 
 if __name__ == "__main__":
-    print("Iniciando reset da tabela report...")
+    logger.debug("Iniciando reset da tabela report...")
     success = reset_report_table()
     
     if success:
-        print("Reset concluído com sucesso!")
+        logger.debug("Reset concluído com sucesso!")
         sys.exit(0)
     else:
-        print("Ocorreram erros durante o reset. Verifique os logs.")
+        logger.debug("Ocorreram erros durante o reset. Verifique os logs.")
         sys.exit(1)

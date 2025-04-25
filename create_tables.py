@@ -83,12 +83,12 @@ def initialize_default_data(db, models):
         db.session.rollback()
 
 if __name__ == "__main__":
-    print("Iniciando criação das tabelas do banco de dados...")
+    logger.debug("Iniciando criação das tabelas do banco de dados...")
     success = create_all_tables()
     
     if success:
-        print("Processo concluído com sucesso!")
+        logger.debug("Processo concluído com sucesso!")
         sys.exit(0)
     else:
-        print("Ocorreram erros durante o processo. Verifique os logs.")
+        logger.debug("Ocorreram erros durante o processo. Verifique os logs.")
         sys.exit(1)

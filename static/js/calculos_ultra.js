@@ -4,7 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("ZeloPack Ultra Calcs 2025 - Inicializado!");
+    // // console.log("ZeloPack Ultra Calcs 2025 - Inicializado!");
     
     // Configurar tema inicial com base na preferência do usuário
     setupTheme();

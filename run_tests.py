@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -27,7 +30,7 @@ from pathlib import Path
 
 # Verificar Python 3.6+
 if sys.version_info < (3, 6):
-    print("Este script requer Python 3.6 ou superior")
+    logger.debug("Este script requer Python 3.6 ou superior")
     sys.exit(1)
 
 # Constantes
@@ -52,25 +55,25 @@ class TermColors:
 
 def print_header(text):
     """Imprime um cabeçalho formatado"""
-    print(f"\n{TermColors.HEADER}{TermColors.BOLD}{'=' * 60}{TermColors.END}")
-    print(f"{TermColors.HEADER}{TermColors.BOLD}{text.center(60)}{TermColors.END}")
-    print(f"{TermColors.HEADER}{TermColors.BOLD}{'=' * 60}{TermColors.END}\n")
+    logger.debug(f"\n{TermColors.HEADER}{TermColors.BOLD}{'=' * 60}{TermColors.END}")
+    logger.debug(f"{TermColors.HEADER}{TermColors.BOLD}{text.center(60)}{TermColors.END}")
+    logger.debug(f"{TermColors.HEADER}{TermColors.BOLD}{'=' * 60}{TermColors.END}\n")
 
 def print_success(text):
     """Imprime uma mensagem de sucesso"""
-    print(f"{TermColors.GREEN}{TermColors.BOLD}✓ {text}{TermColors.END}")
+    logger.debug(f"{TermColors.GREEN}{TermColors.BOLD}✓ {text}{TermColors.END}")
 
 def print_error(text):
     """Imprime uma mensagem de erro"""
-    print(f"{TermColors.RED}{TermColors.BOLD}✗ {text}{TermColors.END}")
+    logger.debug(f"{TermColors.RED}{TermColors.BOLD}✗ {text}{TermColors.END}")
 
 def print_warning(text):
     """Imprime uma mensagem de aviso"""
-    print(f"{TermColors.YELLOW}{TermColors.BOLD}⚠ {text}{TermColors.END}")
+    logger.debug(f"{TermColors.YELLOW}{TermColors.BOLD}⚠ {text}{TermColors.END}")
 
 def print_info(text):
     """Imprime uma mensagem informativa"""
-    print(f"{TermColors.BLUE}ℹ {text}{TermColors.END}")
+    logger.debug(f"{TermColors.BLUE}ℹ {text}{TermColors.END}")
 
 def setup_environment():
     """Configura o ambiente de testes"""
@@ -89,7 +92,7 @@ def setup_environment():
     if missing_scripts:
         print_error(f"Arquivos de teste necessários não encontrados:")
         for script in missing_scripts:
-            print(f"  - {script}")
+            logger.debug(f"  - {script}")
         sys.exit(1)
     
     print_success("Ambiente de testes configurado com sucesso")
@@ -112,10 +115,10 @@ def run_component_tests():
             print_success("Todos os testes de componentes passaram!")
         else:
             print_error("Falha nos testes de componentes")
-            print("\nSaída do teste:")
-            print("-" * 60)
-            print(result.stdout + result.stderr)
-            print("-" * 60)
+            logger.debug("\nSaída do teste:")
+            logger.debug("-" * 60)
+            logger.debug(result.stdout + result.stderr)
+            logger.debug("-" * 60)
         
         return success
     except Exception as e:
@@ -136,10 +139,10 @@ def run_code_analysis():
         
         success = result.returncode == 0
         
-        print("\nResultados da análise:")
-        print("-" * 60)
-        print(result.stdout)
-        print("-" * 60)
+        logger.debug("\nResultados da análise:")
+        logger.debug("-" * 60)
+        logger.debug(result.stdout)
+        logger.debug("-" * 60)
         
         # Tentar extrair o relatório gerado
         report_match = None
@@ -215,8 +218,8 @@ def run_ai_analysis():
                 with open(txt_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                     
-                print("\nPrincipais sugestões:")
-                print("-" * 60)
+                logger.debug("\nPrincipais sugestões:")
+                logger.debug("-" * 60)
                 
                 # Extrair e mostrar as 3 primeiras sugestões
                 suggestions_section = content.split('=== SUGESTÕES DE MELHORIA ===')[1].split('===')[0]
@@ -225,12 +228,12 @@ def run_ai_analysis():
                 for i, suggestion in enumerate(suggestions[1:4], 1):
                     # Limitar a 5 linhas por sugestão
                     suggestion_lines = suggestion.strip().split('\n')[:5]
-                    print(f"SUGESTÃO #{i}")
+                    logger.debug(f"SUGESTÃO #{i}")
                     for line in suggestion_lines:
-                        print(line)
-                    print()
+                        logger.debug(line)
+                    logger.debug()
                 
-                print("-" * 60)
+                logger.debug("-" * 60)
                 
                 # Perguntar se deseja ver todas as sugestões
                 response = input("Deseja ver todas as sugestões? (s/n): ")
@@ -276,10 +279,10 @@ def apply_auto_fixes():
         
         success = result.returncode == 0
         
-        print("\nResultados das correções:")
-        print("-" * 60)
-        print(result.stdout)
-        print("-" * 60)
+        logger.debug("\nResultados das correções:")
+        logger.debug("-" * 60)
+        logger.debug(result.stdout)
+        logger.debug("-" * 60)
         
         # Verificar quantas correções foram aplicadas
         fix_count = 0
@@ -379,7 +382,7 @@ def main():
             print_warning("Análise com IA: CONCLUÍDA COM AVISOS")
         
         # Perguntar se deseja aplicar correções
-        print()
+        logger.debug()
         response = input("Deseja aplicar correções automáticas? (s/n): ")
         if response.lower() == 's':
             apply_auto_fixes()
@@ -388,7 +391,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\nOperação cancelada pelo usuário")
+        logger.debug("\nOperação cancelada pelo usuário")
         sys.exit(1)
     except Exception as e:
         print_error(f"Erro inesperado: {e}")

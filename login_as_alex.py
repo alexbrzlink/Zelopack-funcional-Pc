@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from app import app, db
 from models import User
 from flask_login import login_user
@@ -8,10 +11,10 @@ def login_as_alex():
     with app.app_context():
         user = User.query.filter_by(username='Alex').first()
         if user:
-            print(f"Usuário Alex encontrado (ID: {user.id})")
-            print(f"Email: {user.email}")
-            print(f"Função: {user.role}")
-            print(f"Ativo: {user.is_active}")
+            logger.debug(f"Usuário Alex encontrado (ID: {user.id})")
+            logger.debug(f"Email: {user.email}")
+            logger.debug(f"Função: {user.role}")
+            logger.debug(f"Ativo: {user.is_active}")
             
             # Atualizar último login
             user.last_login = datetime.utcnow()
@@ -19,7 +22,7 @@ def login_as_alex():
             
             return user
         else:
-            print("Usuário Alex não encontrado!")
+            logger.debug("Usuário Alex não encontrado!")
             return None
 
 # Adicionando uma função de acesso simples para ser chamada via web
@@ -40,5 +43,5 @@ def login_alex_web():
 
 # Registrar a nova rota
 with app.app_context():
-    print("Adicionando nova rota de login para Alex")
+    logger.debug("Adicionando nova rota de login para Alex")
     # Já está registrado no decorator acima

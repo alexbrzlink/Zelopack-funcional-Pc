@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 import pandas as pd
 import json
 import datetime
@@ -27,11 +30,11 @@ def extract_excel_data(excel_path):
     Extrair dados de um arquivo Excel e retornar um dicionário com informações
     sobre todas as planilhas e seus conteúdos.
     """
-    print(f"Tentando abrir o arquivo: {excel_path}")
+    logger.debug(f"Tentando abrir o arquivo: {excel_path}")
     
     # Verificar se o arquivo existe
     if not Path(excel_path).exists():
-        print(f"Erro: O arquivo {excel_path} não existe.")
+        logger.debug(f"Erro: O arquivo {excel_path} não existe.")
         return None
     
     try:
@@ -39,7 +42,7 @@ def extract_excel_data(excel_path):
         xl = pd.ExcelFile(excel_path)
         sheet_names = xl.sheet_names
         
-        print(f"Planilhas encontradas: {sheet_names}")
+        logger.debug(f"Planilhas encontradas: {sheet_names}")
         
         result = {
             "arquivo": excel_path,
@@ -48,7 +51,7 @@ def extract_excel_data(excel_path):
         
         # Processar cada planilha
         for sheet_name in sheet_names:
-            print(f"\nProcessando planilha: {sheet_name}")
+            logger.debug(f"\nProcessando planilha: {sheet_name}")
             
             # Ler a planilha
             df = pd.read_excel(excel_path, sheet_name=sheet_name)
@@ -110,7 +113,7 @@ def extract_excel_data(excel_path):
                                 row_dict[str(col)] = value
                         sample_data.append(row_dict)
                 except Exception as e:
-                    print(f"Erro ao converter dados para JSON: {str(e)}")
+                    logger.debug(f"Erro ao converter dados para JSON: {str(e)}")
                     sample_data = [{"erro": "Não foi possível converter os dados para JSON"}]
             
             # Dados da planilha
@@ -130,7 +133,7 @@ def extract_excel_data(excel_path):
         return result
     
     except Exception as e:
-        print(f"Erro ao processar o arquivo Excel: {str(e)}")
+        logger.debug(f"Erro ao processar o arquivo Excel: {str(e)}")
         return None
 
 def save_to_json(data, output_path):
@@ -138,22 +141,22 @@ def save_to_json(data, output_path):
     try:
         with open(output_path, 'w', encoding='utf-8') as json_file:
             json.dump(data, json_file, cls=CustomJSONEncoder, ensure_ascii=False, indent=2)
-        print(f"Dados salvos em {output_path}")
+        logger.debug(f"Dados salvos em {output_path}")
         return True
     except Exception as e:
-        print(f"Erro ao salvar JSON: {str(e)}")
+        logger.debug(f"Erro ao salvar JSON: {str(e)}")
         return False
 
 if __name__ == "__main__":
     excel_path = "./attached_assets/CALCULOS_LAB_RAFA.xlsx"
     output_path = "./extracted_excel_data.json"
     
-    print("Iniciando extração de dados do Excel...")
+    logger.debug("Iniciando extração de dados do Excel...")
     excel_data = extract_excel_data(excel_path)
     
     if excel_data:
-        print("\nSalvando os dados extraídos em JSON...")
+        logger.debug("\nSalvando os dados extraídos em JSON...")
         save_to_json(excel_data, output_path)
-        print("\nProcesso concluído.")
+        logger.debug("\nProcesso concluído.")
     else:
-        print("\nFalha na extração de dados.")
+        logger.debug("\nFalha na extração de dados.")

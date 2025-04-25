@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 #!/usr/bin/env python3
 """
 Cria imagens para o instalador NSIS
@@ -66,7 +69,7 @@ def create_installer_sidebar():
     os.makedirs("static/img", exist_ok=True)
     sidebar_path = os.path.join("static", "img", "installer-sidebar.bmp")
     img.save(sidebar_path, format="BMP")
-    print(f"Imagem da barra lateral do instalador gerada: {sidebar_path}")
+    logger.debug(f"Imagem da barra lateral do instalador gerada: {sidebar_path}")
     
     return sidebar_path
 
@@ -100,7 +103,7 @@ def create_installer_header():
     # Salvar a imagem
     header_path = os.path.join("static", "img", "installer-header.bmp")
     img.save(header_path, format="BMP")
-    print(f"Imagem do cabeçalho do instalador gerada: {header_path}")
+    logger.debug(f"Imagem do cabeçalho do instalador gerada: {header_path}")
     
     return header_path
 
@@ -138,7 +141,7 @@ Ao instalar este software, você concorda com os seguintes termos:
     with open(license_path, "w") as f:
         f.write(license_text)
     
-    print(f"Arquivo de licença gerado: {license_path}")
+    logger.debug(f"Arquivo de licença gerado: {license_path}")
     
     return license_path
 
@@ -146,4 +149,4 @@ if __name__ == "__main__":
     create_installer_sidebar()
     create_installer_header()
     create_license_file()
-    print("Todas as imagens e arquivos do instalador foram gerados.")
+    logger.debug("Todas as imagens e arquivos do instalador foram gerados.")

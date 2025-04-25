@@ -1,0 +1,6 @@
+{
+  "interval_minutes": 5,
+  "apply_fixes": true,
+  "last_run": null,
+  "enabled": true
+}

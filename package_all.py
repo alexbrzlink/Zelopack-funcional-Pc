@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 #!/usr/bin/env python3
 """
 ZELOPACK - Script de Empacotamento Completo
@@ -27,7 +30,7 @@ class ZelopackPackager:
     
     def run_command(self, command, shell=False, cwd=None):
         """Executa um comando e exibe a saída"""
-        print(f"Executando: {command}")
+        logger.debug(f"Executando: {command}")
         try:
             if isinstance(command, str) and not shell:
                 command = command.split()
@@ -46,25 +49,25 @@ class ZelopackPackager:
                 if output == '' and process.poll() is not None:
                     break
                 if output:
-                    print(output.strip())
+                    logger.debug(output.strip())
             
             return process.poll() == 0
         except Exception as e:
-            print(f"Erro ao executar comando: {e}")
+            logger.debug(f"Erro ao executar comando: {e}")
             return False
     
     def generate_assets(self):
         """Gera os assets necessários para o instalador"""
-        print("\n=== Gerando ícones e imagens ===")
+        logger.debug("\n=== Gerando ícones e imagens ===")
         return self.run_command([sys.executable, 'generate_icon.py'])
     
     def build_executable(self):
         """Cria o executável usando PyInstaller"""
-        print("\n=== Compilando executável ===")
+        logger.debug("\n=== Compilando executável ===")
         
         # Limpar pasta dist anterior, se existir
         if os.path.exists(self.dist_dir):
-            print("Limpando pasta dist anterior...")
+            logger.debug("Limpando pasta dist anterior...")
             shutil.rmtree(self.dist_dir)
         
         # Compilar com base na plataforma
@@ -76,7 +79,7 @@ class ZelopackPackager:
     
     def create_installer(self):
         """Cria o instalador adequado para a plataforma"""
-        print("\n=== Criando instalador ===")
+        logger.debug("\n=== Criando instalador ===")
         
         if self.platform == 'windows':
             # Verificar se o NSIS está instalado
@@ -89,8 +92,8 @@ class ZelopackPackager:
             if nsis_found:
                 return self.run_command('create_windows_installer.bat', shell=True)
             else:
-                print("AVISO: NSIS não encontrado. O instalador Windows não será criado.")
-                print("Para criar o instalador, instale o NSIS de https://nsis.sourceforge.io/")
+                logger.debug("AVISO: NSIS não encontrado. O instalador Windows não será criado.")
+                logger.debug("Para criar o instalador, instale o NSIS de https://nsis.sourceforge.io/")
                 return False
                 
         elif self.platform == 'darwin':  # macOS
@@ -105,7 +108,7 @@ class ZelopackPackager:
     
     def run_application(self):
         """Executa o aplicativo compilado para teste"""
-        print("\n=== Executando aplicativo para teste ===")
+        logger.debug("\n=== Executando aplicativo para teste ===")
         
         if self.platform == 'windows':
             exe_path = os.path.join(self.dist_dir, 'ZELOPACK', 'ZELOPACK.exe')
@@ -123,51 +126,51 @@ class ZelopackPackager:
                 os.chmod(exe_path, 0o755)
                 return self.run_command(exe_path)
         
-        print("Executável não encontrado para teste.")
+        logger.debug("Executável não encontrado para teste.")
         return False
     
     def package_all(self, run_test=False):
         """Executa todas as etapas de empacotamento"""
-        print("\n=================================================")
-        print(f"ZELOPACK - CRIAÇÃO DE PACOTE PARA {self.platform.upper()}")
-        print("=================================================\n")
+        logger.debug("\n=================================================")
+        logger.debug(f"ZELOPACK - CRIAÇÃO DE PACOTE PARA {self.platform.upper()}")
+        logger.debug("=================================================\n")
         
         # Etapa 1: Gerar assets
         if not self.generate_assets():
-            print("ERRO: Falha ao gerar assets.")
+            logger.debug("ERRO: Falha ao gerar assets.")
             return False
         
         # Etapa 2: Compilar executável
         if not self.build_executable():
-            print("ERRO: Falha ao compilar executável.")
+            logger.debug("ERRO: Falha ao compilar executável.")
             return False
         
         # Etapa 3: Criar instalador
         if not self.create_installer():
-            print("AVISO: Falha ao criar instalador.")
+            logger.debug("AVISO: Falha ao criar instalador.")
             # Continuar mesmo que o instalador falhe
         
         # Etapa 4: Testar o aplicativo (opcional)
         if run_test:
             if not self.run_application():
-                print("AVISO: Falha ao executar o aplicativo para teste.")
+                logger.debug("AVISO: Falha ao executar o aplicativo para teste.")
         
-        print("\n=================================================")
-        print(f"ZELOPACK - EMPACOTAMENTO CONCLUÍDO")
-        print("=================================================\n")
+        logger.debug("\n=================================================")
+        logger.debug(f"ZELOPACK - EMPACOTAMENTO CONCLUÍDO")
+        logger.debug("=================================================\n")
         
         # Mostrar arquivos gerados
-        print("Arquivos gerados:")
+        logger.debug("Arquivos gerados:")
         
         if os.path.exists(self.dist_dir):
-            print(f"\nExecutável: {self.dist_dir}")
+            logger.debug(f"\nExecutável: {self.dist_dir}")
             for item in os.listdir(self.dist_dir):
-                print(f"  - {item}")
+                logger.debug(f"  - {item}")
         
         if os.path.exists(self.installers_dir):
-            print(f"\nInstaladores: {self.installers_dir}")
+            logger.debug(f"\nInstaladores: {self.installers_dir}")
             for item in os.listdir(self.installers_dir):
-                print(f"  - {item}")
+                logger.debug(f"  - {item}")
         
         return True
 

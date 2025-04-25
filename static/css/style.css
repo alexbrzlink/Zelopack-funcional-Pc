@@ -128,9 +128,9 @@ body {
 
 /* Estilo dos links de navegação */
 .nav-link {
-  color: var(--zelopack-gray-700) !important;
+  color: var(--zelopack-gray-700) ;
   font-weight: 500;
-  padding: 0.75rem 1rem !important;
+  padding: 0.75rem 1rem ;
   margin: 0 0.15rem;
   border-radius: var(--btn-border-radius);
   transition: all var(--transition-normal);
@@ -146,7 +146,7 @@ body {
 }
 
 .nav-link:hover {
-  color: var(--zelopack-primary) !important;
+  color: var(--zelopack-primary) ;
   background-color: var(--zelopack-primary-subtle);
   transform: translateY(-2px);
 }
@@ -156,7 +156,7 @@ body {
 }
 
 .nav-link.active {
-  color: var(--zelopack-primary) !important;
+  color: var(--zelopack-primary) ;
   background-color: var(--zelopack-primary-subtle);
   font-weight: 600;
 }
@@ -787,7 +787,7 @@ body {
 
 /* Variantes de badge */
 .badge-primary, .bg-primary {
-  background-color: var(--zelopack-primary) !important;
+  background-color: var(--zelopack-primary) ;
   color: white;
 }
 
@@ -798,7 +798,7 @@ body {
 }
 
 .badge-secondary, .bg-secondary {
-  background-color: var(--zelopack-gray-600) !important;
+  background-color: var(--zelopack-gray-600) ;
   color: white;
 }
 
@@ -809,7 +809,7 @@ body {
 }
 
 .badge-success, .bg-success {
-  background-color: var(--zelopack-secondary) !important;
+  background-color: var(--zelopack-secondary) ;
   color: white;
 }
 
@@ -820,7 +820,7 @@ body {
 }
 
 .badge-warning, .bg-warning {
-  background-color: var(--zelopack-warning) !important;
+  background-color: var(--zelopack-warning) ;
   color: var(--zelopack-gray-900);
 }
 
@@ -831,7 +831,7 @@ body {
 }
 
 .badge-danger, .bg-danger {
-  background-color: var(--zelopack-error) !important;
+  background-color: var(--zelopack-error) ;
   color: white;
 }
 
@@ -842,7 +842,7 @@ body {
 }
 
 .badge-info, .bg-info {
-  background-color: var(--zelopack-info) !important;
+  background-color: var(--zelopack-info) ;
   color: white;
 }
 
@@ -853,7 +853,7 @@ body {
 }
 
 .badge-accent, .bg-accent {
-  background-color: var(--zelopack-accent) !important;
+  background-color: var(--zelopack-accent) ;
   color: white;
 }
 

@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 #!/usr/bin/env python3
 """
 Script para atualizar o esquema do banco de dados Report.
@@ -17,13 +20,13 @@ from app import app, db
 def execute_sql(sql):
     """Executa um comando SQL com tratamento de erro."""
     try:
-        print(f"Executando: {sql}")
+        logger.debug(f"Executando: {sql}")
         db.session.execute(text(sql))
         db.session.commit()
-        print("Comando executado com sucesso.")
+        logger.debug("Comando executado com sucesso.")
         return True
     except (OperationalError, ProgrammingError) as e:
-        print(f"Erro ao executar comando: {e}")
+        logger.debug(f"Erro ao executar comando: {e}")
         db.session.rollback()
         return False
 
@@ -37,11 +40,11 @@ def column_exists(table, column):
         result = db.session.execute(text(sql)).fetchone()
         return result is not None
     except Exception as e:
-        print(f"Erro ao verificar coluna {column}: {e}")
+        logger.debug(f"Erro ao verificar coluna {column}: {e}")
         return False
 
 def main():
-    print("Iniciando atualização do esquema do banco de dados...")
+    logger.debug("Iniciando atualização do esquema do banco de dados...")
     
     # Adicionando campos para análises realizadas em laboratório
     if not column_exists('reports', 'lab_brix'):
@@ -88,9 +91,9 @@ def main():
         ADD COLUMN has_report_document BOOLEAN DEFAULT FALSE
         """)
     
-    print("Atualização do esquema concluída.")
+    logger.debug("Atualização do esquema concluída.")
 
 if __name__ == "__main__":
     with app.app_context():
         main()
-        print("Script finalizado.")
+        logger.debug("Script finalizado.")

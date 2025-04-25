@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from datetime import datetime
 from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
@@ -34,7 +37,7 @@ def login():
         admin_user.set_password('Alex')
         db.session.add(admin_user)
         db.session.commit()
-        print("Usuário admin criado com sucesso!")
+        logger.debug("Usuário admin criado com sucesso!")
         flash('Usuário admin criado. Use as credenciais: admin / Alex', 'info')
     
     form = LoginForm()
@@ -60,17 +63,17 @@ def login():
         
         # Verificação detalhada para oferecer mensagens específicas
         if not user:
-            print(f"Erro de login: Usuário '{username}' não encontrado no sistema")
+            logger.debug(f"Erro de login: Usuário '{username}' não encontrado no sistema")
             flash(f'Usuário não encontrado. Verifique se digitou o nome corretamente.', 'danger')
             return render_template('auth/login.html', form=form, title='Login')
         
         if not user.check_password(password):
-            print(f"Erro de login: Senha incorreta para o usuário '{username}'")
+            logger.debug(f"Erro de login: Senha incorreta para o usuário '{username}'")
             flash('Senha incorreta. Por favor, tente novamente.', 'danger')
             return render_template('auth/login.html', form=form, title='Login')
         
         if not user.is_active:
-            print(f"Erro de login: A conta do usuário '{username}' está desativada")
+            logger.debug(f"Erro de login: A conta do usuário '{username}' está desativada")
             flash(f'Sua conta está desativada. Entre em contato com o administrador.', 'warning')
             return render_template('auth/login.html', form=form, title='Login')
         
@@ -79,7 +82,7 @@ def login():
         user.last_login = datetime.utcnow()
         db.session.commit()
         
-        print(f"Login bem-sucedido para: {user.username}")
+        logger.debug(f"Login bem-sucedido para: {user.username}")
         flash(f'Bem-vindo, {user.name}! Login realizado com sucesso.', 'success')
         
         # Sempre redirecionar para o dashboard após login
@@ -100,11 +103,11 @@ def logout():
 @login_required
 def register():
     """Página de registro de novo usuário (apenas para administradores)."""
-    print("Acessando rota de registro")
+    logger.debug("Acessando rota de registro")
     
     # Verificar se é administrador
     if not current_user.role == 'admin':
-        print(f"Acesso negado: Usuário {current_user.username} não é administrador")
+        logger.debug(f"Acesso negado: Usuário {current_user.username} não é administrador")
         flash('Acesso negado. Você não tem permissão para registrar novos usuários.', 'danger')
         return redirect(url_for('dashboard.index'))
     
@@ -112,11 +115,11 @@ def register():
     
     # Debugar a submissão do formulário
     if request.method == 'POST':
-        print(f"Recebido POST para registro. Dados: {request.form}")
+        logger.debug(f"Recebido POST para registro. Dados: {request.form}")
     
     # Processar o formulário
     if form.validate_on_submit():
-        print(f"Formulário validado. Criando usuário: {form.username.data}")
+        logger.debug(f"Formulário validado. Criando usuário: {form.username.data}")
         try:
             # Criar novo usuário
             user = User(
@@ -130,15 +133,15 @@ def register():
             db.session.add(user)
             db.session.commit()
             
-            print(f"Usuário {user.username} criado com sucesso!")
+            logger.debug(f"Usuário {user.username} criado com sucesso!")
             flash(f'Usuário {user.username} registrado com sucesso!', 'success')
             return redirect(url_for('auth.users'))
         except Exception as e:
-            print(f"ERRO ao criar usuário: {str(e)}")
+            logger.debug(f"ERRO ao criar usuário: {str(e)}")
             db.session.rollback()
             flash(f'Erro ao registrar usuário: {str(e)}', 'danger')
     elif request.method == 'POST' and not form.validate():
-        print(f"Erros de validação no formulário: {form.errors}")
+        logger.debug(f"Erros de validação no formulário: {form.errors}")
         flash('Verifique os erros no formulário e tente novamente.', 'warning')
     
     return render_template('auth/register.html', title='Registrar Usuário', form=form)
@@ -286,16 +289,16 @@ def reset_password(token):
 @csrf.exempt
 def login_direct():
     """Rota alternativa para login direto, para fins de teste."""
-    print("ACESSANDO ROTA DE LOGIN AUTOMÁTICO")
+    logger.debug("ACESSANDO ROTA DE LOGIN AUTOMÁTICO")
     
     # Rota para login direto sem CSRF para fins de teste
     # Verificar se existe usuário admin
     total_users = User.query.count()
-    print(f"Total de usuários no sistema: {total_users}")
+    logger.debug(f"Total de usuários no sistema: {total_users}")
     
     if total_users == 0:
         # Criar usuário admin se não existir
-        print("Nenhum usuário encontrado. Criando usuário admin padrão...")
+        logger.debug("Nenhum usuário encontrado. Criando usuário admin padrão...")
         admin_user = User(
             username='admin',
             email='admin@zelopack.com.br',
@@ -306,35 +309,35 @@ def login_direct():
         admin_user.set_password('Alex')
         db.session.add(admin_user)
         db.session.commit()
-        print("Usuário admin criado com sucesso!")
+        logger.debug("Usuário admin criado com sucesso!")
     
     user = User.query.filter_by(username='admin').first()
     
     if user is None:
         msg = "ERRO CRÍTICO: Usuário admin não encontrado mesmo após tentativa de criação!"
-        print(msg)
+        logger.debug(msg)
         flash(msg, 'danger')
         return redirect(url_for('auth.login'))
     
     if not user.is_active:
         msg = "ERRO: Usuário admin existe mas está inativo."
-        print(msg)
+        logger.debug(msg)
         user.is_active = True
         db.session.commit()
-        print("Usuário admin foi ativado automaticamente.")
+        logger.debug("Usuário admin foi ativado automaticamente.")
         flash(msg + " Ele foi ativado automaticamente.", 'warning')
     
     # Registrar tentativa de login
-    print(f"Login automático para usuário: {user.username}")
-    print(f"Nome do usuário: {user.name}")
-    print(f"E-mail do usuário: {user.email}")
-    print(f"Função do usuário: {user.role}")
-    print(f"Status de ativação: {user.is_active}")
+    logger.debug(f"Login automático para usuário: {user.username}")
+    logger.debug(f"Nome do usuário: {user.name}")
+    logger.debug(f"E-mail do usuário: {user.email}")
+    logger.debug(f"Função do usuário: {user.role}")
+    logger.debug(f"Status de ativação: {user.is_active}")
     
     login_user(user, remember=True)
     user.last_login = datetime.utcnow()
     db.session.commit()
     
-    print("Login automático bem-sucedido! Redirecionando para o dashboard...")
+    logger.debug("Login automático bem-sucedido! Redirecionando para o dashboard...")
     flash(f'Bem-vindo, {user.name}! Login automático realizado com sucesso.', 'success')
     return redirect(url_for('dashboard.index'))

@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 """
 Utilitários para geração de estatísticas e dados para os dashboards
 """
@@ -66,7 +69,7 @@ def get_report_stats_by_month():
             'rejeitados': status_dict.get('rejeitado', 0)
         }
     except Exception as e:
-        print(f"Erro ao obter estatísticas mensais: {e}")
+        logger.debug(f"Erro ao obter estatísticas mensais: {e}")
         # Retornar dados padrão em caso de erro
         return {
             'total_reports': 0,
@@ -114,7 +117,7 @@ def get_report_stats_by_material():
             'counts': counts
         }
     except Exception as e:
-        print(f"Erro ao obter estatísticas por material: {e}")
+        logger.debug(f"Erro ao obter estatísticas por material: {e}")
         # Retornar dados padrão em caso de erro
         return {
             'materials': ['Erro na consulta'],
@@ -209,7 +212,7 @@ def get_quality_indicators():
             }
         }
     except Exception as e:
-        print(f"Erro ao obter indicadores de qualidade: {e}")
+        logger.debug(f"Erro ao obter indicadores de qualidade: {e}")
         # Retornar dados padrão em caso de erro
         current_month = datetime.now().strftime('%b/%y')
         return {
@@ -306,7 +309,7 @@ def get_operational_efficiency():
             }
         }
     except Exception as e:
-        print(f"Erro ao obter dados de eficiência operacional: {e}")
+        logger.debug(f"Erro ao obter dados de eficiência operacional: {e}")
         # Retornar dados padrão em caso de erro
         return {
             'avg_analysis_time': 2.5,  # Valor exemplo
@@ -351,7 +354,7 @@ def get_recent_documents():
                 }
                 recent_reports_dict.append(report_dict)
             except Exception as e:
-                print(f"Erro ao converter relatório para dicionário: {e}")
+                logger.debug(f"Erro ao converter relatório para dicionário: {e}")
         
         pending_reports_dict = []
         for report in pending_reports:
@@ -368,14 +371,14 @@ def get_recent_documents():
                 }
                 pending_reports_dict.append(report_dict)
             except Exception as e:
-                print(f"Erro ao converter relatório pendente para dicionário: {e}")
+                logger.debug(f"Erro ao converter relatório pendente para dicionário: {e}")
         
         return {
             'recent_reports': recent_reports_dict,
             'pending_reports': pending_reports_dict
         }
     except Exception as e:
-        print(f"Erro ao obter documentos recentes: {e}")
+        logger.debug(f"Erro ao obter documentos recentes: {e}")
         # Retornar listas vazias em caso de erro
         return {
             'recent_reports': [],
@@ -427,14 +430,14 @@ def get_recent_activities():
                 }
                 activities.append(activity)
             except Exception as e:
-                print(f"Erro ao processar atividade específica: {e}")
+                logger.debug(f"Erro ao processar atividade específica: {e}")
                 continue
         
         return {
             'activities': activities
         }
     except Exception as e:
-        print(f"Erro ao obter atividades recentes: {e}")
+        logger.debug(f"Erro ao obter atividades recentes: {e}")
         # Retornar lista vazia em caso de erro
         return {
             'activities': []
@@ -519,7 +522,7 @@ def generate_material_chart():
             
             return plot_to_base64(fig)
         except Exception as e:
-            print(f"Erro ao gerar gráfico de pizza: {e}")
+            logger.debug(f"Erro ao gerar gráfico de pizza: {e}")
             # Em caso de erro, mostrar apenas texto
             plt.clf()  # Limpar figura anterior
             fig, ax = plt.subplots(figsize=(6, 4))
@@ -528,7 +531,7 @@ def generate_material_chart():
             plt.tight_layout()
             return plot_to_base64(fig)
     except Exception as e:
-        print(f"Erro crítico em generate_material_chart: {e}")
+        logger.debug(f"Erro crítico em generate_material_chart: {e}")
         # Garantir que sempre retorna algo
         fig, ax = plt.subplots(figsize=(6, 4))
         ax.text(0.5, 0.5, 'Erro ao carregar dados', ha='center', va='center')

@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 """
 Módulo de Rotas para o Editor Universal do ZeloPack
 
@@ -34,7 +37,7 @@ from app import db
 from models import FormPreset, StandardFields
 
 # Criar blueprint para o editor universal
-editor_bp = Blueprint('editor', __name__, url_prefix='/forms/editor')
+editor_bp = Bluelogger.debug('editor', __name__, url_prefix='/forms/editor')
 
 @editor_bp.route('/')
 @login_required
