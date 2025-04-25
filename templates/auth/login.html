@@ -52,21 +52,26 @@
                             {{ form.hidden_tag() }}
                             
                             <div class="form-floating position-relative">
-                                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="Nome de Usuário", id="username", required=true) }}
+                                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="Nome de Usuário", id="username", required=true, autocomplete="username") }}
                                 <i class="fas fa-user input-icon"></i>
                                 {{ form.username.label }}
                                 {% for error in form.username.errors %}
-                                    <div class="invalid-feedback">{{ error }}</div>
+                                    <div class="invalid-feedback">
+                                        <i class="fas fa-exclamation-circle me-1"></i> {{ error }}
+                                    </div>
                                 {% endfor %}
                             </div>
                             
                             <div class="form-floating position-relative">
-                                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Senha", id="password", required=true) }}
+                                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Senha", id="password", required=true, autocomplete="current-password") }}
                                 <i class="fas fa-key input-icon"></i>
                                 {{ form.password.label }}
                                 {% for error in form.password.errors %}
-                                    <div class="invalid-feedback">{{ error }}</div>
+                                    <div class="invalid-feedback">
+                                        <i class="fas fa-exclamation-circle me-1"></i> {{ error }}
+                                    </div>
                                 {% endfor %}
+                                <div class="password-hint small text-muted mt-1">Digite a senha fornecida pelo administrador</div>
                             </div>
                             
                             <div class="form-check mb-3 mt-3">

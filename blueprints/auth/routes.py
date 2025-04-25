@@ -58,12 +58,20 @@ def login():
         # Login padrão
         user = User.query.filter_by(username=username).first()
         
-        if not user or not user.check_password(password):
-            flash('Nome de usuário ou senha incorretos. Tente novamente.', 'danger')
+        # Verificação detalhada para oferecer mensagens específicas
+        if not user:
+            print(f"Erro de login: Usuário '{username}' não encontrado no sistema")
+            flash(f'Usuário não encontrado. Verifique se digitou o nome corretamente.', 'danger')
+            return render_template('auth/login.html', form=form, title='Login')
+        
+        if not user.check_password(password):
+            print(f"Erro de login: Senha incorreta para o usuário '{username}'")
+            flash('Senha incorreta. Por favor, tente novamente.', 'danger')
             return render_template('auth/login.html', form=form, title='Login')
         
         if not user.is_active:
-            flash(f'Sua conta está desativada. Contate o administrador.', 'warning')
+            print(f"Erro de login: A conta do usuário '{username}' está desativada")
+            flash(f'Sua conta está desativada. Entre em contato com o administrador.', 'warning')
             return render_template('auth/login.html', form=form, title='Login')
         
         # Login bem-sucedido
