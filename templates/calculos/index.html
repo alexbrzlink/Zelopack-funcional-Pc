@@ -1,0 +1,617 @@
+{% extends "base.html" %}
+
+{% block title %}Cálculos Técnicos - Zelopack{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/calculos.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-calculos">
+    <!-- Sidebar para seleção de cálculos -->
+    <div class="sidebar-calculos">
+        <div class="sidebar-header">
+            <h5 class="mb-0"><i class="fas fa-calculator me-2"></i> Cálculos Técnicos</h5>
+        </div>
+        
+        <div class="sidebar-search position-relative">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control search-input" id="searchCalculo" placeholder="Buscar cálculo...">
+        </div>
+        
+        <ul class="calculo-list" id="calculoList">
+            <!-- Categoria: Produção -->
+            <li class="calculo-category" data-category="producao">
+                <div><i class="fas fa-industry"></i> Produção</div>
+                <i class="fas fa-chevron-down"></i>
+            </li>
+            <li class="calculo-item active" data-target="producao-200g">
+                <i class="fas fa-balance-scale"></i> Produção 200g
+            </li>
+            <li class="calculo-item" data-target="volume-producao">
+                <i class="fas fa-tint"></i> Volume de Produção
+            </li>
+            <li class="calculo-item" data-target="rendimento">
+                <i class="fas fa-percentage"></i> Rendimento
+            </li>
+            
+            <!-- Categoria: Laboratório -->
+            <li class="calculo-category" data-category="laboratorio">
+                <div><i class="fas fa-flask"></i> Laboratório</div>
+                <i class="fas fa-chevron-down"></i>
+            </li>
+            <li class="calculo-item" data-target="brix-padrao">
+                <i class="fas fa-thermometer-half"></i> Brix Padrão
+            </li>
+            <li class="calculo-item" data-target="diluicao">
+                <i class="fas fa-vial"></i> Diluição
+            </li>
+            <li class="calculo-item" data-target="acidez">
+                <i class="fas fa-eye-dropper"></i> Conversão de Acidez
+            </li>
+            
+            <!-- Categoria: Finalização -->
+            <li class="calculo-category" data-category="finalizacao">
+                <div><i class="fas fa-tasks"></i> Finalização</div>
+                <i class="fas fa-chevron-down"></i>
+            </li>
+            <li class="calculo-item" data-target="finalizacao-tanque">
+                <i class="fas fa-database"></i> Finalização de Tanque
+            </li>
+            <li class="calculo-item" data-target="mistura-tanques">
+                <i class="fas fa-exchange-alt"></i> Mistura de Tanques
+            </li>
+            
+            <!-- Categoria: Qualidade -->
+            <li class="calculo-category" data-category="qualidade">
+                <div><i class="fas fa-check-circle"></i> Qualidade</div>
+                <i class="fas fa-chevron-down"></i>
+            </li>
+            <li class="calculo-item" data-target="ph-corrigido">
+                <i class="fas fa-filter"></i> pH Corrigido
+            </li>
+            <li class="calculo-item" data-target="teor-solidos">
+                <i class="fas fa-cubes"></i> Teor de Sólidos
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Conteúdo principal - mostra apenas um cálculo por vez -->
+    <div class="content-calculos">
+        <!-- Área de Cálculo: Produção 200g -->
+        <div class="calculo-area active" id="producao-200g-area">
+            <h2><i class="fas fa-balance-scale"></i> Produção 200g</h2>
+            
+            <div class="calculo-description">
+                <p>Determinação de peso líquido de embalagens de 200g, subtraindo a tara (peso da embalagem). Realiza a verificação do peso em relação ao especificado, indicando se está conforme ou não.</p>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="peso_bruto">
+                                Peso Bruto
+                                <span class="unit">(gramas)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Peso total do produto com a embalagem"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="peso_bruto" step="0.01" placeholder="0.00">
+                                <span class="input-unit">g</span>
+                            </div>
+                            <div class="form-text">Medido na balança analítica</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="peso_tara">
+                                Tara (Embalagem)
+                                <span class="unit">(gramas)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Peso da embalagem vazia"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="peso_tara" step="0.01" placeholder="0.00">
+                                <span class="input-unit">g</span>
+                            </div>
+                            <div class="form-text">Valor médio de 10 embalagens</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="peso_especificado">
+                                Peso Especificado
+                                <span class="unit">(gramas)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Peso líquido padrão do produto"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="peso_especificado" value="200.00" step="0.01">
+                                <span class="input-unit">g</span>
+                            </div>
+                            <div class="form-text">Valor definido pela especificação</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="tolerancia">
+                                Tolerância
+                                <span class="unit">(%)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Percentual de tolerância permitido"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="tolerancia" value="2.5" step="0.1">
+                                <span class="input-unit">%</span>
+                            </div>
+                            <div class="form-text">Geralmente entre 2-3%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calculaPeso200g">
+                    <i class="fas fa-calculator"></i> Calcular Peso Líquido
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparPeso200g">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarPeso200g">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-peso200g">
+                <div class="resultado-header">
+                    <h4><i class="fas fa-check-circle"></i> Resultado do Cálculo</h4>
+                    <button class="btn btn-sm btn-primary" id="printResultado">
+                        <i class="fas fa-print"></i> Imprimir
+                    </button>
+                </div>
+                
+                <div class="resultado-value" id="valor-peso-liquido">198.50 g</div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="alert alert-primary peso-status">
+                            <strong><i class="fas fa-info-circle me-2"></i> Status:</strong>
+                            <span id="status-peso">Dentro da tolerância</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-primary peso-desvio">
+                            <strong><i class="fas fa-percentage me-2"></i> Desvio:</strong>
+                            <span id="desvio-peso">-0.75%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="resultado-formula">
+                    <div>Peso Líquido = Peso Bruto - Tara</div>
+                    <div>Peso Líquido = <span id="formula-bruto">217.50</span> - <span id="formula-tara">19.00</span> = <span id="formula-liquido">198.50</span> g</div>
+                </div>
+                
+                <div class="resultado-details">
+                    <div class="details-item">
+                        <span>Tolerância Mínima:</span>
+                        <span id="tolerancia-min">195.00 g</span>
+                    </div>
+                    <div class="details-item">
+                        <span>Tolerância Máxima:</span>
+                        <span id="tolerancia-max">205.00 g</span>
+                    </div>
+                    <div class="details-item">
+                        <span>Diferença Absoluta:</span>
+                        <span id="diferenca-abs">-1.50 g</span>
+                    </div>
+                </div>
+                
+                <div class="visual-hint">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <strong>Dica:</strong> Para aumentar a precisão, realize várias medições e use a média dos valores obtidos.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Área de Cálculo: Brix Padrão -->
+        <div class="calculo-area" id="brix-padrao-area">
+            <h2><i class="fas fa-thermometer-half"></i> Brix Padrão</h2>
+            
+            <div class="calculo-description">
+                <p>Padronização de valores Brix para determinação de açúcares solúveis em amostras de suco. Inclui correção de temperatura e conversão entre diferentes escalas.</p>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="brix_medido">
+                                Brix Medido
+                                <span class="unit">(°Bx)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Medição obtida no refratômetro"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="brix_medido" step="0.1" placeholder="0.0">
+                                <span class="input-unit">°Bx</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="temperatura">
+                                Temperatura
+                                <span class="unit">(°C)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Temperatura da amostra durante a medição"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="temperatura" step="0.1" value="20.0">
+                                <span class="input-unit">°C</span>
+                            </div>
+                            <div class="form-text">Padrão de referência: 20°C</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="fator_correcao">
+                                Fator de Correção
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Fator para ajuste temperatura/tipo de produto"></i>
+                            </label>
+                            <select class="form-select" id="fator_correcao">
+                                <option value="standard">Padrão (Suco Claro)</option>
+                                <option value="citrus">Cítricos</option>
+                                <option value="nectars">Néctares</option>
+                                <option value="concentrate">Concentrados</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="custom_factor_div" style="display: none;">
+                        <div class="form-group">
+                            <label for="custom_factor">
+                                Valor Personalizado
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Valor específico para seu produto"></i>
+                            </label>
+                            <input type="number" class="form-control" id="custom_factor" step="0.001" value="1.000">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calculaBrix">
+                    <i class="fas fa-calculator"></i> Calcular Brix Padrão
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparBrix">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarBrix">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-brix">
+                <!-- Conteúdo do resultado será carregado via JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Área de Cálculo: Finalização de Tanque -->
+        <div class="calculo-area" id="finalizacao-tanque-area">
+            <h2><i class="fas fa-database"></i> Finalização de Tanque</h2>
+            
+            <div class="calculo-description">
+                <p>Cálculo para finalização de tanque, ajustando a diluição para atingir o Brix especificado. Determina volume de água ou concentrado necessário para correção.</p>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="brix_atual">
+                                Brix Atual
+                                <span class="unit">(°Bx)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Brix medido no tanque atualmente"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="brix_atual" step="0.1" placeholder="0.0">
+                                <span class="input-unit">°Bx</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="brix_desejado">
+                                Brix Desejado
+                                <span class="unit">(°Bx)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Brix final que se deseja atingir"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="brix_desejado" step="0.1" placeholder="0.0">
+                                <span class="input-unit">°Bx</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="volume_atual">
+                                Volume Atual
+                                <span class="unit">(litros)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Volume atual do tanque"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="volume_atual" step="1" placeholder="0">
+                                <span class="input-unit">L</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="tipo_ajuste">
+                                Tipo de Ajuste
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Método para ajustar o Brix"></i>
+                            </label>
+                            <select class="form-select" id="tipo_ajuste">
+                                <option value="diluicao">Diluição (Adição de Água)</option>
+                                <option value="concentracao">Concentração (Adição de Concentrado)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3" id="row-concentrado" style="display: none;">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="brix_concentrado">
+                                Brix do Concentrado
+                                <span class="unit">(°Bx)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Brix do concentrado a ser adicionado"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="brix_concentrado" step="0.1" value="65.0">
+                                <span class="input-unit">°Bx</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calculaFinalizacao">
+                    <i class="fas fa-calculator"></i> Calcular Ajuste
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparFinalizacao">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarFinalizacao">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-finalizacao">
+                <!-- Conteúdo do resultado será carregado via JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Demais áreas de cálculo serão carregadas dinamicamente ou inseridas posteriormente -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/calculos.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar classe ativa no item de menu correspondente
+        document.querySelector('#nav-calculos').classList.add('active');
+        
+        // Inicializar o módulo de cálculos
+        initCalculosModule();
+    });
+    
+    function initCalculosModule() {
+        // Manipulação da seleção de cálculos no sidebar
+        const calculoItems = document.querySelectorAll('.calculo-item');
+        const calculoAreas = document.querySelectorAll('.calculo-area');
+        
+        calculoItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Remover classe ativa de todos os itens
+                calculoItems.forEach(i => i.classList.remove('active'));
+                
+                // Adicionar classe ativa ao item clicado
+                this.classList.add('active');
+                
+                // Ocultar todas as áreas de cálculo
+                calculoAreas.forEach(area => area.classList.remove('active'));
+                
+                // Mostrar a área correspondente
+                const targetId = this.getAttribute('data-target') + '-area';
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+        
+        // Expandir/colapsar categorias
+        const calculoCategorias = document.querySelectorAll('.calculo-category');
+        
+        calculoCategorias.forEach(cat => {
+            cat.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                
+                // Encontrar todos os itens desta categoria
+                let nextItem = this.nextElementSibling;
+                while (nextItem && !nextItem.classList.contains('calculo-category')) {
+                    // Alternar visibilidade
+                    if (nextItem.style.display === 'none') {
+                        nextItem.style.display = '';
+                        this.querySelector('i.fas.fa-chevron-down').classList.remove('fa-chevron-down');
+                        this.querySelector('i.fas').classList.add('fa-chevron-up');
+                    } else {
+                        nextItem.style.display = 'none';
+                        this.querySelector('i.fas').classList.remove('fa-chevron-up');
+                        this.querySelector('i.fas').classList.add('fa-chevron-down');
+                    }
+                    
+                    nextItem = nextItem.nextElementSibling;
+                }
+            });
+        });
+        
+        // Busca por cálculos
+        const searchInput = document.getElementById('searchCalculo');
+        
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            
+            // Iterar sobre todos os itens de cálculo
+            calculoItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (query === '' || text.includes(query)) {
+                    item.style.display = '';
+                    
+                    // Também mostrar a categoria pai
+                    let prevItem = item.previousElementSibling;
+                    while (prevItem && !prevItem.classList.contains('calculo-category')) {
+                        prevItem = prevItem.previousElementSibling;
+                    }
+                    
+                    if (prevItem) {
+                        prevItem.style.display = '';
+                    }
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Esconder categorias vazias
+            calculoCategorias.forEach(cat => {
+                const category = cat.getAttribute('data-category');
+                
+                // Verificar se todos os itens desta categoria estão ocultos
+                let nextItem = cat.nextElementSibling;
+                let allHidden = true;
+                
+                while (nextItem && !nextItem.classList.contains('calculo-category')) {
+                    if (nextItem.style.display !== 'none') {
+                        allHidden = false;
+                        break;
+                    }
+                    nextItem = nextItem.nextElementSibling;
+                }
+                
+                // Esconder categoria se todos os itens estiverem ocultos
+                if (allHidden && query !== '') {
+                    cat.style.display = 'none';
+                } else {
+                    cat.style.display = '';
+                }
+            });
+        });
+        
+        // Configurar cálculo de Produção 200g
+        setupProducao200g();
+        
+        // Tipo de ajuste na finalização de tanque
+        const tipoAjuste = document.getElementById('tipo_ajuste');
+        const rowConcentrado = document.getElementById('row-concentrado');
+        
+        tipoAjuste?.addEventListener('change', function() {
+            if (this.value === 'concentracao') {
+                rowConcentrado.style.display = '';
+            } else {
+                rowConcentrado.style.display = 'none';
+            }
+        });
+        
+        // Fator de correção personalizado
+        const fatorCorrecao = document.getElementById('fator_correcao');
+        const customFactorDiv = document.getElementById('custom_factor_div');
+        
+        fatorCorrecao?.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customFactorDiv.style.display = '';
+            } else {
+                customFactorDiv.style.display = 'none';
+            }
+        });
+    }
+    
+    function setupProducao200g() {
+        const calcularBtn = document.getElementById('calculaPeso200g');
+        const limparBtn = document.getElementById('limparPeso200g');
+        const resultado = document.getElementById('resultado-peso200g');
+        
+        calcularBtn?.addEventListener('click', function() {
+            const pesoBruto = parseFloat(document.getElementById('peso_bruto').value) || 0;
+            const pesoTara = parseFloat(document.getElementById('peso_tara').value) || 0;
+            const pesoEspecificado = parseFloat(document.getElementById('peso_especificado').value) || 200;
+            const tolerancia = parseFloat(document.getElementById('tolerancia').value) || 2.5;
+            
+            // Verificar se os campos necessários estão preenchidos
+            if (pesoBruto <= 0 || pesoTara <= 0) {
+                alert('Por favor, preencha corretamente os valores de peso bruto e tara.');
+                return;
+            }
+            
+            // Calcular peso líquido
+            const pesoLiquido = pesoBruto - pesoTara;
+            
+            // Calcular limites de tolerância
+            const toleranciaMin = pesoEspecificado * (1 - (tolerancia / 100));
+            const toleranciaMax = pesoEspecificado * (1 + (tolerancia / 100));
+            
+            // Verificar status
+            let status, statusClass;
+            const desvio = ((pesoLiquido - pesoEspecificado) / pesoEspecificado) * 100;
+            
+            if (pesoLiquido < toleranciaMin) {
+                status = 'Abaixo da tolerância';
+                statusClass = 'alert-danger';
+            } else if (pesoLiquido > toleranciaMax) {
+                status = 'Acima da tolerância';
+                statusClass = 'alert-warning';
+            } else {
+                status = 'Dentro da tolerância';
+                statusClass = 'alert-success';
+            }
+            
+            // Atualizar resultados
+            document.getElementById('valor-peso-liquido').textContent = pesoLiquido.toFixed(2) + ' g';
+            document.getElementById('status-peso').textContent = status;
+            document.getElementById('desvio-peso').textContent = desvio.toFixed(2) + '%';
+            
+            document.getElementById('formula-bruto').textContent = pesoBruto.toFixed(2);
+            document.getElementById('formula-tara').textContent = pesoTara.toFixed(2);
+            document.getElementById('formula-liquido').textContent = pesoLiquido.toFixed(2);
+            
+            document.getElementById('tolerancia-min').textContent = toleranciaMin.toFixed(2) + ' g';
+            document.getElementById('tolerancia-max').textContent = toleranciaMax.toFixed(2) + ' g';
+            document.getElementById('diferenca-abs').textContent = (pesoLiquido - pesoEspecificado).toFixed(2) + ' g';
+            
+            // Atualizar classes de status
+            const pesoStatusElem = document.querySelector('.peso-status');
+            pesoStatusElem.classList.remove('alert-primary', 'alert-success', 'alert-danger', 'alert-warning');
+            pesoStatusElem.classList.add(statusClass);
+            
+            // Mostrar resultado
+            resultado.classList.add('active');
+        });
+        
+        limparBtn?.addEventListener('click', function() {
+            document.getElementById('peso_bruto').value = '';
+            document.getElementById('peso_tara').value = '';
+            document.getElementById('peso_especificado').value = '200.00';
+            document.getElementById('tolerancia').value = '2.5';
+            
+            resultado.classList.remove('active');
+        });
+    }
+</script>
+{% endblock %}
