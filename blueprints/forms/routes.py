@@ -173,6 +173,26 @@ def search_forms():
     return jsonify(results)
 
 
+@forms_bp.route('/api/preset/<int:preset_id>')
+@login_required
+def get_preset_data(preset_id):
+    """API para obter dados de uma predefinição."""
+    preset = FormPreset.query.get_or_404(preset_id)
+    
+    # Verificar se o usuário tem permissão (qualquer usuário pode ver)
+    return jsonify({
+        'success': True,
+        'preset': {
+            'id': preset.id,
+            'name': preset.name,
+            'description': preset.description,
+            'form_type': preset.form_type,
+            'data': preset.data,
+            'is_default': preset.is_default
+        }
+    })
+
+
 @forms_bp.route('/fill/<path:file_path>')
 @login_required
 def fill_form(file_path):

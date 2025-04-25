@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Predefinições</h1>
+        <div>
+            <a href="{{ url_for('forms.fill_form', file_path=file_path) }}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-edit"></i> Preencher Formulário
+            </a>
+            <a href="{{ url_for('forms.category', category=file_path.split('/')[0]) }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ file_name }}</h5>
+                <a href="{{ url_for('forms.create_preset', file_path=file_path) }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Nova Predefinição
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if presets and presets|length > 0 %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Padrão</th>
+                            <th scope="col">Criado em</th>
+                            <th scope="col">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for preset in presets %}
+                        <tr>
+                            <td>{{ preset.name }}</td>
+                            <td>{{ preset.description if preset.description else '-' }}</td>
+                            <td>
+                                {% if preset.is_default %}
+                                <span class="badge bg-success">Sim</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Não</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ preset.created_at }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('forms.edit_preset', preset_id=preset.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    <a href="{{ url_for('forms.download_preset', preset_id=preset.id) }}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-download"></i> Baixar
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger delete-preset" data-preset-id="{{ preset.id }}" data-preset-name="{{ preset.name }}">
+                                        <i class="fas fa-trash"></i> Excluir
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle"></i> Nenhuma predefinição encontrada</h5>
+                <p>Não existem predefinições para este formulário. Crie uma nova predefinição para salvar 
+                   configurações de preenchimento que você usa frequentemente.</p>
+                <a href="{{ url_for('forms.create_preset', file_path=file_path) }}" class="btn btn-primary mt-2">
+                    <i class="fas fa-plus"></i> Criar Nova Predefinição
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="deletePresetModal" tabindex="-1" aria-labelledby="deletePresetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePresetModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir a predefinição <strong id="presetNameToDelete"></strong>?</p>
+                <p class="text-danger">Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deletePresetForm" method="post" action="">
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar modal de exclusão
+        const deleteButtons = document.querySelectorAll('.delete-preset');
+        const deleteForm = document.getElementById('deletePresetForm');
+        const presetNameEl = document.getElementById('presetNameToDelete');
+        const deleteModal = new bootstrap.Modal(document.getElementById('deletePresetModal'));
+        
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const presetId = this.getAttribute('data-preset-id');
+                const presetName = this.getAttribute('data-preset-name');
+                
+                // Configurar o formulário de exclusão
+                deleteForm.action = `/forms/presets/delete/${presetId}`;
+                presetNameEl.textContent = presetName;
+                
+                // Mostrar o modal
+                deleteModal.show();
+            });
+        });
+    });
+</script>
+{% endblock %}

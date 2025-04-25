@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Editar Predefinição</h1>
+        <a href="{{ url_for('forms.list_presets', file_path=file_path) }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">{{ file_name }}</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('forms.edit_preset', preset_id=preset.id) }}" method="post">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="preset_name" class="form-label">Nome da Predefinição *</label>
+                            <input type="text" class="form-control" id="preset_name" name="preset_name" 
+                                   value="{{ preset.name }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="preset_description" class="form-label">Descrição</label>
+                            <input type="text" class="form-control" id="preset_description" name="preset_description" 
+                                   value="{{ preset.description or '' }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" id="is_default" name="is_default" 
+                           {% if preset.is_default %}checked{% endif %}>
+                    <label class="form-check-label" for="is_default">
+                        Definir como predefinição padrão para este formulário
+                    </label>
+                    <div class="form-text">
+                        Se marcado, esta predefinição será aplicada automaticamente ao abrir este formulário.
+                    </div>
+                </div>
+
+                <hr>
+
+                <h4>Campos do Formulário</h4>
+                <p class="text-muted">Edite os valores que serão preenchidos automaticamente.</p>
+
+                <div class="row">
+                    {% for field in fields %}
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label for="field_{{ field.id }}" class="form-label">{{ field.name }}</label>
+                            <input type="text" class="form-control" id="field_{{ field.id }}" name="field_{{ field.id }}" 
+                                   value="{{ preset.data.get(field.id, '') }}">
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if not fields %}
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> Nenhum campo detectado</h5>
+                    <p>Não foi possível detectar campos para preenchimento neste formulário. 
+                       Verifique se este formulário contém campos preenchíveis (indicados por sublinhados ou campos de formulário).</p>
+                </div>
+                {% endif %}
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
