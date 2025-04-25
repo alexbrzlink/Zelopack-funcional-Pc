@@ -62,8 +62,10 @@ function formatDates() {
 
 /**
  * Configura inputs de arquivo para mostrar nome do arquivo selecionado
+ * e adiciona barra de progresso para uploads
  */
 function setupFileInputs() {
+    // Para inputs com classe custom-file-input (Bootstrap 4)
     document.querySelectorAll('.custom-file-input').forEach(function(input) {
         input.addEventListener('change', function(e) {
             const fileName = this.files[0]?.name;
@@ -74,6 +76,77 @@ function setupFileInputs() {
             }
         });
     });
+    
+    // Para inputs de arquivo padrão (Bootstrap 5)
+    document.querySelectorAll('input[type="file"]').forEach(function(input) {
+        input.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                const fileName = this.files[0].name;
+                const fileSize = formatFileSize(this.files[0].size);
+                
+                // Mostrar nome do arquivo próximo ao input
+                const fileInfo = this.parentElement.querySelector('.file-info') || 
+                                document.createElement('div');
+                
+                if (!this.parentElement.querySelector('.file-info')) {
+                    fileInfo.className = 'file-info mt-2 small text-muted';
+                    this.parentElement.appendChild(fileInfo);
+                }
+                
+                fileInfo.innerHTML = `<strong>Arquivo selecionado:</strong> ${fileName} (${fileSize})`;
+            }
+        });
+    });
+    
+    // Configurar formulário de upload para mostrar progresso
+    const uploadForm = document.querySelector('form[enctype="multipart/form-data"]');
+    if (uploadForm) {
+        const progressContainer = document.createElement('div');
+        progressContainer.className = 'progress mt-3 d-none';
+        progressContainer.style.height = '25px';
+        progressContainer.innerHTML = `
+            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                 role="progressbar" aria-valuenow="0" aria-valuemin="0" 
+                 aria-valuemax="100" style="width: 0%">0%</div>
+        `;
+        
+        // Inserir depois do input de arquivo
+        const fileInput = uploadForm.querySelector('input[type="file"]');
+        if (fileInput) {
+            fileInput.parentElement.appendChild(progressContainer);
+            
+            uploadForm.addEventListener('submit', function(e) {
+                const fileInput = this.querySelector('input[type="file"]');
+                if (fileInput && fileInput.files.length > 0) {
+                    progressContainer.classList.remove('d-none');
+                    // Simulação de progresso para feedback visual
+                    // (numa implementação real, isso seria feito com XMLHttpRequest ou fetch)
+                    simulateProgress(progressContainer.querySelector('.progress-bar'));
+                }
+            });
+        }
+    }
+}
+
+/**
+ * Simula progresso de upload para melhor feedback ao usuário
+ * @param {HTMLElement} progressBar - Elemento da barra de progresso
+ */
+function simulateProgress(progressBar) {
+    let progress = 0;
+    const interval = setInterval(function() {
+        progress += Math.floor(Math.random() * 10) + 1;
+        
+        if (progress >= 100) {
+            clearInterval(interval);
+            progress = 100;
+            progressBar.classList.remove('progress-bar-animated');
+        }
+        
+        progressBar.style.width = progress + '%';
+        progressBar.setAttribute('aria-valuenow', progress);
+        progressBar.textContent = progress + '%';
+    }, 200);
 }
 
 /**

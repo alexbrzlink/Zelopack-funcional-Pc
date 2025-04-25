@@ -62,3 +62,26 @@ app.register_blueprint(dashboard_bp)
 with app.app_context():
     import models
     db.create_all()
+    
+    # Adicionar categorias e fornecedores iniciais se tabelas estiverem vazias
+    if models.Category.query.count() == 0:
+        default_categories = [
+            models.Category(name="Microbiológico", description="Laudos de análises microbiológicas"),
+            models.Category(name="Físico-Químico", description="Laudos de análises físico-químicas"),
+            models.Category(name="Sensorial", description="Laudos de análises sensoriais"),
+            models.Category(name="Embalagem", description="Laudos de análises de embalagens"),
+            models.Category(name="Shelf-life", description="Laudos de testes de vida útil")
+        ]
+        db.session.add_all(default_categories)
+        db.session.commit()
+        print("Categorias padrão adicionadas.")
+    
+    if models.Supplier.query.count() == 0:
+        default_suppliers = [
+            models.Supplier(name="Fornecedor Interno", contact="Laboratório Zelopack", email="lab@zelopack.com.br"),
+            models.Supplier(name="Laboratório Externo", contact="Contato do Laboratório", email="contato@labexterno.com.br"),
+            models.Supplier(name="Consultoria ABC", contact="Consultor", email="contato@consultoriaabc.com.br")
+        ]
+        db.session.add_all(default_suppliers)
+        db.session.commit()
+        print("Fornecedores padrão adicionados.")
