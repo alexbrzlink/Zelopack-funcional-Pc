@@ -1,5 +1,7 @@
 import os
 import logging
+# Define uma senha segura baseada em variável de ambiente ou senha padrão
+DEFAULT_ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or "ChangeThis2024!"
 from datetime import datetime
 
 from flask import Flask, flash, redirect, url_for
@@ -168,7 +170,7 @@ def check_admin_user():
             role='admin',
             is_active=True
         )
-        admin_user.set_password('Alex')
+        admin_user.set_password(DEFAULT_ADMIN_PASSWORD)
         db.session.add(admin_user)
         db.session.commit()
         info = f"""
@@ -222,7 +224,7 @@ def login_test():
             role='admin',
             is_active=True
         )
-        admin_user.set_password('Alex')
+        admin_user.set_password(DEFAULT_ADMIN_PASSWORD)
         db.session.add(admin_user)
         db.session.commit()
         print("Usuário admin criado com sucesso!")
@@ -264,7 +266,7 @@ def login_direct():
             role='admin',
             is_active=True
         )
-        admin_user.set_password('Alex')
+        admin_user.set_password(DEFAULT_ADMIN_PASSWORD)
         db.session.add(admin_user)
         db.session.commit()
         print("Usuário admin criado com sucesso!")
@@ -286,7 +288,7 @@ def login_direct():
         flash(msg + " Ele foi ativado automaticamente.", 'warning')
     
     # Verificar senha
-    test_password = 'Alex'
+    test_password = DEFAULT_ADMIN_PASSWORD
     is_password_valid = user.check_password(test_password)
     
     if not is_password_valid:
@@ -352,7 +354,7 @@ def system_validation():
             })
             
             # Verificar senha do admin
-            if admin.check_password('Alex'):
+            if admin.check_password(DEFAULT_ADMIN_PASSWORD):
                 results.append({
                     "test": "Senha do Admin",
                     "result": "Correta",
@@ -360,10 +362,10 @@ def system_validation():
                 })
             else:
                 # Tentar corrigir a senha
-                admin.set_password('Alex')
+                admin.set_password(DEFAULT_ADMIN_PASSWORD)
                 db.session.commit()
                 
-                if admin.check_password('Alex'):
+                if admin.check_password(DEFAULT_ADMIN_PASSWORD):
                     results.append({
                         "test": "Senha do Admin",
                         "result": "Corrigida",
@@ -390,7 +392,7 @@ def system_validation():
                 role='admin',
                 is_active=True
             )
-            admin_user.set_password('Alex')
+            admin_user.set_password(DEFAULT_ADMIN_PASSWORD)
             db.session.add(admin_user)
             db.session.commit()
             
@@ -544,6 +546,7 @@ def setup_database():
     import models
     import sqlalchemy as sa
     from sqlalchemy import inspect
+    from utils.error_handler import log_exception, handle_database_error
     
     # Criar tabelas do banco de dados
     db.create_all()
@@ -562,7 +565,24 @@ def setup_database():
             db.session.commit()
             print("Categorias padrão adicionadas.")
     except Exception as e:
-        print(f"Erro ao adicionar categorias: {e}")
+        error_info = handle_database_error(e, db.session, "adicionar_categorias")
+        print(f"Erro ao adicionar categorias: {error_info['user_message']}")
+        db.session.rollback()
+    
+    # Adicionar fornecedores padrão se não existirem
+    try:
+        if models.Supplier.query.count() == 0:
+            default_suppliers = [
+                models.Supplier(name="Fornecedor Teste 1", contact_name="Contato 1", email="contato1@exemplo.com", phone="(11) 91234-5678"),
+                models.Supplier(name="Fornecedor Teste 2", contact_name="Contato 2", email="contato2@exemplo.com", phone="(11) 98765-4321"),
+                models.Supplier(name="Fornecedor Teste 3", contact_name="Contato 3", email="contato3@exemplo.com", phone="(21) 99876-5432")
+            ]
+            db.session.add_all(default_suppliers)
+            db.session.commit()
+            print("Fornecedores padrão adicionados.")
+    except Exception as e:
+        error_info = handle_database_error(e, db.session, "adicionar_fornecedores")
+        print(f"Erro ao adicionar fornecedores: {error_info['user_message']}")
         db.session.rollback()
 
 # Inicializar o banco de dados
@@ -594,7 +614,7 @@ with app.app_context():
                 name='Administrador',
                 role='admin'
             )
-            admin_user.set_password('Alex')
+            admin_user.set_password(DEFAULT_ADMIN_PASSWORD)
             db.session.add(admin_user)
             db.session.commit()
             print("Usuário administrador padrão criado.")
