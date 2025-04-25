@@ -51,11 +51,17 @@ window.ZelopackAnimations = {
     },
     
     showLoading: function(message = 'Carregando...', type = 'spinner') {
-        showLoading(message, type);
+        if (typeof showLoading === 'function') {
+            showLoading(message, type);
+        } else {
+            console.log('Loading: ' + message);
+        }
     },
     
     hideLoading: function() {
-        hideLoading();
+        if (typeof hideLoading === 'function') {
+            hideLoading();
+        }
     },
     
     showTooltip: function(element, message) {
@@ -96,6 +102,63 @@ window.ZelopackAnimations = {
         }, 3000);
     }
 };
+
+// Garantir que as funções estejam disponíveis globalmente para compatibilidade
+function elementHoverIn(element) {
+    window.ZelopackAnimations.elementHoverIn(element);
+}
+
+function elementHoverOut(element) {
+    window.ZelopackAnimations.elementHoverOut(element);
+}
+
+function showTooltip(element, message) {
+    window.ZelopackAnimations.showTooltip(element, message);
+}
+
+// Para garantir retrocompatibilidade
+if (typeof window.ZelopackAnimations === 'undefined') {
+    console.error('ZelopackAnimations não foi inicializado corretamente. Recriando objeto...');
+    window.ZelopackAnimations = {
+        elementHoverIn: elementHoverIn,
+        elementHoverOut: elementHoverOut,
+        showTooltip: showTooltip,
+        pulse: function(element) {
+            if (!element) return;
+            element.classList.add('animate-pulse');
+            setTimeout(() => { element.classList.remove('animate-pulse'); }, 1000);
+        },
+        pulseElement: function(element) {
+            if (!element) return;
+            element.classList.add('animate-pulse');
+            setTimeout(() => { element.classList.remove('animate-pulse'); }, 1000);
+        },
+        shake: function(element) {
+            if (!element) return;
+            element.classList.add('animate-shake');
+            setTimeout(() => { element.classList.remove('animate-shake'); }, 800);
+        },
+        showMessage: function(message, type = 'info') {
+            if (typeof showFlashMessage === 'function') {
+                return showFlashMessage(message, type);
+            } else {
+                alert(message);
+            }
+        },
+        showLoading: function(message = 'Carregando...', type = 'spinner') {
+            if (typeof showLoading === 'function') {
+                showLoading(message, type);
+            } else {
+                console.log(message);
+            }
+        },
+        hideLoading: function() {
+            if (typeof hideLoading === 'function') {
+                hideLoading();
+            }
+        }
+    };
+}
 
 // Inicialização quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', function() {
