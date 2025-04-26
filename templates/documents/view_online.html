@@ -61,12 +61,21 @@
                         <i class="fas fa-eye me-2"></i> {{ document.title }}
                     </h4>
                     <div>
+                        {% if virtual_document %}
+                        <a href="{{ url_for('documents.index') }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-arrow-left me-1"></i> Voltar
+                        </a>
+                        <a href="{{ download_link }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-download me-1"></i> Download
+                        </a>
+                        {% else %}
                         <a href="{{ url_for('documents.view_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
                             <i class="fas fa-arrow-left me-1"></i> Voltar
                         </a>
                         <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
                             <i class="fas fa-download me-1"></i> Download
                         </a>
+                        {% endif %}
                         <button onclick="window.print()" class="btn btn-sm btn-light">
                             <i class="fas fa-print me-1"></i> Imprimir
                         </button>
@@ -111,10 +120,27 @@
                     {% elif pdf_path %}
                     <!-- Exibição de PDF -->
                     <iframe src="{{ pdf_path }}" class="document-iframe" id="pdf-viewer"></iframe>
+                    {% elif image_path %}
+                    <!-- Exibição de imagem -->
+                    <div class="text-center">
+                        <img src="{{ image_path }}" alt="{{ document.title }}" class="img-fluid" style="max-height: 80vh; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    {% elif office_url %}
+                    <!-- Exibição de documentos Office (Excel, Word, etc.) -->
+                    <iframe src="{{ office_url }}" class="document-iframe" id="office-viewer"></iframe>
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i> 
+                        Este documento está sendo visualizado através do Microsoft Office Online. Alguns recursos podem estar limitados.
+                        Se preferir, faça o <a href="{{ download_link }}" class="alert-link">download</a> para visualizá-lo localmente.
+                    </div>
                     {% else %}
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i> Este tipo de documento não pode ser visualizado diretamente no navegador. 
-                        Por favor, faça o <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="alert-link">download</a> para visualizá-lo.
+                        {% if download_link %}
+                        Por favor, faça o <a href="{{ download_link }}" class="alert-link">download</a> para visualizá-lo.
+                        {% else %}
+                        Por favor, faça o <a href="{{ url_for('documents.download_document', document_id=document.id) if document.id else '#' }}" class="alert-link">download</a> para visualizá-lo.
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>

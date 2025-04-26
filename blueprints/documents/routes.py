@@ -579,16 +579,18 @@ def view_virtual_document(file_path):
     file_name = os.path.basename(full_path)
     
     # Determinar o modo de visualização
-    online_view = request.args.get('online', False)
+    online_view = request.args.get('online', '')
     
-    if online_view:
+    # Verificar se a visualização online foi solicitada
+    if online_view and online_view.lower() in ('true', '1', 'yes'):
         # Para PDFs, exibir no iframe usando o viewer nativo do navegador
         if file_ext == '.pdf':
+            file_url = url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false')
             return render_template(
                 'documents/view_online.html',
                 title=f'Visualização Online: {file_name}',
                 document={'title': file_name, 'file_type': 'pdf'},
-                pdf_path=url_for('documents.download_virtual_document', file_path=file_path)
+                pdf_path=file_url
             )
         # Para arquivos HTML, exibir diretamente no iframe
         elif file_ext == '.html':
@@ -602,11 +604,25 @@ def view_virtual_document(file_path):
             )
         # Para arquivos de imagem
         elif file_ext in ['.jpg', '.jpeg', '.png', '.gif']:
+            file_url = url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false')
             return render_template(
                 'documents/view_online.html',
                 title=f'Visualização Online: {file_name}',
                 document={'title': file_name, 'file_type': file_ext[1:]},
-                image_path=url_for('documents.download_virtual_document', file_path=file_path, as_attachment=False)
+                image_path=file_url
+            )
+        # Para planilhas Excel
+        elif file_ext in ['.xlsx', '.xls']:
+            # Para arquivos Excel, usamos o serviço de visualização do Microsoft Office Online
+            file_url = url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false', _external=True)
+            # Codificar a URL para o serviço de visualização do Office Online
+            # Obs: isso não funciona em localhost, mas funciona quando hospedado
+            office_viewer_url = f"https://view.officeapps.live.com/op/embed.aspx?src={file_url}"
+            return render_template(
+                'documents/view_online.html',
+                title=f'Visualização Online: {file_name}',
+                document={'title': file_name, 'file_type': 'excel'},
+                office_url=office_viewer_url
             )
         else:
             # Para outros tipos, tentar embutir ou oferecer download
@@ -633,7 +649,8 @@ def download_virtual_document(file_path):
         return redirect(url_for('documents.index'))
     
     # Determinar se deve baixar como anexo ou visualizar no navegador
-    as_attachment = request.args.get('as_attachment', 'true').lower() == 'true'
+    as_attachment_param = request.args.get('as_attachment', 'true')
+    as_attachment = as_attachment_param.lower() in ('true', '1', 'yes')
     
     try:
         return send_file(
@@ -663,13 +680,26 @@ def print_virtual_document(file_path):
     
     file_ext = os.path.splitext(full_path)[1].lower()
     file_name = os.path.basename(full_path)
+    creation_time = datetime.datetime.fromtimestamp(os.path.getctime(full_path))
+    modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(full_path))
     
-    # Para PDFs, abrir diretamente para impressão
+    # Informações do documento para o template
+    doc_info = {
+        'title': file_name,
+        'revision': '1.0',
+        'created_at': creation_time,
+        'modified_at': modification_time,
+        'author': 'Sistema Zelopack',
+        'category': os.path.dirname(file_path).split('/')[-1] if '/' in file_path else ''
+    }
+    
+    # Para PDFs, criar uma visualização de impressão com iframe
     if file_ext == '.pdf':
-        return send_file(
-            full_path,
-            as_attachment=False,
-            download_name=file_name
+        return render_template(
+            'documents/print_view.html',
+            title=f'Impressão: {file_name}',
+            document=doc_info,
+            pdf_path=url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false')
         )
     # Para arquivos HTML, exibir diretamente no iframe
     elif file_ext == '.html':
@@ -678,13 +708,49 @@ def print_virtual_document(file_path):
         return render_template(
             'documents/print_view.html',
             title=f'Impressão: {file_name}',
-            document={'title': file_name},
+            document=doc_info,
             html_content=html_content
+        )
+    # Para arquivos Excel
+    elif file_ext in ['.xlsx', '.xls']:
+        try:
+            import pandas as pd
+            # Tentar ler a planilha Excel
+            df = pd.read_excel(full_path)
+            # Converter para HTML para exibir na página de impressão
+            table_html = df.to_html(classes='table table-bordered table-striped', index=False)
+            return render_template(
+                'documents/print_view.html',
+                title=f'Impressão: {file_name}',
+                document=doc_info,
+                html_content=table_html
+            )
+        except Exception as e:
+            # Se não conseguir ler a planilha, oferecer link para visualização online
+            return render_template(
+                'documents/print_view.html',
+                title=f'Impressão: {file_name}',
+                document=doc_info,
+                error_message=f"Não foi possível gerar uma visualização para impressão deste arquivo. Erro: {str(e)}",
+                download_link=url_for('documents.download_virtual_document', file_path=file_path)
+            )
+    # Para imagens, exibir a imagem na página de impressão
+    elif file_ext in ['.jpg', '.jpeg', '.png', '.gif']:
+        return render_template(
+            'documents/print_view.html',
+            title=f'Impressão: {file_name}',
+            document=doc_info,
+            image_path=url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false')
         )
     else:
         # Para outros tipos de arquivo, informar que não é possível imprimir diretamente
-        flash('Este tipo de arquivo não pode ser impresso diretamente pelo navegador. Faça o download para imprimir.', 'info')
-        return redirect(url_for('documents.download_virtual_document', file_path=file_path))
+        return render_template(
+            'documents/print_view.html',
+            title=f'Impressão: {file_name}',
+            document=doc_info,
+            error_message="Este tipo de arquivo não pode ser convertido automaticamente para impressão.",
+            download_link=url_for('documents.download_virtual_document', file_path=file_path)
+        )
 
 
 @documents_bp.route('/download/<int:document_id>')

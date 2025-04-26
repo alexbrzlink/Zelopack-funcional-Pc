@@ -64,6 +64,67 @@
             background-color: #f2f2f2;
         }
         
+        /* Estilos para documentos */
+        .pdf-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .document-image {
+            max-width: 100%;
+            max-height: 600px;
+            border: 1px solid #ddd;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .download-link {
+            display: block;
+            margin: 20px 0;
+            padding: 10px 15px;
+            background-color: #0066cc;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+        }
+        
+        .download-link:hover {
+            background-color: #0056b3;
+        }
+        
+        .print-info {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9f5ff;
+            border-radius: 5px;
+        }
+        
+        .print-button {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
         @media print {
             body {
                 padding: 0.5cm;
@@ -73,42 +134,104 @@
             .page-break {
                 page-break-after: always;
             }
+            
+            .no-print {
+                display: none;
+            }
+            
+            .pdf-container {
+                height: auto;
+                min-height: 500px;
+            }
         }
     </style>
 </head>
-<body onload="window.print()">
+<body>
     <div class="document-header">
         <div class="document-title">{{ document.title }}</div>
         {% if document.revision %}
         <div class="document-meta">Revisão: {{ document.revision }}</div>
         {% endif %}
         {% if document.created_at %}
-        <div class="document-meta">Data: {{ document.created_at.strftime('%d/%m/%Y') }}</div>
+        <div class="document-meta">Data de Criação: {{ document.created_at.strftime('%d/%m/%Y %H:%M') }}</div>
+        {% endif %}
+        {% if document.modified_at %}
+        <div class="document-meta">Última Modificação: {{ document.modified_at.strftime('%d/%m/%Y %H:%M') }}</div>
         {% endif %}
         {% if document.author %}
         <div class="document-meta">Autor: {{ document.author }}</div>
         {% endif %}
+        {% if document.category %}
+        <div class="document-meta">Categoria: {{ document.category }}</div>
+        {% endif %}
     </div>
     
     <div class="document-content">
-        {% if html_content %}
+        {% if error_message %}
+            <div class="error-message">
+                <p>{{ error_message }}</p>
+            </div>
+            {% if download_link %}
+            <a href="{{ download_link }}" class="download-link">Baixar o arquivo para visualizar</a>
+            {% endif %}
+        {% elif pdf_path %}
+            <div class="print-info no-print">
+                <p>Para imprimir este documento PDF, clique no botão abaixo:</p>
+                <button onclick="window.print();" class="print-button">Imprimir Documento</button>
+            </div>
+            <iframe src="{{ pdf_path }}" class="pdf-container" frameborder="0"></iframe>
+        {% elif image_path %}
+            <div class="print-info no-print">
+                <p>Para imprimir esta imagem, clique no botão abaixo:</p>
+                <button onclick="window.print();" class="print-button">Imprimir Imagem</button>
+            </div>
+            <div class="image-container">
+                <img src="{{ image_path }}" alt="{{ document.title }}" class="document-image">
+            </div>
+        {% elif office_url %}
+            <div class="print-info no-print">
+                <p>Para imprimir esta planilha Excel, clique no botão abaixo:</p>
+                <button onclick="window.print();" class="print-button">Imprimir Planilha</button>
+            </div>
+            <iframe src="{{ office_url }}" class="pdf-container" frameborder="0"></iframe>
+        {% elif html_content %}
+            <div class="print-info no-print">
+                <p>Para imprimir este documento, clique no botão abaixo:</p>
+                <button onclick="window.print();" class="print-button">Imprimir Documento</button>
+            </div>
             {{ html_content|safe }}
         {% else %}
             <div class="document-placeholder">
                 <p>O conteúdo deste documento não pode ser exibido diretamente.</p>
             </div>
+            {% if download_link %}
+            <a href="{{ download_link }}" class="download-link">Baixar o arquivo para visualizar</a>
+            {% endif %}
         {% endif %}
     </div>
     
     <div class="document-footer">
         <p>ZELOPACK - Sistema de Gerenciamento de Documentos</p>
-        <p>Impresso em: {{ now().strftime('%d/%m/%Y %H:%M') }}</p>
+        <p>Impresso em: {{ now().strftime('%d/%m/%Y %H:%M') if now else (datetime.datetime.now().strftime('%d/%m/%Y %H:%M')) }}</p>
+        <p>© 2025 ZELOPACK - Todos os direitos reservados</p>
     </div>
     
     <script>
+        // Verificar se a função now está definida
         function now() {
             return new Date();
         }
+        
+        // Iniciar impressão automaticamente após carregar a página
+        // se estiver no modo de impressão e não no modo de visualização
+        window.addEventListener('load', function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('auto_print') === 'true') {
+                setTimeout(function() {
+                    window.print();
+                }, 1000); // Esperar 1 segundo para garantir que tudo carregue
+            }
+        });
     </script>
 </body>
 </html>
