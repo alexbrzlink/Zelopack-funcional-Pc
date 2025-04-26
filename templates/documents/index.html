@@ -138,7 +138,7 @@
                                                     {{ doc.title }}
                                                 </td>
                                                 <td>{{ doc.description|truncate(50) if doc.description else "---" }}</td>
-                                                <td>{{ doc.created_at|timestamp_to_date }}</td>
+                                                <td>{{ doc.created_at }}</td>
                                                 <td>
                                                     <a href="{{ url_for('forms.view_form', file_path=doc.file_path) }}" class="btn btn-sm btn-primary" title="Visualizar">
                                                         <i class="fa fa-eye"></i>

@@ -81,13 +81,13 @@ def index():
         
         # Pasta real no sistema de arquivos
         pasta_real = mapeamento_categorias.get(categoria)
-        pasta_completa = os.path.join(FORMS_DIR, pasta_real)
+        pasta_completa = os.path.join(FORMS_DIR, pasta_real) if pasta_real else None
         
         # Lista para armazenar os documentos virtuais
         docs_virtuais = []
         
         # Verificar se a pasta existe
-        if pasta_real and os.path.exists(pasta_completa):
+        if pasta_real and pasta_completa and os.path.exists(pasta_completa):
             # Obter arquivos na pasta
             for root, dirs, files in os.walk(pasta_completa):
                 for arquivo in files:

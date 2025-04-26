@@ -106,6 +106,19 @@ def inject_variables():
         'current_year': datetime.now().year
     }
 
+# Adicionar filtros personalizados para os templates
+@app.template_filter('timestamp_to_date')
+def timestamp_to_date(timestamp):
+    """Converte um timestamp em data formatada."""
+    if timestamp:
+        try:
+            from datetime import datetime
+            return datetime.fromtimestamp(timestamp).strftime('%d/%m/%Y %H:%M')
+        except Exception as e:
+            app.logger.error(f"Erro ao converter timestamp: {e}")
+            return str(timestamp)
+    return "---"
+
 # Rota para login de teste
 @app.route("/user-admin-info")
 def check_admin_user():
