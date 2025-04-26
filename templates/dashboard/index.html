@@ -1532,38 +1532,85 @@
             return;
         }
         
-        // Aqui você salvaria a tarefa no servidor
-        // Esta é uma simulação
+        // Mostrar feedback visual de carregamento
+        const saveButton = document.getElementById('save-task-button');
+        const originalText = saveButton.innerHTML;
+        saveButton.disabled = true;
+        saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Salvando...';
         
-        // Adicionar a tarefa à lista
-        const taskList = document.querySelector('.widget-tasks .task-list');
-        if (taskList) {
-            const taskId = 'task-' + Date.now();
-            const taskItem = document.createElement('div');
-            taskItem.className = `form-check mb-2 task-${priority}-priority`;
-            taskItem.innerHTML = `
-                <input class="form-check-input task-checkbox" type="checkbox" id="${taskId}" data-task-id="${taskId}">
-                <label class="form-check-label" for="${taskId}">
-                    ${title}
-                    ${deadline ? `<span class="task-deadline d-block"><i class="far fa-clock me-1"></i> ${formatDate(new Date(deadline))}</span>` : ''}
-                </label>
-            `;
+        // Preparar os dados da tarefa
+        const taskData = {
+            title: title,
+            description: description,
+            deadline: deadline || null,
+            priority: priority,
+            completed: false
+        };
+        
+        // Enviar a tarefa para o servidor
+        fetch('/dashboard/api/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(taskData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao salvar tarefa');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Tarefa criada com sucesso:', data);
             
-            // Adicionar o evento de checkbox
-            const checkbox = taskItem.querySelector('.task-checkbox');
-            checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    this.nextElementSibling.classList.add('task-completed');
-                } else {
-                    this.nextElementSibling.classList.remove('task-completed');
-                }
+            // Atualizar a lista de tarefas em todas as widgets de tarefas
+            document.querySelectorAll('.widget-tasks').forEach(widget => {
+                loadTasks(widget);
             });
             
-            taskList.appendChild(taskItem);
-        }
-        
-        // Fechar o modal
-        bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
+            // Mostrar mensagem de sucesso
+            const alertEl = document.createElement('div');
+            alertEl.className = 'alert alert-success alert-dismissible fade show fixed-top mx-auto mt-3';
+            alertEl.style.width = '300px';
+            alertEl.style.maxWidth = '90%';
+            alertEl.innerHTML = `
+                <strong>Sucesso!</strong> Tarefa criada com sucesso.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            document.body.appendChild(alertEl);
+            
+            setTimeout(() => {
+                alertEl.remove();
+            }, 3000);
+            
+            // Fechar o modal
+            bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
+        })
+        .catch(error => {
+            console.error('Erro ao salvar tarefa:', error);
+            
+            // Mostrar mensagem de erro
+            const alertEl = document.createElement('div');
+            alertEl.className = 'alert alert-danger alert-dismissible fade show fixed-top mx-auto mt-3';
+            alertEl.style.width = '300px';
+            alertEl.style.maxWidth = '90%';
+            alertEl.innerHTML = `
+                <strong>Erro!</strong> Não foi possível salvar a tarefa.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            document.body.appendChild(alertEl);
+            
+            setTimeout(() => {
+                alertEl.remove();
+            }, 3000);
+        })
+        .finally(() => {
+            // Restaurar o botão
+            saveButton.disabled = false;
+            saveButton.innerHTML = originalText;
+        });
     }
     
     function clearCompletedTasks() {
@@ -1574,9 +1621,90 @@
         }
         
         if (confirm(`Deseja remover ${completedTasks.length} tarefas concluídas?`)) {
-            completedTasks.forEach(task => {
-                const taskItem = task.parentElement;
-                taskItem.remove();
+            // Mostrar feedback de carregamento
+            const clearButton = document.querySelector('.btn-clear-tasks');
+            if (clearButton) {
+                const originalText = clearButton.innerHTML;
+                clearButton.disabled = true;
+                clearButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Removendo...';
+                
+                // Restaurar o botão após 2 segundos
+                setTimeout(() => {
+                    clearButton.disabled = false;
+                    clearButton.innerHTML = originalText;
+                }, 2000);
+            }
+            
+            // Coletar IDs de tarefas concluídas
+            const taskIds = [];
+            completedTasks.forEach(taskLabel => {
+                const checkbox = taskLabel.previousElementSibling;
+                if (checkbox && checkbox.hasAttribute('data-task-id')) {
+                    taskIds.push(checkbox.getAttribute('data-task-id'));
+                }
+            });
+            
+            // Enviar solicitação para o servidor
+            fetch('/dashboard/api/tasks/completed', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({ task_ids: taskIds })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao remover tarefas concluídas');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Tarefas concluídas removidas:', data);
+                
+                // Atualizar a lista de tarefas em todas as widgets de tarefas
+                document.querySelectorAll('.widget-tasks').forEach(widget => {
+                    loadTasks(widget);
+                });
+                
+                // Mostrar mensagem de sucesso
+                const alertEl = document.createElement('div');
+                alertEl.className = 'alert alert-success alert-dismissible fade show fixed-top mx-auto mt-3';
+                alertEl.style.width = '300px';
+                alertEl.style.maxWidth = '90%';
+                alertEl.innerHTML = `
+                    <strong>Sucesso!</strong> Tarefas concluídas removidas.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                `;
+                document.body.appendChild(alertEl);
+                
+                setTimeout(() => {
+                    alertEl.remove();
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Erro ao remover tarefas concluídas:', error);
+                
+                // Mostrar mensagem de erro
+                const alertEl = document.createElement('div');
+                alertEl.className = 'alert alert-danger alert-dismissible fade show fixed-top mx-auto mt-3';
+                alertEl.style.width = '300px';
+                alertEl.style.maxWidth = '90%';
+                alertEl.innerHTML = `
+                    <strong>Erro!</strong> Não foi possível remover as tarefas concluídas.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                `;
+                document.body.appendChild(alertEl);
+                
+                setTimeout(() => {
+                    alertEl.remove();
+                }, 3000);
+                
+                // Fallback: remover localmente
+                completedTasks.forEach(task => {
+                    const taskItem = task.parentElement;
+                    taskItem.style.opacity = '0.5';
+                });
             });
         }
     }
@@ -1606,81 +1734,266 @@
             return;
         }
         
-        // Aqui você salvaria o evento no servidor
-        // Esta é uma simulação
+        // Mostrar feedback visual de carregamento
+        const saveButton = document.getElementById('save-event-button');
+        const originalText = saveButton.innerHTML;
+        saveButton.disabled = true;
+        saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Salvando...';
         
-        // Marcar o dia no calendário
-        const eventDate = new Date(date);
-        const day = eventDate.getDate();
+        // Criar um timestamp ISO a partir da data e hora (se fornecida)
+        let eventDateTime = date;
+        if (time) {
+            eventDateTime = `${date}T${time}`;
+        }
         
-        const calendarDays = document.querySelectorAll('.calendar-day:not(.empty)');
-        calendarDays.forEach(dayEl => {
-            if (parseInt(dayEl.textContent) === day) {
-                dayEl.classList.add('active');
-                
-                // Adicionar um tooltip com o título do evento
-                dayEl.setAttribute('title', title);
-                dayEl.setAttribute('data-bs-toggle', 'tooltip');
-                dayEl.setAttribute('data-bs-placement', 'top');
-                
-                // Inicializar o tooltip
-                new bootstrap.Tooltip(dayEl);
+        // Preparar os dados do evento
+        const eventData = {
+            title: title,
+            date: eventDateTime,
+            description: description || '',
+            category: category || 'default',
+            color: getCategoryColor(category)
+        };
+        
+        // Enviar o evento para o servidor
+        fetch('/dashboard/api/events', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(eventData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao salvar evento');
             }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Evento criado com sucesso:', data);
+            
+            // Atualizar o calendário
+            document.querySelectorAll('.widget-calendar').forEach(widget => {
+                updateCalendar(widget);
+            });
+            
+            // Mostrar mensagem de sucesso
+            const alertEl = document.createElement('div');
+            alertEl.className = 'alert alert-success alert-dismissible fade show fixed-top mx-auto mt-3';
+            alertEl.style.width = '300px';
+            alertEl.style.maxWidth = '90%';
+            alertEl.innerHTML = `
+                <strong>Sucesso!</strong> Evento criado com sucesso.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            document.body.appendChild(alertEl);
+            
+            setTimeout(() => {
+                alertEl.remove();
+            }, 3000);
+            
+            // Fechar o modal
+            bootstrap.Modal.getInstance(document.getElementById('addEventModal')).hide();
+        })
+        .catch(error => {
+            console.error('Erro ao salvar evento:', error);
+            
+            // Mostrar mensagem de erro
+            const alertEl = document.createElement('div');
+            alertEl.className = 'alert alert-danger alert-dismissible fade show fixed-top mx-auto mt-3';
+            alertEl.style.width = '300px';
+            alertEl.style.maxWidth = '90%';
+            alertEl.innerHTML = `
+                <strong>Erro!</strong> Não foi possível salvar o evento.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            document.body.appendChild(alertEl);
+            
+            setTimeout(() => {
+                alertEl.remove();
+            }, 3000);
+        })
+        .finally(() => {
+            // Restaurar o botão
+            saveButton.disabled = false;
+            saveButton.innerHTML = originalText;
         });
-        
-        // Fechar o modal
-        bootstrap.Modal.getInstance(document.getElementById('addEventModal')).hide();
     }
     
-    function loadTasks(widget) {
-        // Esta função simularia o carregamento de tarefas do servidor
-        // Como demonstração, usaremos dados simulados
+    function getCategoryColor(category) {
+        // Retorna uma cor baseada na categoria do evento
+        const colors = {
+            'meeting': '#4285F4',    // Azul
+            'deadline': '#EA4335',   // Vermelho
+            'reminder': '#FBBC05',   // Amarelo
+            'event': '#34A853',      // Verde
+            'holiday': '#9C27B0',    // Roxo
+            'default': '#00978D'     // Cor padrão Zelopack
+        };
         
-        const taskListHtml = `
-            <div class="task-list">
-                <div class="form-check mb-2 task-high-priority">
-                    <input class="form-check-input task-checkbox" type="checkbox" id="task-1">
-                    <label class="form-check-label" for="task-1">
-                        Revisar documentos de qualidade
-                        <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 30/04/2025</span>
-                    </label>
+        return colors[category] || colors.default;
+    }
+    
+    function updateCalendar(widget) {
+        const widgetBody = widget.querySelector('.calendar-container');
+        if (!widgetBody) return;
+        
+        // Mostrar indicador de carregamento
+        widgetBody.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Carregando...</span>
                 </div>
-                <div class="form-check mb-2 task-medium-priority">
-                    <input class="form-check-input task-checkbox" type="checkbox" id="task-2">
-                    <label class="form-check-label" for="task-2">
-                        Preparar relatório mensal
-                        <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 05/05/2025</span>
-                    </label>
-                </div>
-                <div class="form-check mb-2 task-low-priority">
-                    <input class="form-check-input task-checkbox" type="checkbox" id="task-3" checked>
-                    <label class="form-check-label task-completed" for="task-3">
-                        Atualizar inventário
-                        <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 26/04/2025</span>
-                    </label>
-                </div>
-                <div class="form-check mb-2 task-medium-priority">
-                    <input class="form-check-input task-checkbox" type="checkbox" id="task-4">
-                    <label class="form-check-label" for="task-4">
-                        Reunião com fornecedores
-                        <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 03/05/2025</span>
-                    </label>
-                </div>
+                <p class="mt-2">Atualizando calendário...</p>
             </div>
         `;
         
+        // Carregar eventos do servidor via API
+        fetch('/dashboard/api/events', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCsrfToken()
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao carregar eventos');
+            }
+            return response.json();
+        })
+        .then(events => {
+            // Renderizar o calendário
+            renderCalendar(widgetBody, events);
+        })
+        .catch(error => {
+            console.error('Erro ao carregar eventos:', error);
+            
+            // Fallback: renderizar calendário sem eventos
+            renderCalendar(widgetBody, []);
+        });
+    }
+    
+    function loadTasks(widget) {
         const widgetBody = widget.querySelector('.card-body');
-        widgetBody.innerHTML = taskListHtml;
         
-        // Adicionar eventos para os checkboxes
-        const checkboxes = widgetBody.querySelectorAll('.task-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    this.nextElementSibling.classList.add('task-completed');
-                } else {
-                    this.nextElementSibling.classList.remove('task-completed');
-                }
+        // Mostrar indicador de carregamento
+        widgetBody.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-2">Carregando tarefas...</p>
+            </div>
+        `;
+        
+        // Carregar tarefas do servidor via API
+        fetch('/dashboard/api/tasks', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCsrfToken()
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao carregar tarefas');
+            }
+            return response.json();
+        })
+        .then(tasks => {
+            // Se não houver tarefas, mostrar mensagem
+            if (!tasks || tasks.length === 0) {
+                widgetBody.innerHTML = `
+                    <div class="task-list">
+                        <p class="text-center text-muted py-3">Nenhuma tarefa pendente</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Construir o HTML das tarefas
+            let taskListHtml = '<div class="task-list">';
+            
+            tasks.forEach(task => {
+                const deadlineHtml = task.deadline ? 
+                    `<span class="task-deadline d-block"><i class="far fa-clock me-1"></i> ${formatDateFromISO(task.deadline)}</span>` : '';
+                
+                taskListHtml += `
+                    <div class="form-check mb-2 task-${task.priority}-priority">
+                        <input class="form-check-input task-checkbox" type="checkbox" id="task-${task.id}" 
+                            data-task-id="${task.id}" ${task.completed ? 'checked' : ''}>
+                        <label class="form-check-label ${task.completed ? 'task-completed' : ''}" for="task-${task.id}">
+                            ${task.title}
+                            ${deadlineHtml}
+                        </label>
+                    </div>
+                `;
+            });
+            
+            taskListHtml += '</div>';
+            widgetBody.innerHTML = taskListHtml;
+            
+            // Adicionar eventos para os checkboxes
+            const checkboxes = widgetBody.querySelectorAll('.task-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const taskId = this.getAttribute('data-task-id');
+                    const completed = this.checked;
+                    
+                    // Atualizar visualmente
+                    if (completed) {
+                        this.nextElementSibling.classList.add('task-completed');
+                    } else {
+                        this.nextElementSibling.classList.remove('task-completed');
+                    }
+                    
+                    // Enviar atualização para o servidor
+                    updateTaskStatus(taskId, completed);
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar tarefas:', error);
+            // Fallback para dados simulados em caso de erro
+            widgetBody.innerHTML = `
+                <div class="task-list">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Não foi possível carregar as tarefas do servidor.
+                    </div>
+                    <div class="form-check mb-2 task-high-priority">
+                        <input class="form-check-input task-checkbox" type="checkbox" id="task-demo-1">
+                        <label class="form-check-label" for="task-demo-1">
+                            Revisar documentos de qualidade
+                            <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 30/04/2025</span>
+                        </label>
+                    </div>
+                    <div class="form-check mb-2 task-medium-priority">
+                        <input class="form-check-input task-checkbox" type="checkbox" id="task-demo-2">
+                        <label class="form-check-label" for="task-demo-2">
+                            Preparar relatório mensal
+                            <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 05/05/2025</span>
+                        </label>
+                    </div>
+                </div>
+            `;
+            
+            // Adicionar eventos para os checkboxes (modo offline)
+            const checkboxes = widgetBody.querySelectorAll('.task-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        this.nextElementSibling.classList.add('task-completed');
+                    } else {
+                        this.nextElementSibling.classList.remove('task-completed');
+                    }
+                });
             });
         });
     }
@@ -1879,6 +2192,176 @@
     
     function formatDate(date) {
         return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+    }
+    
+    function formatDateFromISO(isoDate) {
+        if (!isoDate) return '';
+        const date = new Date(isoDate);
+        return formatDate(date);
+    }
+    
+    function renderCalendar(container, events = []) {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        
+        // Obter o primeiro dia do mês atual
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const startingDay = firstDay.getDay(); // 0 (Domingo) a 6 (Sábado)
+        
+        // Obter o último dia do mês atual
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const totalDays = lastDay.getDate();
+        
+        // Criar estrutura do calendário
+        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        
+        let calendarHTML = `
+            <div class="calendar-header d-flex justify-content-between align-items-center mb-2">
+                <div class="calendar-nav">
+                    <button class="btn btn-sm btn-outline-secondary" id="prev-month">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" id="next-month">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="calendar-title">
+                    <h5 class="mb-0">${monthNames[currentMonth]} ${currentYear}</h5>
+                </div>
+                <div class="calendar-tools">
+                    <button class="btn btn-sm btn-primary" onclick="showAddEventModal()">
+                        <i class="fas fa-plus"></i> Evento
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calendar">
+                <div class="calendar-weekdays row">
+        `;
+        
+        // Adicionar cabeçalhos dos dias da semana
+        weekDays.forEach(day => {
+            calendarHTML += `<div class="col weekday">${day}</div>`;
+        });
+        
+        calendarHTML += `</div><div class="calendar-days row">`;
+        
+        // Adicionar dias vazios no início
+        for (let i = 0; i < startingDay; i++) {
+            calendarHTML += `<div class="col calendar-day empty"></div>`;
+        }
+        
+        // Adicionar os dias do mês
+        for (let day = 1; day <= totalDays; day++) {
+            const date = new Date(currentYear, currentMonth, day);
+            const dateString = date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+            
+            // Verificar se há eventos nesse dia
+            const dayEvents = events.filter(event => {
+                const eventDate = new Date(event.date);
+                return eventDate.getDate() === day && 
+                       eventDate.getMonth() === currentMonth && 
+                       eventDate.getFullYear() === currentYear;
+            });
+            
+            let eventDots = '';
+            if (dayEvents.length > 0) {
+                // Limitar a 3 pontos no máximo
+                const maxDots = Math.min(3, dayEvents.length);
+                eventDots = '<div class="event-dots">';
+                for (let i = 0; i < maxDots; i++) {
+                    eventDots += `<span class="event-dot" style="background-color: ${dayEvents[i].color || '#00978D'}"></span>`;
+                }
+                eventDots += '</div>';
+                
+                // Adicionar o primeiro evento como título para tooltip
+                const eventTitles = dayEvents.map(e => e.title).join(', ');
+                eventDots += `<div class="event-tooltip" style="display: none;">${eventTitles}</div>`;
+            }
+            
+            // Verificar se é o dia atual
+            const isToday = day === now.getDate() && currentMonth === now.getMonth() && currentYear === now.getFullYear();
+            
+            calendarHTML += `
+                <div class="col calendar-day${isToday ? ' today' : ''}" data-date="${dateString}">
+                    <div class="day-number">${day}</div>
+                    ${eventDots}
+                </div>
+            `;
+            
+            // Quebrar a linha a cada 7 dias (fim de semana)
+            if ((startingDay + day) % 7 === 0 && day !== totalDays) {
+                calendarHTML += `</div><div class="calendar-days row">`;
+            }
+        }
+        
+        // Adicionar dias vazios no final
+        const lastRowDay = (startingDay + totalDays) % 7;
+        if (lastRowDay !== 0) {
+            for (let i = lastRowDay; i < 7; i++) {
+                calendarHTML += `<div class="col calendar-day empty"></div>`;
+            }
+        }
+        
+        calendarHTML += `</div></div>`;
+        
+        // Inserir o calendário no container
+        container.innerHTML = calendarHTML;
+        
+        // Adicionar tooltips para dias com eventos
+        container.querySelectorAll('.calendar-day[data-date]').forEach(day => {
+            const tooltip = day.querySelector('.event-tooltip');
+            if (tooltip) {
+                day.setAttribute('title', tooltip.textContent);
+                day.setAttribute('data-bs-toggle', 'tooltip');
+                day.setAttribute('data-bs-placement', 'top');
+                
+                // Inicializar o tooltip
+                new bootstrap.Tooltip(day);
+            }
+        });
+    }
+    
+    function updateTaskStatus(taskId, completed) {
+        // Enviar a atualização para o servidor
+        fetch('/dashboard/api/tasks/' + taskId, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify({
+                completed: completed
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao atualizar tarefa');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Tarefa atualizada com sucesso:', data);
+        })
+        .catch(error => {
+            console.error('Erro ao atualizar tarefa:', error);
+            // Mostrar mensagem de erro
+            const alertEl = document.createElement('div');
+            alertEl.className = 'alert alert-danger alert-dismissible fade show fixed-top mx-auto mt-3';
+            alertEl.style.width = '300px';
+            alertEl.style.maxWidth = '90%';
+            alertEl.innerHTML = `
+                <strong>Erro!</strong> Não foi possível atualizar a tarefa.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            document.body.appendChild(alertEl);
+            
+            setTimeout(() => {
+                alertEl.remove();
+            }, 3000);
+        });
     }
     
     function getCsrfToken() {
