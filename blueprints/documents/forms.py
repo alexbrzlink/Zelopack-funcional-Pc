@@ -16,8 +16,19 @@ class DocumentForm(FlaskForm):
         ('instrucao', 'Instrução de Trabalho'),
         ('planilha', 'Planilha de Controle'),
         ('manual', 'Manual'),
+        ('formulario', 'Formulário'),
         ('outro', 'Outro')
     ])
+    
+    # Categoria do documento (para formulários)
+    category = SelectField('Categoria', choices=[
+        ('', 'Selecione uma categoria (opcional)'),
+        ('blender', 'BLENDER'),
+        ('laboratorio', 'LABORATÓRIO'),
+        ('portaria', 'PORTARIA'),
+        ('qualidade', 'QUALIDADE'),
+        ('tba', 'TBA')
+    ], default='', validators=[Optional()])
     
     # Campo para versão/revisão
     revision = StringField('Revisão/Versão', validators=[Optional(), Length(max=20)])

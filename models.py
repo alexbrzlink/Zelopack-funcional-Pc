@@ -547,7 +547,8 @@ class TechnicalDocument(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    document_type = db.Column(db.String(50), nullable=False)  # pop, ficha_tecnica, certificado, instrucao, planilha, manual, outro
+    document_type = db.Column(db.String(50), nullable=False)  # pop, ficha_tecnica, certificado, instrucao, planilha, manual, formulario, outro
+    category = db.Column(db.String(50), nullable=True)  # blender, laboratorio, portaria, qualidade, tba
     
     # Arquivos
     filename = db.Column(db.String(255), nullable=False)
@@ -587,6 +588,7 @@ class TechnicalDocument(db.Model):
             'title': self.title,
             'description': self.description,
             'document_type': self.document_type,
+            'category': self.category,
             'filename': self.filename,
             'original_filename': self.original_filename,
             'file_path': self.file_path,
