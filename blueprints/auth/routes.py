@@ -93,10 +93,18 @@ def login():
                 flash(f'Sua conta está desativada. Entre em contato com o administrador.', 'warning')
                 return render_template('auth/login.html', form=form, title='Login')
             
+            # Captura informações do navegador e IP
+            user.last_ip = request.remote_addr
+            user.last_user_agent = request.headers.get('User-Agent', '')
+            
             # Login bem-sucedido
             login_user(user, remember=remember)
             user.last_login = datetime.utcnow()
             db.session.commit()
+            
+            # Registrar atividade de login
+            from utils.activity_logger import log_login
+            log_login(user.id, status='success')
             
             logger.debug(f"Login bem-sucedido para: {user.username}")
             flash(f'Bem-vindo, {user.name}! Login realizado com sucesso.', 'success')
@@ -122,6 +130,12 @@ def login():
 @auth_bp.route('/logout')
 def logout():
     """Faz logout do usuário."""
+    if current_user.is_authenticated:
+        # Registrar atividade de logout antes de deslogar
+        from utils.activity_logger import log_logout
+        user_id = current_user.id
+        log_logout(user_id)
+    
     logout_user()
     flash('Você saiu do sistema.', 'info')
     return redirect(url_for('auth.login'))
@@ -160,6 +174,16 @@ def register():
             user.set_password(form.password.data)
             db.session.add(user)
             db.session.commit()
+            
+            # Registrar atividade de criação de usuário
+            from utils.activity_logger import log_create
+            log_create(
+                user_id=current_user.id,
+                module='users',
+                entity_type='User',
+                entity_id=user.id,
+                data=user.to_dict()
+            )
             
             logger.debug(f"Usuário {user.username} criado com sucesso!")
             flash(f'Usuário {user.username} registrado com sucesso!', 'success')
@@ -210,6 +234,9 @@ def edit_user(id):
         del form.is_active
     
     if form.validate_on_submit():
+        # Guardar estado anterior
+        before_state = user.to_dict()
+        
         user.name = form.name.data
         user.email = form.email.data
         
@@ -219,6 +246,19 @@ def edit_user(id):
             user.is_active = form.is_active.data
         
         db.session.commit()
+        
+        # Registrar atividade de atualização
+        from utils.activity_logger import log_update
+        after_state = user.to_dict()
+        log_update(
+            user_id=current_user.id, 
+            module='users',
+            entity_type='User',
+            entity_id=user.id,
+            before_data=before_state,
+            after_data=after_state
+        )
+        
         flash('As informações do usuário foram atualizadas.', 'success')
         
         if current_user.role == 'admin' and current_user.id != user.id:
@@ -257,7 +297,20 @@ def admin():
     now = datetime.utcnow()
     dt = timedelta(days=1)  # Para simular eventos recentes
     
-    return render_template('auth/admin.html', title='Administração', stats=stats, now=now, dt=dt)
+    # Atividades recentes (últimas 10)
+    from models import UserActivity
+    recent_activities = UserActivity.query.order_by(UserActivity.created_at.desc()).limit(10).all()
+    
+    # Registrar visualização da página de administração
+    from utils.activity_logger import log_view
+    log_view(
+        user_id=current_user.id,
+        module='admin',
+        details='Visualização da página de administração'
+    )
+    
+    return render_template('auth/admin.html', title='Administração', stats=stats, 
+                          now=now, dt=dt, recent_activities=recent_activities)
 
 
 @auth_bp.route('/user/<int:id>/delete', methods=['POST'])
@@ -275,8 +328,22 @@ def delete_user(id):
         flash('Você não pode excluir seu próprio usuário.', 'danger')
         return redirect(url_for('auth.users'))
     
+    # Guardar estado antes da exclusão para registro
+    user_data = user.to_dict()
+    
+    # Excluir usuário
     db.session.delete(user)
     db.session.commit()
+    
+    # Registrar atividade de exclusão
+    from utils.activity_logger import log_delete
+    log_delete(
+        user_id=current_user.id,
+        module='users',
+        entity_type='User',
+        entity_id=id,
+        data=user_data
+    )
     
     flash(f'Usuário {user.username} excluído com sucesso.', 'success')
     return redirect(url_for('auth.users'))
@@ -294,6 +361,18 @@ def change_password():
         
         current_user.set_password(form.password.data)
         db.session.commit()
+        
+        # Registrar atividade de alteração de senha
+        from utils.activity_logger import log_action
+        log_action(
+            user_id=current_user.id,
+            action='password_change',
+            module='users',
+            entity_type='User',
+            entity_id=current_user.id,
+            details='Alteração de senha realizada pelo próprio usuário'
+        )
+        
         flash('Sua senha foi alterada com sucesso.', 'success')
         return redirect(url_for('dashboard.index'))
     
@@ -387,10 +466,107 @@ def login_direct():
     logger.debug(f"Função do usuário: {user.role}")
     logger.debug(f"Status de ativação: {user.is_active}")
     
+    # Captura informações do navegador e IP
+    user.last_ip = request.remote_addr
+    user.last_user_agent = request.headers.get('User-Agent', '')
+    
     login_user(user, remember=True)
     user.last_login = datetime.utcnow()
     db.session.commit()
     
+    # Registrar atividade de login automático
+    from utils.activity_logger import log_login
+    log_login(user.id, status='success', details='Login automático via rota direta')
+    
     logger.debug("Login automático bem-sucedido! Redirecionando para o dashboard...")
     flash(f'Bem-vindo, {user.name}! Login automático realizado com sucesso.', 'success')
     return redirect(url_for('dashboard.index'))
+
+
+@auth_bp.route('/activities')
+@login_required
+def activities():
+    """Exibe o histórico de atividades do sistema (apenas para administradores)."""
+    if not current_user.role == 'admin':
+        flash('Acesso negado. Você não tem permissão para acessar o histórico de atividades.', 'danger')
+        return redirect(url_for('dashboard.index'))
+    
+    page = request.args.get('page', 1, type=int)
+    per_page = 25  # Paginação com 25 registros por página
+    
+    # Obter filtros
+    user_id = request.args.get('user_id', None, type=int)
+    module = request.args.get('module', None)
+    action = request.args.get('action', None)
+    date_from = request.args.get('date_from', None)
+    date_to = request.args.get('date_to', None)
+    
+    # Construir query base
+    from models import UserActivity, User
+    query = UserActivity.query
+    
+    # Aplicar filtros
+    if user_id:
+        query = query.filter(UserActivity.user_id == user_id)
+    if module:
+        query = query.filter(UserActivity.module == module)
+    if action:
+        query = query.filter(UserActivity.action == action)
+    
+    # Converter datas para formato datetime se fornecidas
+    if date_from or date_to:
+        from datetime import datetime
+        if date_from:
+            try:
+                date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
+                query = query.filter(UserActivity.created_at >= date_from_obj)
+            except ValueError:
+                flash('Formato de data inválido para data inicial.', 'warning')
+        
+        if date_to:
+            try:
+                date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
+                # Adicionar um dia para incluir todo o dia final
+                date_to_obj = date_to_obj.replace(hour=23, minute=59, second=59)
+                query = query.filter(UserActivity.created_at <= date_to_obj)
+            except ValueError:
+                flash('Formato de data inválido para data final.', 'warning')
+    
+    # Ordenar por data (mais recente primeiro)
+    query = query.order_by(UserActivity.created_at.desc())
+    
+    # Obter lista de usuários para o filtro
+    users = User.query.order_by(User.username).all()
+    
+    # Obter lista de módulos únicos e ações para os filtros
+    modules = db.session.query(UserActivity.module).distinct().all()
+    actions = db.session.query(UserActivity.action).distinct().all()
+    
+    # Paginar resultados
+    pagination = query.paginate(page=page, per_page=per_page)
+    activities = pagination.items
+    
+    # Registrar visualização da página de atividades
+    from utils.activity_logger import log_view
+    log_view(
+        user_id=current_user.id,
+        module='admin',
+        details='Visualização do histórico de atividades'
+    )
+    
+    return render_template(
+        'auth/activities.html', 
+        title='Histórico de Atividades',
+        activities=activities,
+        pagination=pagination,
+        users=users,
+        modules=[m[0] for m in modules],
+        actions=[a[0] for a in actions],
+        filters={
+            'user_id': user_id,
+            'module': module,
+            'action': action,
+            'date_from': date_from,
+            'date_to': date_to
+        }
+    )

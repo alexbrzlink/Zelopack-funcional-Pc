@@ -509,6 +509,8 @@ class User(UserMixin, db.Model):
     last_login = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_ip = db.Column(db.String(45), nullable=True)  # Para armazenar o último IP usado
+    last_user_agent = db.Column(db.String(255), nullable=True)  # Para armazenar informações do navegador
     
     @property
     def is_admin(self):
@@ -669,7 +671,102 @@ class DocumentAttachment(db.Model):
         }
 
 
-# Modelo já definido anteriormente - removido para evitar duplicação
+class UserActivity(db.Model):
+    """Modelo para registro de atividades dos usuários no sistema."""
+    __tablename__ = 'user_activities'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    action = db.Column(db.String(100), nullable=False)  # login, logout, create, update, delete, view
+    module = db.Column(db.String(50), nullable=False)  # users, reports, suppliers, calculos, documents, etc.
+    entity_id = db.Column(db.Integer, nullable=True)  # ID da entidade afetada (laudo, usuário, etc.)
+    entity_type = db.Column(db.String(50), nullable=True)  # Tipo da entidade (Report, User, etc.)
+    details = db.Column(db.Text, nullable=True)  # Detalhes adicionais da ação
+    before_state = db.Column(db.Text, nullable=True)  # Estado antes da alteração (JSON)
+    after_state = db.Column(db.Text, nullable=True)  # Estado após a alteração (JSON)
+    ip_address = db.Column(db.String(45), nullable=True)  # Endereço IP do usuário
+    user_agent = db.Column(db.String(255), nullable=True)  # Navegador/dispositivo usado
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default='success')  # success, failed, error
+    
+    # Relacionamentos
+    user = db.relationship('User', backref='activities')
+    
+    def __repr__(self):
+        return f"<UserActivity {self.id}: {self.user_id} - {self.action} {self.module}>"
+    
+    def to_dict(self):
+        """Converte a atividade para dicionário."""
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'user_name': self.user.name if self.user else None,
+            'user_username': self.user.username if self.user else None,
+            'action': self.action,
+            'module': self.module,
+            'entity_id': self.entity_id,
+            'entity_type': self.entity_type,
+            'details': self.details,
+            'before_state': json.loads(self.before_state) if self.before_state else None,
+            'after_state': json.loads(self.after_state) if self.after_state else None,
+            'ip_address': self.ip_address,
+            'user_agent': self.user_agent,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M:%S'),
+            'status': self.status
+        }
+    
+    @classmethod
+    def log_activity(cls, user_id, action, module, entity_id=None, entity_type=None, 
+                     details=None, before_state=None, after_state=None, 
+                     ip_address=None, user_agent=None, status='success'):
+        """
+        Registra uma atividade de usuário no sistema.
+        
+        Args:
+            user_id: ID do usuário que realizou a ação
+            action: Tipo de ação (login, logout, create, update, delete, view)
+            module: Módulo do sistema onde a ação ocorreu
+            entity_id: ID opcional da entidade afetada
+            entity_type: Tipo opcional da entidade afetada
+            details: Detalhes opcionais sobre a ação
+            before_state: Estado opcional da entidade antes da alteração (como JSON string)
+            after_state: Estado opcional da entidade após a alteração (como JSON string)
+            ip_address: Endereço IP opcional do usuário
+            user_agent: Navegador/dispositivo opcional do usuário
+            status: Status da ação ('success', 'failed', 'error')
+            
+        Returns:
+            A instância da atividade criada
+        """
+        # Converter objetos Python para JSON string se necessário
+        if before_state and not isinstance(before_state, str):
+            before_state = json.dumps(before_state)
+        if after_state and not isinstance(after_state, str):
+            after_state = json.dumps(after_state)
+            
+        activity = cls(
+            user_id=user_id,
+            action=action,
+            module=module,
+            entity_id=entity_id,
+            entity_type=entity_type,
+            details=details,
+            before_state=before_state,
+            after_state=after_state,
+            ip_address=ip_address,
+            user_agent=user_agent,
+            status=status
+        )
+        
+        try:
+            db.session.add(activity)
+            db.session.commit()
+            return activity
+        except Exception as e:
+            db.session.rollback()
+            # Log para debug em caso de erro
+            print(f"Erro ao registrar atividade: {str(e)}")
+            return None
 
 
 class AutomaticReport(db.Model):

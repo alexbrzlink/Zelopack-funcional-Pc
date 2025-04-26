@@ -7,33 +7,44 @@
     .admin-card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         margin-bottom: 1.5rem;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
     }
     
     .admin-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     }
     
     .admin-card .card-header {
         font-weight: 600;
+        padding: 1rem 1.25rem;
+        border-bottom: none;
     }
     
     .stat-value {
-        font-size: 2.5rem;
+        font-size: 3rem;
         font-weight: 700;
-        color: #00978D;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #00978D 0%, #006A60 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
     
     .stat-label {
         font-size: 0.9rem;
         color: #666;
         text-transform: uppercase;
+        letter-spacing: 1px;
     }
     
     .stat-change {
         font-size: 0.85rem;
-        padding: 0.15rem 0.5rem;
+        padding: 0.15rem 0.75rem;
         border-radius: 2rem;
+        margin-left: 0.5rem;
     }
     
     .stat-change.positive {
@@ -53,204 +64,742 @@
     
     .user-action-btn {
         width: 100%;
+        margin-bottom: 0.75rem;
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .user-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .module-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .module-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+    }
+    
+    .module-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--color-start) 0%, var(--color-end) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+    
+    .module-card:hover .module-icon {
+        transform: scale(1.1);
+    }
+    
+    .module-card .btn {
+        transition: all 0.3s ease;
+        transform: translateY(5px);
+        opacity: 0.85;
+    }
+    
+    .module-card:hover .btn {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    
+    .activity-table tr {
+        transition: background-color 0.2s;
+    }
+    
+    .activity-table tr:hover {
+        background-color: rgba(0, 151, 141, 0.05);
+    }
+    
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    
+    .dashboard-header {
+        background: linear-gradient(135deg, #00978D 0%, #007A70 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .dashboard-header h1 {
+        font-weight: 700;
         margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-header p {
+        opacity: 0.85;
+        max-width: 80%;
+    }
+    
+    .user-status-icon {
+        font-size: 0.7rem;
+        vertical-align: middle;
+        margin-right: 0.2rem;
+    }
+    
+    .card-hover-reveal {
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    
+    .hover-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 151, 141, 0.9);
+        color: white;
+        padding: 1rem;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .card-hover-reveal:hover .hover-content {
+        transform: translateY(0);
+    }
+    
+    .system-status {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .system-status-icon {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #28a745;
+        margin-right: 0.5rem;
+    }
+    
+    .analytics-pill {
+        border-radius: 50px;
+        padding: 0.5rem 1rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        background-color: rgba(0, 151, 141, 0.1);
+        color: #00978D;
+        display: inline-block;
+        transition: all 0.2s;
+    }
+    
+    .analytics-pill:hover {
+        background-color: rgba(0, 151, 141, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .progress-slim {
+        height: 5px;
+        border-radius: 2.5px;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        color: #495057;
+        font-weight: 500;
+        padding: 1rem 1.5rem;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #00978D;
+        background-color: transparent;
+        border-bottom: 2px solid #00978D;
+    }
+    
+    #quickStatsRow .card {
+        min-height: 140px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Cabeçalho do Dashboard -->
 <div class="container">
-    <div class="row mb-4">
-        <div class="col">
-            <h2>
-                <i class="fas fa-tachometer-alt me-2"></i>
-                Painel de Administração
-            </h2>
-            <p class="text-muted">
-                Gerencie usuários, configurações e acompanhe o status do sistema.
-            </p>
+    <div class="dashboard-header mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Painel de Administração
+                </h1>
+                <p class="mb-0">
+                    Gerencie usuários, configurações e acompanhe o status do sistema. Acesso administrativo total à plataforma Zelopack.
+                </p>
+            </div>
+            <div class="d-none d-md-block">
+                <div class="btn-group">
+                    <a href="{{ url_for('auth.users') }}" class="btn btn-light">
+                        <i class="fas fa-users me-2"></i> Gerenciar Usuários
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-light">
+                        <i class="fas fa-user-plus me-2"></i> Novo Usuário
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
     
-    <!-- Cards com estatísticas -->
-    <div class="row mb-4">
-        <div class="col-md-4">
+    <!-- Estatísticas Rápidas -->
+    <div class="row" id="quickStatsRow">
+        <div class="col-12 mb-4">
+            <h4 class="mb-3"><i class="fas fa-chart-pie me-2"></i> Resumo Geral</h4>
+        </div>
+        
+        <div class="col-md-3 mb-4">
             <div class="card shadow admin-card">
-                <div class="card-header bg-primary text-white">
-                    <i class="fas fa-users me-2"></i> Usuários
-                </div>
                 <div class="card-body text-center">
                     <div class="stat-value">{{ stats.total_users }}</div>
-                    <div class="stat-label mb-2">Total de Usuários</div>
-                    <div class="d-flex justify-content-around">
-                        <div>
-                            <div class="fw-bold text-success">{{ stats.active_users }}</div>
-                            <div class="small text-muted">Ativos</div>
-                        </div>
-                        <div>
-                            <div class="fw-bold text-primary">{{ stats.admin_users }}</div>
-                            <div class="small text-muted">Administradores</div>
-                        </div>
+                    <div class="stat-label">Total de Usuários</div>
+                    <div class="d-flex justify-content-center mt-2">
+                        <span class="badge bg-success">
+                            <i class="fas fa-user-check me-1"></i> {{ stats.active_users }} Ativos
+                        </span>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between align-items-center">
-                    <span class="text-muted small">Último cadastro: 
-                        {{ stats.last_registered.created_at.strftime('%d/%m/%Y') if stats.last_registered else 'N/A' }}
-                    </span>
-                    <a href="{{ url_for('auth.users') }}" class="btn btn-sm btn-primary">
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('auth.users') }}" class="btn btn-outline-primary btn-sm w-100">
                         <i class="fas fa-users me-1"></i> Gerenciar
                     </a>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-4">
+        <div class="col-md-3 mb-4">
             <div class="card shadow admin-card">
-                <div class="card-header bg-success text-white">
-                    <i class="fas fa-sitemap me-2"></i> Sistema
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">Status do Sistema</h5>
-                    <div class="d-flex flex-column">
-                        <div class="mb-2 d-flex justify-content-between">
-                            <span>Status:</span>
-                            <span class="badge bg-success">Online</span>
-                        </div>
-                        <div class="mb-2 d-flex justify-content-between">
-                            <span>Base de Dados:</span>
-                            <span class="badge bg-success">Conectada</span>
-                        </div>
-                        <div class="mb-2 d-flex justify-content-between">
-                            <span>Último Login:</span>
-                            <span>{{ stats.last_login.last_login.strftime('%d/%m/%Y %H:%M') if stats.last_login and stats.last_login.last_login else 'N/A' }}</span>
-                        </div>
+                <div class="card-body text-center">
+                    <div class="stat-value">{{ stats.admin_users }}</div>
+                    <div class="stat-label">Administradores</div>
+                    <div class="d-flex justify-content-center mt-2">
+                        <span class="badge bg-danger">
+                            <i class="fas fa-shield-alt me-1"></i> Acesso Total
+                        </span>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-end">
-                    <button class="btn btn-sm btn-success">
-                        <i class="fas fa-sync-alt me-1"></i> Atualizar
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-danger btn-sm w-100">
+                        <i class="fas fa-user-shield me-1"></i> Novo Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card shadow admin-card">
+                <div class="card-body text-center">
+                    <div style="font-size: 1.5rem; color: #00978D;">
+                        <i class="fas fa-server fa-2x mb-2"></i>
+                    </div>
+                    <div class="stat-label">Status do Sistema</div>
+                    <div class="mt-2">
+                        <span class="badge bg-success">
+                            <i class="fas fa-check-circle me-1"></i> Todos Serviços Online
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button class="btn btn-outline-success btn-sm w-100">
+                        <i class="fas fa-sync-alt me-1"></i> Verificar Status
                     </button>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-4">
+        <div class="col-md-3 mb-4">
             <div class="card shadow admin-card">
-                <div class="card-header bg-info text-white">
-                    <i class="fas fa-cogs me-2"></i> Configurações
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">Ações Rápidas</h5>
-                    <div class="d-grid gap-2">
-                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary user-action-btn">
-                            <i class="fas fa-user-plus me-1"></i> Novo Usuário
-                        </a>
-                        <a href="{{ url_for('auth.users') }}" class="btn btn-info user-action-btn">
-                            <i class="fas fa-user-edit me-1"></i> Editar Usuários
-                        </a>
-                        <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary user-action-btn">
-                            <i class="fas fa-chart-line me-1"></i> Ver Dashboard
-                        </a>
+                <div class="card-body text-center">
+                    <div style="font-size: 1.5rem; color: #00978D;">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
                     </div>
+                    <div class="stat-label">Último Acesso</div>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            {% if stats.last_login and stats.last_login.last_login %}
+                                {{ stats.last_login.last_login.strftime('%d/%m/%Y %H:%M') }}
+                            {% else %}
+                                Nenhum registro
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button class="btn btn-outline-secondary btn-sm w-100">
+                        <i class="fas fa-history me-1"></i> Ver Histórico
+                    </button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Módulos do Sistema -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white">
-                    <i class="fas fa-cubes me-2"></i> Módulos do Sistema
+    <!-- Interface de Abas -->
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="modules-tab" data-bs-toggle="tab" data-bs-target="#modules" type="button" role="tab" aria-controls="modules" aria-selected="true">
+                <i class="fas fa-cubes me-2"></i> Módulos do Sistema
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="false">
+                <i class="fas fa-users me-2"></i> Usuários
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="false">
+                <i class="fas fa-history me-2"></i> Atividades
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="adminTabsContent">
+        <!-- Aba de Módulos -->
+        <div class="tab-pane fade show active" id="modules" role="tabpanel" aria-labelledby="modules-tab">
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <div class="card module-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-file-alt module-icon" style="--color-start: #4e73df; --color-end: #224abe;"></i>
+                            <h5>Laudos Técnicos</h5>
+                            <p class="text-muted small mb-4">Gerenciamento completo de laudos e relatórios técnicos de laboratório.</p>
+                            <a href="{{ url_for('reports.index') }}" class="btn btn-primary">
+                                <i class="fas fa-external-link-alt me-1"></i> Acessar
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <i class="fas fa-file-alt fa-3x mb-3 text-primary"></i>
-                                    <h5>Gerenciamento de Laudos</h5>
-                                    <p class="small">Cadastro e visualização de laudos técnicos.</p>
-                                    <a href="{{ url_for('reports.index') }}" class="btn btn-sm btn-outline-primary">Acessar</a>
-                                </div>
-                            </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card module-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-calculator module-icon" style="--color-start: #1cc88a; --color-end: #13855c;"></i>
+                            <h5>Cálculos Técnicos</h5>
+                            <p class="text-muted small mb-4">Ferramentas de cálculo para laboratório, análises e estudos técnicos.</p>
+                            <a href="{{ url_for('calculos.index') }}" class="btn btn-success">
+                                <i class="fas fa-external-link-alt me-1"></i> Acessar
+                            </a>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <i class="fas fa-calculator fa-3x mb-3 text-success"></i>
-                                    <h5>Cálculos Técnicos</h5>
-                                    <p class="small">Ferramentas de cálculo para laboratório.</p>
-                                    <a href="{{ url_for('calculos.index') }}" class="btn btn-sm btn-outline-success">Acessar</a>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card module-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-clipboard-list module-icon" style="--color-start: #36b9cc; --color-end: #258391;"></i>
+                            <h5>Formulários</h5>
+                            <p class="text-muted small mb-4">Formulários dinâmicos e questionários para coleta de dados de produção.</p>
+                            <a href="{{ url_for('forms.index') }}" class="btn btn-info">
+                                <i class="fas fa-external-link-alt me-1"></i> Acessar
+                            </a>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <i class="fas fa-edit fa-3x mb-3 text-info"></i>
-                                    <h5>Formulários</h5>
-                                    <p class="small">Formulários e questionários do sistema.</p>
-                                    <a href="{{ url_for('forms.index') }}" class="btn btn-sm btn-outline-info">Acessar</a>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card module-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-folder-open module-icon" style="--color-start: #f6c23e; --color-end: #dda20a;"></i>
+                            <h5>Documentos</h5>
+                            <p class="text-muted small mb-4">Gerenciamento de documentos técnicos, padrões e especificações.</p>
+                            <a href="{{ url_for('documents.index') }}" class="btn btn-warning">
+                                <i class="fas fa-external-link-alt me-1"></i> Acessar
+                            </a>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <i class="fas fa-folder fa-3x mb-3 text-warning"></i>
-                                    <h5>Documentos</h5>
-                                    <p class="small">Gerenciamento de documentos técnicos.</p>
-                                    <a href="{{ url_for('documents.index') }}" class="btn btn-sm btn-outline-warning">Acessar</a>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card module-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-chart-line module-icon" style="--color-start: #e74a3b; --color-end: #be2617;"></i>
+                            <h5>Estatísticas</h5>
+                            <p class="text-muted small mb-4">Painéis de controle e visualização de dados com análises avançadas.</p>
+                            <a href="{{ url_for('dashboard.index') }}" class="btn btn-danger">
+                                <i class="fas fa-external-link-alt me-1"></i> Acessar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card module-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-cogs module-icon" style="--color-start: #6f42c1; --color-end: #532ea3;"></i>
+                            <h5>Configurações</h5>
+                            <p class="text-muted small mb-4">Configurações gerais do sistema, parâmetros e personalizações.</p>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-external-link-alt me-1"></i> Acessar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card module-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-exclamation-triangle module-icon" style="--color-start: #fd7e14; --color-end: #c35e02;"></i>
+                            <h5>Alertas</h5>
+                            <p class="text-muted small mb-4">Central de alertas e notificações para monitoramento do sistema.</p>
+                            <button class="btn btn-warning">
+                                <i class="fas fa-external-link-alt me-1"></i> Acessar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card module-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-database module-icon" style="--color-start: #5a5c69; --color-end: #373840;"></i>
+                            <h5>Banco de Dados</h5>
+                            <p class="text-muted small mb-4">Ferramentas de backup, restauração e manutenção da base de dados.</p>
+                            <button class="btn btn-dark">
+                                <i class="fas fa-external-link-alt me-1"></i> Acessar
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Histórico de Atividades (Placeholder) -->
-    <div class="row">
-        <div class="col-12">
+        
+        <!-- Aba de Usuários -->
+        <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
             <div class="card shadow">
-                <div class="card-header bg-secondary text-white">
-                    <i class="fas fa-history me-2"></i> Últimas Atividades do Sistema
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 font-weight-bold text-primary">Usuários do Sistema</h5>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user-plus me-1"></i> Novo Usuário
+                    </a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
-                            <thead>
+                            <thead class="table-light">
                                 <tr>
-                                    <th>Data/Hora</th>
-                                    <th>Usuário</th>
-                                    <th>Ação</th>
-                                    <th>Detalhes</th>
+                                    <th scope="col">Nome</th>
+                                    <th scope="col">Usuário</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Função</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Último Acesso</th>
+                                    <th scope="col" class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if stats.last_registered %}
+                                <tr>
+                                    <td>{{ stats.last_registered.name }}</td>
+                                    <td>{{ stats.last_registered.username }}</td>
+                                    <td>{{ stats.last_registered.email }}</td>
+                                    <td>
+                                        {% if stats.last_registered.role == 'admin' %}
+                                        <span class="badge bg-danger">Administrador</span>
+                                        {% elif stats.last_registered.role == 'gestor' %}
+                                        <span class="badge bg-success">Gestor</span>
+                                        {% else %}
+                                        <span class="badge bg-info">Analista</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if stats.last_registered.is_active %}
+                                        <span class="text-success">
+                                            <i class="fas fa-circle user-status-icon"></i> Ativo
+                                        </span>
+                                        {% else %}
+                                        <span class="text-secondary">
+                                            <i class="fas fa-circle user-status-icon"></i> Inativo
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if stats.last_registered.last_login %}
+                                        <small>{{ stats.last_registered.last_login.strftime('%d/%m/%Y %H:%M') }}</small>
+                                        {% else %}
+                                        <small class="text-muted">Nunca acessou</small>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ url_for('auth.edit_user', id=stats.last_registered.id) }}" class="btn btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% if stats.last_registered.id != current_user.id %}
+                                            <button type="button" class="btn btn-outline-danger delete-user" data-id="{{ stats.last_registered.id }}" data-name="{{ stats.last_registered.name }}">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% if stats.last_login and stats.last_login.id != stats.last_registered.id %}
+                                <tr>
+                                    <td>{{ stats.last_login.name }}</td>
+                                    <td>{{ stats.last_login.username }}</td>
+                                    <td>{{ stats.last_login.email }}</td>
+                                    <td>
+                                        {% if stats.last_login.role == 'admin' %}
+                                        <span class="badge bg-danger">Administrador</span>
+                                        {% elif stats.last_login.role == 'gestor' %}
+                                        <span class="badge bg-success">Gestor</span>
+                                        {% else %}
+                                        <span class="badge bg-info">Analista</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if stats.last_login.is_active %}
+                                        <span class="text-success">
+                                            <i class="fas fa-circle user-status-icon"></i> Ativo
+                                        </span>
+                                        {% else %}
+                                        <span class="text-secondary">
+                                            <i class="fas fa-circle user-status-icon"></i> Inativo
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if stats.last_login.last_login %}
+                                        <small>{{ stats.last_login.last_login.strftime('%d/%m/%Y %H:%M') }}</small>
+                                        {% else %}
+                                        <small class="text-muted">Nunca acessou</small>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ url_for('auth.edit_user', id=stats.last_login.id) }}" class="btn btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% if stats.last_login.id != current_user.id %}
+                                            <button type="button" class="btn btn-outline-danger delete-user" data-id="{{ stats.last_login.id }}" data-name="{{ stats.last_login.name }}">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('auth.users') }}" class="btn btn-primary">
+                            <i class="fas fa-users me-1"></i> Ver Todos os Usuários
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Aba de Atividades -->
+        <div class="tab-pane fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+            <div class="card shadow">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 font-weight-bold text-primary">Histórico de Atividades</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover activity-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Data/Hora</th>
+                                    <th scope="col">Usuário</th>
+                                    <th scope="col">Ação</th>
+                                    <th scope="col">Módulo</th>
+                                    <th scope="col">Detalhes</th>
+                                    <th scope="col">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>{{ now.strftime('%d/%m/%Y %H:%M') }}</td>
                                     <td>{{ current_user.name }}</td>
-                                    <td><span class="badge bg-info">Acesso</span></td>
-                                    <td>Acessou o painel de administração</td>
+                                    <td>Acesso</td>
+                                    <td>Administração</td>
+                                    <td>Login no painel administrativo</td>
+                                    <td><span class="badge bg-success">Concluído</span></td>
                                 </tr>
-                                <!-- Histórico fictício para ilustração -->
                                 <tr>
                                     <td>{{ (now - dt).strftime('%d/%m/%Y %H:%M') }}</td>
                                     <td>Sistema</td>
-                                    <td><span class="badge bg-success">Atualização</span></td>
-                                    <td>Backup automático realizado com sucesso</td>
+                                    <td>Backup</td>
+                                    <td>Banco de Dados</td>
+                                    <td>Backup automático realizado</td>
+                                    <td><span class="badge bg-success">Concluído</span></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ (now - dt * 2).strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>Admin</td>
+                                    <td>Registro</td>
+                                    <td>Usuários</td>
+                                    <td>Criação de novo usuário</td>
+                                    <td><span class="badge bg-success">Concluído</span></td>
+                                </tr>
+                                <tr>
+                                    <td>{{ (now - dt * 3).strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>Sistema</td>
+                                    <td>Manutenção</td>
+                                    <td>Sistema</td>
+                                    <td>Atualização de índices</td>
+                                    <td><span class="badge bg-success">Concluído</span></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="card-footer text-end">
-                    <button class="btn btn-sm btn-secondary" disabled>
+                <div class="card-footer bg-white py-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        Mostrando últimas 4 atividades
+                    </div>
+                    <button class="btn btn-sm btn-primary">
                         <i class="fas fa-search me-1"></i> Ver Histórico Completo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Status do Sistema -->
+    <div class="row mt-4">
+        <div class="col-12 mb-3">
+            <h4><i class="fas fa-server me-2"></i> Status do Sistema</h4>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 font-weight-bold text-primary">Serviços</h5>
+                </div>
+                <div class="card-body">
+                    <div class="system-status">
+                        <div class="system-status-icon"></div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <div><strong>Aplicação Web</strong></div>
+                                <div class="text-success">Online</div>
+                            </div>
+                            <div class="progress progress-slim mt-1">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-status">
+                        <div class="system-status-icon"></div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <div><strong>Banco de Dados</strong></div>
+                                <div class="text-success">Online</div>
+                            </div>
+                            <div class="progress progress-slim mt-1">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-status">
+                        <div class="system-status-icon"></div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <div><strong>Servidor de Arquivos</strong></div>
+                                <div class="text-success">Online</div>
+                            </div>
+                            <div class="progress progress-slim mt-1">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-status">
+                        <div class="system-status-icon"></div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between">
+                                <div><strong>Sistema de Email</strong></div>
+                                <div class="text-success">Online</div>
+                            </div>
+                            <div class="progress progress-slim mt-1">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3 text-center">
+                    <button class="btn btn-sm btn-success">
+                        <i class="fas fa-sync-alt me-1"></i> Atualizar Status
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 font-weight-bold text-primary">Recursos do Sistema</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>CPU</span>
+                            <span>23%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 23%" aria-valuenow="23" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Memória</span>
+                            <span>42%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 42%" aria-valuenow="42" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Disco</span>
+                            <span>65%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Banda</span>
+                            <span>12%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 12%" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-success mb-0 mt-4">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Todos os recursos estão operando em níveis normais.
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3 text-center">
+                    <button class="btn btn-sm btn-info">
+                        <i class="fas fa-chart-line me-1"></i> Ver Detalhes
                     </button>
                 </div>
             </div>
@@ -259,17 +808,59 @@
 </div>
 {% endblock %}
 
-{% block extra_js %}
+{% block scripts %}
 <script>
-    // Adiciona a data atual para o histórico simulado
     document.addEventListener('DOMContentLoaded', function() {
-        // Adicionar classe ativa ao link de administração no menu
+        // Ativar o link de administração no menu
         const navItems = document.querySelectorAll('.nav-item .nav-link');
         navItems.forEach(item => item.classList.remove('active'));
         const adminLink = document.querySelector('a[href="{{ url_for("auth.admin") }}"]');
         if (adminLink) {
             adminLink.classList.add('active');
         }
+        
+        // Inicialização das abas do Bootstrap
+        const triggerTabList = [].slice.call(document.querySelectorAll('#adminTabs button'));
+        triggerTabList.forEach(function(triggerEl) {
+            const tabTrigger = new bootstrap.Tab(triggerEl);
+            triggerEl.addEventListener('click', function(event) {
+                event.preventDefault();
+                tabTrigger.show();
+            });
+        });
+        
+        // Botões de exclusão de usuários
+        const deleteButtons = document.querySelectorAll('.delete-user');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.getAttribute('data-id');
+                const userName = this.getAttribute('data-name');
+                
+                if (confirm(`Tem certeza que deseja excluir o usuário "${userName}"? Esta ação não pode ser desfeita.`)) {
+                    // Criar formulário dinamicamente para enviar o POST
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/auth/user/${userId}/delete`;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        });
+        
+        // Animação para os cards
+        const adminCards = document.querySelectorAll('.admin-card, .module-card');
+        adminCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 50);
+            }, index * 100);
+        });
     });
 </script>
 {% endblock %}
