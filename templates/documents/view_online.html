@@ -62,19 +62,32 @@
                     </h4>
                     <div>
                         {% if virtual_document %}
-                        <a href="{{ url_for('documents.index') }}" class="btn btn-sm btn-light me-2">
-                            <i class="fas fa-arrow-left me-1"></i> Voltar
-                        </a>
-                        <a href="{{ download_link }}" class="btn btn-sm btn-light me-2">
-                            <i class="fas fa-download me-1"></i> Download
-                        </a>
+                            <a href="{{ url_for('documents.index') }}" class="btn btn-sm btn-light me-2">
+                                <i class="fas fa-arrow-left me-1"></i> Voltar
+                            </a>
+                            {% if download_link %}
+                                <a href="{{ download_link }}" class="btn btn-sm btn-light me-2">
+                                    <i class="fas fa-download me-1"></i> Download
+                                </a>
+                            {% endif %}
                         {% else %}
-                        <a href="{{ url_for('documents.view_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
-                            <i class="fas fa-arrow-left me-1"></i> Voltar
-                        </a>
-                        <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
-                            <i class="fas fa-download me-1"></i> Download
-                        </a>
+                            {% if document.id is defined %}
+                                <a href="{{ url_for('documents.view_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
+                                    <i class="fas fa-arrow-left me-1"></i> Voltar
+                                </a>
+                                <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
+                                    <i class="fas fa-download me-1"></i> Download
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('documents.index') }}" class="btn btn-sm btn-light me-2">
+                                    <i class="fas fa-arrow-left me-1"></i> Voltar
+                                </a>
+                                {% if download_link %}
+                                    <a href="{{ download_link }}" class="btn btn-sm btn-light me-2">
+                                        <i class="fas fa-download me-1"></i> Download
+                                    </a>
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
                         <button onclick="window.print()" class="btn btn-sm btn-light">
                             <i class="fas fa-print me-1"></i> Imprimir
@@ -87,7 +100,15 @@
                             <div class="col-md-8">
                                 <h5 class="mb-0">{{ document.title }}</h5>
                                 <p class="text-muted small mb-0">
-                                    <span class="me-3"><i class="far fa-calendar-alt me-1"></i> Atualizado em: {{ document.updated_at.strftime('%d/%m/%Y %H:%M') }}</span>
+                                    <span class="me-3"><i class="far fa-calendar-alt me-1"></i> Atualizado em: 
+                                    {% if document.updated_at is string %}
+                                        {{ document.updated_at }}
+                                    {% elif document.updated_at is defined and document.updated_at.strftime is defined %}
+                                        {{ document.updated_at.strftime('%d/%m/%Y %H:%M') }}
+                                    {% else %}
+                                        Desconhecido
+                                    {% endif %}
+                                    </span>
                                     <span class="me-3"><i class="far fa-user me-1"></i> Autor: {{ document.author }}</span>
                                     {% if document.revision %}
                                     <span><i class="fas fa-code-branch me-1"></i> Revisão: {{ document.revision }}</span>
@@ -139,7 +160,11 @@
                         {% if download_link %}
                         Por favor, faça o <a href="{{ download_link }}" class="alert-link">download</a> para visualizá-lo.
                         {% else %}
-                        Por favor, faça o <a href="{{ url_for('documents.download_document', document_id=document.id) if document.id else '#' }}" class="alert-link">download</a> para visualizá-lo.
+                            {% if document.id is defined %}
+                                Por favor, faça o <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="alert-link">download</a> para visualizá-lo.
+                            {% else %}
+                                Por favor, faça o <a href="#" class="alert-link">download</a> para visualizá-lo.
+                            {% endif %}
                         {% endif %}
                     </div>
                     {% endif %}

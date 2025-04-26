@@ -583,14 +583,33 @@ def view_virtual_document(file_path):
     
     # Verificar se a visualização online foi solicitada
     if online_view and online_view.lower() in ('true', '1', 'yes'):
+        # Cria um objeto de documento virtual com informações do arquivo
+        creation_time = datetime.datetime.fromtimestamp(os.path.getctime(full_path))
+        modification_time = datetime.datetime.fromtimestamp(os.path.getmtime(full_path))
+        
+        doc_info = {
+            'title': file_name,
+            'file_type': file_ext[1:] if file_ext.startswith('.') else file_ext,
+            'updated_at': modification_time,
+            'created_at': creation_time,
+            'author': 'Sistema Zelopack',
+            'category': os.path.dirname(file_path).split('/')[-1] if '/' in file_path else '',
+            'revision': '1.0'
+        }
+        
+        # Link para download do arquivo
+        download_link = url_for('documents.download_virtual_document', file_path=file_path)
+        
         # Para PDFs, exibir no iframe usando o viewer nativo do navegador
         if file_ext == '.pdf':
             file_url = url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false')
             return render_template(
                 'documents/view_online.html',
                 title=f'Visualização Online: {file_name}',
-                document={'title': file_name, 'file_type': 'pdf'},
-                pdf_path=file_url
+                document=doc_info,
+                pdf_path=file_url,
+                download_link=download_link,
+                virtual_document=True
             )
         # Para arquivos HTML, exibir diretamente no iframe
         elif file_ext == '.html':
@@ -599,8 +618,10 @@ def view_virtual_document(file_path):
             return render_template(
                 'documents/view_online.html',
                 title=f'Visualização Online: {file_name}',
-                document={'title': file_name, 'file_type': 'html'},
-                html_content=html_content
+                document=doc_info,
+                html_content=html_content,
+                download_link=download_link,
+                virtual_document=True
             )
         # Para arquivos de imagem
         elif file_ext in ['.jpg', '.jpeg', '.png', '.gif']:
@@ -608,8 +629,10 @@ def view_virtual_document(file_path):
             return render_template(
                 'documents/view_online.html',
                 title=f'Visualização Online: {file_name}',
-                document={'title': file_name, 'file_type': file_ext[1:]},
-                image_path=file_url
+                document=doc_info,
+                image_path=file_url,
+                download_link=download_link,
+                virtual_document=True
             )
         # Para planilhas Excel
         elif file_ext in ['.xlsx', '.xls']:
@@ -621,8 +644,10 @@ def view_virtual_document(file_path):
             return render_template(
                 'documents/view_online.html',
                 title=f'Visualização Online: {file_name}',
-                document={'title': file_name, 'file_type': 'excel'},
-                office_url=office_viewer_url
+                document=doc_info,
+                office_url=office_viewer_url,
+                download_link=download_link,
+                virtual_document=True
             )
         else:
             # Para outros tipos, tentar embutir ou oferecer download
