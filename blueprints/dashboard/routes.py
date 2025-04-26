@@ -25,7 +25,7 @@ def index():
         'uploads_today': TechnicalDocument.query.filter(
             func.date(TechnicalDocument.upload_date) == datetime.date.today()
         ).count(),
-        'active_users': User.query.filter_by(active=True).count()
+        'active_users': User.query.count()  # Todos os usuários (ajustar se houver campo de status)
     }
     
     # Obter tarefas do usuário (se existir o modelo)
@@ -55,23 +55,21 @@ def index():
         notes_content=notes_content
     )
 
-@dashboard_bp.route('/api/tasks', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@dashboard_bp.route('/api/tasks', methods=['GET', 'POST'])
 @login_required
 def api_tasks():
     """API para gerenciar tarefas."""
-    # Verificar se o modelo Task existe
     try:
         if request.method == 'GET':
             # Listar tarefas
-            tasks = Task.query.filter_by(user_id=current_user.id).all()
-            return jsonify([{
-                'id': task.id,
-                'title': task.title,
-                'description': task.description,
-                'deadline': task.deadline.isoformat() if task.deadline else None,
-                'completed': task.completed,
-                'priority': task.priority
-            } for task in tasks])
+            completed = request.args.get('completed')
+            if completed is not None:
+                completed = completed.lower() == 'true'
+                tasks = get_user_tasks(completed=completed)
+            else:
+                tasks = get_user_tasks()
+            
+            return jsonify(tasks)
         
         elif request.method == 'POST':
             # Criar nova tarefa
@@ -86,24 +84,32 @@ def api_tasks():
             )
             db.session.add(task)
             db.session.commit()
-            return jsonify({
-                'id': task.id,
-                'title': task.title,
-                'description': task.description,
-                'deadline': task.deadline.isoformat() if task.deadline else None,
-                'completed': task.completed,
-                'priority': task.priority
-            }), 201
+            
+            return jsonify(task.to_dict()), 201
+    
+    except Exception as e:
+        current_app.logger.error(f"Erro na API de tarefas: {str(e)}")
+        return jsonify({'error': 'Erro interno do servidor', 'details': str(e)}), 500
+
+
+@dashboard_bp.route('/api/tasks/<int:task_id>', methods=['GET', 'PATCH', 'DELETE'])
+@login_required
+def api_task(task_id):
+    """API para gerenciar uma tarefa específica."""
+    try:
+        task = Task.query.get_or_404(task_id)
         
-        elif request.method == 'PUT':
+        # Verificar permissão
+        if task.user_id != current_user.id:
+            return jsonify({'error': 'Não autorizado'}), 403
+        
+        if request.method == 'GET':
+            # Obter detalhes da tarefa
+            return jsonify(task.to_dict())
+        
+        elif request.method == 'PATCH':
             # Atualizar tarefa existente
             data = request.json
-            task_id = data.get('id')
-            task = Task.query.get_or_404(task_id)
-            
-            # Verificar permissão
-            if task.user_id != current_user.id:
-                return jsonify({'error': 'Não autorizado'}), 403
             
             if 'title' in data:
                 task.title = data['title']
@@ -117,31 +123,43 @@ def api_tasks():
                 task.priority = data['priority']
             
             db.session.commit()
-            return jsonify({
-                'id': task.id,
-                'title': task.title,
-                'description': task.description,
-                'deadline': task.deadline.isoformat() if task.deadline else None,
-                'completed': task.completed,
-                'priority': task.priority
-            })
+            return jsonify(task.to_dict())
         
         elif request.method == 'DELETE':
             # Excluir tarefa
-            task_id = request.args.get('id')
-            task = Task.query.get_or_404(task_id)
-            
-            # Verificar permissão
-            if task.user_id != current_user.id:
-                return jsonify({'error': 'Não autorizado'}), 403
-            
             db.session.delete(task)
             db.session.commit()
             return jsonify({'message': 'Tarefa excluída com sucesso'})
     
     except Exception as e:
-        current_app.logger.error(f"Erro na API de tarefas: {str(e)}")
-        return jsonify({'error': 'Erro interno do servidor'}), 500
+        current_app.logger.error(f"Erro na API de tarefa {task_id}: {str(e)}")
+        return jsonify({'error': 'Erro interno do servidor', 'details': str(e)}), 500
+
+
+@dashboard_bp.route('/api/tasks/completed', methods=['DELETE'])
+@login_required
+def api_tasks_completed():
+    """API para excluir todas as tarefas concluídas."""
+    try:
+        data = request.json
+        task_ids = data.get('task_ids', [])
+        
+        if task_ids:
+            # Excluir tarefas específicas
+            tasks = Task.query.filter(Task.id.in_(task_ids), Task.user_id == current_user.id).all()
+        else:
+            # Excluir todas as tarefas concluídas
+            tasks = Task.query.filter_by(completed=True, user_id=current_user.id).all()
+        
+        for task in tasks:
+            db.session.delete(task)
+        
+        db.session.commit()
+        return jsonify({'message': f'{len(tasks)} tarefas concluídas removidas com sucesso'})
+    
+    except Exception as e:
+        current_app.logger.error(f"Erro ao excluir tarefas concluídas: {str(e)}")
+        return jsonify({'error': 'Erro interno do servidor', 'details': str(e)}), 500
 
 @dashboard_bp.route('/api/notes', methods=['GET', 'POST'])
 @login_required
@@ -192,24 +210,118 @@ def api_notes():
         current_app.logger.error(f"Erro na API de notas: {str(e)}")
         return jsonify({'error': 'Erro interno do servidor'}), 500
 
+@dashboard_bp.route('/api/events', methods=['GET', 'POST'])
+@login_required
+def api_events():
+    """API para gerenciar eventos de calendário."""
+    try:
+        if request.method == 'GET':
+            # Listar eventos
+            start_date = request.args.get('start_date')
+            end_date = request.args.get('end_date')
+            
+            if start_date:
+                start_date = datetime.datetime.fromisoformat(start_date)
+            if end_date:
+                end_date = datetime.datetime.fromisoformat(end_date)
+            
+            events = get_user_events(start_date=start_date, end_date=end_date)
+            return jsonify(events)
+        
+        elif request.method == 'POST':
+            # Criar novo evento
+            data = request.json
+            event = CalendarEvent(
+                title=data.get('title'),
+                date=datetime.datetime.fromisoformat(data.get('date')) if data.get('date') else datetime.datetime.now(),
+                description=data.get('description', ''),
+                category=data.get('category', 'default'),
+                color=data.get('color'),
+                user_id=current_user.id
+            )
+            db.session.add(event)
+            db.session.commit()
+            
+            return jsonify(event.to_dict()), 201
+    
+    except Exception as e:
+        current_app.logger.error(f"Erro na API de eventos: {str(e)}")
+        return jsonify({'error': 'Erro interno do servidor', 'details': str(e)}), 500
+
+
+@dashboard_bp.route('/api/events/<int:event_id>', methods=['GET', 'PATCH', 'DELETE'])
+@login_required
+def api_event(event_id):
+    """API para gerenciar um evento específico."""
+    try:
+        event = CalendarEvent.query.get_or_404(event_id)
+        
+        # Verificar permissão
+        if event.user_id != current_user.id:
+            return jsonify({'error': 'Não autorizado'}), 403
+        
+        if request.method == 'GET':
+            # Obter detalhes do evento
+            return jsonify(event.to_dict())
+        
+        elif request.method == 'PATCH':
+            # Atualizar evento existente
+            data = request.json
+            
+            if 'title' in data:
+                event.title = data['title']
+            if 'date' in data and data['date']:
+                event.date = datetime.datetime.fromisoformat(data['date'])
+            if 'description' in data:
+                event.description = data['description']
+            if 'category' in data:
+                event.category = data['category']
+            if 'color' in data:
+                event.color = data['color']
+            
+            db.session.commit()
+            return jsonify(event.to_dict())
+        
+        elif request.method == 'DELETE':
+            # Excluir evento
+            db.session.delete(event)
+            db.session.commit()
+            return jsonify({'message': 'Evento excluído com sucesso'})
+    
+    except Exception as e:
+        current_app.logger.error(f"Erro na API de evento {event_id}: {str(e)}")
+        return jsonify({'error': 'Erro interno do servidor', 'details': str(e)}), 500
+
+
 @dashboard_bp.route('/api/dashboard-config', methods=['GET', 'POST'])
 @login_required
 def api_dashboard_config():
     """API para salvar e carregar configurações do painel."""
-    # Esta rota seria para salvar e carregar as configurações do painel no servidor
-    # Para simplicidade, deixamos o armazenamento no lado do cliente (localStorage)
     try:
         if request.method == 'GET':
-            # Implementação futura: carregar do banco de dados
-            return jsonify({'message': 'Funcionalidade ainda não implementada'})
+            # Obter configuração atual do dashboard
+            config = DashboardConfig.query.filter_by(user_id=current_user.id).first()
+            if config:
+                return jsonify(config.to_dict())
+            else:
+                # Retornar configuração padrão
+                return jsonify({
+                    'layout': 'grid',
+                    'theme': 'light',
+                    'auto_refresh': False,
+                    'refresh_interval': 60,
+                    'config_data': {}
+                })
         
         elif request.method == 'POST':
-            # Implementação futura: salvar no banco de dados
-            return jsonify({'message': 'Configuração salva com sucesso'})
+            # Salvar configuração do dashboard
+            data = request.json
+            config = save_dashboard_config(data)
+            return jsonify(config.to_dict())
     
     except Exception as e:
         current_app.logger.error(f"Erro na API de configuração do dashboard: {str(e)}")
-        return jsonify({'error': 'Erro interno do servidor'}), 500
+        return jsonify({'error': 'Erro interno do servidor', 'details': str(e)}), 500
 
 @dashboard_bp.route('/api/charts-data')
 @login_required

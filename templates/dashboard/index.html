@@ -2344,23 +2344,61 @@
         })
         .then(data => {
             console.log('Tarefa atualizada com sucesso:', data);
+            
+            // Se a tarefa foi concluída, mostrar uma mensagem de sucesso
+            if (completed) {
+                showToast('Tarefa concluída com sucesso!', 'success');
+            }
         })
         .catch(error => {
             console.error('Erro ao atualizar tarefa:', error);
-            // Mostrar mensagem de erro
-            const alertEl = document.createElement('div');
-            alertEl.className = 'alert alert-danger alert-dismissible fade show fixed-top mx-auto mt-3';
-            alertEl.style.width = '300px';
-            alertEl.style.maxWidth = '90%';
-            alertEl.innerHTML = `
-                <strong>Erro!</strong> Não foi possível atualizar a tarefa.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-            `;
-            document.body.appendChild(alertEl);
-            
-            setTimeout(() => {
-                alertEl.remove();
-            }, 3000);
+            showToast('Não foi possível atualizar a tarefa.', 'danger');
+        });
+    }
+    
+    function showToast(message, type = 'info') {
+        // Mostrar mensagem temporária
+        const alertEl = document.createElement('div');
+        alertEl.className = `alert alert-${type} alert-dismissible fade show fixed-top mx-auto mt-3`;
+        alertEl.style.width = '300px';
+        alertEl.style.maxWidth = '90%';
+        alertEl.style.zIndex = '9999';
+        alertEl.innerHTML = `
+            <strong>${type === 'success' ? 'Sucesso!' : type === 'danger' ? 'Erro!' : 'Informação:'}</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        `;
+        document.body.appendChild(alertEl);
+        
+        setTimeout(() => {
+            alertEl.remove();
+        }, 3000);
+    }
+    
+    // Função para inicializar as widgets do dashboard
+    function initDashboardWidgets() {
+        // Carregar tarefas em todas as widgets de tarefas
+        document.querySelectorAll('.widget-tasks').forEach(widget => {
+            loadTasks(widget);
+        });
+        
+        // Carregar calendário em todas as widgets de calendário
+        document.querySelectorAll('.widget-calendar').forEach(widget => {
+            updateCalendar(widget);
+        });
+        
+        // Carregar estatísticas em todas as widgets de estatísticas
+        document.querySelectorAll('.widget-stats').forEach(widget => {
+            loadStats(widget);
+        });
+        
+        // Carregar documentos recentes em todas as widgets de documentos
+        document.querySelectorAll('.widget-recent-documents').forEach(widget => {
+            loadRecentDocuments(widget);
+        });
+        
+        // Carregar formulários recentes em todas as widgets de formulários
+        document.querySelectorAll('.widget-recent-forms').forEach(widget => {
+            loadRecentForms(widget);
         });
     }
     
