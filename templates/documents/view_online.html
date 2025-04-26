@@ -32,20 +32,91 @@
     }
     
     @media print {
-        .navbar, .footer, .document-actions {
-            display: none;
+        /* Configurações gerais da página para impressão */
+        @page {
+            margin: 0.5cm;
+            size: portrait;
+            marks: none;
         }
         
+        /* Elementos que não devem ser impressos */
+        .navbar, .footer, .document-actions, .card-header, .btn,
+        header, nav, aside, .sidebar, .no-print {
+            display: none !important;
+            height: 0 !important;
+            visibility: hidden !important;
+        }
+        
+        /* Ajustes globais */
+        html, body {
+            width: 100% !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background-color: white !important;
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        
+        /* Garantir que o conteúdo principal seja exibido corretamente */
+        .container, .card, .card-body {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            display: block !important;
+        }
+        
+        /* Ajustes para contêineres de documentos */
         .document-html-container {
-            border: none;
-            height: auto;
-            max-height: none;
-            overflow: visible;
+            border: none !important;
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            margin: 0 !important;
         }
         
-        body {
-            padding: 0;
-            margin: 0;
+        /* Otimizações para PDF e iframe */
+        .document-iframe {
+            border: none !important;
+            height: 100vh !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: block !important;
+            page-break-inside: avoid !important;
+        }
+        
+        /* Ajustes para imagens */
+        img {
+            max-width: 100% !important;
+            page-break-inside: avoid !important;
+        }
+        
+        /* Forçar cores de fundo e texto para garantir legibilidade */
+        * {
+            color: black !important;
+            background: transparent !important;
+        }
+        
+        /* Evitar quebras dentro de elementos importantes */
+        p, h1, h2, h3, h4, h5, h6, table, figure, ul, ol {
+            orphans: 3;
+            widows: 3;
+            page-break-inside: avoid;
+        }
+        
+        /* Forçar quebras de página específicas */
+        .page-break-after {
+            page-break-after: always;
+        }
+        
+        .page-break-before {
+            page-break-before: always;
         }
     }
 </style>
@@ -179,7 +250,53 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Adicionar classe ativa no item de menu correspondente
-        document.querySelector('#nav-documents').classList.add('active');
+        const navItem = document.querySelector('#nav-documents');
+        if (navItem) {
+            navItem.classList.add('active');
+        }
+        
+        // Preparar elementos para impressão
+        function prepareForPrinting() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(function(iframe) {
+                try {
+                    // Tentar ajustar altura para conteúdo
+                    if (iframe.contentWindow && iframe.contentWindow.document && iframe.contentWindow.document.body) {
+                        iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 50) + 'px';
+                    }
+                } catch(e) {
+                    console.log('Não foi possível acessar o conteúdo do iframe:', e);
+                }
+                // Marcar como pronto para impressão
+                iframe.setAttribute('data-print-ready', 'true');
+            });
+            
+            // Otimizar imagens para impressão
+            const images = document.querySelectorAll('img');
+            images.forEach(function(img) {
+                img.style.maxWidth = '100%';
+                img.setAttribute('data-print-ready', 'true');
+            });
+        }
+        
+        // Eventos para impressão
+        window.addEventListener('beforeprint', function() {
+            console.log('Preparando para impressão...');
+            prepareForPrinting();
+            
+            // Ocultar elementos desnecessários
+            document.querySelectorAll('.document-actions, .btn, .btn-group, .alert').forEach(function(el) {
+                el.style.display = 'none';
+            });
+        });
+        
+        window.addEventListener('afterprint', function() {
+            console.log('Impressão concluída. Restaurando visualização...');
+            // Restaurar elementos ocultos
+            document.querySelectorAll('.document-actions, .btn, .btn-group, .alert').forEach(function(el) {
+                el.style.display = '';
+            });
+        });
         
         // Controles para zoom de PDF
         const pdfViewer = document.getElementById('pdf-viewer');
@@ -217,7 +334,25 @@
                 pdfViewer.style.transform = `scale(${scale})`;
                 pdfViewer.style.transformOrigin = 'top left';
             }
+            
+            // Preparação para impressão quando PDF carregado
+            pdfViewer.onload = function() {
+                console.log('PDF carregado e pronto para visualização');
+                this.setAttribute('data-loaded', 'true');
+            };
         }
+        
+        // Verificar outros tipos de visualizadores
+        const officeViewer = document.getElementById('office-viewer');
+        if (officeViewer) {
+            officeViewer.onload = function() {
+                console.log('Documento Office carregado');
+                this.setAttribute('data-loaded', 'true');
+            };
+        }
+        
+        // Preparação inicial para impressão
+        setTimeout(prepareForPrinting, 800);
     });
 </script>
 {% endblock %}
