@@ -99,32 +99,60 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for doc in documentos %}
-                                        <tr>
-                                            <td>
-                                                <i class="fa {{ doc.get_icon_class() }} me-2"></i>
-                                                {{ doc.title }}
-                                            </td>
-                                            <td>{{ doc.description|truncate(50) if doc.description else "---" }}</td>
-                                            <td>{{ doc.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
-                                            <td>
-                                                <a href="{{ url_for('documents.view_document', document_id=doc.id) }}" class="btn btn-sm btn-primary" title="Visualizar">
-                                                    <i class="fa fa-eye"></i>
-                                                </a>
-                                                <a href="{{ url_for('documents.download_document', document_id=doc.id) }}" class="btn btn-sm btn-success" title="Download">
-                                                    <i class="fa fa-download"></i>
-                                                </a>
-                                                <a href="{{ url_for('documents.print_document', document_id=doc.id) }}" class="btn btn-sm btn-secondary" title="Imprimir" target="_blank">
-                                                    <i class="fa fa-print"></i>
-                                                </a>
-                                                {% if doc.file_type == 'html' %}
-                                                <a href="{{ url_for('documents.edit_online', document_id=doc.id) }}" class="btn btn-sm btn-warning" title="Editar Online">
-                                                    <i class="fa fa-pencil-alt"></i>
-                                                </a>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
+                                        <!-- Documentos do banco de dados -->
+                                        {% if documentos.documentos_bd %}
+                                            {% for doc in documentos.documentos_bd %}
+                                            <tr>
+                                                <td>
+                                                    <i class="fa {{ doc.get_icon_class() }} me-2"></i>
+                                                    {{ doc.title }}
+                                                </td>
+                                                <td>{{ doc.description|truncate(50) if doc.description else "---" }}</td>
+                                                <td>{{ doc.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                                <td>
+                                                    <a href="{{ url_for('documents.view_document', document_id=doc.id) }}" class="btn btn-sm btn-primary" title="Visualizar">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ url_for('documents.download_document', document_id=doc.id) }}" class="btn btn-sm btn-success" title="Download">
+                                                        <i class="fa fa-download"></i>
+                                                    </a>
+                                                    <a href="{{ url_for('documents.print_document', document_id=doc.id) }}" class="btn btn-sm btn-secondary" title="Imprimir" target="_blank">
+                                                        <i class="fa fa-print"></i>
+                                                    </a>
+                                                    {% if doc.file_type == 'html' %}
+                                                    <a href="{{ url_for('documents.edit_online', document_id=doc.id) }}" class="btn btn-sm btn-warning" title="Editar Online">
+                                                        <i class="fa fa-pencil-alt"></i>
+                                                    </a>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% endif %}
+                                        
+                                        <!-- Documentos virtuais (sistema de arquivos) -->
+                                        {% if documentos.documentos_virtuais %}
+                                            {% for doc in documentos.documentos_virtuais %}
+                                            <tr>
+                                                <td>
+                                                    <i class="fa {{ doc.icon_class }} me-2"></i>
+                                                    {{ doc.title }}
+                                                </td>
+                                                <td>{{ doc.description|truncate(50) if doc.description else "---" }}</td>
+                                                <td>{{ doc.created_at|timestamp_to_date }}</td>
+                                                <td>
+                                                    <a href="{{ url_for('forms.view_form', file_path=doc.file_path) }}" class="btn btn-sm btn-primary" title="Visualizar">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ url_for('forms.download_form', file_path=doc.file_path) }}" class="btn btn-sm btn-success" title="Download">
+                                                        <i class="fa fa-download"></i>
+                                                    </a>
+                                                    <a href="{{ url_for('forms.fill_form', file_path=doc.file_path) }}" class="btn btn-sm btn-info" title="Preencher">
+                                                        <i class="fa fa-pencil-alt"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% endif %}
                                     </tbody>
                                 </table>
                             </div>

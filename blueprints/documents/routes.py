@@ -56,40 +56,95 @@ def index():
     
     # Obter documentos por categoria para formulários
     formularios = {}
-    if TechnicalDocument.query.filter_by(document_type='formulario').count() > 0:
-        categorias = ['blender', 'laboratorio', 'portaria', 'qualidade', 'tba']
+    
+    # Importar as bibliotecas necessárias
+    import os
+    
+    # Definir o diretório de formulários
+    FORMS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'extracted_forms')
+    
+    # Mapeamento de categorias para pasta real
+    mapeamento_categorias = {
+        'blender': 'FORMULÁRIOS BLENDER',
+        'laboratorio': 'FORMULÁRIOS LABORATÓRIO',
+        'portaria': 'FORMULÁRIOS PORTARIA', 
+        'qualidade': 'FORMULÁRIOS QUALIDADE',
+        'tba': 'FORMULÁRIOS TBA',
+    }
+    
+    # Categorias que queremos mostrar
+    categorias = ['blender', 'laboratorio', 'portaria', 'qualidade', 'tba']
+    
+    for categoria in categorias:
+        # Nome da categoria em maiúsculas
+        nome_categoria = categoria.upper()
         
-        # Adicionar referências para documentos do sistema de arquivos
-        from os import path
-        FORMS_DIR = path.join(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))), 'extracted_forms')
+        # Pasta real no sistema de arquivos
+        pasta_real = mapeamento_categorias.get(categoria)
+        pasta_completa = os.path.join(FORMS_DIR, pasta_real)
         
-        for categoria in categorias:
-            # Primeiro adiciona documentos do banco de dados
-            docs = TechnicalDocument.query.filter_by(
+        # Lista para armazenar os documentos virtuais
+        docs_virtuais = []
+        
+        # Verificar se a pasta existe
+        if pasta_real and os.path.exists(pasta_completa):
+            # Obter arquivos na pasta
+            for root, dirs, files in os.walk(pasta_completa):
+                for arquivo in files:
+                    # Ignorar temporários e ocultos
+                    if arquivo.startswith('~$') or arquivo.startswith('.'):
+                        continue
+                        
+                    # Caminho relativo ao diretório base
+                    caminho_relativo = os.path.relpath(os.path.join(root, arquivo), FORMS_DIR)
+                    caminho_completo = os.path.join(FORMS_DIR, caminho_relativo)
+                    
+                    # Extensão do arquivo
+                    extensao = os.path.splitext(arquivo)[1].lower()
+                    
+                    # Data de modificação
+                    data_mod = os.path.getmtime(caminho_completo)
+                    
+                    # Determinar ícone baseado na extensão
+                    if extensao in ['.pdf']:
+                        icone = 'fa-file-pdf'
+                    elif extensao in ['.doc', '.docx']:
+                        icone = 'fa-file-word'
+                    elif extensao in ['.xls', '.xlsx']:
+                        icone = 'fa-file-excel'
+                    elif extensao in ['.ppt', '.pptx']:
+                        icone = 'fa-file-powerpoint'
+                    elif extensao in ['.jpg', '.jpeg', '.png', '.gif']:
+                        icone = 'fa-file-image'
+                    else:
+                        icone = 'fa-file'
+                    
+                    # Criar documento virtual
+                    doc_virtual = {
+                        'id': f"file_{pasta_real}_{arquivo}".replace(" ", "_"),
+                        'title': arquivo,
+                        'file_path': caminho_relativo,
+                        'description': f"Formulário {pasta_real}",
+                        'created_at': data_mod,
+                        'icon_class': icone,
+                        'is_virtual': True
+                    }
+                    
+                    docs_virtuais.append(doc_virtual)
+            
+            # Adicionar documentos do banco de dados
+            docs_bd = TechnicalDocument.query.filter_by(
                 document_type='formulario',
                 category=categoria,
                 status='ativo'
             ).order_by(TechnicalDocument.title).all()
             
-            # Lista para documentos que serão exibidos
-            categoria_docs = docs.copy() if docs else []
-            
-            # Mapeamento de nomes de categorias do banco de dados para pastas reais
-            categoria_mapeada = {
-                'blender': 'FORMULÁRIOS BLENDER',
-                'laboratorio': 'FORMULÁRIOS LABORATÓRIO',
-                'portaria': 'FORMULÁRIOS PORTARIA',
-                'qualidade': 'FORMULÁRIOS QUALIDADE',
-                'tba': 'FORMULÁRIOS TBA',
-            }.get(categoria)
-            
-            # Checa se a pasta existe no sistema de arquivos
-            if categoria_mapeada and path.exists(path.join(FORMS_DIR, categoria_mapeada)):
-                nome_categoria = categoria.upper()
-                formularios[nome_categoria] = categoria_docs
-            elif docs:  # Se pelo menos houver documentos no banco
-                nome_categoria = categoria.upper()
-                formularios[nome_categoria] = categoria_docs
+            # Se tiver documentos, adicionar à lista
+            if docs_virtuais or docs_bd:
+                formularios[nome_categoria] = {
+                    'documentos_bd': docs_bd,
+                    'documentos_virtuais': docs_virtuais
+                }
     
     return render_template(
         'documents/index.html',
