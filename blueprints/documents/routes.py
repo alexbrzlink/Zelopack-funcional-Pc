@@ -519,6 +519,174 @@ def new_version(document_id):
     )
 
 
+@documents_bp.route('/print/<int:document_id>')
+@login_required
+def print_document(document_id):
+    """Versão para impressão de um documento técnico."""
+    document = TechnicalDocument.query.get_or_404(document_id)
+    
+    # Verificar permissão para documentos restritos
+    if document.restricted_access and current_user.role != 'admin':
+        flash('Você não tem permissão para acessar este documento.', 'warning')
+        return redirect(url_for('documents.index'))
+    
+    if os.path.exists(document.file_path):
+        file_ext = os.path.splitext(document.file_path)[1].lower()
+        
+        # Para PDFs, abrir diretamente para impressão
+        if file_ext == '.pdf':
+            return send_file(
+                document.file_path,
+                as_attachment=False,
+                download_name=document.original_filename
+            )
+        # Para arquivos HTML, exibir diretamente no iframe
+        elif file_ext == '.html':
+            with open(document.file_path, 'r', encoding='utf-8') as f:
+                html_content = f.read()
+            return render_template(
+                'documents/print_view.html',
+                title=f'Impressão: {document.title}',
+                document=document,
+                html_content=html_content
+            )
+        else:
+            # Para outros tipos de arquivo, informar que não é possível imprimir diretamente
+            flash('Este tipo de arquivo não pode ser impresso diretamente pelo navegador. Faça o download para imprimir.', 'info')
+            return redirect(url_for('documents.view_document', document_id=document.id))
+    else:
+        flash('Arquivo não encontrado.', 'danger')
+        return redirect(url_for('documents.view_document', document_id=document.id))
+
+
+@documents_bp.route('/view-file/<path:file_path>')
+@login_required
+def view_virtual_document(file_path):
+    """Visualizar um documento virtual (arquivo do sistema)."""
+    # Montar o caminho completo
+    FORMS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'extracted_forms')
+    
+    # Garantir que o caminho é seguro (dentro do diretório permitido)
+    full_path = os.path.join(FORMS_DIR, file_path)
+    
+    # Verificar se o arquivo existe
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        flash('Arquivo não encontrado.', 'danger')
+        return redirect(url_for('documents.index'))
+    
+    # Verificar a extensão do arquivo
+    file_ext = os.path.splitext(full_path)[1].lower()
+    file_name = os.path.basename(full_path)
+    
+    # Determinar o modo de visualização
+    online_view = request.args.get('online', False)
+    
+    if online_view:
+        # Para PDFs, exibir no iframe usando o viewer nativo do navegador
+        if file_ext == '.pdf':
+            return render_template(
+                'documents/view_online.html',
+                title=f'Visualização Online: {file_name}',
+                document={'title': file_name, 'file_type': 'pdf'},
+                pdf_path=url_for('documents.download_virtual_document', file_path=file_path)
+            )
+        # Para arquivos HTML, exibir diretamente no iframe
+        elif file_ext == '.html':
+            with open(full_path, 'r', encoding='utf-8') as f:
+                html_content = f.read()
+            return render_template(
+                'documents/view_online.html',
+                title=f'Visualização Online: {file_name}',
+                document={'title': file_name, 'file_type': 'html'},
+                html_content=html_content
+            )
+        # Para arquivos de imagem
+        elif file_ext in ['.jpg', '.jpeg', '.png', '.gif']:
+            return render_template(
+                'documents/view_online.html',
+                title=f'Visualização Online: {file_name}',
+                document={'title': file_name, 'file_type': file_ext[1:]},
+                image_path=url_for('documents.download_virtual_document', file_path=file_path, as_attachment=False)
+            )
+        else:
+            # Para outros tipos, tentar embutir ou oferecer download
+            flash('Visualização online não disponível para este tipo de arquivo. Faça o download para visualizar.', 'info')
+            return redirect(url_for('documents.download_virtual_document', file_path=file_path))
+    else:
+        # Download direto
+        return redirect(url_for('documents.download_virtual_document', file_path=file_path))
+
+
+@documents_bp.route('/download-file/<path:file_path>')
+@login_required
+def download_virtual_document(file_path):
+    """Download de um documento virtual (arquivo do sistema)."""
+    # Montar o caminho completo
+    FORMS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'extracted_forms')
+    
+    # Garantir que o caminho é seguro (dentro do diretório permitido)
+    full_path = os.path.join(FORMS_DIR, file_path)
+    
+    # Verificar se o arquivo existe
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        flash('Arquivo não encontrado.', 'danger')
+        return redirect(url_for('documents.index'))
+    
+    # Determinar se deve baixar como anexo ou visualizar no navegador
+    as_attachment = request.args.get('as_attachment', 'true').lower() == 'true'
+    
+    try:
+        return send_file(
+            full_path,
+            as_attachment=as_attachment,
+            download_name=os.path.basename(full_path)
+        )
+    except Exception as e:
+        flash(f'Erro ao baixar o arquivo: {str(e)}', 'danger')
+        return redirect(url_for('documents.index'))
+
+
+@documents_bp.route('/print-file/<path:file_path>')
+@login_required
+def print_virtual_document(file_path):
+    """Versão para impressão de um documento virtual (arquivo do sistema)."""
+    # Montar o caminho completo
+    FORMS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'extracted_forms')
+    
+    # Garantir que o caminho é seguro (dentro do diretório permitido)
+    full_path = os.path.join(FORMS_DIR, file_path)
+    
+    # Verificar se o arquivo existe
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        flash('Arquivo não encontrado.', 'danger')
+        return redirect(url_for('documents.index'))
+    
+    file_ext = os.path.splitext(full_path)[1].lower()
+    file_name = os.path.basename(full_path)
+    
+    # Para PDFs, abrir diretamente para impressão
+    if file_ext == '.pdf':
+        return send_file(
+            full_path,
+            as_attachment=False,
+            download_name=file_name
+        )
+    # Para arquivos HTML, exibir diretamente no iframe
+    elif file_ext == '.html':
+        with open(full_path, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        return render_template(
+            'documents/print_view.html',
+            title=f'Impressão: {file_name}',
+            document={'title': file_name},
+            html_content=html_content
+        )
+    else:
+        # Para outros tipos de arquivo, informar que não é possível imprimir diretamente
+        flash('Este tipo de arquivo não pode ser impresso diretamente pelo navegador. Faça o download para imprimir.', 'info')
+        return redirect(url_for('documents.download_virtual_document', file_path=file_path))
+
+
 @documents_bp.route('/download/<int:document_id>')
 @login_required
 def download_document(document_id):
@@ -836,41 +1004,7 @@ def edit_online(document_id):
     )
 
 
-@documents_bp.route('/print/<int:document_id>')
-@login_required
-def print_document(document_id):
-    """Visualização para impressão do documento."""
-    document = TechnicalDocument.query.get_or_404(document_id)
-    
-    # Verificar permissão para documentos restritos
-    if document.restricted_access and current_user.role != 'admin':
-        flash('Você não tem permissão para acessar este documento.', 'warning')
-        return redirect(url_for('documents.index'))
-    
-    # Para documentos HTML, exibir conteúdo diretamente
-    if document.file_type == 'html':
-        try:
-            with open(document.file_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-                
-            # Adicionar data e hora atual
-            from datetime import datetime
-            now = datetime.utcnow()
-                
-            return render_template(
-                'documents/print.html',
-                title=f'Impressão: {document.title}',
-                document=document,
-                content=content,
-                now=now,
-                current_user=current_user
-            )
-        except Exception as e:
-            flash(f'Erro ao ler o documento: {str(e)}', 'danger')
-            return redirect(url_for('documents.view_document', document_id=document.id))
-    
-    # Para outros tipos de documento, redirecionar para download
-    return redirect(url_for('documents.download_document', document_id=document.id))
+# Esta função foi removida e consolidada com a rota print_document acima
 
 
 @documents_bp.route('/image-preview/<int:document_id>')
