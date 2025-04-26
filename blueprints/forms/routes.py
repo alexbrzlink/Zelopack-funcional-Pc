@@ -28,21 +28,9 @@ FORMS_DIR = os.path.join(os.getcwd(), 'extracted_forms')
 @forms_bp.route('/')
 @login_required
 def index():
-    """Página principal para visualização de formulários."""
-    # Obtém as categorias de formulários (pastas)
-    categories = []
-    for item in os.listdir(FORMS_DIR):
-        if os.path.isdir(os.path.join(FORMS_DIR, item)):
-            categories.append(item)
-    
-    # Ordenar alfabeticamente
-    categories.sort()
-    
-    return render_template(
-        'forms/index.html',
-        title="Formulários Zelopack",
-        categories=categories
-    )
+    """Redirecionamento para a página de documentos, agora que formulários foram movidos para lá."""
+    flash("Todos os formulários foram reorganizados na seção de Documentos.", "info")
+    return redirect(url_for('documents.index'))
 
 @forms_bp.route('/category/<category>')
 @login_required

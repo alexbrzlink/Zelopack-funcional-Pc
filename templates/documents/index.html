@@ -62,6 +62,31 @@
                              id="content-{{ categoria|lower }}" 
                              role="tabpanel" 
                              aria-labelledby="tab-{{ categoria|lower }}">
+                             
+                            <!-- Descrição da categoria -->
+                            <div class="alert alert-light mb-3">
+                                {% if categoria == 'BLENDER' %}
+                                    <p><strong>FORMULÁRIOS BLENDER</strong><br>
+                                    Acesse todos os formulários desta categoria</p>
+                                {% elif categoria == 'LABORATORIO' %}
+                                    <p><strong>FORMULÁRIOS LABORATÓRIO</strong><br>
+                                    Acesse todos os formulários desta categoria</p>
+                                {% elif categoria == 'PORTARIA' %}
+                                    <p><strong>FORMULÁRIOS PORTARIA</strong><br>
+                                    Acesse todos os formulários desta categoria</p>
+                                {% elif categoria == 'QUALIDADE' %}
+                                    <p><strong>FORMULÁRIOS QUALIDADE</strong><br>
+                                    Documentos para garantia da qualidade e atendimento de normas</p>
+                                {% elif categoria == 'TBA' %}
+                                    <p><strong>FORMULÁRIOS TBA</strong><br>
+                                    Documentos relacionados aos tanques e equipamentos TBA</p>
+                                {% else %}
+                                    <p><strong>FORMULÁRIOS {{ categoria }}</strong></p>
+                                {% endif %}
+                                <a href="#" class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ url_for('documents.search_documents') }}?document_type=formulario&category={{ categoria|lower }}'">
+                                    <i class="fas fa-search me-1"></i> Visualizar todos
+                                </a>
+                            </div>
                             
                             <div class="table-responsive">
                                 <table class="table table-hover">
