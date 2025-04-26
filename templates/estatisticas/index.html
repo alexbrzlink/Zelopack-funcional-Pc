@@ -191,8 +191,8 @@
             </div>
             <div class="d-none d-md-block">
                 <div class="btn-group">
-                    <a href="{{ url_for('estatisticas.reports_statistics') }}" class="btn btn-light">
-                        <i class="fas fa-file-alt me-2"></i> Relatórios
+                    <a href="{{ url_for('estatisticas.documents_statistics') }}" class="btn btn-light">
+                        <i class="fas fa-file-alt me-2"></i> Documentos
                     </a>
                     {% if current_user.role == 'admin' %}
                     <a href="{{ url_for('estatisticas.users_statistics') }}" class="btn btn-light">
@@ -216,7 +216,7 @@
                         <i class="fas fa-file-alt"></i>
                     </div>
                     <div class="stat-value">{{ total_reports }}</div>
-                    <div class="stat-label">Relatórios</div>
+                    <div class="stat-label">Documentos</div>
                 </div>
             </div>
         </div>
@@ -251,11 +251,11 @@
         <div class="col-lg-8 mb-4">
             <div class="card chart-card h-100">
                 <div class="card-header bg-white">
-                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i> Relatórios por Mês</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i> Documentos por Mês</h5>
                 </div>
                 <div class="card-body text-center p-4">
                     {% if line_chart %}
-                        <img src="data:image/png;base64,{{ line_chart }}" alt="Relatórios por Mês" class="chart-img">
+                        <img src="data:image/png;base64,{{ line_chart }}" alt="Documentos por Mês" class="chart-img">
                     {% else %}
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i> Não há dados suficientes para gerar o gráfico.

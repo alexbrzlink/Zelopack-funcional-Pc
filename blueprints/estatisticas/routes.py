@@ -130,15 +130,15 @@ def index():
                           recent_activities=recent_activities)
 
 
-@estatisticas_bp.route('/relatorios')
+@estatisticas_bp.route('/documentos')
 @login_required
-def reports_statistics():
-    """Estatísticas detalhadas de relatórios."""
+def documents_statistics():
+    """Estatísticas detalhadas de documentos."""
     # Registrar visualização
     log_view(
         user_id=current_user.id,
         module='estatisticas',
-        details='Visualização de estatísticas detalhadas de relatórios'
+        details='Visualização de estatísticas detalhadas de documentos'
     )
     
     # Obter documentos por tipo
@@ -200,11 +200,11 @@ def reports_statistics():
     day_names = [day_mapping.get(int(report.day), 'Desconhecido') for report in reports_by_day]
     day_counts = [report.count for report in reports_by_day]
     
-    # Gerar gráfico de barras para relatórios por dia da semana
-    day_chart = create_bar_chart(day_names, day_counts, 'Relatórios por Dia da Semana', 'Dia', 'Quantidade')
+    # Gerar gráfico de barras para documentos por dia da semana
+    day_chart = create_bar_chart(day_names, day_counts, 'Documentos por Dia da Semana', 'Dia', 'Quantidade')
     
-    return render_template('estatisticas/relatorios.html', 
-                          title='Estatísticas de Relatórios', 
+    return render_template('estatisticas/documentos.html', 
+                          title='Estatísticas de Documentos', 
                           category_chart=category_chart,
                           status_chart=status_chart,
                           day_chart=day_chart)
