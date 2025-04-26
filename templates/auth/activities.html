@@ -1,0 +1,464 @@
+{% extends 'base.html' %}
+
+{% block title %}Histórico de Atividades - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filters-card {
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .filters-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: #00978D;
+    }
+    
+    .search-section {
+        background: linear-gradient(135deg, #00978D 0%, #006A60 100%);
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .search-section h1 {
+        color: white;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .search-section p {
+        color: rgba(255, 255, 255, 0.85);
+    }
+    
+    .filter-badge {
+        background-color: rgba(0, 151, 141, 0.1);
+        color: #00978D;
+        border-radius: 50px;
+        padding: 0.4rem 0.8rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+    
+    .filter-badge i {
+        margin-left: 0.5rem;
+        cursor: pointer;
+    }
+    
+    .activity-table tr {
+        transition: background-color 0.2s;
+    }
+    
+    .activity-table tr:hover {
+        background-color: rgba(0, 151, 141, 0.05);
+    }
+    
+    .detail-cell {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .detail-cell:hover {
+        overflow: visible;
+        white-space: normal;
+        background-color: #f8f9fa;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+    
+    .page-item.active .page-link {
+        background-color: #00978D;
+        border-color: #00978D;
+    }
+    
+    .page-link {
+        color: #00978D;
+    }
+    
+    .page-link:hover {
+        color: #006A60;
+    }
+    
+    .page-item.disabled .page-link {
+        color: #6c757d;
+    }
+    
+    .no-activities {
+        padding: 4rem 2rem;
+        text-align: center;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        margin-top: 2rem;
+    }
+    
+    .no-activities i {
+        font-size: 3rem;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+    
+    .no-activities h4 {
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+    
+    .no-activities p {
+        color: #adb5bd;
+    }
+    
+    .date-input-group {
+        display: flex;
+        align-items: center;
+    }
+    
+    .date-separator {
+        margin: 0 0.5rem;
+        color: #6c757d;
+    }
+    
+    .filter-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .filter-applied {
+        margin-bottom: 1.5rem;
+        padding: 0.75rem 1rem;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .action-cell {
+        min-width: 100px;
+    }
+    
+    .module-cell {
+        min-width: 120px;
+    }
+    
+    .user-cell {
+        min-width: 150px;
+    }
+    
+    .timestamp-cell {
+        min-width: 170px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Cabeçalho de Pesquisa -->
+    <div class="search-section mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-history me-2"></i> Histórico de Atividades</h1>
+                <p class="mb-0">Rastreamento completo de todas as ações realizadas no sistema.</p>
+            </div>
+            <div class="d-none d-md-block">
+                <a href="{{ url_for('auth.admin') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-2"></i> Voltar para Administração
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filtros de Pesquisa -->
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card filters-card">
+                <div class="card-body">
+                    <form method="get" action="{{ url_for('auth.activities') }}">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="filters-title">
+                                    <i class="fas fa-filter me-2"></i> Filtrar Atividades
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="user_id" class="form-label">Usuário</label>
+                                <select class="form-select" id="user_id" name="user_id">
+                                    <option value="">Todos os Usuários</option>
+                                    {% for user in users %}
+                                        <option value="{{ user.id }}" {% if filters.user_id == user.id %}selected{% endif %}>
+                                            {{ user.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="module" class="form-label">Módulo</label>
+                                <select class="form-select" id="module" name="module">
+                                    <option value="">Todos os Módulos</option>
+                                    {% for module_name in modules %}
+                                        <option value="{{ module_name }}" {% if filters.module == module_name %}selected{% endif %}>
+                                            {{ module_name|title }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="action" class="form-label">Ação</label>
+                                <select class="form-select" id="action" name="action">
+                                    <option value="">Todas as Ações</option>
+                                    {% for action_name in actions %}
+                                        <option value="{{ action_name }}" {% if filters.action == action_name %}selected{% endif %}>
+                                            {{ action_name|title }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3 mb-3">
+                                <label for="date_from" class="form-label">Período</label>
+                                <div class="date-input-group">
+                                    <input type="date" class="form-control" id="date_from" name="date_from" 
+                                           value="{{ filters.date_from }}" placeholder="Data inicial">
+                                    <span class="date-separator">até</span>
+                                    <input type="date" class="form-control" id="date_to" name="date_to" 
+                                           value="{{ filters.date_to }}" placeholder="Data final">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12 mt-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-2"></i> Filtrar
+                                </button>
+                                <a href="{{ url_for('auth.activities') }}" class="btn btn-outline-secondary ms-2">
+                                    <i class="fas fa-times me-2"></i> Limpar Filtros
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filtros Aplicados -->
+    {% if filters.user_id or filters.module or filters.action or filters.date_from or filters.date_to %}
+    <div class="filter-applied">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <strong><i class="fas fa-filter me-2"></i> Filtros aplicados:</strong>
+                {% if filters.user_id %}
+                    {% for user in users %}
+                        {% if user.id == filters.user_id %}
+                            <span class="filter-badge">Usuário: {{ user.name }}</span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                
+                {% if filters.module %}
+                    <span class="filter-badge">Módulo: {{ filters.module|title }}</span>
+                {% endif %}
+                
+                {% if filters.action %}
+                    <span class="filter-badge">Ação: {{ filters.action|title }}</span>
+                {% endif %}
+                
+                {% if filters.date_from %}
+                    <span class="filter-badge">De: {{ filters.date_from }}</span>
+                {% endif %}
+                
+                {% if filters.date_to %}
+                    <span class="filter-badge">Até: {{ filters.date_to }}</span>
+                {% endif %}
+            </div>
+            <a href="{{ url_for('auth.activities') }}" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-times me-1"></i> Limpar
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Tabela de Atividades -->
+    <div class="card shadow">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 font-weight-bold text-primary">Registros de Atividades</h5>
+        </div>
+        <div class="card-body">
+            {% if activities %}
+            <div class="table-responsive">
+                <table class="table table-hover activity-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="timestamp-cell">Data/Hora</th>
+                            <th scope="col" class="user-cell">Usuário</th>
+                            <th scope="col" class="action-cell">Ação</th>
+                            <th scope="col" class="module-cell">Módulo</th>
+                            <th scope="col">Detalhes</th>
+                            <th scope="col">IP</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities %}
+                        <tr>
+                            <td class="timestamp-cell">{{ activity.created_at.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                            <td class="user-cell">
+                                {% if activity.user %}
+                                    {{ activity.user.name }}
+                                {% else %}
+                                    Sistema
+                                {% endif %}
+                            </td>
+                            <td class="action-cell">{{ activity.action|title }}</td>
+                            <td class="module-cell">{{ activity.module|title }}</td>
+                            <td class="detail-cell">
+                                {% if activity.details %}
+                                    {% if activity.details.startswith('{') %}
+                                        {% set details = activity.details|tojson %}
+                                        {{ details }}
+                                    {% else %}
+                                        {{ activity.details }}
+                                    {% endif %}
+                                {% else %}
+                                    {% if activity.entity_type %}
+                                        {{ activity.action|title }} {{ activity.entity_type }}
+                                        {% if activity.entity_id %} #{{ activity.entity_id }}{% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>{{ activity.ip_address or '-' }}</td>
+                            <td>
+                                {% if activity.status == 'success' %}
+                                    <span class="badge bg-success">Sucesso</span>
+                                {% elif activity.status == 'failed' %}
+                                    <span class="badge bg-danger">Falha</span>
+                                {% elif activity.status == 'error' %}
+                                    <span class="badge bg-warning">Erro</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ activity.status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Paginação -->
+            <div class="pagination-container">
+                <nav aria-label="Navegação de página">
+                    <ul class="pagination">
+                        {% if pagination.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('auth.activities', page=pagination.prev_num, user_id=filters.user_id, module=filters.module, action=filters.action, date_from=filters.date_from, date_to=filters.date_to) }}" aria-label="Anterior">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Anterior">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                            {% if page_num %}
+                                {% if page_num == pagination.page %}
+                                    <li class="page-item active">
+                                        <a class="page-link" href="#">{{ page_num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('auth.activities', page=page_num, user_id=filters.user_id, module=filters.module, action=filters.action, date_from=filters.date_from, date_to=filters.date_to) }}">{{ page_num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">...</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if pagination.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('auth.activities', page=pagination.next_num, user_id=filters.user_id, module=filters.module, action=filters.action, date_from=filters.date_from, date_to=filters.date_to) }}" aria-label="Próximo">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Próximo">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="mt-3 text-muted text-center">
+                Mostrando {{ activities|length }} de {{ pagination.total }} atividades
+            </div>
+            {% else %}
+            <div class="no-activities">
+                <i class="fas fa-search"></i>
+                <h4>Nenhuma atividade encontrada</h4>
+                <p>Tente ajustar seus filtros ou aguarde por novas atividades.</p>
+                <a href="{{ url_for('auth.activities') }}" class="btn btn-outline-primary mt-3">
+                    <i class="fas fa-redo me-2"></i> Limpar Filtros
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ativar o link de administração no menu
+        const navItems = document.querySelectorAll('.nav-item .nav-link');
+        navItems.forEach(item => item.classList.remove('active'));
+        const adminLink = document.querySelector('a[href="{{ url_for("auth.admin") }}"]');
+        if (adminLink) {
+            adminLink.classList.add('active');
+        }
+        
+        // Expandir/colapsar detalhes nas células de detalhes longos
+        const detailCells = document.querySelectorAll('.detail-cell');
+        detailCells.forEach(cell => {
+            if (cell.offsetWidth < cell.scrollWidth) {
+                cell.title = 'Clique para expandir';
+                cell.style.cursor = 'pointer';
+                
+                cell.addEventListener('click', function() {
+                    if (this.classList.contains('expanded')) {
+                        this.classList.remove('expanded');
+                        this.style.whiteSpace = 'nowrap';
+                    } else {
+                        this.classList.add('expanded');
+                        this.style.whiteSpace = 'normal';
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}
