@@ -668,13 +668,16 @@
                                                     <i class="fas fa-folder-open me-1"></i> ${form.category}
                                                 </p>
                                                 <div class="d-flex mt-3 action-buttons">
-                                                    <a href="/forms/view/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-secondary me-2">
+                                                    <a href="/documents/view-file/${encodeURIComponent(form.path)}?online=true" class="btn btn-sm btn-outline-secondary me-2">
                                                         <i class="fas fa-eye me-1"></i> Visualizar
                                                     </a>
                                                     <a href="/forms/interactive/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-${accentColor} me-2">
                                                         <i class="fas fa-edit me-1"></i> Preencher Interativo
                                                     </a>
-                                                    <a href="/forms/download/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-dark">
+                                                    <a href="/documents/print-file/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-success me-2">
+                                                        <i class="fas fa-print me-1"></i> Imprimir
+                                                    </a>
+                                                    <a href="/documents/download-file/${encodeURIComponent(form.path)}" class="btn btn-sm btn-outline-dark">
                                                         <i class="fas fa-download me-1"></i> Baixar
                                                     </a>
                                                 </div>
