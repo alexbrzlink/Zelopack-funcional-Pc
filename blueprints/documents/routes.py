@@ -743,11 +743,17 @@ def print_document(document_id):
             with open(document.file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
                 
+            # Adicionar data e hora atual
+            from datetime import datetime
+            now = datetime.utcnow()
+                
             return render_template(
                 'documents/print.html',
                 title=f'Impressão: {document.title}',
                 document=document,
-                content=content
+                content=content,
+                now=now,
+                current_user=current_user
             )
         except Exception as e:
             flash(f'Erro ao ler o documento: {str(e)}', 'danger')
