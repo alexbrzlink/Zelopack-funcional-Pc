@@ -626,49 +626,65 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>{{ now.strftime('%d/%m/%Y %H:%M') }}</td>
-                                    <td>{{ current_user.name }}</td>
-                                    <td>Acesso</td>
-                                    <td>Administração</td>
-                                    <td>Login no painel administrativo</td>
-                                    <td><span class="badge bg-success">Concluído</span></td>
-                                </tr>
-                                <tr>
-                                    <td>{{ (now - dt).strftime('%d/%m/%Y %H:%M') }}</td>
-                                    <td>Sistema</td>
-                                    <td>Backup</td>
-                                    <td>Banco de Dados</td>
-                                    <td>Backup automático realizado</td>
-                                    <td><span class="badge bg-success">Concluído</span></td>
-                                </tr>
-                                <tr>
-                                    <td>{{ (now - dt * 2).strftime('%d/%m/%Y %H:%M') }}</td>
-                                    <td>Admin</td>
-                                    <td>Registro</td>
-                                    <td>Usuários</td>
-                                    <td>Criação de novo usuário</td>
-                                    <td><span class="badge bg-success">Concluído</span></td>
-                                </tr>
-                                <tr>
-                                    <td>{{ (now - dt * 3).strftime('%d/%m/%Y %H:%M') }}</td>
-                                    <td>Sistema</td>
-                                    <td>Manutenção</td>
-                                    <td>Sistema</td>
-                                    <td>Atualização de índices</td>
-                                    <td><span class="badge bg-success">Concluído</span></td>
-                                </tr>
+                                {% if recent_activities %}
+                                    {% for activity in recent_activities %}
+                                    <tr>
+                                        <td>{{ activity.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                        <td>{{ activity.user.name if activity.user else 'Sistema' }}</td>
+                                        <td>{{ activity.action|title }}</td>
+                                        <td>{{ activity.module|title }}</td>
+                                        <td>
+                                            {% if activity.details %}
+                                                {% if activity.details.startswith('{') %}
+                                                    {% set details = activity.details|tojson %}
+                                                    {{ details }}
+                                                {% else %}
+                                                    {{ activity.details }}
+                                                {% endif %}
+                                            {% else %}
+                                                {% if activity.entity_type %}
+                                                    {{ activity.action|title }} {{ activity.entity_type }}
+                                                    {% if activity.entity_id %} #{{ activity.entity_id }}{% endif %}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if activity.status == 'success' %}
+                                                <span class="badge bg-success">Sucesso</span>
+                                            {% elif activity.status == 'failed' %}
+                                                <span class="badge bg-danger">Falha</span>
+                                            {% elif activity.status == 'error' %}
+                                                <span class="badge bg-warning">Erro</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ activity.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <i class="fas fa-info-circle me-2"></i> Nenhuma atividade registrada
+                                        </td>
+                                    </tr>
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="card-footer bg-white py-3 d-flex justify-content-between align-items-center">
                     <div>
-                        Mostrando últimas 4 atividades
+                        {% if recent_activities %}
+                            Mostrando {{ recent_activities|length }} atividade(s) recente(s)
+                        {% else %}
+                            Nenhuma atividade registrada
+                        {% endif %}
                     </div>
-                    <button class="btn btn-sm btn-primary">
+                    <a href="{{ url_for('auth.activities') }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-search me-1"></i> Ver Histórico Completo
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
