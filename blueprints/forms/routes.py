@@ -28,9 +28,36 @@ FORMS_DIR = os.path.join(os.getcwd(), 'extracted_forms')
 @forms_bp.route('/')
 @login_required
 def index():
-    """Redirecionamento para a página de documentos, agora que formulários foram movidos para lá."""
-    flash("Todos os formulários foram reorganizados na seção de Documentos.", "info")
-    return redirect(url_for('documents.index'))
+    """Página principal para visualização de formulários de ordem de produção."""
+    # Esta página agora irá mostrar apenas os formulários de ordem de produção
+    # Os outros formulários foram movidos para a aba Documentos
+    
+    ordem_producao_dir = None
+    for item in os.listdir(FORMS_DIR):
+        # Procurar a pasta de ordem de produção
+        if "ORDEM DE PRODUCAO" in item.upper() and os.path.isdir(os.path.join(FORMS_DIR, item)):
+            ordem_producao_dir = item
+            break
+    
+    if not ordem_producao_dir:
+        # Se não encontrar a pasta, mostrar todas as categorias (fallback)
+        categories = []
+        for item in os.listdir(FORMS_DIR):
+            if os.path.isdir(os.path.join(FORMS_DIR, item)):
+                categories.append(item)
+        categories.sort()
+    else:
+        # Se encontrar, mostrar apenas essa categoria
+        categories = [ordem_producao_dir]
+    
+    # Adicionar uma mensagem informativa
+    flash("Os formulários de BLENDER, LABORATÓRIO, PORTARIA, QUALIDADE e TBA foram reorganizados na seção de Documentos.", "info")
+    
+    return render_template(
+        'forms/index.html',
+        title="Formulários de Ordem de Produção",
+        categories=categories
+    )
 
 @forms_bp.route('/category/<category>')
 @login_required

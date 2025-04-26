@@ -58,15 +58,38 @@ def index():
     formularios = {}
     if TechnicalDocument.query.filter_by(document_type='formulario').count() > 0:
         categorias = ['blender', 'laboratorio', 'portaria', 'qualidade', 'tba']
+        
+        # Adicionar referências para documentos do sistema de arquivos
+        from os import path
+        FORMS_DIR = path.join(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))), 'extracted_forms')
+        
         for categoria in categorias:
+            # Primeiro adiciona documentos do banco de dados
             docs = TechnicalDocument.query.filter_by(
                 document_type='formulario',
                 category=categoria,
                 status='ativo'
             ).order_by(TechnicalDocument.title).all()
-            if docs:
+            
+            # Lista para documentos que serão exibidos
+            categoria_docs = docs.copy() if docs else []
+            
+            # Mapeamento de nomes de categorias do banco de dados para pastas reais
+            categoria_mapeada = {
+                'blender': 'FORMULÁRIOS BLENDER',
+                'laboratorio': 'FORMULÁRIOS LABORATÓRIO',
+                'portaria': 'FORMULÁRIOS PORTARIA',
+                'qualidade': 'FORMULÁRIOS QUALIDADE',
+                'tba': 'FORMULÁRIOS TBA',
+            }.get(categoria)
+            
+            # Checa se a pasta existe no sistema de arquivos
+            if categoria_mapeada and path.exists(path.join(FORMS_DIR, categoria_mapeada)):
                 nome_categoria = categoria.upper()
-                formularios[nome_categoria] = docs
+                formularios[nome_categoria] = categoria_docs
+            elif docs:  # Se pelo menos houver documentos no banco
+                nome_categoria = categoria.upper()
+                formularios[nome_categoria] = categoria_docs
     
     return render_template(
         'documents/index.html',
