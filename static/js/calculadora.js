@@ -25,6 +25,22 @@ document.addEventListener('DOMContentLoaded', function() {
  * Configura a interface geral do módulo de cálculos
  */
 function setupInterface() {
+    // Atualizar timestamp atual
+    const timestampElement = document.getElementById('timestamp-atual');
+    if (timestampElement) {
+        const dataAtual = new Date();
+        const options = { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit',
+            hour12: false
+        };
+        timestampElement.textContent = dataAtual.toLocaleString('pt-BR', options);
+    }
+    
     // Expandir/colapsar categorias
     document.querySelectorAll('.calculo-category').forEach(category => {
         category.addEventListener('click', function() {
