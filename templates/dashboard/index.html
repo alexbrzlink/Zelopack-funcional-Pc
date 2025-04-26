@@ -1,0 +1,1845 @@
+{% extends "base.html" %}
+
+{% block title %}Painel de Controle - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        padding: 20px 0;
+    }
+    
+    .dashboard-header {
+        margin-bottom: 30px;
+    }
+    
+    .dashboard-card {
+        border-radius: 0.375rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .dashboard-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-3px);
+    }
+    
+    .dashboard-card .card-header {
+        background-color: #ffffff;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .dashboard-card .card-header .card-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .widget-container {
+        min-height: 200px;
+        margin-bottom: 20px;
+    }
+    
+    .sortable-ghost {
+        opacity: 0.4;
+        background-color: #f8f9fa;
+    }
+    
+    .sortable-chosen {
+        border: 2px dashed #0d6efd;
+    }
+    
+    .dashboard-controls {
+        position: sticky;
+        top: 20px;
+        z-index: 1;
+    }
+    
+    .widget-placeholder {
+        border: 2px dashed #dee2e6;
+        border-radius: 0.375rem;
+        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f8f9fa;
+        margin-bottom: 20px;
+    }
+    
+    .widget-catalog {
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 15px;
+        background-color: #f8f9fa;
+        margin-bottom: 20px;
+    }
+    
+    .widget-item {
+        padding: 8px 12px;
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        margin-bottom: 8px;
+        cursor: move;
+        transition: all 0.2s ease;
+    }
+    
+    .widget-item:hover {
+        background-color: #e9ecef;
+    }
+    
+    .widget-item i {
+        margin-right: 8px;
+        color: #0d6efd;
+    }
+    
+    .dashboard-empty {
+        text-align: center;
+        padding: 40px;
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+        margin-top: 20px;
+    }
+    
+    .dashboard-empty i {
+        font-size: 3rem;
+        color: #dee2e6;
+        margin-bottom: 20px;
+    }
+    
+    /* Estilos específicos para widgets */
+    .widget-documents .list-group-item {
+        padding: 0.5rem 1rem;
+    }
+    
+    .widget-documents .document-meta {
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+    
+    .widget-stats .card-icon {
+        font-size: 2rem;
+        color: #0d6efd;
+    }
+    
+    .widget-calendar .calendar-header {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    .widget-calendar .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+    }
+    
+    .widget-calendar .calendar-weekday {
+        text-align: center;
+        font-weight: bold;
+        padding: 5px;
+    }
+    
+    .widget-calendar .calendar-day {
+        text-align: center;
+        padding: 5px;
+        border-radius: 0.25rem;
+    }
+    
+    .widget-calendar .calendar-day.active {
+        background-color: #0d6efd;
+        color: white;
+    }
+    
+    .widget-calendar .calendar-day.today {
+        border: 1px solid #0d6efd;
+    }
+    
+    .widget-calendar .calendar-day:hover {
+        background-color: #e9ecef;
+    }
+    
+    .widget-chart .chart-container {
+        height: 200px;
+    }
+    
+    .widget-tasks .form-check {
+        margin-bottom: 0.5rem;
+    }
+    
+    .widget-tasks .task-completed {
+        text-decoration: line-through;
+        color: #6c757d;
+    }
+    
+    .widget-tasks .task-deadline {
+        font-size: 0.75rem;
+        color: #6c757d;
+    }
+    
+    .widget-tasks .task-high-priority {
+        border-left: 3px solid #dc3545;
+        padding-left: 10px;
+    }
+    
+    .widget-tasks .task-medium-priority {
+        border-left: 3px solid #ffc107;
+        padding-left: 10px;
+    }
+    
+    .widget-tasks .task-low-priority {
+        border-left: 3px solid #0d6efd;
+        padding-left: 10px;
+    }
+    
+    /* Ajustes responsivos */
+    @media (max-width: 768px) {
+        .dashboard-controls {
+            position: static;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container dashboard-container">
+    <div class="dashboard-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-0">Painel de Controle</h1>
+                <p class="text-muted">Visualize e gerencie seus dados em um só lugar</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <button type="button" class="btn btn-primary me-2" id="btn-save-dashboard">
+                    <i class="fas fa-save me-1"></i> Salvar Configuração
+                </button>
+                <button type="button" class="btn btn-outline-secondary" id="btn-reset-dashboard">
+                    <i class="fas fa-undo me-1"></i> Restaurar Padrão
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Área Principal do Dashboard (Widgets) -->
+        <div class="col-lg-9 mb-4">
+            <div class="row">
+                <!-- Área dragável para widgets -->
+                <div class="col-12">
+                    <div id="dashboard-widgets" class="sortable-widgets">
+                        <!-- Widgets serão carregados aqui dinamicamente -->
+                        
+                        <!-- Widget: Documentos Recentes -->
+                        <div class="col-md-6 widget-container" data-widget-id="recent-documents">
+                            <div class="dashboard-card widget-documents">
+                                <div class="card-header">
+                                    <span><i class="fas fa-file-alt me-2"></i> Documentos Recentes</span>
+                                    <div class="card-actions">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        {% for document in recent_documents %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <a href="{{ url_for('documents.view_document', document_id=document.id) }}">{{ document.title }}</a>
+                                                <div class="document-meta">
+                                                    {{ document.document_type }} | {{ document.upload_date.strftime('%d/%m/%Y') }}
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-primary rounded-pill">{{ document.file_type }}</span>
+                                        </li>
+                                        {% else %}
+                                        <li class="list-group-item text-center text-muted">
+                                            Nenhum documento encontrado
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="card-footer text-end">
+                                    <a href="{{ url_for('documents.index') }}" class="btn btn-sm btn-primary">Ver Todos</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Widget: Estatísticas -->
+                        <div class="col-md-6 widget-container" data-widget-id="stats">
+                            <div class="dashboard-card widget-stats">
+                                <div class="card-header">
+                                    <span><i class="fas fa-chart-bar me-2"></i> Estatísticas</span>
+                                    <div class="card-actions">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon me-3">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">Documentos</h6>
+                                                    <h3 class="mb-0">{{ stats.total_documents }}</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon me-3">
+                                                    <i class="fas fa-clipboard-list"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">Formulários</h6>
+                                                    <h3 class="mb-0">{{ stats.total_forms }}</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon me-3">
+                                                    <i class="fas fa-file-upload"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">Uploads</h6>
+                                                    <h3 class="mb-0">{{ stats.uploads_today }}</h3>
+                                                    <small class="text-muted">Hoje</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="card-icon me-3">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">Usuários</h6>
+                                                    <h3 class="mb-0">{{ stats.active_users }}</h3>
+                                                    <small class="text-muted">Ativos</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Widget: Calendário -->
+                        <div class="col-md-6 widget-container" data-widget-id="calendar">
+                            <div class="dashboard-card widget-calendar">
+                                <div class="card-header">
+                                    <span><i class="fas fa-calendar-alt me-2"></i> Calendário</span>
+                                    <div class="card-actions">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="calendar-header">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <button class="btn btn-sm btn-outline-secondary" id="prev-month">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </button>
+                                            <h5 class="mb-0" id="calendar-month">Abril 2025</h5>
+                                            <button class="btn btn-sm btn-outline-secondary" id="next-month">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="calendar-grid">
+                                        <!-- Dias da semana -->
+                                        <div class="calendar-weekday">D</div>
+                                        <div class="calendar-weekday">S</div>
+                                        <div class="calendar-weekday">T</div>
+                                        <div class="calendar-weekday">Q</div>
+                                        <div class="calendar-weekday">Q</div>
+                                        <div class="calendar-weekday">S</div>
+                                        <div class="calendar-weekday">S</div>
+                                        
+                                        <!-- Dias do mês (preenchidos via JavaScript) -->
+                                        <div id="calendar-days" class="calendar-grid">
+                                            <!-- Os dias do mês serão carregados aqui via JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-end">
+                                    <button class="btn btn-sm btn-primary" id="btn-add-event">
+                                        <i class="fas fa-plus me-1"></i> Adicionar Evento
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Widget: Gráfico de Documentos por Categoria -->
+                        <div class="col-md-6 widget-container" data-widget-id="documents-chart">
+                            <div class="dashboard-card widget-chart">
+                                <div class="card-header">
+                                    <span><i class="fas fa-chart-pie me-2"></i> Documentos por Categoria</span>
+                                    <div class="card-actions">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="documents-by-category-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Widget: Tarefas -->
+                        <div class="col-md-6 widget-container" data-widget-id="tasks">
+                            <div class="dashboard-card widget-tasks">
+                                <div class="card-header">
+                                    <span><i class="fas fa-tasks me-2"></i> Minhas Tarefas</span>
+                                    <div class="card-actions">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="task-list">
+                                        {% if tasks %}
+                                            {% for task in tasks %}
+                                            <div class="form-check mb-2 task-{{ task.priority }}-priority">
+                                                <input class="form-check-input task-checkbox" type="checkbox" id="task-{{ task.id }}" 
+                                                       {% if task.completed %}checked{% endif %}
+                                                       data-task-id="{{ task.id }}">
+                                                <label class="form-check-label {% if task.completed %}task-completed{% endif %}" 
+                                                       for="task-{{ task.id }}">
+                                                    {{ task.title }}
+                                                    {% if task.deadline %}
+                                                    <span class="task-deadline d-block">
+                                                        <i class="far fa-clock me-1"></i> {{ task.deadline.strftime('%d/%m/%Y') }}
+                                                    </span>
+                                                    {% endif %}
+                                                </label>
+                                            </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="text-center text-muted">Nenhuma tarefa pendente</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <button class="btn btn-sm btn-outline-secondary" id="btn-clear-completed">
+                                        <i class="fas fa-trash me-1"></i> Limpar Concluídas
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" id="btn-add-task">
+                                        <i class="fas fa-plus me-1"></i> Nova Tarefa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Widget: Notas Rápidas -->
+                        <div class="col-md-6 widget-container" data-widget-id="quick-notes">
+                            <div class="dashboard-card widget-notes">
+                                <div class="card-header">
+                                    <span><i class="fas fa-sticky-note me-2"></i> Notas Rápidas</span>
+                                    <div class="card-actions">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <textarea class="form-control" id="quick-notes-content" rows="6" 
+                                              placeholder="Digite suas anotações aqui...">{{ notes_content }}</textarea>
+                                </div>
+                                <div class="card-footer text-end">
+                                    <button class="btn btn-sm btn-primary" id="btn-save-notes">
+                                        <i class="fas fa-save me-1"></i> Salvar Notas
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Painel Lateral -->
+        <div class="col-lg-3">
+            <div class="dashboard-controls">
+                <!-- Controle de Widgets -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-th me-2"></i> Widgets Disponíveis
+                    </div>
+                    <div class="card-body">
+                        <div class="widget-catalog">
+                            <div class="widget-item" draggable="true" data-widget-type="recent-documents">
+                                <i class="fas fa-file-alt"></i> Documentos Recentes
+                            </div>
+                            <div class="widget-item" draggable="true" data-widget-type="stats">
+                                <i class="fas fa-chart-bar"></i> Estatísticas
+                            </div>
+                            <div class="widget-item" draggable="true" data-widget-type="calendar">
+                                <i class="fas fa-calendar-alt"></i> Calendário
+                            </div>
+                            <div class="widget-item" draggable="true" data-widget-type="documents-chart">
+                                <i class="fas fa-chart-pie"></i> Gráfico de Documentos
+                            </div>
+                            <div class="widget-item" draggable="true" data-widget-type="tasks">
+                                <i class="fas fa-tasks"></i> Tarefas
+                            </div>
+                            <div class="widget-item" draggable="true" data-widget-type="quick-notes">
+                                <i class="fas fa-sticky-note"></i> Notas Rápidas
+                            </div>
+                            <div class="widget-item" draggable="true" data-widget-type="recent-forms">
+                                <i class="fas fa-clipboard-list"></i> Formulários Recentes
+                            </div>
+                        </div>
+                        <div class="form-text text-center">
+                            Arraste os widgets para o painel
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Configurações -->
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <i class="fas fa-cog me-2"></i> Configurações
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Layout</label>
+                            <select class="form-select" id="dashboard-layout">
+                                <option value="2-column">2 Colunas (Padrão)</option>
+                                <option value="1-column">1 Coluna</option>
+                                <option value="3-column">3 Colunas</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tema do Dashboard</label>
+                            <select class="form-select" id="dashboard-theme">
+                                <option value="light">Claro (Padrão)</option>
+                                <option value="dark">Escuro</option>
+                                <option value="blue">Azul</option>
+                                <option value="green">Verde</option>
+                            </select>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="auto-refresh" checked>
+                            <label class="form-check-label" for="auto-refresh">Atualização Automática</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Intervalo de Atualização</label>
+                            <select class="form-select" id="refresh-interval">
+                                <option value="30">30 segundos</option>
+                                <option value="60" selected>1 minuto</option>
+                                <option value="300">5 minutos</option>
+                                <option value="600">10 minutos</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar Tarefas -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTaskModalLabel">Nova Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="task-form">
+                    <div class="mb-3">
+                        <label for="task-title" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="task-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="task-description" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="task-description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="task-deadline" class="form-label">Data Limite</label>
+                        <input type="date" class="form-control" id="task-deadline">
+                    </div>
+                    <div class="mb-3">
+                        <label for="task-priority" class="form-label">Prioridade</label>
+                        <select class="form-select" id="task-priority">
+                            <option value="low">Baixa</option>
+                            <option value="medium" selected>Média</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn-save-task">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar Evento -->
+<div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEventModalLabel">Novo Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="event-form">
+                    <div class="mb-3">
+                        <label for="event-title" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="event-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-date" class="form-label">Data</label>
+                        <input type="date" class="form-control" id="event-date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-time" class="form-label">Hora</label>
+                        <input type="time" class="form-control" id="event-time">
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-description" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="event-description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="event-category" class="form-label">Categoria</label>
+                        <select class="form-select" id="event-category">
+                            <option value="meeting">Reunião</option>
+                            <option value="deadline">Prazo</option>
+                            <option value="reminder">Lembrete</option>
+                            <option value="other">Outro</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn-save-event">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Chart.js para os gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Sortable.js para arrastar e soltar -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar a funcionalidade de arrastar e soltar
+        initSortable();
+        
+        // Inicializar gráficos
+        initCharts();
+        
+        // Inicializar o calendário
+        initCalendar();
+        
+        // Configurar eventos dos botões
+        setupEventListeners();
+        
+        // Carregar dashboard salvo (se existir)
+        loadDashboardConfiguration();
+    });
+    
+    function initSortable() {
+        // Tornar contêiner de widgets ordenável
+        new Sortable(document.getElementById('dashboard-widgets'), {
+            animation: 150,
+            handle: '.card-header',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            onEnd: function(evt) {
+                // Salvar a nova ordem
+                saveDashboardConfiguration();
+            }
+        });
+        
+        // Tornar a área de widget catalog arrastrável para o dashboard
+        const widgetItems = document.querySelectorAll('.widget-item');
+        widgetItems.forEach(item => {
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragend', handleDragEnd);
+        });
+        
+        const dashboardWidgets = document.getElementById('dashboard-widgets');
+        dashboardWidgets.addEventListener('dragover', handleDragOver);
+        dashboardWidgets.addEventListener('drop', handleDrop);
+    }
+    
+    function handleDragStart(e) {
+        e.dataTransfer.setData('widget-type', this.getAttribute('data-widget-type'));
+        this.classList.add('dragging');
+    }
+    
+    function handleDragEnd(e) {
+        this.classList.remove('dragging');
+    }
+    
+    function handleDragOver(e) {
+        e.preventDefault();
+    }
+    
+    function handleDrop(e) {
+        e.preventDefault();
+        const widgetType = e.dataTransfer.getData('widget-type');
+        if (widgetType) {
+            addWidget(widgetType);
+        }
+    }
+    
+    function addWidget(widgetType) {
+        // Aqui você adicionaria a lógica para criar um novo widget baseado no tipo
+        // Este é um exemplo simples
+        const widgetId = 'widget-' + Date.now();
+        const widgetContainer = document.createElement('div');
+        widgetContainer.className = 'col-md-6 widget-container';
+        widgetContainer.setAttribute('data-widget-id', widgetId);
+        widgetContainer.setAttribute('data-widget-type', widgetType);
+        
+        // O conteúdo do widget dependeria do tipo
+        let widgetContent = '';
+        switch(widgetType) {
+            case 'recent-documents':
+                widgetContent = createDocumentsWidgetContent(widgetId);
+                break;
+            case 'stats':
+                widgetContent = createStatsWidgetContent(widgetId);
+                break;
+            case 'calendar':
+                widgetContent = createCalendarWidgetContent(widgetId);
+                break;
+            case 'documents-chart':
+                widgetContent = createChartWidgetContent(widgetId);
+                break;
+            case 'tasks':
+                widgetContent = createTasksWidgetContent(widgetId);
+                break;
+            case 'quick-notes':
+                widgetContent = createNotesWidgetContent(widgetId);
+                break;
+            case 'recent-forms':
+                widgetContent = createFormsWidgetContent(widgetId);
+                break;
+            default:
+                widgetContent = createEmptyWidgetContent(widgetId, widgetType);
+        }
+        
+        widgetContainer.innerHTML = widgetContent;
+        document.getElementById('dashboard-widgets').appendChild(widgetContainer);
+        
+        // Inicializar funcionalidades específicas do widget
+        if (widgetType === 'documents-chart') {
+            initWidgetChart(widgetId);
+        } else if (widgetType === 'calendar') {
+            initWidgetCalendar(widgetId);
+        }
+        
+        // Configurar eventos para o novo widget
+        setupWidgetEvents(widgetContainer);
+        
+        // Salvar a configuração atualizada
+        saveDashboardConfiguration();
+    }
+    
+    function createEmptyWidgetContent(widgetId, widgetType) {
+        // Widget genérico como fallback
+        return `
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <span><i class="fas fa-puzzle-piece me-2"></i> Novo Widget</span>
+                    <div class="card-actions">
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center p-4">
+                        <i class="fas fa-puzzle-piece mb-3" style="font-size: 3rem; color: #dee2e6;"></i>
+                        <h5>Widget de ${widgetType}</h5>
+                        <p class="text-muted">Este widget foi adicionado mas ainda não tem conteúdo.</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function createDocumentsWidgetContent(widgetId) {
+        return `
+            <div class="dashboard-card widget-documents">
+                <div class="card-header">
+                    <span><i class="fas fa-file-alt me-2"></i> Documentos Recentes</span>
+                    <div class="card-actions">
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando documentos...</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function createStatsWidgetContent(widgetId) {
+        return `
+            <div class="dashboard-card widget-stats">
+                <div class="card-header">
+                    <span><i class="fas fa-chart-bar me-2"></i> Estatísticas</span>
+                    <div class="card-actions">
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando estatísticas...</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function createCalendarWidgetContent(widgetId) {
+        return `
+            <div class="dashboard-card widget-calendar">
+                <div class="card-header">
+                    <span><i class="fas fa-calendar-alt me-2"></i> Calendário</span>
+                    <div class="card-actions">
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="calendar-header">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <button class="btn btn-sm btn-outline-secondary prev-month">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <h5 class="mb-0 calendar-month">Abril 2025</h5>
+                            <button class="btn btn-sm btn-outline-secondary next-month">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="calendar-weekday">D</div>
+                        <div class="calendar-weekday">S</div>
+                        <div class="calendar-weekday">T</div>
+                        <div class="calendar-weekday">Q</div>
+                        <div class="calendar-weekday">Q</div>
+                        <div class="calendar-weekday">S</div>
+                        <div class="calendar-weekday">S</div>
+                        
+                        <div class="calendar-days">
+                            <!-- Dias do mês serão adicionados via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <button class="btn btn-sm btn-primary btn-add-event">
+                        <i class="fas fa-plus me-1"></i> Adicionar Evento
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    function createChartWidgetContent(widgetId) {
+        return `
+            <div class="dashboard-card widget-chart">
+                <div class="card-header">
+                    <span><i class="fas fa-chart-pie me-2"></i> Gráfico de Documentos</span>
+                    <div class="card-actions">
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="${widgetId}-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function createTasksWidgetContent(widgetId) {
+        return `
+            <div class="dashboard-card widget-tasks">
+                <div class="card-header">
+                    <span><i class="fas fa-tasks me-2"></i> Minhas Tarefas</span>
+                    <div class="card-actions">
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando tarefas...</p>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <button class="btn btn-sm btn-outline-secondary btn-clear-completed">
+                        <i class="fas fa-trash me-1"></i> Limpar Concluídas
+                    </button>
+                    <button class="btn btn-sm btn-primary btn-add-task">
+                        <i class="fas fa-plus me-1"></i> Nova Tarefa
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    function createNotesWidgetContent(widgetId) {
+        return `
+            <div class="dashboard-card widget-notes">
+                <div class="card-header">
+                    <span><i class="fas fa-sticky-note me-2"></i> Notas Rápidas</span>
+                    <div class="card-actions">
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <textarea class="form-control" rows="6" placeholder="Digite suas anotações aqui..."></textarea>
+                </div>
+                <div class="card-footer text-end">
+                    <button class="btn btn-sm btn-primary btn-save-notes">
+                        <i class="fas fa-save me-1"></i> Salvar Notas
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    function createFormsWidgetContent(widgetId) {
+        return `
+            <div class="dashboard-card widget-forms">
+                <div class="card-header">
+                    <span><i class="fas fa-clipboard-list me-2"></i> Formulários Recentes</span>
+                    <div class="card-actions">
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-widget-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-widget-remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <p class="mt-2">Carregando formulários...</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function setupWidgetEvents(widget) {
+        // Configurar o botão de remover widget
+        const removeBtn = widget.querySelector('.btn-widget-remove');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja remover este widget?')) {
+                    widget.remove();
+                    saveDashboardConfiguration();
+                }
+            });
+        }
+        
+        // Configurar o botão de atualizar widget
+        const refreshBtn = widget.querySelector('.btn-widget-refresh');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                refreshWidget(widget);
+            });
+        }
+        
+        // Outros eventos específicos do widget
+        const widgetType = widget.getAttribute('data-widget-type');
+        if (widgetType === 'tasks') {
+            const addTaskBtn = widget.querySelector('.btn-add-task');
+            if (addTaskBtn) {
+                addTaskBtn.addEventListener('click', showAddTaskModal);
+            }
+            
+            const clearCompletedBtn = widget.querySelector('.btn-clear-completed');
+            if (clearCompletedBtn) {
+                clearCompletedBtn.addEventListener('click', clearCompletedTasks);
+            }
+        } else if (widgetType === 'calendar') {
+            const addEventBtn = widget.querySelector('.btn-add-event');
+            if (addEventBtn) {
+                addEventBtn.addEventListener('click', showAddEventModal);
+            }
+            
+            const prevMonthBtn = widget.querySelector('.prev-month');
+            if (prevMonthBtn) {
+                prevMonthBtn.addEventListener('click', function() {
+                    navigateCalendar(-1, widget);
+                });
+            }
+            
+            const nextMonthBtn = widget.querySelector('.next-month');
+            if (nextMonthBtn) {
+                nextMonthBtn.addEventListener('click', function() {
+                    navigateCalendar(1, widget);
+                });
+            }
+        } else if (widgetType === 'quick-notes') {
+            const saveNotesBtn = widget.querySelector('.btn-save-notes');
+            if (saveNotesBtn) {
+                saveNotesBtn.addEventListener('click', function() {
+                    saveNotes(widget);
+                });
+            }
+        }
+    }
+    
+    function refreshWidget(widget) {
+        const widgetType = widget.getAttribute('data-widget-type');
+        const widgetBody = widget.querySelector('.card-body');
+        
+        // Mostrar um indicador de carregamento
+        widgetBody.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-2">Atualizando...</p>
+            </div>
+        `;
+        
+        // Simular carregamento e atualizar o widget
+        setTimeout(() => {
+            // Aqui você carregaria os dados reais do servidor
+            // Esta é apenas uma simulação
+            if (widgetType === 'documents-chart') {
+                widgetBody.innerHTML = `<div class="chart-container"><canvas id="${widget.id}-chart"></canvas></div>`;
+                initWidgetChart(widget.id);
+            } else if (widgetType === 'tasks') {
+                loadTasks(widget);
+            } else if (widgetType === 'recent-documents') {
+                loadRecentDocuments(widget);
+            } else if (widgetType === 'stats') {
+                loadStats(widget);
+            } else if (widgetType === 'calendar') {
+                initWidgetCalendar(widget.id);
+            } else if (widgetType === 'recent-forms') {
+                loadRecentForms(widget);
+            } else if (widgetType === 'quick-notes') {
+                loadNotes(widget);
+            }
+        }, 1000);
+    }
+    
+    function initCharts() {
+        // Gráfico: Documentos por Categoria
+        const ctx = document.getElementById('documents-by-category-chart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['POPs', 'Fichas Técnicas', 'Certificados', 'Manuais', 'Formulários', 'Outros'],
+                    datasets: [{
+                        data: [12, 19, 3, 5, 8, 3],
+                        backgroundColor: [
+                            '#0d6efd',
+                            '#20c997',
+                            '#ffc107',
+                            '#dc3545',
+                            '#6f42c1',
+                            '#6c757d'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+    }
+    
+    function initWidgetChart(widgetId) {
+        const ctx = document.getElementById(`${widgetId}-chart`);
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['POPs', 'Fichas Técnicas', 'Certificados', 'Manuais', 'Formulários', 'Outros'],
+                    datasets: [{
+                        data: [12, 19, 3, 5, 8, 3],
+                        backgroundColor: [
+                            '#0d6efd',
+                            '#20c997',
+                            '#ffc107',
+                            '#dc3545',
+                            '#6f42c1',
+                            '#6c757d'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+    }
+    
+    function initCalendar() {
+        // Inicializar o calendário principal
+        const calendarEl = document.getElementById('calendar-days');
+        if (calendarEl) {
+            renderCalendar(new Date(), calendarEl);
+        }
+        
+        // Configurar botões do calendário
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        
+        if (prevMonthBtn && nextMonthBtn) {
+            prevMonthBtn.addEventListener('click', function() {
+                navigateCalendar(-1);
+            });
+            
+            nextMonthBtn.addEventListener('click', function() {
+                navigateCalendar(1);
+            });
+        }
+    }
+    
+    function initWidgetCalendar(widgetId) {
+        const widget = document.querySelector(`[data-widget-id="${widgetId}"]`);
+        if (widget) {
+            const calendarEl = widget.querySelector('.calendar-days');
+            if (calendarEl) {
+                renderCalendar(new Date(), calendarEl);
+            }
+        }
+    }
+    
+    function renderCalendar(date, calendarEl) {
+        // Limpar o calendário
+        if (!calendarEl) {
+            calendarEl = document.getElementById('calendar-days');
+        }
+        
+        if (!calendarEl) return;
+        
+        calendarEl.innerHTML = '';
+        
+        // Obter o mês e ano
+        const month = date.getMonth();
+        const year = date.getFullYear();
+        
+        // Atualizar o cabeçalho do mês
+        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const calendarMonth = document.getElementById('calendar-month');
+        if (calendarMonth) {
+            calendarMonth.textContent = `${monthNames[month]} ${year}`;
+        }
+        
+        // Obter o primeiro dia do mês e o número total de dias
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        
+        // Obter o dia da semana do primeiro dia (0 = Domingo, 1 = Segunda, etc.)
+        let firstDayOfWeek = firstDay.getDay();
+        
+        // Adicionar dias vazios para o início do mês
+        for (let i = 0; i < firstDayOfWeek; i++) {
+            const dayEl = document.createElement('div');
+            dayEl.className = 'calendar-day empty';
+            calendarEl.appendChild(dayEl);
+        }
+        
+        // Adicionar os dias do mês
+        const today = new Date();
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dayEl = document.createElement('div');
+            dayEl.className = 'calendar-day';
+            dayEl.textContent = i;
+            
+            // Verificar se é o dia atual
+            if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+                dayEl.classList.add('today');
+            }
+            
+            // Adicionar eventos para o dia (se houver)
+            // Isso seria feito com dados reais do seu backend
+            
+            calendarEl.appendChild(dayEl);
+        }
+    }
+    
+    function navigateCalendar(direction, widget) {
+        // Obter a data atual exibida
+        let currentMonth;
+        let monthTextElement;
+        
+        if (widget) {
+            monthTextElement = widget.querySelector('.calendar-month');
+        } else {
+            monthTextElement = document.getElementById('calendar-month');
+        }
+        
+        if (!monthTextElement) return;
+        
+        const [monthStr, yearStr] = monthTextElement.textContent.split(' ');
+        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const month = monthNames.indexOf(monthStr);
+        const year = parseInt(yearStr);
+        
+        // Criar uma nova data com o mês ajustado
+        currentMonth = new Date(year, month);
+        currentMonth.setMonth(currentMonth.getMonth() + direction);
+        
+        // Atualizar o calendário
+        const calendarEl = widget ? widget.querySelector('.calendar-days') : document.getElementById('calendar-days');
+        renderCalendar(currentMonth, calendarEl);
+        
+        // Atualizar o texto do mês
+        monthTextElement.textContent = `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
+    }
+    
+    function setupEventListeners() {
+        // Configurar botões do dashboard
+        const saveBtn = document.getElementById('btn-save-dashboard');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', saveDashboardConfiguration);
+        }
+        
+        const resetBtn = document.getElementById('btn-reset-dashboard');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', resetDashboard);
+        }
+        
+        // Configurar eventos para widgets existentes
+        document.querySelectorAll('.widget-container').forEach(widget => {
+            setupWidgetEvents(widget);
+        });
+        
+        // Configurar eventos para modais
+        const addTaskBtn = document.getElementById('btn-add-task');
+        if (addTaskBtn) {
+            addTaskBtn.addEventListener('click', showAddTaskModal);
+        }
+        
+        const saveTaskBtn = document.getElementById('btn-save-task');
+        if (saveTaskBtn) {
+            saveTaskBtn.addEventListener('click', saveTask);
+        }
+        
+        const addEventBtn = document.getElementById('btn-add-event');
+        if (addEventBtn) {
+            addEventBtn.addEventListener('click', showAddEventModal);
+        }
+        
+        const saveEventBtn = document.getElementById('btn-save-event');
+        if (saveEventBtn) {
+            saveEventBtn.addEventListener('click', saveEvent);
+        }
+        
+        // Configurar o layout do dashboard
+        const layoutSelect = document.getElementById('dashboard-layout');
+        if (layoutSelect) {
+            layoutSelect.addEventListener('change', function() {
+                updateDashboardLayout(this.value);
+            });
+        }
+        
+        // Configurar o tema do dashboard
+        const themeSelect = document.getElementById('dashboard-theme');
+        if (themeSelect) {
+            themeSelect.addEventListener('change', function() {
+                updateDashboardTheme(this.value);
+            });
+        }
+    }
+    
+    function updateDashboardLayout(layout) {
+        const widgets = document.querySelectorAll('.widget-container');
+        widgets.forEach(widget => {
+            widget.className = 'widget-container';
+            if (layout === '1-column') {
+                widget.classList.add('col-12');
+            } else if (layout === '3-column') {
+                widget.classList.add('col-md-4');
+            } else {
+                // 2-column (default)
+                widget.classList.add('col-md-6');
+            }
+        });
+        
+        saveDashboardConfiguration();
+    }
+    
+    function updateDashboardTheme(theme) {
+        // Remover temas anteriores
+        document.body.classList.remove('dashboard-theme-dark', 'dashboard-theme-blue', 'dashboard-theme-green');
+        
+        // Aplicar o novo tema
+        if (theme !== 'light') {
+            document.body.classList.add(`dashboard-theme-${theme}`);
+        }
+        
+        saveDashboardConfiguration();
+    }
+    
+    function saveDashboardConfiguration() {
+        // Coletar a configuração atual
+        const widgets = [];
+        document.querySelectorAll('.widget-container').forEach(widget => {
+            widgets.push({
+                id: widget.getAttribute('data-widget-id'),
+                type: widget.getAttribute('data-widget-type')
+            });
+        });
+        
+        const layout = document.getElementById('dashboard-layout').value;
+        const theme = document.getElementById('dashboard-theme').value;
+        const autoRefresh = document.getElementById('auto-refresh').checked;
+        const refreshInterval = document.getElementById('refresh-interval').value;
+        
+        const configuration = {
+            widgets,
+            layout,
+            theme,
+            autoRefresh,
+            refreshInterval
+        };
+        
+        // Salvar a configuração (aqui usaria localStorage para demonstração,
+        // mas em produção provavelmente enviaria para o servidor)
+        localStorage.setItem('dashboardConfig', JSON.stringify(configuration));
+        
+        // Mostrar uma mensagem de sucesso
+        const alertEl = document.createElement('div');
+        alertEl.className = 'alert alert-success alert-dismissible fade show fixed-top mx-auto mt-3';
+        alertEl.style.width = '300px';
+        alertEl.style.maxWidth = '90%';
+        alertEl.innerHTML = `
+            <strong>Sucesso!</strong> Configuração do painel salva.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        `;
+        document.body.appendChild(alertEl);
+        
+        setTimeout(() => {
+            alertEl.remove();
+        }, 3000);
+    }
+    
+    function loadDashboardConfiguration() {
+        // Carregar a configuração salva (se existir)
+        const savedConfig = localStorage.getItem('dashboardConfig');
+        if (savedConfig) {
+            const config = JSON.parse(savedConfig);
+            
+            // Aplicar configurações
+            if (config.layout) {
+                document.getElementById('dashboard-layout').value = config.layout;
+                updateDashboardLayout(config.layout);
+            }
+            
+            if (config.theme) {
+                document.getElementById('dashboard-theme').value = config.theme;
+                updateDashboardTheme(config.theme);
+            }
+            
+            if (config.autoRefresh !== undefined) {
+                document.getElementById('auto-refresh').checked = config.autoRefresh;
+            }
+            
+            if (config.refreshInterval) {
+                document.getElementById('refresh-interval').value = config.refreshInterval;
+            }
+            
+            // Configurar atualização automática (se habilitada)
+            if (config.autoRefresh) {
+                const interval = parseInt(config.refreshInterval) * 1000;
+                setInterval(() => {
+                    // Atualizar widgets
+                    document.querySelectorAll('.widget-container').forEach(widget => {
+                        if (Math.random() < 0.2) { // Atualizar aleatoriamente alguns widgets
+                            refreshWidget(widget);
+                        }
+                    });
+                }, interval);
+            }
+        }
+    }
+    
+    function resetDashboard() {
+        if (confirm('Tem certeza que deseja restaurar o painel para a configuração padrão? Todas as suas configurações personalizadas serão perdidas.')) {
+            // Limpar configuração salva
+            localStorage.removeItem('dashboardConfig');
+            
+            // Recarregar a página
+            window.location.reload();
+        }
+    }
+    
+    function showAddTaskModal() {
+        // Resetar o formulário
+        document.getElementById('task-form').reset();
+        
+        // Mostrar o modal
+        const taskModal = new bootstrap.Modal(document.getElementById('addTaskModal'));
+        taskModal.show();
+    }
+    
+    function saveTask() {
+        const title = document.getElementById('task-title').value;
+        const description = document.getElementById('task-description').value;
+        const deadline = document.getElementById('task-deadline').value;
+        const priority = document.getElementById('task-priority').value;
+        
+        if (!title) {
+            alert('O título da tarefa é obrigatório');
+            return;
+        }
+        
+        // Aqui você salvaria a tarefa no servidor
+        // Esta é uma simulação
+        
+        // Adicionar a tarefa à lista
+        const taskList = document.querySelector('.widget-tasks .task-list');
+        if (taskList) {
+            const taskId = 'task-' + Date.now();
+            const taskItem = document.createElement('div');
+            taskItem.className = `form-check mb-2 task-${priority}-priority`;
+            taskItem.innerHTML = `
+                <input class="form-check-input task-checkbox" type="checkbox" id="${taskId}" data-task-id="${taskId}">
+                <label class="form-check-label" for="${taskId}">
+                    ${title}
+                    ${deadline ? `<span class="task-deadline d-block"><i class="far fa-clock me-1"></i> ${formatDate(new Date(deadline))}</span>` : ''}
+                </label>
+            `;
+            
+            // Adicionar o evento de checkbox
+            const checkbox = taskItem.querySelector('.task-checkbox');
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.nextElementSibling.classList.add('task-completed');
+                } else {
+                    this.nextElementSibling.classList.remove('task-completed');
+                }
+            });
+            
+            taskList.appendChild(taskItem);
+        }
+        
+        // Fechar o modal
+        bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
+    }
+    
+    function clearCompletedTasks() {
+        const completedTasks = document.querySelectorAll('.task-completed');
+        if (completedTasks.length === 0) {
+            alert('Não há tarefas concluídas para limpar');
+            return;
+        }
+        
+        if (confirm(`Deseja remover ${completedTasks.length} tarefas concluídas?`)) {
+            completedTasks.forEach(task => {
+                const taskItem = task.parentElement;
+                taskItem.remove();
+            });
+        }
+    }
+    
+    function showAddEventModal() {
+        // Resetar o formulário
+        document.getElementById('event-form').reset();
+        
+        // Definir a data de hoje como padrão
+        const today = new Date();
+        document.getElementById('event-date').valueAsDate = today;
+        
+        // Mostrar o modal
+        const eventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
+        eventModal.show();
+    }
+    
+    function saveEvent() {
+        const title = document.getElementById('event-title').value;
+        const date = document.getElementById('event-date').value;
+        const time = document.getElementById('event-time').value;
+        const description = document.getElementById('event-description').value;
+        const category = document.getElementById('event-category').value;
+        
+        if (!title || !date) {
+            alert('Título e data são obrigatórios');
+            return;
+        }
+        
+        // Aqui você salvaria o evento no servidor
+        // Esta é uma simulação
+        
+        // Marcar o dia no calendário
+        const eventDate = new Date(date);
+        const day = eventDate.getDate();
+        
+        const calendarDays = document.querySelectorAll('.calendar-day:not(.empty)');
+        calendarDays.forEach(dayEl => {
+            if (parseInt(dayEl.textContent) === day) {
+                dayEl.classList.add('active');
+                
+                // Adicionar um tooltip com o título do evento
+                dayEl.setAttribute('title', title);
+                dayEl.setAttribute('data-bs-toggle', 'tooltip');
+                dayEl.setAttribute('data-bs-placement', 'top');
+                
+                // Inicializar o tooltip
+                new bootstrap.Tooltip(dayEl);
+            }
+        });
+        
+        // Fechar o modal
+        bootstrap.Modal.getInstance(document.getElementById('addEventModal')).hide();
+    }
+    
+    function loadTasks(widget) {
+        // Esta função simularia o carregamento de tarefas do servidor
+        // Como demonstração, usaremos dados simulados
+        
+        const taskListHtml = `
+            <div class="task-list">
+                <div class="form-check mb-2 task-high-priority">
+                    <input class="form-check-input task-checkbox" type="checkbox" id="task-1">
+                    <label class="form-check-label" for="task-1">
+                        Revisar documentos de qualidade
+                        <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 30/04/2025</span>
+                    </label>
+                </div>
+                <div class="form-check mb-2 task-medium-priority">
+                    <input class="form-check-input task-checkbox" type="checkbox" id="task-2">
+                    <label class="form-check-label" for="task-2">
+                        Preparar relatório mensal
+                        <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 05/05/2025</span>
+                    </label>
+                </div>
+                <div class="form-check mb-2 task-low-priority">
+                    <input class="form-check-input task-checkbox" type="checkbox" id="task-3" checked>
+                    <label class="form-check-label task-completed" for="task-3">
+                        Atualizar inventário
+                        <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 26/04/2025</span>
+                    </label>
+                </div>
+                <div class="form-check mb-2 task-medium-priority">
+                    <input class="form-check-input task-checkbox" type="checkbox" id="task-4">
+                    <label class="form-check-label" for="task-4">
+                        Reunião com fornecedores
+                        <span class="task-deadline d-block"><i class="far fa-clock me-1"></i> 03/05/2025</span>
+                    </label>
+                </div>
+            </div>
+        `;
+        
+        const widgetBody = widget.querySelector('.card-body');
+        widgetBody.innerHTML = taskListHtml;
+        
+        // Adicionar eventos para os checkboxes
+        const checkboxes = widgetBody.querySelectorAll('.task-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.nextElementSibling.classList.add('task-completed');
+                } else {
+                    this.nextElementSibling.classList.remove('task-completed');
+                }
+            });
+        });
+    }
+    
+    function loadRecentDocuments(widget) {
+        // Esta função simularia o carregamento de documentos do servidor
+        
+        const documentsHtml = `
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="#">Relatório de Qualidade Q1 2025</a>
+                        <div class="document-meta">
+                            Relatório | 26/04/2025
+                        </div>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">PDF</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="#">Procedimento Operacional - Envase</a>
+                        <div class="document-meta">
+                            POP | 25/04/2025
+                        </div>
+                    </div>
+                    <span class="badge bg-warning rounded-pill">DOCX</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="#">Planilha de Controle de Produção</a>
+                        <div class="document-meta">
+                            Planilha | 24/04/2025
+                        </div>
+                    </div>
+                    <span class="badge bg-success rounded-pill">XLSX</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="#">Manual de Operação - Pasteurizador</a>
+                        <div class="document-meta">
+                            Manual | 23/04/2025
+                        </div>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">PDF</span>
+                </li>
+            </ul>
+        `;
+        
+        const widgetBody = widget.querySelector('.card-body');
+        widgetBody.innerHTML = documentsHtml;
+    }
+    
+    function loadStats(widget) {
+        // Esta função simularia o carregamento de estatísticas do servidor
+        
+        const statsHtml = `
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon me-3">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Documentos</h6>
+                            <h3 class="mb-0">187</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon me-3">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Formulários</h6>
+                            <h3 class="mb-0">42</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon me-3">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Uploads</h6>
+                            <h3 class="mb-0">7</h3>
+                            <small class="text-muted">Hoje</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon me-3">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Usuários</h6>
+                            <h3 class="mb-0">15</h3>
+                            <small class="text-muted">Ativos</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const widgetBody = widget.querySelector('.card-body');
+        widgetBody.innerHTML = statsHtml;
+    }
+    
+    function loadRecentForms(widget) {
+        // Esta função simularia o carregamento de formulários do servidor
+        
+        const formsHtml = `
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="#">F_PRD_012 - Troca de Borrachas</a>
+                        <div class="document-meta">
+                            TBA | 26/04/2025
+                        </div>
+                    </div>
+                    <span class="badge bg-success rounded-pill">XLSX</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="#">F_QLD_005 Descrição de Parada</a>
+                        <div class="document-meta">
+                            Qualidade | 25/04/2025
+                        </div>
+                    </div>
+                    <span class="badge bg-success rounded-pill">XLSX</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="#">F_PRD_013 - Conferência Sala de Envase</a>
+                        <div class="document-meta">
+                            Envase | 24/04/2025
+                        </div>
+                    </div>
+                    <span class="badge bg-warning rounded-pill">DOCX</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="#">F_PRD_014 - Controle CIP</a>
+                        <div class="document-meta">
+                            Sala de Envase | 23/04/2025
+                        </div>
+                    </div>
+                    <span class="badge bg-success rounded-pill">XLSX</span>
+                </li>
+            </ul>
+        `;
+        
+        const widgetBody = widget.querySelector('.card-body');
+        widgetBody.innerHTML = formsHtml;
+    }
+    
+    function loadNotes(widget) {
+        // Esta função simularia o carregamento de notas do servidor
+        
+        const notesContent = localStorage.getItem('quickNotes') || '';
+        
+        const notesHtml = `
+            <textarea class="form-control" rows="6" placeholder="Digite suas anotações aqui...">${notesContent}</textarea>
+        `;
+        
+        const widgetBody = widget.querySelector('.card-body');
+        widgetBody.innerHTML = notesHtml;
+    }
+    
+    function saveNotes(widget) {
+        const textarea = widget.querySelector('textarea');
+        if (textarea) {
+            const content = textarea.value;
+            
+            // Salvar as notas (aqui usamos localStorage como demonstração)
+            localStorage.setItem('quickNotes', content);
+            
+            // Mostrar uma mensagem de sucesso
+            const alertEl = document.createElement('div');
+            alertEl.className = 'alert alert-success alert-dismissible fade show fixed-top mx-auto mt-3';
+            alertEl.style.width = '300px';
+            alertEl.style.maxWidth = '90%';
+            alertEl.innerHTML = `
+                <strong>Sucesso!</strong> Notas salvas.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            document.body.appendChild(alertEl);
+            
+            setTimeout(() => {
+                alertEl.remove();
+            }, 3000);
+        }
+    }
+    
+    function formatDate(date) {
+        return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+    }
+</script>
+{% endblock %}

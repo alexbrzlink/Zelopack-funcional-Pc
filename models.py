@@ -73,9 +73,9 @@ class Report(db.Model):
     priority = db.Column(db.String(20), default='normal')  # baixa, normal, alta, urgente
     
     # Campos para atribuição e responsabilidade
-    assigned_to = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    approved_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    assigned_to = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Campos para assinatura digital
     signature_date = db.Column(db.DateTime, nullable=True)
@@ -251,7 +251,7 @@ class ReportComment(db.Model):
     """Modelo para comentários internos em laudos."""
     id = db.Column(db.Integer, primary_key=True)
     report_id = db.Column(db.Integer, db.ForeignKey('reports.id', ondelete='CASCADE'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     comment = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -282,7 +282,7 @@ class ReportHistory(db.Model):
     """Modelo para registrar histórico de modificações nos laudos."""
     id = db.Column(db.Integer, primary_key=True)
     report_id = db.Column(db.Integer, db.ForeignKey('reports.id', ondelete='CASCADE'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     action = db.Column(db.String(50), nullable=False)  # create, update, approve, reject, etc.
     details = db.Column(db.Text, nullable=True)  # Detalhes da ação (opcional)
     data_before = db.Column(db.Text, nullable=True)  # JSON com dados antes da modificação
@@ -318,7 +318,7 @@ class CustomFormula(db.Model):
     description = db.Column(db.Text, nullable=True)
     formula = db.Column(db.Text, nullable=False)  # Fórmula em formato Python ou expressão matemática
     parameters = db.Column(db.Text, nullable=False)  # JSON com parâmetros da fórmula
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
@@ -354,7 +354,7 @@ class CalculationResult(db.Model):
     description = db.Column(db.Text, nullable=True)
     input_data = db.Column(db.Text, nullable=False)  # JSON com dados de entrada
     result = db.Column(db.Text, nullable=False)  # JSON com resultados do cálculo
-    calculated_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    calculated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     calculated_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relações
@@ -428,7 +428,7 @@ class Sample(db.Model):
     received_date = db.Column(db.DateTime, default=datetime.utcnow)
     expiration_date = db.Column(db.Date, nullable=True)
     status = db.Column(db.String(20), default='recebida')  # recebida, em_analise, finalizada, arquivada
-    received_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    received_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     storage_location = db.Column(db.String(100), nullable=True)
     notes = db.Column(db.Text, nullable=True)
     
@@ -467,7 +467,7 @@ class Sample(db.Model):
 class Notification(db.Model):
     """Modelo para notificações do sistema."""
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     title = db.Column(db.String(150), nullable=False)
     message = db.Column(db.Text, nullable=False)
     link = db.Column(db.String(255), nullable=True)  # Link para redirecionamento
@@ -499,6 +499,8 @@ class Notification(db.Model):
 
 class User(UserMixin, db.Model):
     """Modelo para usuários do sistema."""
+    __tablename__ = 'users'
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -568,7 +570,7 @@ class TechnicalDocument(db.Model):
     restricted_access = db.Column(db.Boolean, default=False)
     
     # Campos de controle
-    uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     upload_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     parent_id = db.Column(db.Integer, db.ForeignKey('technical_document.id'), nullable=True)  # Para versões
@@ -654,7 +656,7 @@ class DocumentAttachment(db.Model):
     file_type = db.Column(db.String(50), nullable=False)
     file_size = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text, nullable=True)
-    uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     upload_date = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relações
@@ -686,7 +688,7 @@ class UserActivity(db.Model):
     __tablename__ = 'user_activities'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     action = db.Column(db.String(100), nullable=False)  # login, logout, create, update, delete, view
     module = db.Column(db.String(50), nullable=False)  # users, reports, suppliers, calculos, documents, etc.
     entity_id = db.Column(db.Integer, nullable=True)  # ID da entidade afetada (laudo, usuário, etc.)
@@ -789,8 +791,8 @@ class SystemConfig(db.Model):
     description = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    updated_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Relações
     creator = db.relationship('User', foreign_keys=[created_by], backref='created_configs')
@@ -828,8 +830,8 @@ class Alert(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     expires_at = db.Column(db.DateTime, nullable=True)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    target_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Usuário destinatário
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    target_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Usuário destinatário
     
     # Relações
     creator = db.relationship('User', foreign_keys=[created_by], backref='created_alerts')
@@ -887,7 +889,7 @@ class DatabaseBackup(db.Model):
     file_size = db.Column(db.Integer, nullable=False)  # Tamanho em bytes
     description = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     # Relações
     creator = db.relationship('User', foreign_keys=[created_by], backref='created_backups')
@@ -915,11 +917,11 @@ class AutomaticReport(db.Model):
     description = db.Column(db.Text, nullable=True)
     template_id = db.Column(db.Integer, db.ForeignKey('report_templates.id'), nullable=False)
     data = db.Column(db.JSON, nullable=False)  # Dados preenchidos do template
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = db.Column(db.String(50), default='draft')  # draft, review, approved, rejected
-    approved_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    approved_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     approved_at = db.Column(db.DateTime, nullable=True)
     generated_file = db.Column(db.String(255), nullable=True)  # Arquivo PDF gerado
     file_path = db.Column(db.String(500), nullable=True)
@@ -987,7 +989,7 @@ class ReportTemplate(db.Model):
     template_type = db.Column(db.String(50))  # quality, production, maintenance, etc.
     version = db.Column(db.String(10))
     is_active = db.Column(db.Boolean, default=True)
-    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -1035,7 +1037,7 @@ class ReportAttachment(db.Model):
     file_type = db.Column(db.String(50))
     file_size = db.Column(db.Integer)  # em bytes
     upload_date = db.Column(db.DateTime, default=datetime.utcnow)
-    uploader_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    uploader_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     
     # Relacionamentos
     report = db.relationship('Report', back_populates='attachments')
@@ -1061,7 +1063,7 @@ class StandardFields(db.Model):
     linha_producao = db.Column(db.String(50), nullable=True)
     
     # Controle de versão e metadados
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
@@ -1106,7 +1108,7 @@ class FormPreset(db.Model):
     form_type = db.Column(db.String(100), nullable=True)  # Tipo/nome do formulário
     form_path = db.Column(db.String(500), nullable=True)  # Caminho relativo do arquivo no sistema
     file_path = db.Column(db.String(500), nullable=True)  # Campo mantido para compatibilidade
-    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     data = db.Column(db.Text, nullable=False, default='{}')  # Campos e valores predefinidos em formato JSON
@@ -1159,6 +1161,70 @@ class FormPreset(db.Model):
         """Retorna a URL para download da predefinição."""
         from flask import url_for
         return url_for('forms.download_preset', preset_id=self.id)
+
+
+# Modelos para o painel de controle personalizado
+
+class Task(db.Model):
+    """Modelo para tarefas no painel de controle."""
+    __tablename__ = 'tasks'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    deadline = db.Column(db.DateTime, nullable=True)
+    completed = db.Column(db.Boolean, default=False)
+    priority = db.Column(db.String(50), default='medium')  # low, medium, high
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relação com o usuário
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('tasks', lazy=True))
+    
+    def __repr__(self):
+        return f'<Task {self.id}: {self.title}>'
+    
+    def to_dict(self):
+        """Converte o modelo para um dicionário."""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'deadline': self.deadline.isoformat() if self.deadline else None,
+            'completed': self.completed,
+            'priority': self.priority,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+            'user_id': self.user_id
+        }
+
+
+class Note(db.Model):
+    """Modelo para notas rápidas no painel de controle."""
+    __tablename__ = 'notes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False, default='')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relação com o usuário
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('notes', lazy=True))
+    
+    def __repr__(self):
+        return f'<Note {self.id}>'
+    
+    def to_dict(self):
+        """Converte o modelo para um dicionário."""
+        return {
+            'id': self.id,
+            'content': self.content,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+            'user_id': self.user_id
+        }
 
 
 
