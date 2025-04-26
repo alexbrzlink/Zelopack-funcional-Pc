@@ -7,7 +7,7 @@ import io
 import base64
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from flask_login import login_required, current_user
-from models import Report, Supplier, User, UserActivity, db
+from models import TechnicalDocument, Supplier, User, UserActivity, db
 import matplotlib
 matplotlib.use('Agg')  # Define o backend não interativo
 import matplotlib.pyplot as plt
@@ -37,7 +37,7 @@ def index():
     )
     
     # Obter estatísticas gerais
-    total_reports = Report.query.count()
+    total_reports = TechnicalDocument.query.count()
     total_suppliers = Supplier.query.count()
     total_users = User.query.count()
     
@@ -45,19 +45,19 @@ def index():
     today = datetime.now()
     six_months_ago = today - timedelta(days=180)
     
-    # Consulta SQL para obter contagem de laudos por mês
+    # Consulta SQL para obter contagem de documentos por mês
     reports_by_month = db.session.query(
-        extract('year', Report.created_at).label('year'),
-        extract('month', Report.created_at).label('month'),
-        func.count(Report.id).label('count')
+        extract('year', TechnicalDocument.upload_date).label('year'),
+        extract('month', TechnicalDocument.upload_date).label('month'),
+        func.count(TechnicalDocument.id).label('count')
     ).filter(
-        Report.created_at >= six_months_ago
+        TechnicalDocument.upload_date >= six_months_ago
     ).group_by(
-        extract('year', Report.created_at),
-        extract('month', Report.created_at)
+        extract('year', TechnicalDocument.upload_date),
+        extract('month', TechnicalDocument.upload_date)
     ).order_by(
-        extract('year', Report.created_at),
-        extract('month', Report.created_at)
+        extract('year', TechnicalDocument.upload_date),
+        extract('month', TechnicalDocument.upload_date)
     ).all()
     
     # Preparar dados para o gráfico de linha
@@ -79,27 +79,25 @@ def index():
         
         counts.append(count)
     
-    # Gerar gráfico de linha para relatórios por mês
-    line_chart = create_line_chart(months, counts, 'Relatórios por Mês', 'Mês', 'Quantidade')
+    # Gerar gráfico de linha para documentos por mês
+    line_chart = create_line_chart(months, counts, 'Documentos por Mês', 'Mês', 'Quantidade')
     
-    # Obter laudos por fornecedor (top 5)
-    reports_by_supplier = db.session.query(
-        Supplier.name,
-        func.count(Report.id).label('count')
-    ).join(
-        Report, Report.supplier_id == Supplier.id
+    # Obter documentos por categoria (top 5)
+    reports_by_category = db.session.query(
+        TechnicalDocument.document_type,
+        func.count(TechnicalDocument.id).label('count')
     ).group_by(
-        Supplier.name
+        TechnicalDocument.document_type
     ).order_by(
-        func.count(Report.id).desc()
+        func.count(TechnicalDocument.id).desc()
     ).limit(5).all()
     
     # Preparar dados para o gráfico de barras
-    supplier_names = [supplier.name for supplier in reports_by_supplier]
-    supplier_counts = [supplier.count for supplier in reports_by_supplier]
+    category_names = [doc.document_type for doc in reports_by_category]
+    category_counts = [doc.count for doc in reports_by_category]
     
-    # Gerar gráfico de barras para laudos por fornecedor
-    bar_chart = create_bar_chart(supplier_names, supplier_counts, 'Relatórios por Fornecedor', 'Fornecedor', 'Quantidade')
+    # Gerar gráfico de barras para documentos por categoria
+    bar_chart = create_bar_chart(category_names, category_counts, 'Documentos por Categoria', 'Categoria', 'Quantidade')
     
     # Obter atividades por módulo
     activities_by_module = db.session.query(
@@ -143,48 +141,48 @@ def reports_statistics():
         details='Visualização de estatísticas detalhadas de relatórios'
     )
     
-    # Obter relatórios por categoria
+    # Obter documentos por tipo
     reports_by_category = db.session.query(
-        Report.category,
-        func.count(Report.id).label('count')
+        TechnicalDocument.document_type,
+        func.count(TechnicalDocument.id).label('count')
     ).group_by(
-        Report.category
+        TechnicalDocument.document_type
     ).order_by(
-        func.count(Report.id).desc()
+        func.count(TechnicalDocument.id).desc()
     ).all()
     
     # Preparar dados para o gráfico de barras
-    category_names = [report.category for report in reports_by_category]
-    category_counts = [report.count for report in reports_by_category]
+    category_names = [doc.document_type for doc in reports_by_category]
+    category_counts = [doc.count for doc in reports_by_category]
     
-    # Gerar gráfico de barras para relatórios por categoria
-    category_chart = create_bar_chart(category_names, category_counts, 'Relatórios por Categoria', 'Categoria', 'Quantidade')
+    # Gerar gráfico de barras para documentos por tipo
+    category_chart = create_bar_chart(category_names, category_counts, 'Documentos por Tipo', 'Tipo', 'Quantidade')
     
-    # Obter relatórios por status
+    # Obter documentos por status
     reports_by_status = db.session.query(
-        Report.status,
-        func.count(Report.id).label('count')
+        TechnicalDocument.status,
+        func.count(TechnicalDocument.id).label('count')
     ).group_by(
-        Report.status
+        TechnicalDocument.status
     ).order_by(
-        func.count(Report.id).desc()
+        func.count(TechnicalDocument.id).desc()
     ).all()
     
     # Preparar dados para o gráfico de pizza
-    status_names = [report.status for report in reports_by_status]
-    status_counts = [report.count for report in reports_by_status]
+    status_names = [doc.status for doc in reports_by_status]
+    status_counts = [doc.count for doc in reports_by_status]
     
-    # Gerar gráfico de pizza para relatórios por status
-    status_chart = create_pie_chart(status_names, status_counts, 'Relatórios por Status')
+    # Gerar gráfico de pizza para documentos por status
+    status_chart = create_pie_chart(status_names, status_counts, 'Documentos por Status')
     
-    # Obter relatórios por dia da semana
+    # Obter documentos por dia da semana
     reports_by_day = db.session.query(
-        extract('dow', Report.created_at).label('day'),
-        func.count(Report.id).label('count')
+        extract('dow', TechnicalDocument.upload_date).label('day'),
+        func.count(TechnicalDocument.id).label('count')
     ).group_by(
-        extract('dow', Report.created_at)
+        extract('dow', TechnicalDocument.upload_date)
     ).order_by(
-        extract('dow', Report.created_at)
+        extract('dow', TechnicalDocument.upload_date)
     ).all()
     
     # Mapear dias da semana
