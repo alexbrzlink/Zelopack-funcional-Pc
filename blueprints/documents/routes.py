@@ -1,5 +1,6 @@
 from flask import render_template, redirect, url_for, request, flash, jsonify, current_app, send_file, abort
 from flask_login import login_required, current_user
+from flask_wtf.csrf import generate_csrf
 from sqlalchemy import desc, func, or_
 from werkzeug.utils import secure_filename
 import os
@@ -1120,6 +1121,112 @@ def edit_online(document_id):
         title=f'Editor Online: {document.title}',
         document=document,
         content=content
+    )
+
+
+@documents_bp.route('/advanced-editor/<int:document_id>', methods=['GET', 'POST'])
+@login_required
+def advanced_editor(document_id):
+    """Editor avançado de documentos com recursos modernos."""
+    document = TechnicalDocument.query.get_or_404(document_id)
+    
+    # Verificar permissão
+    if document.uploaded_by != current_user.id and current_user.role != 'admin':
+        flash('Você não tem permissão para editar este documento.', 'warning')
+        return redirect(url_for('documents.view_document', document_id=document.id))
+    
+    # Verificar se é um documento HTML
+    if document.file_type != 'html':
+        flash('Este documento não pode ser editado com o editor avançado.', 'warning')
+        return redirect(url_for('documents.view_document', document_id=document.id))
+    
+    # Ler o conteúdo atual do documento
+    try:
+        with open(document.file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            
+            # Extrair apenas o conteúdo do corpo se for um HTML completo
+            if '<body' in content and '</body>' in content:
+                body_start = content.find('<body')
+                body_start = content.find('>', body_start) + 1
+                body_end = content.find('</body>', body_start)
+                if body_start > 0 and body_end > 0:
+                    content = content[body_start:body_end].strip()
+    except Exception as e:
+        current_app.logger.error(f"Erro ao ler documento: {str(e)}")
+        flash(f'Erro ao ler o documento: {str(e)}', 'danger')
+        return redirect(url_for('documents.view_document', document_id=document.id))
+    
+    if request.method == 'POST':
+        new_content = request.form.get('content', '')
+        status = request.form.get('status', 'draft')
+        
+        try:
+            # Envolver em um template HTML completo
+            html_template = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{document.title}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+        h1 {{ color: #0066cc; }}
+        .container {{ max-width: 100%; margin: 0 auto; }}
+        .footer {{ margin-top: 30px; font-size: 12px; color: #666; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        {new_content}
+        <div class="footer">
+            <p>Documento atualizado por: {current_user.name} - {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}</p>
+        </div>
+    </div>
+</body>
+</html>"""
+            
+            # Salvar o conteúdo HTML completo
+            with open(document.file_path, 'w', encoding='utf-8') as f:
+                f.write(html_template)
+            
+            # Atualizar metadados do documento
+            document.file_size = os.path.getsize(document.file_path)
+            document.updated_at = datetime.datetime.utcnow()
+            
+            if status == 'published':
+                document.status = 'published'
+            
+            db.session.commit()
+            
+            # Retornar resposta JSON se solicitado
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({
+                    'success': True,
+                    'message': 'Documento atualizado com sucesso',
+                    'redirect_url': url_for('documents.view_document', document_id=document.id)
+                })
+            
+            flash('Documento atualizado com sucesso!', 'success')
+            return redirect(url_for('documents.view_document', document_id=document.id))
+        
+        except Exception as e:
+            current_app.logger.error(f"Erro ao salvar documento: {str(e)}")
+            
+            # Retornar resposta JSON se solicitado
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({'success': False, 'message': f'Erro ao salvar o documento: {str(e)}'})
+            
+            flash(f'Erro ao salvar o documento: {str(e)}', 'danger')
+    
+    # Gerar token CSRF para requisições Ajax
+    csrf_token = generate_csrf()
+    
+    return render_template(
+        'documents/advanced_editor.html',
+        title=f'Editor Avançado: {document.title}',
+        document=document,
+        content=content,
+        csrf_token=csrf_token
     )
 
 

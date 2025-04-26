@@ -28,6 +28,16 @@
                         <a href="{{ url_for('documents.edit_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
                             <i class="fas fa-edit me-1"></i> Editar
                         </a>
+                        {% if document.file_type == 'html' %}
+                        <div class="btn-group me-2">
+                            <a href="{{ url_for('documents.edit_online', document_id=document.id) }}" class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-code me-1"></i> Editar HTML
+                            </a>
+                            <a href="{{ url_for('documents.advanced_editor', document_id=document.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-pen-fancy me-1"></i> Editor Avançado
+                            </a>
+                        </div>
+                        {% endif %}
                         {% endif %}
                         <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
                             <i class="fas fa-download me-1"></i> Download
