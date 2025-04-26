@@ -1,0 +1,1036 @@
+{% extends "base.html" %}
+
+{% block title %}Editor Avançado: {{ document.title }} - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .tox-tinymce {
+        border-radius: 0.375rem;
+        border-color: #dee2e6;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .editor-container {
+        min-height: 600px;
+    }
+    
+    .document-info {
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-left: 4px solid #0d6efd;
+    }
+    
+    .document-actions {
+        position: sticky;
+        top: 20px;
+    }
+    
+    .action-card {
+        margin-bottom: 15px;
+        border-radius: 0.375rem;
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: all 0.3s ease;
+    }
+    
+    .action-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .action-card .card-body {
+        padding: 15px;
+    }
+    
+    .action-card .icon {
+        font-size: 1.5rem;
+        color: #0d6efd;
+        margin-bottom: 10px;
+    }
+    
+    .btn-action {
+        width: 100%;
+        text-align: left;
+        margin-bottom: 5px;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-action:hover {
+        transform: translateX(3px);
+    }
+    
+    .history-container {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .history-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        font-size: 0.9rem;
+    }
+    
+    .history-date {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .collaborators-list {
+        margin-top: 10px;
+    }
+    
+    .collaborator-badge {
+        display: inline-block;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        background-color: #e9ecef;
+        font-size: 0.85rem;
+    }
+    
+    /* Barra de status */
+    .status-bar {
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        padding: 8px 15px;
+        font-size: 0.85rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .document-actions {
+            position: static;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Área de edição principal -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit me-2"></i> Editor Avançado
+                    </h4>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-light" id="btn-preview">
+                            <i class="fas fa-eye me-1"></i> Visualizar
+                        </button>
+                        <button type="button" class="btn btn-sm btn-light ms-2" id="btn-settings">
+                            <i class="fas fa-cog me-1"></i> Configurações
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Informações do documento -->
+                    <div class="document-info">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="document-title">{{ document.title }}</h5>
+                                <p class="document-desc mb-0">{{ document.description }}</p>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <div class="document-meta">
+                                    <span class="badge bg-primary me-2">{{ document.category }}</span>
+                                    <span class="badge bg-secondary">Versão {{ document.version }}</span>
+                                </div>
+                                <div class="document-dates mt-1">
+                                    <small class="text-muted">Criado em: {{ document.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulário de edição -->
+                    <form method="POST" id="editor-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <!-- O editor TinyMCE será inicializado aqui -->
+                        <div class="editor-container">
+                            <textarea id="advanced-editor" name="content">{{ content|safe }}</textarea>
+                        </div>
+                        
+                        <!-- Barra de status -->
+                        <div class="status-bar mt-3">
+                            <div class="status-info">
+                                <span id="status-indicator" class="text-success">
+                                    <i class="fas fa-check-circle me-1"></i> Todas as alterações serão salvas automaticamente
+                                </span>
+                            </div>
+                            <div class="status-actions">
+                                <span class="me-3" id="word-count">0 palavras</span>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-secondary" id="btn-undo">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" id="btn-redo">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botões de ação -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('documents.view_document', document_id=document.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i> Voltar
+                            </a>
+                            <div>
+                                <button type="button" class="btn btn-info me-2" id="btn-save-draft">
+                                    <i class="fas fa-save me-1"></i> Salvar Rascunho
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="btn-publish">
+                                    <i class="fas fa-paper-plane me-1"></i> Publicar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Área de ações lateral -->
+        <div class="col-lg-3">
+            <div class="document-actions">
+                <!-- Ações do documento -->
+                <div class="card action-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ações do Documento</h5>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="btn btn-outline-primary btn-action">
+                                <i class="fas fa-download me-2"></i> Download
+                            </a>
+                            <a href="{{ url_for('documents.print_document', document_id=document.id) }}" target="_blank" class="btn btn-outline-secondary btn-action">
+                                <i class="fas fa-print me-2"></i> Imprimir
+                            </a>
+                            <button type="button" class="btn btn-outline-success btn-action" id="btn-share">
+                                <i class="fas fa-share-alt me-2"></i> Compartilhar
+                            </button>
+                            <button type="button" class="btn btn-outline-warning btn-action" id="btn-revision">
+                                <i class="fas fa-history me-2"></i> Criar Revisão
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Histórico de alterações -->
+                <div class="card action-card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Histórico de Alterações</h5>
+                        <div class="history-container">
+                            <div class="history-item">
+                                <div class="d-flex justify-content-between">
+                                    <span>Criação do documento</span>
+                                    <span class="history-date">{{ document.created_at.strftime('%d/%m/%Y') }}</span>
+                                </div>
+                                <div class="small text-muted">{{ document.author }}</div>
+                            </div>
+                            
+                            {% if document.updated_at and document.updated_at != document.created_at %}
+                            <div class="history-item">
+                                <div class="d-flex justify-content-between">
+                                    <span>Última atualização</span>
+                                    <span class="history-date">{{ document.updated_at.strftime('%d/%m/%Y') }}</span>
+                                </div>
+                                <div class="small text-muted">{{ current_user.name }}</div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Mais itens de histórico seriam adicionados aqui dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Templates e estilos -->
+                <div class="card action-card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Templates e Estilos</h5>
+                        <div class="list-group list-group-flush">
+                            <button type="button" class="list-group-item list-group-item-action template-item" data-template="business">
+                                <i class="fas fa-briefcase text-primary me-2"></i> Modelo Corporativo
+                            </button>
+                            <button type="button" class="list-group-item list-group-item-action template-item" data-template="technical">
+                                <i class="fas fa-cogs text-secondary me-2"></i> Documento Técnico
+                            </button>
+                            <button type="button" class="list-group-item list-group-item-action template-item" data-template="report">
+                                <i class="fas fa-chart-bar text-success me-2"></i> Relatório
+                            </button>
+                            <button type="button" class="list-group-item list-group-item-action template-item" data-template="form">
+                                <i class="fas fa-clipboard-list text-info me-2"></i> Formulário
+                            </button>
+                        </div>
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="btn-more-templates">
+                                <i class="fas fa-plus me-1"></i> Mais Templates
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Visualização -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i> Visualização: {{ document.title }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-container p-3" id="preview-content"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="btn-print-preview">
+                    <i class="fas fa-print me-1"></i> Imprimir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Configurações -->
+<div class="modal fade" id="settingsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-cog me-2"></i> Configurações do Editor
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Tema do Editor</label>
+                    <select class="form-select" id="editor-theme">
+                        <option value="default">Padrão</option>
+                        <option value="dark">Escuro</option>
+                        <option value="gray">Cinza</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tamanho da Fonte</label>
+                    <select class="form-select" id="font-size">
+                        <option value="12pt">12pt (Padrão)</option>
+                        <option value="14pt">14pt</option>
+                        <option value="16pt">16pt</option>
+                        <option value="18pt">18pt</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Verificação Ortográfica</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="spellcheck" checked>
+                        <label class="form-check-label" for="spellcheck">Habilitar verificação ortográfica</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Salvamento Automático</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="autosave" checked>
+                        <label class="form-check-label" for="autosave">Salvar alterações automaticamente</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Intervalo de Salvamento</label>
+                    <select class="form-select" id="autosave-interval">
+                        <option value="30">30 segundos</option>
+                        <option value="60" selected>1 minuto</option>
+                        <option value="300">5 minutos</option>
+                        <option value="600">10 minutos</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn-save-settings">Salvar Configurações</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Compartilhamento -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-share-alt me-2"></i> Compartilhar Documento
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Link para Compartilhamento</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="share-link" value="{{ request.host_url }}documents/view/{{ document.id }}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" id="btn-copy-link">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="form-text">Este link permite que qualquer pessoa acesse o documento.</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Adicionar Colaboradores</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="collaborator-email" placeholder="Email do colaborador">
+                        <button class="btn btn-outline-primary" type="button" id="btn-add-collaborator">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Colaboradores Atuais</label>
+                    <div class="collaborators-list">
+                        <span class="collaborator-badge">
+                            {{ current_user.email }} (Você) <span class="badge bg-primary">Proprietário</span>
+                        </span>
+                        <!-- Outros colaboradores seriam adicionados aqui -->
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Permissões</label>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="permission-view" checked>
+                        <label class="form-check-label" for="permission-view">Visualizar</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="permission-comment" checked>
+                        <label class="form-check-label" for="permission-comment">Comentar</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="permission-edit">
+                        <label class="form-check-label" for="permission-edit">Editar</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="btn-share-save">Compartilhar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- TinyMCE from CDN -->
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+<script>
+    // Variáveis globais
+    let editor;
+    let autoSaveInterval;
+    let lastSavedContent = '';
+    let isDirty = false;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar o editor TinyMCE
+        initEditor();
+        
+        // Inicializar eventos
+        setupEventListeners();
+        
+        // Marcar menu ativo
+        document.querySelector('#nav-documents').classList.add('active');
+        
+        // Configurar salvamento automático
+        setupAutoSave();
+    });
+    
+    function initEditor() {
+        tinymce.init({
+            selector: '#advanced-editor',
+            plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons',
+            menubar: 'file edit view insert format tools table help',
+            toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+            toolbar_sticky: true,
+            image_advtab: true,
+            importcss_append: true,
+            height: 600,
+            image_caption: true,
+            quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+            noneditable_class: 'mceNonEditable',
+            toolbar_mode: 'sliding',
+            contextmenu: 'link image table',
+            skin: 'oxide',
+            content_css: 'default',
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 16px; }',
+            setup: function(ed) {
+                editor = ed;
+                
+                // Monitorar mudanças no conteúdo
+                ed.on('change', function(e) {
+                    isDirty = true;
+                    updateStatusIndicator('editing');
+                });
+                
+                // Atualizar contador de palavras
+                ed.on('KeyUp', function(e) {
+                    updateWordCount();
+                });
+            },
+            save_onsavecallback: function() {
+                saveContent(false);
+            }
+        });
+    }
+    
+    function setupEventListeners() {
+        // Botão de preview
+        document.getElementById('btn-preview').addEventListener('click', function() {
+            const content = tinymce.get('advanced-editor').getContent();
+            document.getElementById('preview-content').innerHTML = content;
+            new bootstrap.Modal(document.getElementById('previewModal')).show();
+        });
+        
+        // Botão de configurações
+        document.getElementById('btn-settings').addEventListener('click', function() {
+            new bootstrap.Modal(document.getElementById('settingsModal')).show();
+        });
+        
+        // Botão de compartilhar
+        document.getElementById('btn-share').addEventListener('click', function() {
+            new bootstrap.Modal(document.getElementById('shareModal')).show();
+        });
+        
+        // Botão de salvar rascunho
+        document.getElementById('btn-save-draft').addEventListener('click', function() {
+            saveContent(false);
+        });
+        
+        // Botão de publicar
+        document.getElementById('btn-publish').addEventListener('click', function() {
+            saveContent(true);
+        });
+        
+        // Botão de imprimir preview
+        document.getElementById('btn-print-preview').addEventListener('click', function() {
+            printPreview();
+        });
+        
+        // Botão de copiar link
+        document.getElementById('btn-copy-link').addEventListener('click', function() {
+            const shareLink = document.getElementById('share-link');
+            shareLink.select();
+            document.execCommand('copy');
+            alert('Link copiado para a área de transferência!');
+        });
+        
+        // Botões undo/redo
+        document.getElementById('btn-undo').addEventListener('click', function() {
+            tinymce.get('advanced-editor').execCommand('undo');
+        });
+        
+        document.getElementById('btn-redo').addEventListener('click', function() {
+            tinymce.get('advanced-editor').execCommand('redo');
+        });
+        
+        // Botão de salvar configurações
+        document.getElementById('btn-save-settings').addEventListener('click', function() {
+            saveSettings();
+            bootstrap.Modal.getInstance(document.getElementById('settingsModal')).hide();
+        });
+        
+        // Itens de template
+        document.querySelectorAll('.template-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                applyTemplate(this.dataset.template);
+            });
+        });
+        
+        // Adicionar colaborador
+        document.getElementById('btn-add-collaborator').addEventListener('click', function() {
+            addCollaborator();
+        });
+        
+        // Compartilhar documento
+        document.getElementById('btn-share-save').addEventListener('click', function() {
+            shareDocument();
+            bootstrap.Modal.getInstance(document.getElementById('shareModal')).hide();
+        });
+        
+        // Revisão do documento
+        document.getElementById('btn-revision').addEventListener('click', function() {
+            createRevision();
+        });
+    }
+    
+    function setupAutoSave() {
+        // Configurar intervalo de salvamento automático
+        autoSaveInterval = setInterval(function() {
+            if (isDirty) {
+                saveContent(false, true);
+            }
+        }, 60000); // 1 minuto por padrão
+    }
+    
+    function updateStatusIndicator(status) {
+        const indicator = document.getElementById('status-indicator');
+        
+        switch(status) {
+            case 'saved':
+                indicator.className = 'text-success';
+                indicator.innerHTML = '<i class="fas fa-check-circle me-1"></i> Todas as alterações foram salvas';
+                break;
+            case 'saving':
+                indicator.className = 'text-warning';
+                indicator.innerHTML = '<i class="fas fa-sync fa-spin me-1"></i> Salvando alterações...';
+                break;
+            case 'editing':
+                indicator.className = 'text-info';
+                indicator.innerHTML = '<i class="fas fa-pencil-alt me-1"></i> Editando...';
+                break;
+            case 'error':
+                indicator.className = 'text-danger';
+                indicator.innerHTML = '<i class="fas fa-exclamation-circle me-1"></i> Erro ao salvar! Tente novamente.';
+                break;
+            default:
+                indicator.className = 'text-muted';
+                indicator.innerHTML = '<i class="fas fa-info-circle me-1"></i> Editor pronto';
+        }
+    }
+    
+    function updateWordCount() {
+        const wordCount = tinymce.get('advanced-editor').plugins.wordcount.getCount();
+        document.getElementById('word-count').textContent = `${wordCount} palavras`;
+    }
+    
+    function saveContent(isPublishing = false, isAutoSave = false) {
+        if (!isDirty && !isPublishing) return;
+        
+        updateStatusIndicator('saving');
+        
+        const content = tinymce.get('advanced-editor').getContent();
+        const formData = new FormData();
+        formData.append('content', content);
+        formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
+        
+        if (isPublishing) {
+            formData.append('status', 'published');
+        }
+        
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao salvar documento');
+            }
+            return response.json();
+        })
+        .then(data => {
+            lastSavedContent = content;
+            isDirty = false;
+            updateStatusIndicator('saved');
+            
+            if (!isAutoSave) {
+                showNotification(isPublishing ? 'Documento publicado com sucesso!' : 'Documento salvo com sucesso!');
+            }
+            
+            if (isPublishing) {
+                setTimeout(() => {
+                    window.location.href = data.redirect_url || '/documents/view/' + {{ document.id }};
+                }, 1000);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            updateStatusIndicator('error');
+        });
+    }
+    
+    function printPreview() {
+        const content = document.getElementById('preview-content').innerHTML;
+        const printWin = window.open('', '_blank', 'width=800,height=600');
+        
+        printWin.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>{{ document.title }} - Impressão</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 30px; line-height: 1.5; }
+                    h1, h2, h3 { margin-top: 20px; }
+                    table { border-collapse: collapse; width: 100%; }
+                    table, th, td { border: 1px solid #ddd; padding: 8px; }
+                    th { background-color: #f2f2f2; }
+                    @media print {
+                        body { margin: 0.5cm; }
+                        a { text-decoration: none; color: #000; }
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>{{ document.title }}</h1>
+                <div>${content}</div>
+                <div style="margin-top: 30px; font-size: 12px; color: #666; border-top: 1px solid #ddd; padding-top: 10px;">
+                    <p>Documento gerado em: ${new Date().toLocaleString()}</p>
+                    <p>© 2025 ZELOPACK - Sistema de Gerenciamento de Documentos</p>
+                </div>
+            </body>
+            </html>
+        `);
+        
+        printWin.document.close();
+        setTimeout(() => {
+            printWin.print();
+        }, 500);
+    }
+    
+    function saveSettings() {
+        // Salvar as configurações do editor
+        const theme = document.getElementById('editor-theme').value;
+        const fontSize = document.getElementById('font-size').value;
+        const spellcheck = document.getElementById('spellcheck').checked;
+        const autosave = document.getElementById('autosave').checked;
+        const autosaveInterval = parseInt(document.getElementById('autosave-interval').value);
+        
+        // Aplicar as configurações
+        if (theme === 'dark') {
+            tinymce.get('advanced-editor').setContent(tinymce.get('advanced-editor').getContent());
+            tinymce.execCommand('mceRemoveEditor', false, 'advanced-editor');
+            
+            // Reinicializar com o tema escuro
+            setTimeout(() => {
+                tinymce.init({
+                    selector: '#advanced-editor',
+                    plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons',
+                    menubar: 'file edit view insert format tools table help',
+                    toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl',
+                    toolbar_sticky: true,
+                    image_advtab: true,
+                    importcss_append: true,
+                    height: 600,
+                    image_caption: true,
+                    quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+                    noneditable_class: 'mceNonEditable',
+                    toolbar_mode: 'sliding',
+                    contextmenu: 'link image table',
+                    skin: 'oxide-dark',
+                    content_css: 'dark',
+                    content_style: `body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: ${fontSize}; }`,
+                });
+            }, 300);
+        }
+        
+        // Configurar o intervalo de salvamento automático
+        clearInterval(autoSaveInterval);
+        
+        if (autosave) {
+            autoSaveInterval = setInterval(function() {
+                if (isDirty) {
+                    saveContent(false, true);
+                }
+            }, autosaveInterval * 1000);
+        }
+        
+        showNotification('Configurações salvas com sucesso!');
+    }
+    
+    function applyTemplate(templateType) {
+        if (!confirm(`Aplicar o template "${templateType}" irá substituir o conteúdo atual do documento. Deseja continuar?`)) {
+            return;
+        }
+        
+        let template = '';
+        
+        switch(templateType) {
+            case 'business':
+                template = `
+                    <h1 style="text-align: center; color: #0066cc;">Relatório Corporativo</h1>
+                    <p style="text-align: center;"><em>Preparado por: ${current_user.name}</em></p>
+                    <h2>Sumário Executivo</h2>
+                    <p>Este documento apresenta os resultados e análises das atividades do período...</p>
+                    <h2>Objetivos</h2>
+                    <ol>
+                        <li>Objetivo principal 1</li>
+                        <li>Objetivo principal 2</li>
+                        <li>Objetivo principal 3</li>
+                    </ol>
+                    <h2>Análise de Resultados</h2>
+                    <p>Descrição detalhada dos resultados obtidos com dados e métricas relevantes.</p>
+                    <table border="1" style="width:100%">
+                        <tr style="background-color: #f2f2f2;">
+                            <th>Métrica</th>
+                            <th>Valor Atual</th>
+                            <th>Meta</th>
+                        </tr>
+                        <tr>
+                            <td>Exemplo 1</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>Exemplo 2</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    </table>
+                    <h2>Conclusões</h2>
+                    <p>Resumo das principais conclusões e próximos passos recomendados.</p>
+                `;
+                break;
+                
+            case 'technical':
+                template = `
+                    <h1 style="text-align: center; color: #333;">Documento Técnico</h1>
+                    <h2>1. Introdução</h2>
+                    <p>Este documento técnico descreve os procedimentos e especificações relacionados a...</p>
+                    <h2>2. Especificações Técnicas</h2>
+                    <ul>
+                        <li><strong>Parâmetro 1:</strong> Valor</li>
+                        <li><strong>Parâmetro 2:</strong> Valor</li>
+                        <li><strong>Parâmetro 3:</strong> Valor</li>
+                    </ul>
+                    <h2>3. Procedimentos</h2>
+                    <ol>
+                        <li>Primeiro passo do procedimento</li>
+                        <li>Segundo passo do procedimento</li>
+                        <li>Terceiro passo do procedimento</li>
+                    </ol>
+                    <h2>4. Considerações de Segurança</h2>
+                    <div style="background-color: #ffeaea; padding: 10px; border-left: 4px solid #ff5252;">
+                        <p><strong>Atenção:</strong> Precauções importantes de segurança a serem observadas.</p>
+                    </div>
+                    <h2>5. Referências</h2>
+                    <p>Lista de documentos e fontes de referência relevantes.</p>
+                `;
+                break;
+                
+            case 'report':
+                template = `
+                    <h1 style="text-align: center; color: #008080;">Relatório de Análise</h1>
+                    <p style="text-align: right;"><em>Data: ${new Date().toLocaleDateString()}</em></p>
+                    <h2>Resumo</h2>
+                    <p>Este relatório apresenta uma análise detalhada sobre...</p>
+                    <h2>Dados Coletados</h2>
+                    <p>Os seguintes dados foram coletados e analisados:</p>
+                    <table border="1" style="width:100%">
+                        <tr style="background-color: #e6f2f2;">
+                            <th>Categoria</th>
+                            <th>Valor 1</th>
+                            <th>Valor 2</th>
+                            <th>Percentual</th>
+                        </tr>
+                        <tr>
+                            <td>Categoria 1</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td>Categoria 2</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0%</td>
+                        </tr>
+                    </table>
+                    <h2>Análise Gráfica</h2>
+                    <p>Inserir gráficos e visualizações relevantes aqui.</p>
+                    <h2>Conclusões</h2>
+                    <p>Com base na análise realizada, conclui-se que...</p>
+                    <h2>Recomendações</h2>
+                    <ol>
+                        <li>Primeira recomendação</li>
+                        <li>Segunda recomendação</li>
+                        <li>Terceira recomendação</li>
+                    </ol>
+                `;
+                break;
+                
+            case 'form':
+                template = `
+                    <h1 style="text-align: center; color: #4b0082;">Formulário</h1>
+                    <p>Complete os campos abaixo:</p>
+                    <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 20px;">
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Nome:</label>
+                            <div style="border: 1px solid #ccc; padding: 8px; min-height: 20px; background-color: #f9f9f9;">&nbsp;</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Data:</label>
+                            <div style="border: 1px solid #ccc; padding: 8px; min-height: 20px; background-color: #f9f9f9;">&nbsp;</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Departamento:</label>
+                            <div style="border: 1px solid #ccc; padding: 8px; min-height: 20px; background-color: #f9f9f9;">&nbsp;</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Descrição:</label>
+                            <div style="border: 1px solid #ccc; padding: 8px; min-height: 80px; background-color: #f9f9f9;">&nbsp;</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Assinatura:</label>
+                            <div style="border: 1px solid #ccc; padding: 8px; min-height: 40px; background-color: #f9f9f9;">&nbsp;</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <p>© 2025 ZELOPACK - Todos os direitos reservados</p>
+                    </div>
+                `;
+                break;
+        }
+        
+        if (template) {
+            tinymce.get('advanced-editor').setContent(template);
+            isDirty = true;
+            updateStatusIndicator('editing');
+            showNotification(`Template "${templateType}" aplicado com sucesso!`);
+        }
+    }
+    
+    function addCollaborator() {
+        const email = document.getElementById('collaborator-email').value.trim();
+        
+        if (!email) {
+            alert('Por favor, informe um email válido.');
+            return;
+        }
+        
+        if (!isValidEmail(email)) {
+            alert('Por favor, informe um email válido.');
+            return;
+        }
+        
+        // Verificar se o colaborador já existe
+        const collaborators = document.querySelectorAll('.collaborator-badge');
+        for (let i = 0; i < collaborators.length; i++) {
+            if (collaborators[i].textContent.includes(email)) {
+                alert('Este colaborador já foi adicionado.');
+                return;
+            }
+        }
+        
+        // Adicionar colaborador (simulação)
+        const collaboratorsList = document.querySelector('.collaborators-list');
+        const collaboratorBadge = document.createElement('span');
+        collaboratorBadge.className = 'collaborator-badge';
+        collaboratorBadge.innerHTML = `
+            ${email} <span class="badge bg-info">Convidado</span>
+            <button type="button" class="btn btn-sm btn-close" onclick="this.parentElement.remove()"></button>
+        `;
+        
+        collaboratorsList.appendChild(collaboratorBadge);
+        document.getElementById('collaborator-email').value = '';
+    }
+    
+    function isValidEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+    
+    function shareDocument() {
+        // Simulação de compartilhamento
+        const permissions = {
+            view: document.getElementById('permission-view').checked,
+            comment: document.getElementById('permission-comment').checked,
+            edit: document.getElementById('permission-edit').checked
+        };
+        
+        // Coletar emails dos colaboradores
+        const collaborators = document.querySelectorAll('.collaborator-badge');
+        const emails = [];
+        
+        for (let i = 0; i < collaborators.length; i++) {
+            const text = collaborators[i].textContent.trim();
+            const match = text.match(/^([^\s@]+@[^\s@]+\.[^\s@]+)/);
+            if (match && match[1] !== '{{ current_user.email }}') {
+                emails.push(match[1]);
+            }
+        }
+        
+        // Aqui você pode enviar esses dados para o servidor
+        console.log('Compartilhando documento com:', emails);
+        console.log('Permissões:', permissions);
+        
+        showNotification('Documento compartilhado com sucesso!');
+    }
+    
+    function createRevision() {
+        // Simular criação de revisão
+        if (confirm('Deseja criar uma nova revisão deste documento?')) {
+            // Aqui você pode enviar a solicitação para o servidor
+            showNotification('Nova revisão criada com sucesso!');
+            
+            // Adicionar a revisão ao histórico
+            const historyContainer = document.querySelector('.history-container');
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString();
+            
+            historyItem.innerHTML = `
+                <div class="d-flex justify-content-between">
+                    <span>Nova revisão criada</span>
+                    <span class="history-date">${formattedDate}</span>
+                </div>
+                <div class="small text-muted">{{ current_user.name }}</div>
+            `;
+            
+            historyContainer.prepend(historyItem);
+        }
+    }
+    
+    function showNotification(message) {
+        // Verificar se o container já existe
+        let notificationContainer = document.getElementById('notification-container');
+        
+        if (!notificationContainer) {
+            notificationContainer = document.createElement('div');
+            notificationContainer.id = 'notification-container';
+            notificationContainer.style.position = 'fixed';
+            notificationContainer.style.top = '20px';
+            notificationContainer.style.right = '20px';
+            notificationContainer.style.zIndex = '9999';
+            document.body.appendChild(notificationContainer);
+        }
+        
+        // Criar notificação
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-success alert-dismissible fade show';
+        notification.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        notificationContainer.appendChild(notification);
+        
+        // Remover após 5 segundos
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 5000);
+    }
+    
+    // Confirmação antes de sair da página com alterações não salvas
+    window.addEventListener('beforeunload', function(e) {
+        if (isDirty) {
+            e.preventDefault();
+            e.returnValue = 'Existem alterações não salvas. Deseja realmente sair?';
+        }
+    });
+</script>
+{% endblock %}
