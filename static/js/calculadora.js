@@ -140,17 +140,17 @@ function setupCalculos() {
     }
     
     // Ratio
-    const btnCalcularRatio = document.getElementById('calculaRatio');
+    const btnCalcularRatio = document.getElementById('calcularRatio');
     if (btnCalcularRatio) {
         btnCalcularRatio.addEventListener('click', function() {
             calcularRatio();
         });
     }
     
-    // Ratio (segundo botão na tela)
-    const btnCalcularRatioAlt = document.getElementById('calcularRatio');
-    if (btnCalcularRatioAlt) {
-        btnCalcularRatioAlt.addEventListener('click', function() {
+    // Ratio Simples
+    const btnCalcularRatioSimples = document.getElementById('calcularRatioSimples');
+    if (btnCalcularRatioSimples) {
+        btnCalcularRatioSimples.addEventListener('click', function() {
             calcularRatioAlt();
         });
     }
@@ -164,7 +164,7 @@ function setupCalculos() {
     }
     
     // Acidez
-    const btnCalcularAcidez = document.getElementById('calculaAcidez');
+    const btnCalcularAcidez = document.getElementById('calcularAcidez');
     if (btnCalcularAcidez) {
         btnCalcularAcidez.addEventListener('click', function() {
             calcularAcidez();
@@ -172,7 +172,7 @@ function setupCalculos() {
     }
     
     // Produção Litro
-    const btnCalcularProducaoLitro = document.getElementById('calculaProducaoLitro');
+    const btnCalcularProducaoLitro = document.getElementById('calcularProducaoLitro');
     if (btnCalcularProducaoLitro) {
         btnCalcularProducaoLitro.addEventListener('click', function() {
             calcularProducaoLitro();
@@ -307,11 +307,14 @@ function calcularRatioAlt() {
     const ratio = brix / acidez;
     
     // Exibir resultado
-    const resultadoArea = document.getElementById('resultado_area_ratio');
+    const resultadoArea = document.getElementById('resultado-ratio-simples');
     if (resultadoArea) {
         resultadoArea.innerHTML = `
             <div class="resultado-header">
                 <h4><i class="fas fa-check-circle"></i> Resultado do Cálculo</h4>
+                <button class="btn btn-sm btn-primary print-btn">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
             </div>
             
             <div class="resultado-value">${ratio.toFixed(1)}</div>
@@ -319,6 +322,16 @@ function calcularRatioAlt() {
             <div class="resultado-formula">
                 <div>Ratio = Brix / Acidez</div>
                 <div>Ratio = ${brix.toFixed(1)} / ${acidez.toFixed(2)} = ${ratio.toFixed(1)}</div>
+            </div>
+            
+            <div class="resultado-interpretation">
+                <div class="alert ${ratio < 12 ? 'alert-warning' : (ratio > 18 ? 'alert-info' : 'alert-success')}">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Interpretação:</strong> 
+                    ${ratio < 12 ? 'Produto com predominância ácida.' : 
+                      (ratio > 18 ? 'Produto com predominância doce.' : 
+                       'Ratio ideal (balanceado).')}
+                </div>
             </div>
         `;
         
