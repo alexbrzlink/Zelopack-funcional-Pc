@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Início</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('documents.index') }}">Documentos</a></li>
+                    <li class="breadcrumb-item active">{{ document.title }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-file-alt me-2"></i> {{ document.title }}
+                    </h4>
+                    <div>
+                        {% if current_user.id == document.uploaded_by or current_user.role == 'admin' %}
+                        <a href="{{ url_for('documents.edit_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-edit me-1"></i> Editar
+                        </a>
+                        {% endif %}
+                        <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-download me-1"></i> Download
+                        </a>
+                        <a href="{{ url_for('documents.print_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2" target="_blank">
+                            <i class="fas fa-print me-1"></i> Imprimir
+                        </a>
+                        <a href="{{ url_for('documents.view_document', document_id=document.id, online=True) }}" class="btn btn-sm btn-light">
+                            <i class="fas fa-globe me-1"></i> Ver Online
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="document-preview text-center">
+                                {% if document.file_type == 'pdf' %}
+                                <i class="fas fa-file-pdf text-danger" style="font-size: 8rem;"></i>
+                                {% elif document.file_type in ['doc', 'docx'] %}
+                                <i class="fas fa-file-word text-primary" style="font-size: 8rem;"></i>
+                                {% elif document.file_type in ['xls', 'xlsx'] %}
+                                <i class="fas fa-file-excel text-success" style="font-size: 8rem;"></i>
+                                {% elif document.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+                                <i class="fas fa-file-image text-info" style="font-size: 8rem;"></i>
+                                {% elif document.file_type == 'html' %}
+                                <i class="fas fa-file-code text-warning" style="font-size: 8rem;"></i>
+                                {% else %}
+                                <i class="fas fa-file text-secondary" style="font-size: 8rem;"></i>
+                                {% endif %}
+                                <p class="mt-2">{{ document.file_type|upper }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <h5 class="mb-3">Detalhes do Documento</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Título:</strong> {{ document.title }}</p>
+                                    <p><strong>Tipo:</strong> 
+                                        {% if document.document_type == 'pop' %}
+                                            POP
+                                        {% elif document.document_type == 'ficha_tecnica' %}
+                                            Ficha Técnica
+                                        {% elif document.document_type == 'certificado' %}
+                                            Certificado
+                                        {% elif document.document_type == 'instrucao' %}
+                                            Instrução
+                                        {% elif document.document_type == 'planilha' %}
+                                            Planilha
+                                        {% elif document.document_type == 'manual' %}
+                                            Manual
+                                        {% elif document.document_type == 'formulario' %}
+                                            Formulário
+                                        {% else %}
+                                            {{ document.document_type|capitalize }}
+                                        {% endif %}
+                                    </p>
+                                    <p><strong>Categoria:</strong> {{ document.category|upper if document.category else "---" }}</p>
+                                    <p><strong>Status:</strong> 
+                                        {% if document.status == 'ativo' %}
+                                            <span class="badge bg-success">Ativo</span>
+                                        {% elif document.status == 'arquivado' %}
+                                            <span class="badge bg-secondary">Arquivado</span>
+                                        {% elif document.status == 'obsoleto' %}
+                                            <span class="badge bg-danger">Obsoleto</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">{{ document.status|capitalize }}</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Revisão:</strong> {{ document.revision if document.revision else "1.0" }}</p>
+                                    <p><strong>Autor:</strong> {{ document.author }}</p>
+                                    <p><strong>Criado em:</strong> {{ document.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                                    <p><strong>Atualizado em:</strong> {{ document.updated_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                                    {% if document.valid_until %}
+                                    <p><strong>Válido até:</strong> {{ document.valid_until.strftime('%d/%m/%Y') }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if document.description %}
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="mb-3">Descrição</h5>
+                            <div class="p-3 bg-light rounded">
+                                {{ document.description|nl2br }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if document.tags %}
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="mb-3">Tags</h5>
+                            <div>
+                                {% for tag in document.tags.split(',') %}
+                                <span class="badge bg-primary me-2">{{ tag.strip() }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if versions %}
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="mb-3">Versões</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Versão</th>
+                                            <th>Revisão</th>
+                                            <th>Data</th>
+                                            <th>Autor</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for ver in versions %}
+                                        <tr {% if ver.id == document.id %}class="table-primary"{% endif %}>
+                                            <td>{{ ver.version }}</td>
+                                            <td>{{ ver.revision if ver.revision else "1.0" }}</td>
+                                            <td>{{ ver.created_at.strftime('%d/%m/%Y') }}</td>
+                                            <td>{{ ver.author }}</td>
+                                            <td>
+                                                {% if ver.status == 'ativo' %}
+                                                    <span class="badge bg-success">Ativo</span>
+                                                {% elif ver.status == 'arquivado' %}
+                                                    <span class="badge bg-secondary">Arquivado</span>
+                                                {% elif ver.status == 'obsoleto' %}
+                                                    <span class="badge bg-danger">Obsoleto</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning">{{ ver.status|capitalize }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('documents.view_document', document_id=ver.id) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('documents.download_document', document_id=ver.id) }}" class="btn btn-sm btn-outline-success">
+                                                    <i class="fas fa-download"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="text-end">
+                                <a href="{{ url_for('documents.new_version', document_id=document.id) }}" class="btn btn-primary">
+                                    <i class="fas fa-code-branch me-2"></i> Criar Nova Versão
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Informações adicionais e anexos -->
+            {% if attachments %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Anexos</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for attachment in attachments %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            {% if attachment.file_type == 'pdf' %}
+                            <i class="fas fa-file-pdf text-danger me-2"></i>
+                            {% elif attachment.file_type in ['doc', 'docx'] %}
+                            <i class="fas fa-file-word text-primary me-2"></i>
+                            {% elif attachment.file_type in ['xls', 'xlsx'] %}
+                            <i class="fas fa-file-excel text-success me-2"></i>
+                            {% elif attachment.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
+                            <i class="fas fa-file-image text-info me-2"></i>
+                            {% else %}
+                            <i class="fas fa-file text-secondary me-2"></i>
+                            {% endif %}
+                            {{ attachment.original_filename }}
+                        </div>
+                        <div>
+                            <a href="{{ url_for('documents.download_attachment', attachment_id=attachment.id) }}" class="btn btn-sm btn-success">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            {% if current_user.id == document.uploaded_by or current_user.role == 'admin' %}
+                            <a href="{{ url_for('documents.delete_attachment', attachment_id=attachment.id) }}" class="btn btn-sm btn-danger" 
+                               onclick="return confirm('Tem certeza que deseja excluir este anexo?');">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Informações do Arquivo</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Nome Original</span>
+                        <span>{{ document.original_filename }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Tamanho</span>
+                        <span>{{ (document.file_size / 1024)|round(1) }} KB</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Formato</span>
+                        <span>{{ document.file_type|upper }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Versão</span>
+                        <span>{{ document.version }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Enviado por</span>
+                        <span>{{ document.uploader.name if document.uploader else 'Sistema' }}</span>
+                    </div>
+                    {% if document.restricted_access %}
+                    <div class="list-group-item list-group-item-warning">
+                        <i class="fas fa-lock me-2"></i> Acesso Restrito
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar classe ativa no item de menu correspondente
+        document.querySelector('#nav-documents').classList.add('active');
+    });
+</script>
+{% endblock %}

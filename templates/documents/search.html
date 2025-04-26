@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Busca de Documentos - Zelopack{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-search me-2"></i> Busca Avançada de Documentos
+                    </h4>
+                    <div>
+                        <a href="{{ url_for('documents.index') }}" class="btn btn-sm btn-light">
+                            <i class="fas fa-arrow-left me-1"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="{{ url_for('documents.search_documents') }}" class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="q" class="form-label">Palavra-chave</label>
+                                    <input type="text" class="form-control" id="q" name="q" value="{{ request.args.get('q', '') }}" placeholder="Pesquisar...">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="document_type" class="form-label">Tipo de Documento</label>
+                                    <select class="form-select" id="document_type" name="document_type">
+                                        <option value="">Todos</option>
+                                        <option value="formulario" {% if request.args.get('document_type') == 'formulario' %}selected{% endif %}>Formulário</option>
+                                        <option value="pop" {% if request.args.get('document_type') == 'pop' %}selected{% endif %}>POP</option>
+                                        <option value="ficha_tecnica" {% if request.args.get('document_type') == 'ficha_tecnica' %}selected{% endif %}>Ficha Técnica</option>
+                                        <option value="certificado" {% if request.args.get('document_type') == 'certificado' %}selected{% endif %}>Certificado</option>
+                                        <option value="instrucao" {% if request.args.get('document_type') == 'instrucao' %}selected{% endif %}>Instrução</option>
+                                        <option value="planilha" {% if request.args.get('document_type') == 'planilha' %}selected{% endif %}>Planilha</option>
+                                        <option value="manual" {% if request.args.get('document_type') == 'manual' %}selected{% endif %}>Manual</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="category" class="form-label">Categoria</label>
+                                    <select class="form-select" id="category" name="category">
+                                        <option value="">Todas</option>
+                                        <option value="blender" {% if request.args.get('category') == 'blender' %}selected{% endif %}>BLENDER</option>
+                                        <option value="laboratorio" {% if request.args.get('category') == 'laboratorio' %}selected{% endif %}>LABORATÓRIO</option>
+                                        <option value="portaria" {% if request.args.get('category') == 'portaria' %}selected{% endif %}>PORTARIA</option>
+                                        <option value="qualidade" {% if request.args.get('category') == 'qualidade' %}selected{% endif %}>QUALIDADE</option>
+                                        <option value="tba" {% if request.args.get('category') == 'tba' %}selected{% endif %}>TBA</option>
+                                        <option value="ordem_producao" {% if request.args.get('category') == 'ordem_producao' %}selected{% endif %}>ORDEM DE PRODUÇÃO</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="status" class="form-label">Status</label>
+                                    <select class="form-select" id="status" name="status">
+                                        <option value="">Todos</option>
+                                        <option value="ativo" {% if request.args.get('status') == 'ativo' %}selected{% endif %}>Ativo</option>
+                                        <option value="arquivado" {% if request.args.get('status') == 'arquivado' %}selected{% endif %}>Arquivado</option>
+                                        <option value="obsoleto" {% if request.args.get('status') == 'obsoleto' %}selected{% endif %}>Obsoleto</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-1"></i> Buscar
+                                </button>
+                                <a href="{{ url_for('documents.search_documents') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-redo me-1"></i> Limpar
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    {% if results %}
+                    <div class="card mt-3">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Resultados da Pesquisa ({{ results|length }})</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Tipo</th>
+                                            <th>Categoria</th>
+                                            <th>Revisão</th>
+                                            <th>Atualizado</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for doc in results %}
+                                        <tr>
+                                            <td>
+                                                <i class="fa {{ doc.get_icon_class() }} me-2"></i>
+                                                {{ doc.title }}
+                                            </td>
+                                            <td>
+                                                {% if doc.document_type == 'pop' %}
+                                                    POP
+                                                {% elif doc.document_type == 'ficha_tecnica' %}
+                                                    Ficha Técnica
+                                                {% elif doc.document_type == 'certificado' %}
+                                                    Certificado
+                                                {% elif doc.document_type == 'instrucao' %}
+                                                    Instrução
+                                                {% elif doc.document_type == 'planilha' %}
+                                                    Planilha
+                                                {% elif doc.document_type == 'manual' %}
+                                                    Manual
+                                                {% elif doc.document_type == 'formulario' %}
+                                                    Formulário
+                                                {% else %}
+                                                    {{ doc.document_type|capitalize }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if doc.category %}
+                                                    <span class="badge bg-info">{{ doc.category|upper }}</span>
+                                                {% else %}
+                                                    ---
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ doc.revision if doc.revision else "1.0" }}</td>
+                                            <td>{{ doc.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                            <td>
+                                                <a href="{{ url_for('documents.view_document', document_id=doc.id) }}" class="btn btn-sm btn-primary" title="Visualizar">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('documents.download_document', document_id=doc.id) }}" class="btn btn-sm btn-success" title="Download">
+                                                    <i class="fa fa-download"></i>
+                                                </a>
+                                                <a href="{{ url_for('documents.print_document', document_id=doc.id) }}" class="btn btn-sm btn-secondary" title="Imprimir" target="_blank">
+                                                    <i class="fa fa-print"></i>
+                                                </a>
+                                                <!-- Visualização Online -->
+                                                <a href="{{ url_for('documents.view_document', document_id=doc.id, online=True) }}" class="btn btn-sm btn-info" title="Visualizar Online">
+                                                    <i class="fa fa-globe"></i>
+                                                </a>
+                                                {% if current_user.id == doc.uploaded_by or current_user.role == 'admin' %}
+                                                <a href="{{ url_for('documents.edit_document', document_id=doc.id) }}" class="btn btn-sm btn-warning" title="Editar">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% elif search_performed %}
+                    <div class="alert alert-info mt-3">
+                        <i class="fa fa-info-circle me-2"></i> Nenhum documento encontrado para os critérios de pesquisa informados.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar classe ativa no item de menu correspondente
+        document.querySelector('#nav-documents').classList.add('active');
+    });
+</script>
+{% endblock %}

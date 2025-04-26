@@ -256,6 +256,9 @@ def view_document(document_id):
         flash('Você não tem permissão para acessar este documento.', 'warning')
         return redirect(url_for('documents.index'))
     
+    # Verificar se é para visualização online
+    online_view = request.args.get('online', False)
+    
     # Obter anexos
     attachments = DocumentAttachment.query.filter_by(document_id=document.id).all()
     
@@ -274,6 +277,35 @@ def view_document(document_id):
         # Se este é o original, buscar suas versões
         versions = TechnicalDocument.query.filter_by(parent_id=document.id).all()
     
+    # Se for visualização online e o arquivo existir
+    if online_view and document.file_path and os.path.exists(document.file_path):
+        file_ext = os.path.splitext(document.file_path)[1].lower()
+        
+        # Para arquivos HTML, exibir diretamente no iframe
+        if file_ext == '.html':
+            with open(document.file_path, 'r', encoding='utf-8') as f:
+                html_content = f.read()
+            return render_template(
+                'documents/view_online.html',
+                title=f'Visualização Online: {document.title}',
+                document=document,
+                html_content=html_content
+            )
+        
+        # Para PDFs, exibir no iframe usando o viewer nativo do navegador
+        elif file_ext == '.pdf':
+            return render_template(
+                'documents/view_online.html',
+                title=f'Visualização Online: {document.title}',
+                document=document,
+                pdf_path=url_for('documents.download_document', document_id=document.id)
+            )
+        
+        # Para outros tipos, tentar embutir ou oferecer download
+        else:
+            flash('Visualização online não disponível para este tipo de arquivo. Faça o download para visualizar.', 'info')
+    
+    # Renderizar a visualização padrão
     return render_template(
         'documents/view.html',
         title=f'Documento: {document.title}',

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .document-iframe {
+        width: 100%;
+        height: 80vh;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+    
+    .document-html-container {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        background-color: #fff;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .document-actions {
+        position: sticky;
+        top: 0;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        z-index: 100;
+    }
+    
+    @media print {
+        .navbar, .footer, .document-actions {
+            display: none;
+        }
+        
+        .document-html-container {
+            border: none;
+            height: auto;
+            max-height: none;
+            overflow: visible;
+        }
+        
+        body {
+            padding: 0;
+            margin: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-eye me-2"></i> {{ document.title }}
+                    </h4>
+                    <div>
+                        <a href="{{ url_for('documents.view_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-arrow-left me-1"></i> Voltar
+                        </a>
+                        <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-download me-1"></i> Download
+                        </a>
+                        <button onclick="window.print()" class="btn btn-sm btn-light">
+                            <i class="fas fa-print me-1"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="document-actions mb-3">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h5 class="mb-0">{{ document.title }}</h5>
+                                <p class="text-muted small mb-0">
+                                    <span class="me-3"><i class="far fa-calendar-alt me-1"></i> Atualizado em: {{ document.updated_at.strftime('%d/%m/%Y %H:%M') }}</span>
+                                    <span class="me-3"><i class="far fa-user me-1"></i> Autor: {{ document.author }}</span>
+                                    {% if document.revision %}
+                                    <span><i class="fas fa-code-branch me-1"></i> Revisão: {{ document.revision }}</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                {% if document.file_type == 'pdf' %}
+                                <div class="btn-group" role="group">
+                                    <button id="zoom-in" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-search-plus"></i>
+                                    </button>
+                                    <button id="zoom-out" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-search-minus"></i>
+                                    </button>
+                                    <button id="fullscreen" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if html_content %}
+                    <!-- Exibição de conteúdo HTML -->
+                    <div class="document-html-container">
+                        {{ html_content|safe }}
+                    </div>
+                    {% elif pdf_path %}
+                    <!-- Exibição de PDF -->
+                    <iframe src="{{ pdf_path }}" class="document-iframe" id="pdf-viewer"></iframe>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Este tipo de documento não pode ser visualizado diretamente no navegador. 
+                        Por favor, faça o <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="alert-link">download</a> para visualizá-lo.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar classe ativa no item de menu correspondente
+        document.querySelector('#nav-documents').classList.add('active');
+        
+        // Controles para zoom de PDF
+        const pdfViewer = document.getElementById('pdf-viewer');
+        const zoomIn = document.getElementById('zoom-in');
+        const zoomOut = document.getElementById('zoom-out');
+        const fullscreen = document.getElementById('fullscreen');
+        
+        if (pdfViewer && zoomIn && zoomOut) {
+            let scale = 1;
+            
+            zoomIn.addEventListener('click', function() {
+                scale += 0.1;
+                updatePdfScale();
+            });
+            
+            zoomOut.addEventListener('click', function() {
+                scale = Math.max(0.5, scale - 0.1);
+                updatePdfScale();
+            });
+            
+            fullscreen.addEventListener('click', function() {
+                if (pdfViewer.requestFullscreen) {
+                    pdfViewer.requestFullscreen();
+                } else if (pdfViewer.webkitRequestFullscreen) {
+                    pdfViewer.webkitRequestFullscreen();
+                } else if (pdfViewer.msRequestFullscreen) {
+                    pdfViewer.msRequestFullscreen();
+                }
+            });
+            
+            function updatePdfScale() {
+                // Esta função depende da implementação específica do visualizador de PDF
+                // Para visualizadores nativos do navegador, pode não funcionar bem
+                // Seria ideal implementar com PDF.js para controle completo
+                pdfViewer.style.transform = `scale(${scale})`;
+                pdfViewer.style.transformOrigin = 'top left';
+            }
+        }
+    });
+</script>
+{% endblock %}
