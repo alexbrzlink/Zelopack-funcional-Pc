@@ -140,11 +140,14 @@
                                                 <td>{{ doc.description|truncate(50) if doc.description else "---" }}</td>
                                                 <td>{{ doc.created_at }}</td>
                                                 <td>
-                                                    <a href="{{ url_for('forms.view_form', file_path=doc.file_path) }}" class="btn btn-sm btn-primary" title="Visualizar">
+                                                    <a href="{{ url_for('documents.view_virtual_document', file_path=doc.file_path, online='true') }}" class="btn btn-sm btn-primary" title="Visualizar Online">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
-                                                    <a href="{{ url_for('forms.download_form', file_path=doc.file_path) }}" class="btn btn-sm btn-success" title="Download">
+                                                    <a href="{{ url_for('documents.download_virtual_document', file_path=doc.file_path) }}" class="btn btn-sm btn-success" title="Download">
                                                         <i class="fa fa-download"></i>
+                                                    </a>
+                                                    <a href="{{ url_for('documents.print_virtual_document', file_path=doc.file_path) }}" class="btn btn-sm btn-secondary" title="Imprimir" target="_blank">
+                                                        <i class="fa fa-print"></i>
                                                     </a>
                                                     <a href="{{ url_for('forms.fill_form', file_path=doc.file_path) }}" class="btn btn-sm btn-info" title="Preencher">
                                                         <i class="fa fa-pencil-alt"></i>
