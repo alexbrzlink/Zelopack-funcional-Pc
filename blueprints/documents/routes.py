@@ -4,8 +4,30 @@ from sqlalchemy import desc, func, or_
 from werkzeug.utils import secure_filename
 import os
 import datetime
-from PIL import Image
 import io
+import tempfile
+import logging
+
+# Importações para manipulação de imagens e documentos
+from PIL import Image, ImageDraw, ImageFont
+
+# Importações opcionais (usadas na função de preview)
+try:
+    from PyPDF2 import PdfReader
+except ImportError:
+    PdfReader = None
+
+try:
+    from reportlab.lib.pagesizes import letter
+    from reportlab.pdfgen import canvas
+except ImportError:
+    canvas = None
+    letter = None
+
+try:
+    from pdf2image import convert_from_path
+except ImportError:
+    convert_from_path = None
 
 from app import db
 from models import TechnicalDocument, DocumentAttachment, User
@@ -1180,7 +1202,7 @@ def image_preview(document_id):
                         draw.text((20, 80), "Prévia do documento", fill=(0, 0, 0), font=font)
                         
                         # Adicione um ícone de PDF (retângulo vermelho com "PDF")
-                        draw.rectangle([(100, 150), (200, 250)], fill=(220, 50, 50))
+                        draw.rectangle((100, 150, 200, 250), fill=(220, 50, 50))
                         draw.text((130, 190), "PDF", fill=(255, 255, 255), font=font)
                         
                         # Converta a imagem para enviar
@@ -1191,7 +1213,7 @@ def image_preview(document_id):
                         return send_file(img_io, mimetype='image/jpeg')
                 except (ImportError, Exception) as e:
                     # Se tudo falhar, retorne um ícone de PDF padrão
-                    app.logger.error(f"Erro ao gerar prévia de PDF: {str(e)}")
+                    current_app.logger.error(f"Erro ao gerar prévia de PDF: {str(e)}")
             
         # Para qualquer outro tipo de arquivo ou se as conversões falharem
         # Retornar um ícone padrão com base no tipo
@@ -1225,7 +1247,7 @@ def image_preview(document_id):
         draw.text((20, 50), title, fill=(0, 0, 0), font=font)
         
         # Ícone representativo
-        draw.rectangle([(100, 100), (200, 200)], fill=color)
+        draw.rectangle((100, 100, 200, 200), fill=color)
         draw.text((130, 140), document.file_type.upper(), fill=(255, 255, 255), font=font)
         
         # Converta e envie a imagem
