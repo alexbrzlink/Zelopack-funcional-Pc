@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Editor Online: {{ document.title }} - Zelopack{% endblock %}
+
+{% block styles %}
+<style>
+    #editor {
+        height: 500px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+    }
+    
+    .editor-toolbar {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    .editor-toolbar button {
+        margin-right: 5px;
+    }
+    
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit me-2"></i> Editor Online: {{ document.title }}
+                    </h4>
+                    <div>
+                        <a href="{{ url_for('documents.view_document', document_id=document.id) }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-eye me-1"></i> Visualizar
+                        </a>
+                        <a href="{{ url_for('documents.print_document', document_id=document.id) }}" class="btn btn-sm btn-light" target="_blank">
+                            <i class="fas fa-print me-1"></i> Imprimir
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="editor-toolbar">
+                            <div class="btn-toolbar" role="toolbar">
+                                <div class="btn-group btn-group-sm me-2" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('bold')">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('italic')">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('underline')">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="btn-group btn-group-sm me-2" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('justifyLeft')">
+                                        <i class="fas fa-align-left"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('justifyCenter')">
+                                        <i class="fas fa-align-center"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('justifyRight')">
+                                        <i class="fas fa-align-right"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="btn-group btn-group-sm me-2" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('insertUnorderedList')">
+                                        <i class="fas fa-list-ul"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('insertOrderedList')">
+                                        <i class="fas fa-list-ol"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="btn-group btn-group-sm me-2" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('createLink')">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('insertImage')">
+                                        <i class="fas fa-image"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('insertTable')">
+                                        <i class="fas fa-table"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <select class="form-select form-select-sm" onchange="formatDoc('formatBlock', this.value); this.selectedIndex = 0;">
+                                        <option value="" selected>Formato</option>
+                                        <option value="h1">Título 1</option>
+                                        <option value="h2">Título 2</option>
+                                        <option value="h3">Título 3</option>
+                                        <option value="h4">Título 4</option>
+                                        <option value="p">Parágrafo</option>
+                                        <option value="pre">Código</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="btn-group btn-group-sm ms-2" role="group">
+                                    <select class="form-select form-select-sm" onchange="formatDoc('fontName', this.value); this.selectedIndex = 0;">
+                                        <option value="" selected>Fonte</option>
+                                        <option value="Arial">Arial</option>
+                                        <option value="Helvetica">Helvetica</option>
+                                        <option value="Times New Roman">Times New Roman</option>
+                                        <option value="Courier">Courier</option>
+                                        <option value="Verdana">Verdana</option>
+                                        <option value="Georgia">Georgia</option>
+                                        <option value="Tahoma">Tahoma</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="btn-group btn-group-sm ms-2" role="group">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('undo')">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="formatDoc('redo')">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="editor" contenteditable="true">{{ content|safe }}</div>
+                        
+                        <textarea name="content" id="hiddenContent" style="display: none;"></textarea>
+                        
+                        <div class="d-flex justify-content-between mt-3">
+                            <a href="{{ url_for('documents.view_document', document_id=document.id) }}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary" onclick="updateContent()">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar classe ativa no item de menu correspondente
+        document.querySelector('#nav-documents').classList.add('active');
+    });
+    
+    function formatDoc(command, value = null) {
+        if (command === 'createLink') {
+            let url = prompt('Digite a URL do link:', 'http://');
+            if (url) {
+                document.execCommand(command, false, url);
+            }
+        } else if (command === 'insertImage') {
+            let url = prompt('Digite a URL da imagem:', 'http://');
+            if (url) {
+                document.execCommand(command, false, url);
+            }
+        } else if (command === 'insertTable') {
+            let rows = prompt('Número de linhas:', '3');
+            let cols = prompt('Número de colunas:', '3');
+            if (rows && cols) {
+                let table = '<table border="1" cellpadding="5" cellspacing="0" style="width:100%">';
+                for (let i = 0; i < parseInt(rows); i++) {
+                    table += '<tr>';
+                    for (let j = 0; j < parseInt(cols); j++) {
+                        table += '<td>&nbsp;</td>';
+                    }
+                    table += '</tr>';
+                }
+                table += '</table>';
+                document.execCommand('insertHTML', false, table);
+            }
+        } else if (value !== null) {
+            document.execCommand(command, false, value);
+        } else {
+            document.execCommand(command, false, null);
+        }
+        
+        // Foco no editor
+        document.getElementById('editor').focus();
+    }
+    
+    function updateContent() {
+        document.getElementById('hiddenContent').value = document.getElementById('editor').innerHTML;
+    }
+</script>
+{% endblock %}

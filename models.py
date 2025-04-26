@@ -581,6 +581,8 @@ class TechnicalDocument(db.Model):
     def __repr__(self):
         return f"<TechnicalDocument {self.id}: {self.title} ({self.document_type})>"
     
+
+
     def to_dict(self):
         """Converte o documento para dicionário."""
         return {
@@ -626,12 +628,18 @@ class TechnicalDocument(db.Model):
             return 'fa-file-pdf'
         elif ext in ['doc', 'docx']:
             return 'fa-file-word'
-        elif ext in ['xls', 'xlsx']:
+        elif ext in ['xls', 'xlsx', 'csv']:
             return 'fa-file-excel'
         elif ext in ['ppt', 'pptx']:
             return 'fa-file-powerpoint'
         elif ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
             return 'fa-file-image'
+        elif ext in ['html', 'htm']:
+            return 'fa-file-code'
+        elif ext in ['txt', 'md']:
+            return 'fa-file-alt'
+        elif ext in ['zip', 'rar', '7z', 'tar', 'gz']:
+            return 'fa-file-archive'
         else:
             return 'fa-file'
 
