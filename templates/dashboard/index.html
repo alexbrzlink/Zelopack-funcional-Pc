@@ -687,22 +687,36 @@
             handle: '.card-header',
             ghostClass: 'sortable-ghost',
             chosenClass: 'sortable-chosen',
+            group: {
+                name: 'dashboard',
+                pull: true,
+                put: true
+            },
             onEnd: function(evt) {
                 // Salvar a nova ordem
                 saveDashboardConfiguration();
             }
         });
         
-        // Tornar a área de widget catalog arrastrável para o dashboard
-        const widgetItems = document.querySelectorAll('.widget-item');
-        widgetItems.forEach(item => {
-            item.addEventListener('dragstart', handleDragStart);
-            item.addEventListener('dragend', handleDragEnd);
+        // Inicializar o catálogo de widgets com Sortable
+        new Sortable(document.querySelector('.widget-catalog'), {
+            animation: 150,
+            group: {
+                name: 'catalog',
+                pull: 'clone',
+                put: false
+            },
+            sort: false,
+            onEnd: function(evt) {
+                // Se o widget foi adicionado ao dashboard, criar uma nova instância
+                if (evt.to.id === 'dashboard-widgets') {
+                    const widgetType = evt.item.getAttribute('data-widget-type');
+                    // Remover o original clonado e adicionar um widget real
+                    evt.item.remove();
+                    addWidget(widgetType);
+                }
+            }
         });
-        
-        const dashboardWidgets = document.getElementById('dashboard-widgets');
-        dashboardWidgets.addEventListener('dragover', handleDragOver);
-        dashboardWidgets.addEventListener('drop', handleDrop);
     }
     
     function handleDragStart(e) {
@@ -1386,7 +1400,9 @@
         document.querySelectorAll('.widget-container').forEach(widget => {
             widgets.push({
                 id: widget.getAttribute('data-widget-id'),
-                type: widget.getAttribute('data-widget-type')
+                type: widget.getAttribute('data-widget-type'),
+                position: widget.getAttribute('data-position') || 'main',
+                settings: widget.getAttribute('data-settings') || '{}'
             });
         });
         
@@ -1400,12 +1416,35 @@
             layout,
             theme,
             autoRefresh,
-            refreshInterval
+            refreshInterval,
+            lastUpdated: new Date().toISOString()
         };
         
-        // Salvar a configuração (aqui usaria localStorage para demonstração,
-        // mas em produção provavelmente enviaria para o servidor)
+        // Salvar a configuração em localStorage para recuperação rápida
         localStorage.setItem('dashboardConfig', JSON.stringify(configuration));
+        
+        // Também salvar no servidor via API (async)
+        fetch('/dashboard/api/dashboard-config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify(configuration)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao salvar configuração');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Configuração salva com sucesso no servidor');
+        })
+        .catch(error => {
+            console.error('Erro ao salvar configuração:', error);
+            // Não é crítico se falhar, pois temos a versão no localStorage
+        });
         
         // Mostrar uma mensagem de sucesso
         const alertEl = document.createElement('div');
