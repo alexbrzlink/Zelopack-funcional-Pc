@@ -318,11 +318,11 @@
         <div class="col-md-6 mb-4">
             <div class="card chart-card h-100">
                 <div class="card-header bg-white">
-                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i> Relatórios por Fornecedor</h5>
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i> Documentos por Fornecedor</h5>
                 </div>
                 <div class="card-body text-center p-4">
                     {% if bar_chart %}
-                        <img src="data:image/png;base64,{{ bar_chart }}" alt="Relatórios por Fornecedor" class="chart-img">
+                        <img src="data:image/png;base64,{{ bar_chart }}" alt="Documentos por Fornecedor" class="chart-img">
                     {% else %}
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i> Não há dados suficientes para gerar o gráfico.
@@ -360,9 +360,9 @@
             <div class="card module-card">
                 <div class="card-body text-center p-4">
                     <i class="fas fa-file-alt module-icon"></i>
-                    <h5>Análise de Relatórios</h5>
-                    <p class="text-muted small mb-4">Estatísticas detalhadas sobre relatórios, categorias e status.</p>
-                    <a href="{{ url_for('estatisticas.reports_statistics') }}" class="btn btn-success">
+                    <h5>Análise de Documentos</h5>
+                    <p class="text-muted small mb-4">Estatísticas detalhadas sobre documentos, categorias e status.</p>
+                    <a href="{{ url_for('estatisticas.documents_statistics') }}" class="btn btn-success">
                         <i class="fas fa-chart-line me-1"></i> Visualizar
                     </a>
                 </div>
