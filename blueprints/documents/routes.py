@@ -1123,7 +1123,192 @@ def edit_online(document_id):
     )
 
 
-# Esta função foi removida e consolidada com a rota print_document acima
+# Funções para impressão avançada de documentos
+
+@documents_bp.route('/advanced-print/<int:document_id>')
+@login_required
+def advanced_print_document(document_id):
+    """Modo de impressão dedicado para um documento."""
+    document = TechnicalDocument.query.get_or_404(document_id)
+    
+    if not document.file_path or not os.path.exists(document.file_path):
+        flash('Arquivo não encontrado. O documento pode estar corrompido.', 'danger')
+        return redirect(url_for('documents.view_document', document_id=document_id))
+    
+    # Verificar extensão do arquivo
+    _, file_ext = os.path.splitext(document.file_path)
+    file_ext = file_ext.lower()
+    
+    # Configuração para impressão
+    print_mode = True
+    auto_print = request.args.get('auto_print', 'false') == 'true'
+    paper_size = request.args.get('paper_size', 'a4')
+    print_header = request.args.get('header', 'true') == 'true'
+    print_footer = request.args.get('footer', 'true') == 'true'
+    
+    # Para arquivos PDF, exibir usando um visualizador embutido
+    if file_ext == '.pdf':
+        return render_template(
+            'documents/print_view.html',
+            title=document.title,
+            document=document,
+            pdf_path=url_for('documents.serve_document', document_id=document_id, direct_view=True),
+            print_mode=print_mode,
+            auto_print=auto_print,
+            paper_size=paper_size,
+            print_header=print_header,
+            print_footer=print_footer
+        )
+    
+    # Para imagens, mostrar diretamente
+    elif file_ext in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
+        return render_template(
+            'documents/print_view.html',
+            title=document.title,
+            document=document,
+            image_path=url_for('documents.serve_document', document_id=document_id, direct_view=True),
+            print_mode=print_mode,
+            auto_print=auto_print,
+            paper_size=paper_size,
+            print_header=print_header,
+            print_footer=print_footer
+        )
+    
+    # Para arquivos Excel, tentar embutir visualizador do Microsoft Office Online
+    elif file_ext in ['.xlsx', '.xls']:
+        file_url = url_for('documents.serve_document', document_id=document_id, direct_view=True, _external=True)
+        office_online_viewer = f"https://view.officeapps.live.com/op/embed.aspx?src={file_url}"
+        
+        return render_template(
+            'documents/print_view.html',
+            title=document.title,
+            document=document,
+            office_url=office_online_viewer,
+            print_mode=print_mode,
+            auto_print=auto_print,
+            paper_size=paper_size,
+            print_header=print_header,
+            print_footer=print_footer
+        )
+    
+    # Para outros tipos, oferecer link de download
+    else:
+        download_link = url_for('documents.download_document', document_id=document_id)
+        return render_template(
+            'documents/print_view.html',
+            title=document.title,
+            document=document,
+            error_message="Este tipo de arquivo não pode ser impresso diretamente.",
+            download_link=download_link,
+            print_mode=print_mode,
+            auto_print=auto_print,
+            paper_size=paper_size,
+            print_header=print_header,
+            print_footer=print_footer
+        )
+
+
+@documents_bp.route('/advanced-print-virtual/<path:file_path>')
+@login_required
+def advanced_print_virtual_document(file_path):
+    """Modo de impressão dedicado para um documento virtual."""
+    # Montar o caminho completo
+    FORMS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'extracted_forms')
+    
+    # Garantir que o caminho é seguro (dentro do diretório permitido)
+    full_path = os.path.join(FORMS_DIR, file_path)
+    
+    # Verificar se o arquivo existe
+    if not os.path.exists(full_path) or not os.path.isfile(full_path):
+        flash('Arquivo não encontrado.', 'danger')
+        return redirect(url_for('documents.index'))
+        
+    # Criar informações do documento
+    file_name = os.path.basename(file_path)
+    file_ext = os.path.splitext(file_name)[1].lower()
+    
+    # Informações do documento
+    doc_info = {
+        'title': file_name,
+        'file_path': full_path,
+        'created_at': datetime.datetime.fromtimestamp(os.path.getctime(full_path)),
+        'modified_at': datetime.datetime.fromtimestamp(os.path.getmtime(full_path)),
+        'file_type': file_ext[1:] if file_ext.startswith('.') else file_ext,
+        'author': 'Sistema Zelopack',
+        'category': 'Documento Virtual'
+    }
+    
+    # Link para download
+    download_link = url_for('documents.download_virtual_document', file_path=file_path)
+    
+    # Configuração para impressão
+    print_mode = True
+    auto_print = request.args.get('auto_print', 'false') == 'true'
+    paper_size = request.args.get('paper_size', 'a4')
+    print_header = request.args.get('header', 'true') == 'true'
+    print_footer = request.args.get('footer', 'true') == 'true'
+    
+    # Determinar como mostrar com base na extensão do arquivo
+    if file_ext in ['.pdf']:
+        file_url = url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false')
+        return render_template(
+            'documents/print_view.html',
+            title=f'Impressão: {file_name}',
+            document=doc_info,
+            pdf_path=file_url,
+            download_link=download_link,
+            virtual_document=True,
+            print_mode=print_mode,
+            auto_print=auto_print,
+            paper_size=paper_size,
+            print_header=print_header,
+            print_footer=print_footer
+        )
+    elif file_ext in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
+        file_url = url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false')
+        return render_template(
+            'documents/print_view.html',
+            title=f'Impressão: {file_name}',
+            document=doc_info,
+            image_path=file_url,
+            download_link=download_link,
+            virtual_document=True,
+            print_mode=print_mode,
+            auto_print=auto_print,
+            paper_size=paper_size,
+            print_header=print_header,
+            print_footer=print_footer
+        )
+    elif file_ext in ['.xlsx', '.xls']:
+        file_url = url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false', _external=True)
+        office_viewer_url = f"https://view.officeapps.live.com/op/embed.aspx?src={file_url}"
+        return render_template(
+            'documents/print_view.html',
+            title=f'Impressão: {file_name}',
+            document=doc_info,
+            office_url=office_viewer_url,
+            download_link=download_link,
+            virtual_document=True,
+            print_mode=print_mode,
+            auto_print=auto_print,
+            paper_size=paper_size,
+            print_header=print_header,
+            print_footer=print_footer
+        )
+    else:
+        return render_template(
+            'documents/print_view.html',
+            title=f'Impressão: {file_name}',
+            document=doc_info,
+            error_message="Este tipo de arquivo não pode ser impresso diretamente.",
+            download_link=download_link,
+            virtual_document=True,
+            print_mode=print_mode,
+            auto_print=auto_print,
+            paper_size=paper_size,
+            print_header=print_header,
+            print_footer=print_footer
+        )
 
 
 @documents_bp.route('/image-preview/<int:document_id>')

@@ -227,7 +227,7 @@
             /* Configurações da página */
             @page {
                 margin: 0.5cm;
-                size: portrait;
+                size: {{ paper_size|default('a4') }} portrait;
                 /* Evitar cabeçalhos e rodapés do navegador */
                 marks: none;
             }
