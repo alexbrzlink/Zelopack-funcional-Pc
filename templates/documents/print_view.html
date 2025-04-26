@@ -212,7 +212,7 @@
     
     <div class="document-footer">
         <p>ZELOPACK - Sistema de Gerenciamento de Documentos</p>
-        <p>Impresso em: {{ now().strftime('%d/%m/%Y %H:%M') if now else (datetime.datetime.now().strftime('%d/%m/%Y %H:%M')) }}</p>
+        <p>Impresso em: {{ now().strftime('%d/%m/%Y %H:%M') if now is defined else timestamp_to_date() }}</p>
         <p>© 2025 ZELOPACK - Todos os direitos reservados</p>
     </div>
     

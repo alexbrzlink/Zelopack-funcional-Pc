@@ -724,7 +724,8 @@ def print_virtual_document(file_path):
             'documents/print_view.html',
             title=f'Impressão: {file_name}',
             document=doc_info,
-            pdf_path=url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false')
+            pdf_path=url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false'),
+            timestamp_to_date=lambda: datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
         )
     # Para arquivos HTML, exibir diretamente no iframe
     elif file_ext == '.html':
@@ -734,7 +735,8 @@ def print_virtual_document(file_path):
             'documents/print_view.html',
             title=f'Impressão: {file_name}',
             document=doc_info,
-            html_content=html_content
+            html_content=html_content,
+            timestamp_to_date=lambda: datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
         )
     # Para arquivos Excel
     elif file_ext in ['.xlsx', '.xls']:
@@ -748,7 +750,8 @@ def print_virtual_document(file_path):
                 'documents/print_view.html',
                 title=f'Impressão: {file_name}',
                 document=doc_info,
-                html_content=table_html
+                html_content=table_html,
+                timestamp_to_date=lambda: datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
             )
         except Exception as e:
             # Se não conseguir ler a planilha, oferecer link para visualização online
@@ -757,7 +760,8 @@ def print_virtual_document(file_path):
                 title=f'Impressão: {file_name}',
                 document=doc_info,
                 error_message=f"Não foi possível gerar uma visualização para impressão deste arquivo. Erro: {str(e)}",
-                download_link=url_for('documents.download_virtual_document', file_path=file_path)
+                download_link=url_for('documents.download_virtual_document', file_path=file_path),
+                timestamp_to_date=lambda: datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
             )
     # Para imagens, exibir a imagem na página de impressão
     elif file_ext in ['.jpg', '.jpeg', '.png', '.gif']:
@@ -765,7 +769,8 @@ def print_virtual_document(file_path):
             'documents/print_view.html',
             title=f'Impressão: {file_name}',
             document=doc_info,
-            image_path=url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false')
+            image_path=url_for('documents.download_virtual_document', file_path=file_path, as_attachment='false'),
+            timestamp_to_date=lambda: datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
         )
     else:
         # Para outros tipos de arquivo, informar que não é possível imprimir diretamente
@@ -774,7 +779,8 @@ def print_virtual_document(file_path):
             title=f'Impressão: {file_name}',
             document=doc_info,
             error_message="Este tipo de arquivo não pode ser convertido automaticamente para impressão.",
-            download_link=url_for('documents.download_virtual_document', file_path=file_path)
+            download_link=url_for('documents.download_virtual_document', file_path=file_path),
+            timestamp_to_date=lambda: datetime.datetime.now().strftime('%d/%m/%Y %H:%M')
         )
 
 
