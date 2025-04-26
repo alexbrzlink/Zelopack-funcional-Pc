@@ -226,7 +226,7 @@
         @media print {
             /* Configurações da página */
             @page {
-                margin: 0.5cm;
+                margin: 0;
                 size: {{ paper_size|default('a4') }} portrait;
                 /* Evitar cabeçalhos e rodapés do navegador */
                 marks: none;
@@ -244,28 +244,55 @@
                 print-color-adjust: exact !important; /* Futura especificação */
             }
             
-            /* Remover todos os elementos apenas para tela */
+            /* Remover todos os elementos apenas para tela e deixar apenas o documento */
             .screen-only {
                 background: none;
                 padding: 0;
+                margin: 0;
                 max-width: 100%;
                 box-shadow: none;
-                margin: 0;
             }
             
-            /* Garantir que apenas o conteúdo a ser impresso seja exibido */
+            /* Remover TODOS os elementos de interface e mostrar apenas o documento */
+            .toolbar, .document-header, .document-footer, .action-button,
+            .btn, nav, header, footer, .print-info, .no-print, 
+            .document-meta, .meta-item, button {
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                max-height: 0 !important;
+                max-width: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: hidden !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+            }
+            
+            /* Garantir que apenas o conteúdo do documento seja exibido */
             .printable-content {
-                display: block;
-                width: 100%;
-                height: auto;
-                position: relative;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                height: 100% !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                background: white !important;
             }
             
-            /* Estilizar cabeçalho para impressão */
-            .document-header {
-                margin-bottom: 0.8cm;
-                border-bottom-color: #888;
-                padding-bottom: 0.5cm;
+            /* Mostrar diretamente o conteúdo do documento sem elementos ao redor */
+            .document-content {
+                display: block !important;
+                width: 100% !important;
+                height: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                overflow: visible !important;
             }
             
             .document-header:before {
@@ -406,9 +433,11 @@
     </style>
 </head>
 <body>
-    <div class="screen-only">
-        <!-- Interface visível apenas na tela (não na impressão) -->
-        <div class="toolbar no-print">
+    <!-- Estrutura dividida em duas partes: interface visível na tela e conteúdo para impressão -->
+    
+    <!-- 1. Interface visível apenas na tela (não na impressão) -->
+    <div class="no-print screen-only">
+        <div class="toolbar">
             <button onclick="window.print();" class="action-button">
                 <i class="fas fa-print"></i> Imprimir Documento
             </button>
@@ -421,71 +450,29 @@
                 <i class="fas fa-arrow-left"></i> Voltar
             </a>
         </div>
-        
-        <!-- Conteúdo que será impresso -->
-        <div class="printable-content">
-            <!-- Cabeçalho do documento -->
-            <div class="document-header">
-                <div class="document-title">{{ document.title }}</div>
-                <div class="document-meta">
-                    {% if document.revision %}
-                    <span class="meta-item"><i class="fas fa-code-branch"></i> Revisão: {{ document.revision }}</span>
-                    {% endif %}
-                    
-                    {% if document.author %}
-                    <span class="meta-item"><i class="fas fa-user"></i> Autor: {{ document.author }}</span>
-                    {% endif %}
-                    
-                    {% if document.created_at %}
-                    <span class="meta-item"><i class="far fa-calendar-plus"></i> Data: {{ document.created_at.strftime('%d/%m/%Y') }}</span>
-                    {% endif %}
-                    
-                    {% if document.category %}
-                    <span class="meta-item"><i class="fas fa-folder"></i> Categoria: {{ document.category }}</span>
-                    {% endif %}
+    </div>
+    
+    <!-- 2. Conteúdo puro para impressão - este será o único elemento visível na impressão -->
+    <div class="printable-content">
+        <!-- Conteúdo principal do documento - apenas o documento em si, sem cabeçalhos -->
+        <div class="document-content">
+            {% if error_message %}
+                <div class="error-message">
+                    <p>{{ error_message }}</p>
                 </div>
-            </div>
-            
-            <!-- Conteúdo principal do documento -->
-            <div class="document-content">
-                {% if error_message %}
-                    <div class="error-message">
-                        <p>{{ error_message }}</p>
-                    </div>
-                    {% if download_link %}
-                    <a href="{{ download_link }}" class="action-button">Baixar o arquivo para visualizar</a>
-                    {% endif %}
-                
-                {% elif pdf_path %}
-                    <iframe src="{{ pdf_path }}" class="pdf-container" frameborder="0"></iframe>
-                
-                {% elif image_path %}
-                    <div class="image-container">
-                        <img src="{{ image_path }}" alt="{{ document.title }}" class="document-image">
-                    </div>
-                
-                {% elif office_url %}
-                    <iframe src="{{ office_url }}" class="pdf-container" frameborder="0"></iframe>
-                
-                {% elif html_content %}
-                    {{ html_content|safe }}
-                
-                {% else %}
-                    <div class="info-message">
-                        <p>O conteúdo deste documento não pode ser exibido diretamente.</p>
-                    </div>
-                    {% if download_link %}
-                    <a href="{{ download_link }}" class="action-button">Baixar o arquivo para visualizar</a>
-                    {% endif %}
-                {% endif %}
-            </div>
-            
-            <!-- Rodapé do documento -->
-            <div class="document-footer">
-                <p>ZELOPACK - Sistema de Gerenciamento de Documentos</p>
-                <p>Impresso em: {{ now().strftime('%d/%m/%Y %H:%M') if now is defined else timestamp_to_date() }}</p>
-                <p>© 2025 ZELOPACK - Todos os direitos reservados</p>
-            </div>
+            {% elif pdf_path %}
+                <iframe src="{{ pdf_path }}" class="pdf-container" frameborder="0"></iframe>
+            {% elif image_path %}
+                <img src="{{ image_path }}" alt="{{ document.title }}" class="document-image">
+            {% elif office_url %}
+                <iframe src="{{ office_url }}" class="pdf-container" frameborder="0"></iframe>
+            {% elif html_content %}
+                {{ html_content|safe }}
+            {% else %}
+                <div class="info-message no-print">
+                    <p>O conteúdo deste documento não pode ser exibido diretamente.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
     

@@ -1211,7 +1211,7 @@ def advanced_print_document(document_id):
 @documents_bp.route('/advanced-print-virtual/<path:file_path>')
 @login_required
 def advanced_print_virtual_document(file_path):
-    """Modo de impressão dedicado para um documento virtual."""
+    """Modo de impressão dedicado para um documento virtual - mostra apenas o documento."""
     # Montar o caminho completo
     FORMS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'extracted_forms')
     
@@ -1227,15 +1227,14 @@ def advanced_print_virtual_document(file_path):
     file_name = os.path.basename(file_path)
     file_ext = os.path.splitext(file_name)[1].lower()
     
-    # Informações do documento
+    # Informações do documento (simplificado para impressão)
     doc_info = {
         'title': file_name,
         'file_path': full_path,
         'created_at': datetime.datetime.fromtimestamp(os.path.getctime(full_path)),
-        'modified_at': datetime.datetime.fromtimestamp(os.path.getmtime(full_path)),
         'file_type': file_ext[1:] if file_ext.startswith('.') else file_ext,
         'author': 'Sistema Zelopack',
-        'category': 'Documento Virtual'
+        'category': 'Documento'
     }
     
     # Link para download
