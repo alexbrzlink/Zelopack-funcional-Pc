@@ -77,7 +77,17 @@ class DocumentSearchForm(FlaskForm):
         ('instrucao', 'Instrução de Trabalho'),
         ('planilha', 'Planilha de Controle'),
         ('manual', 'Manual'),
+        ('formulario', 'Formulário'),
         ('outro', 'Outro')
+    ], default='')
+    
+    category = SelectField('Categoria', choices=[
+        ('', 'Todas'),
+        ('blender', 'BLENDER'),
+        ('laboratorio', 'LABORATÓRIO'),
+        ('portaria', 'PORTARIA'),
+        ('qualidade', 'QUALIDADE'),
+        ('tba', 'TBA')
     ], default='')
     
     status = SelectField('Status', choices=[

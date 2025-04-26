@@ -46,18 +46,35 @@ def index():
             stats['Planilhas'] = count
         elif doc_type == 'manual':
             stats['Manuais'] = count
+        elif doc_type == 'formulario':
+            stats['Formulários'] = count
         else:
             stats['Outros'] = stats.get('Outros', 0) + count
     
     # Obter documentos recentes
     recent_docs = query.limit(10).all()
     
+    # Obter documentos por categoria para formulários
+    formularios = {}
+    if TechnicalDocument.query.filter_by(document_type='formulario').count() > 0:
+        categorias = ['blender', 'laboratorio', 'portaria', 'qualidade', 'tba']
+        for categoria in categorias:
+            docs = TechnicalDocument.query.filter_by(
+                document_type='formulario',
+                category=categoria,
+                status='ativo'
+            ).order_by(TechnicalDocument.title).all()
+            if docs:
+                nome_categoria = categoria.upper()
+                formularios[nome_categoria] = docs
+    
     return render_template(
         'documents/index.html',
         title='Documentos Técnicos',
         recent_docs=recent_docs,
         search_form=search_form,
-        stats=stats
+        stats=stats,
+        formularios=formularios
     )
 
 
@@ -90,6 +107,7 @@ def upload_document():
             title=form.title.data,
             description=form.description.data,
             document_type=form.document_type.data,
+            category=form.category.data if form.category.data else None,
             revision=form.revision.data,
             valid_until=form.valid_until.data,
             author=form.author.data,
@@ -208,6 +226,7 @@ def edit_document(document_id):
         document.title = form.title.data
         document.description = form.description.data
         document.document_type = form.document_type.data
+        document.category = form.category.data if form.category.data else None
         document.revision = form.revision.data
         document.valid_until = form.valid_until.data
         document.author = form.author.data
@@ -318,6 +337,7 @@ def new_version(document_id):
             title=form.title.data,
             description=form.description.data,
             document_type=form.document_type.data,
+            category=form.category.data if form.category.data else None,
             revision=form.revision.data,
             valid_until=form.valid_until.data,
             author=form.author.data,
@@ -445,12 +465,14 @@ def search_documents():
         if request.method == 'POST':
             search_term = form.search_term.data
             document_type = form.document_type.data
+            category = form.category.data
             status = form.status.data
             author = form.author.data
             tag = form.tag.data
         else:
             search_term = request.args.get('search_term', '')
             document_type = request.args.get('document_type', '')
+            category = request.args.get('category', '')
             status = request.args.get('status', '')
             author = request.args.get('author', '')
             tag = request.args.get('tag', '')
@@ -458,6 +480,7 @@ def search_documents():
             # Preencher o formulário com os valores da URL
             form.search_term.data = search_term
             form.document_type.data = document_type
+            form.category.data = category
             form.status.data = status
             form.author.data = author
             form.tag.data = tag
@@ -478,6 +501,9 @@ def search_documents():
         
         if document_type:
             query = query.filter(TechnicalDocument.document_type == document_type)
+        
+        if category:
+            query = query.filter(TechnicalDocument.category == category)
         
         if status:
             query = query.filter(TechnicalDocument.status == status)
@@ -559,6 +585,176 @@ def change_document_status(document_id, status):
     
     flash('Status do documento atualizado com sucesso!', 'success')
     return redirect(url_for('documents.view_document', document_id=document.id))
+
+
+@documents_bp.route('/create-online', methods=['GET', 'POST'])
+@login_required
+def create_document_online():
+    """Criar documento online sem a necessidade de upload de arquivo."""
+    form = DocumentForm()
+    
+    # Não exigir arquivo para o documento online
+    form.document_file.validators = []
+    
+    if form.validate_on_submit():
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        document_folder = os.path.join(upload_folder, 'documents')
+        os.makedirs(document_folder, exist_ok=True)
+        
+        # Criar arquivo HTML vazio para o documento online
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"{timestamp}_documento_online.html"
+        file_path = os.path.join(document_folder, filename)
+        
+        # Conteúdo inicial do documento HTML
+        html_content = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{form.title.data}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+        h1 {{ color: #0066cc; }}
+        .container {{ max-width: 800px; margin: 0 auto; }}
+        .footer {{ margin-top: 30px; font-size: 12px; color: #666; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{form.title.data}</h1>
+        <p>{form.description.data if form.description.data else 'Documento criado em ' + datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}</p>
+        <!-- Conteúdo do documento -->
+        <div class="content">
+            <p>Edite este documento para adicionar seu conteúdo...</p>
+        </div>
+        <div class="footer">
+            <p>Documento criado por: {current_user.name} - {datetime.datetime.now().strftime('%d/%m/%Y %H:%M')}</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+        
+        # Salvar o arquivo HTML
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(html_content)
+        
+        file_size = os.path.getsize(file_path)
+        
+        # Criar registro no banco de dados
+        document = TechnicalDocument(
+            title=form.title.data,
+            description=form.description.data,
+            document_type=form.document_type.data,
+            category=form.category.data if form.category.data else None,
+            revision=form.revision.data,
+            valid_until=form.valid_until.data,
+            author=form.author.data,
+            tags=form.tags.data,
+            status=form.status.data,
+            restricted_access=form.restricted_access.data,
+            filename=filename,
+            original_filename=f"{form.title.data}.html",
+            file_path=file_path,
+            file_type='html',
+            file_size=file_size,
+            uploaded_by=current_user.id,
+            version=1
+        )
+        
+        db.session.add(document)
+        db.session.commit()
+        
+        flash('Documento online criado com sucesso!', 'success')
+        return redirect(url_for('documents.edit_online', document_id=document.id))
+    
+    return render_template(
+        'documents/create_online.html',
+        title='Criar Documento Online',
+        form=form
+    )
+
+
+@documents_bp.route('/edit-online/<int:document_id>', methods=['GET', 'POST'])
+@login_required
+def edit_online(document_id):
+    """Editar documento online."""
+    document = TechnicalDocument.query.get_or_404(document_id)
+    
+    # Verificar permissão
+    if document.uploaded_by != current_user.id and current_user.role != 'admin':
+        flash('Você não tem permissão para editar este documento.', 'warning')
+        return redirect(url_for('documents.view_document', document_id=document.id))
+    
+    # Verificar se é um documento HTML
+    if document.file_type != 'html':
+        flash('Este documento não pode ser editado online.', 'warning')
+        return redirect(url_for('documents.view_document', document_id=document.id))
+    
+    # Ler o conteúdo atual do documento
+    try:
+        with open(document.file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        flash(f'Erro ao ler o documento: {str(e)}', 'danger')
+        return redirect(url_for('documents.view_document', document_id=document.id))
+    
+    if request.method == 'POST':
+        new_content = request.form.get('content', '')
+        
+        # Salvar o novo conteúdo
+        try:
+            with open(document.file_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            
+            # Atualizar tamanho do arquivo
+            document.file_size = os.path.getsize(document.file_path)
+            document.updated_at = datetime.datetime.utcnow()
+            db.session.commit()
+            
+            flash('Documento atualizado com sucesso!', 'success')
+        except Exception as e:
+            flash(f'Erro ao salvar o documento: {str(e)}', 'danger')
+        
+        return redirect(url_for('documents.view_document', document_id=document.id))
+    
+    return render_template(
+        'documents/edit_online.html',
+        title=f'Editor Online: {document.title}',
+        document=document,
+        content=content
+    )
+
+
+@documents_bp.route('/print/<int:document_id>')
+@login_required
+def print_document(document_id):
+    """Visualização para impressão do documento."""
+    document = TechnicalDocument.query.get_or_404(document_id)
+    
+    # Verificar permissão para documentos restritos
+    if document.restricted_access and current_user.role != 'admin':
+        flash('Você não tem permissão para acessar este documento.', 'warning')
+        return redirect(url_for('documents.index'))
+    
+    # Para documentos HTML, exibir conteúdo diretamente
+    if document.file_type == 'html':
+        try:
+            with open(document.file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                
+            return render_template(
+                'documents/print.html',
+                title=f'Impressão: {document.title}',
+                document=document,
+                content=content
+            )
+        except Exception as e:
+            flash(f'Erro ao ler o documento: {str(e)}', 'danger')
+            return redirect(url_for('documents.view_document', document_id=document.id))
+    
+    # Para outros tipos de documento, redirecionar para download
+    return redirect(url_for('documents.download_document', document_id=document.id))
 
 
 @documents_bp.route('/image-preview/<int:document_id>')
