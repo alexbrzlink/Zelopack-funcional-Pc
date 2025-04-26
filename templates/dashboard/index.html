@@ -1880,5 +1880,24 @@
     function formatDate(date) {
         return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
     }
+    
+    function getCsrfToken() {
+        // Obter o token CSRF de um meta tag ou cookie
+        const metaToken = document.querySelector('meta[name="csrf-token"]');
+        if (metaToken) {
+            return metaToken.getAttribute('content');
+        }
+        
+        // Fallback: ler do cookie (pode não funcionar dependendo da configuração do servidor)
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith('csrf_token=')) {
+                return cookie.substring('csrf_token='.length, cookie.length);
+            }
+        }
+        
+        return '';
+    }
 </script>
 {% endblock %}
