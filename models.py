@@ -1149,3 +1149,86 @@ class FormPreset(db.Model):
         """Retorna a URL para download da predefinição."""
         from flask import url_for
         return url_for('forms.download_preset', preset_id=self.id)
+
+
+class Alert(db.Model):
+    """Alertas e notificações do sistema."""
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    type = db.Column(db.String(50), nullable=False)  # info, warning, danger, success
+    module = db.Column(db.String(50), default='sistema')  # reports, suppliers, users, etc.
+    target_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Destinatário (null = para todos)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Quem criou (null = sistema)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    expires_at = db.Column(db.DateTime, nullable=True)  # Data de expiração
+    is_read = db.Column(db.Boolean, default=False)  # Se foi lido pelo usuário
+    is_active = db.Column(db.Boolean, default=True)  # Se está ativo
+    
+    target_user = db.relationship('User', foreign_keys=[target_user_id], backref=db.backref('received_alerts', lazy=True))
+    creator = db.relationship('User', foreign_keys=[created_by], backref=db.backref('created_alerts', lazy=True))
+    
+    def get_icon(self):
+        """Retorna o ícone de acordo com o tipo de alerta."""
+        icons = {
+            'info': 'fas fa-info-circle',
+            'warning': 'fas fa-exclamation-triangle',
+            'danger': 'fas fa-exclamation-circle',
+            'success': 'fas fa-check-circle'
+        }
+        return icons.get(self.type, 'fas fa-bell')
+    
+    def get_color(self):
+        """Retorna a cor de acordo com o tipo de alerta."""
+        colors = {
+            'info': 'primary',
+            'warning': 'warning',
+            'danger': 'danger',
+            'success': 'success'
+        }
+        return colors.get(self.type, 'primary')
+    
+    def to_dict(self):
+        """Converte o objeto para dicionário."""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'message': self.message,
+            'type': self.type,
+            'module': self.module,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'is_read': self.is_read,
+            'icon': self.get_icon(),
+            'color': self.get_color()
+        }
+
+
+class SystemConfig(db.Model):
+    """Configurações do sistema."""
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(255), unique=True, nullable=False)
+    value = db.Column(db.Text, nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    
+    creator = db.relationship('User', foreign_keys=[created_by], backref=db.backref('created_configs', lazy=True))
+    updater = db.relationship('User', foreign_keys=[updated_by], backref=db.backref('updated_configs', lazy=True))
+
+
+class DatabaseBackup(db.Model):
+    """Registros de backup do banco de dados."""
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(511), nullable=False)
+    file_size = db.Column(db.Integer, nullable=True)  # Tamanho em bytes
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    restored_at = db.Column(db.DateTime, nullable=True)
+    restored_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    
+    creator = db.relationship('User', foreign_keys=[created_by], backref=db.backref('created_backups', lazy=True))
+    restorer = db.relationship('User', foreign_keys=[restored_by], backref=db.backref('restored_backups', lazy=True))

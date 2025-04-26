@@ -539,6 +539,10 @@ from blueprints.templates import templates_bp
 from blueprints.documents import documents_bp
 from blueprints.forms import forms_bp
 from blueprints.calculos import calculos_bp
+from blueprints.estatisticas.routes import estatisticas_bp
+from blueprints.configuracoes.routes import configuracoes_bp
+from blueprints.alertas.routes import alertas_bp
+from blueprints.banco_dados.routes import banco_dados_bp
 
 app.register_blueprint(reports_bp)
 app.register_blueprint(dashboard_bp)
@@ -547,6 +551,10 @@ app.register_blueprint(templates_bp)
 app.register_blueprint(documents_bp)
 app.register_blueprint(forms_bp)
 app.register_blueprint(calculos_bp)
+app.register_blueprint(estatisticas_bp)
+app.register_blueprint(configuracoes_bp)
+app.register_blueprint(alertas_bp)
+app.register_blueprint(banco_dados_bp)
 
 # Registrar blueprint do editor universal
 from blueprints.forms.routes_editor import editor_bp

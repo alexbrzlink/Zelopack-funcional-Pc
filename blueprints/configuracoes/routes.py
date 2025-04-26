@@ -1,5 +1,5 @@
 """
-Rotas para o módulo de Configurações do Sistema.
+Rotas para o módulo de Configurações.
 """
 import logging
 import json
@@ -7,9 +7,10 @@ import os
 from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
-from models import User, SystemConfig, db
-from utils.activity_logger import log_view, log_action
+from models import SystemConfig, User, db
 from werkzeug.security import generate_password_hash
+from utils.activity_logger import log_view, log_action
+from werkzeug.utils import secure_filename
 
 # Configuração do logger
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ def index():
     """Página principal do módulo de configurações."""
     # Verificar se o usuário é administrador
     if not current_user.role == 'admin':
-        flash('Acesso negado. Você não tem permissão para acessar as configurações do sistema.', 'danger')
+        flash('Acesso negado. Você não tem permissão para acessar configurações.', 'danger')
         return redirect(url_for('dashboard.index'))
     
     # Registrar visualização
@@ -34,116 +35,141 @@ def index():
         details='Visualização da página principal de configurações'
     )
     
-    # Obter configurações atuais
-    configs = SystemConfig.query.all()
-    config_dict = {config.key: config.value for config in configs}
+    # Obter configurações do sistema
+    configs = {}
+    system_configs = SystemConfig.query.all()
+    
+    for config in system_configs:
+        if '.' in config.key:
+            section, name = config.key.split('.', 1)
+            if section not in configs:
+                configs[section] = {}
+            configs[section][name] = config.value
+        else:
+            configs[config.key] = config.value
     
     return render_template('configuracoes/index.html', 
-                          title='Configurações do Sistema', 
-                          configs=config_dict)
+                          title='Configurações', 
+                          configs=configs)
 
 
 @configuracoes_bp.route('/gerais')
 @login_required
 def gerais():
-    """Configurações gerais do sistema."""
+    """Página de configurações gerais."""
     # Verificar se o usuário é administrador
     if not current_user.role == 'admin':
-        flash('Acesso negado. Você não tem permissão para acessar as configurações do sistema.', 'danger')
+        flash('Acesso negado. Você não tem permissão para acessar configurações.', 'danger')
         return redirect(url_for('dashboard.index'))
     
     # Registrar visualização
     log_view(
         user_id=current_user.id,
         module='configuracoes',
-        details='Visualização das configurações gerais'
+        details='Visualização da página de configurações gerais'
     )
     
     # Obter configurações gerais
-    configs = SystemConfig.query.filter(SystemConfig.key.like('general.%')).all()
-    config_dict = {config.key.replace('general.', ''): config.value for config in configs}
+    configs = {}
+    system_configs = SystemConfig.query.filter(SystemConfig.key.like('general.%')).all()
+    
+    for config in system_configs:
+        _, name = config.key.split('.', 1)
+        configs[name] = config.value
     
     return render_template('configuracoes/gerais.html', 
                           title='Configurações Gerais', 
-                          configs=config_dict)
+                          configs=configs)
 
 
 @configuracoes_bp.route('/email')
 @login_required
 def email():
-    """Configurações de email do sistema."""
+    """Página de configurações de email."""
     # Verificar se o usuário é administrador
     if not current_user.role == 'admin':
-        flash('Acesso negado. Você não tem permissão para acessar as configurações do sistema.', 'danger')
+        flash('Acesso negado. Você não tem permissão para acessar configurações.', 'danger')
         return redirect(url_for('dashboard.index'))
     
     # Registrar visualização
     log_view(
         user_id=current_user.id,
         module='configuracoes',
-        details='Visualização das configurações de email'
+        details='Visualização da página de configurações de email'
     )
     
     # Obter configurações de email
-    configs = SystemConfig.query.filter(SystemConfig.key.like('email.%')).all()
-    config_dict = {config.key.replace('email.', ''): config.value for config in configs}
+    configs = {}
+    system_configs = SystemConfig.query.filter(SystemConfig.key.like('email.%')).all()
+    
+    for config in system_configs:
+        _, name = config.key.split('.', 1)
+        configs[name] = config.value
     
     return render_template('configuracoes/email.html', 
                           title='Configurações de Email', 
-                          configs=config_dict)
+                          configs=configs)
 
 
 @configuracoes_bp.route('/seguranca')
 @login_required
 def seguranca():
-    """Configurações de segurança do sistema."""
+    """Página de configurações de segurança."""
     # Verificar se o usuário é administrador
     if not current_user.role == 'admin':
-        flash('Acesso negado. Você não tem permissão para acessar as configurações do sistema.', 'danger')
+        flash('Acesso negado. Você não tem permissão para acessar configurações.', 'danger')
         return redirect(url_for('dashboard.index'))
     
     # Registrar visualização
     log_view(
         user_id=current_user.id,
         module='configuracoes',
-        details='Visualização das configurações de segurança'
+        details='Visualização da página de configurações de segurança'
     )
     
     # Obter configurações de segurança
-    configs = SystemConfig.query.filter(SystemConfig.key.like('security.%')).all()
-    config_dict = {config.key.replace('security.', ''): config.value for config in configs}
+    configs = {}
+    system_configs = SystemConfig.query.filter(SystemConfig.key.like('security.%')).all()
+    
+    for config in system_configs:
+        _, name = config.key.split('.', 1)
+        configs[name] = config.value
     
     return render_template('configuracoes/seguranca.html', 
                           title='Configurações de Segurança', 
-                          configs=config_dict)
+                          configs=configs)
 
 
 @configuracoes_bp.route('/personalizar')
 @login_required
 def personalizar():
-    """Configurações de personalização do sistema."""
+    """Página de personalização da interface."""
     # Verificar se o usuário é administrador
     if not current_user.role == 'admin':
-        flash('Acesso negado. Você não tem permissão para acessar as configurações do sistema.', 'danger')
+        flash('Acesso negado. Você não tem permissão para acessar configurações.', 'danger')
         return redirect(url_for('dashboard.index'))
     
     # Registrar visualização
     log_view(
         user_id=current_user.id,
         module='configuracoes',
-        details='Visualização das configurações de personalização'
+        details='Visualização da página de personalização'
     )
     
-    # Obter configurações de personalização
-    configs = SystemConfig.query.filter(SystemConfig.key.like('ui.%')).all()
-    config_dict = {config.key.replace('ui.', ''): config.value for config in configs}
+    # Obter configurações de UI
+    configs = {}
+    system_configs = SystemConfig.query.filter(SystemConfig.key.like('ui.%')).all()
+    
+    for config in system_configs:
+        _, name = config.key.split('.', 1)
+        configs[name] = config.value
     
     return render_template('configuracoes/personalizar.html', 
-                          title='Personalização da Interface', 
-                          configs=config_dict)
+                          title='Personalização', 
+                          configs=configs)
 
 
-@configuracoes_bp.route('/update', methods=['POST'])
+@configuracoes_bp.route('/atualizar', methods=['POST'])
 @login_required
 def update_config():
     """Atualizar configurações do sistema."""
@@ -151,34 +177,42 @@ def update_config():
     if not current_user.role == 'admin':
         return jsonify({'success': False, 'message': 'Acesso negado'}), 403
     
-    # Obter dados do formulário
-    data = request.json
-    if not data:
-        return jsonify({'success': False, 'message': 'Dados não fornecidos'}), 400
-    
-    section = data.get('section', 'general')
-    settings = data.get('settings', {})
-    
-    for key, value in settings.items():
-        full_key = f"{section}.{key}"
-        config = SystemConfig.query.filter_by(key=full_key).first()
-        
-        if config:
-            # Atualizar configuração existente
-            config.value = value
-            config.updated_at = datetime.utcnow()
-            config.updated_by = current_user.id
-        else:
-            # Criar nova configuração
-            config = SystemConfig(
-                key=full_key,
-                value=value,
-                created_by=current_user.id,
-                updated_by=current_user.id
-            )
-            db.session.add(config)
-        
     try:
+        # Obter dados da requisição
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'Dados inválidos'}), 400
+        
+        section = data.get('section')
+        settings = data.get('settings')
+        
+        if not section or not settings:
+            return jsonify({'success': False, 'message': 'Parâmetros incompletos'}), 400
+        
+        # Atualizar ou criar configurações
+        for key, value in settings.items():
+            config_key = f"{section}.{key}"
+            
+            # Verificar se a configuração já existe
+            config = SystemConfig.query.filter_by(key=config_key).first()
+            
+            if config:
+                # Atualizar configuração existente
+                config.value = value
+                config.updated_at = datetime.utcnow()
+                config.updated_by = current_user.id
+            else:
+                # Criar nova configuração
+                config = SystemConfig(
+                    key=config_key,
+                    value=value,
+                    created_by=current_user.id,
+                    updated_by=current_user.id
+                )
+                db.session.add(config)
+            
+        # Salvar alterações
         db.session.commit()
         
         # Registrar atividade
@@ -192,158 +226,198 @@ def update_config():
         
         return jsonify({'success': True, 'message': 'Configurações atualizadas com sucesso!'})
     except Exception as e:
-        db.session.rollback()
         logger.error(f"Erro ao atualizar configurações: {str(e)}")
+        db.session.rollback()
         return jsonify({'success': False, 'message': f'Erro ao atualizar configurações: {str(e)}'}), 500
 
 
-@configuracoes_bp.route('/backup')
+@configuracoes_bp.route('/upload-logo', methods=['POST'])
 @login_required
-def backup():
-    """Página de backup e restauração do sistema."""
-    # Verificar se o usuário é administrador
-    if not current_user.role == 'admin':
-        flash('Acesso negado. Você não tem permissão para acessar as configurações do sistema.', 'danger')
-        return redirect(url_for('dashboard.index'))
-    
-    # Registrar visualização
-    log_view(
-        user_id=current_user.id,
-        module='configuracoes',
-        details='Visualização da página de backup e restauração'
-    )
-    
-    # Obter lista de backups disponíveis
-    backup_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'backups')
-    os.makedirs(backup_folder, exist_ok=True)
-    
-    backups = []
-    for filename in os.listdir(backup_folder):
-        if filename.endswith('.zip'):
-            filepath = os.path.join(backup_folder, filename)
-            backups.append({
-                'name': filename,
-                'size': os.path.getsize(filepath),
-                'date': datetime.fromtimestamp(os.path.getmtime(filepath))
-            })
-    
-    return render_template('configuracoes/backup.html', 
-                          title='Backup e Restauração', 
-                          backups=sorted(backups, key=lambda x: x['date'], reverse=True))
-
-
-@configuracoes_bp.route('/create-backup', methods=['POST'])
-@login_required
-def create_backup():
-    """Criar um backup do sistema."""
+def upload_logo():
+    """Upload de logo do sistema."""
     # Verificar se o usuário é administrador
     if not current_user.role == 'admin':
         return jsonify({'success': False, 'message': 'Acesso negado'}), 403
     
     try:
-        # Criar pasta de backups se não existir
-        backup_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'backups')
-        os.makedirs(backup_folder, exist_ok=True)
+        if 'logo' not in request.files:
+            return jsonify({'success': False, 'message': 'Nenhum arquivo enviado'}), 400
         
-        # Nome do arquivo de backup
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        backup_filename = f"zelopack_backup_{timestamp}.zip"
-        backup_path = os.path.join(backup_folder, backup_filename)
+        file = request.files['logo']
         
-        # Executar backup
-        # Aqui você implementaria o código real para criar o backup
-        # Por simplificação, apenas criamos um arquivo vazio
-        with open(backup_path, 'w') as f:
-            f.write('Backup simulado')
+        if file.filename == '':
+            return jsonify({'success': False, 'message': 'Nenhum arquivo selecionado'}), 400
+        
+        # Verificar extensão do arquivo
+        allowed_extensions = {'png', 'jpg', 'jpeg', 'svg', 'gif'}
+        if '.' not in file.filename or file.filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+            return jsonify({'success': False, 'message': 'Formato de arquivo não permitido'}), 400
+        
+        # Criar diretório se não existir
+        logo_dir = os.path.join(current_app.static_folder, 'img')
+        os.makedirs(logo_dir, exist_ok=True)
+        
+        # Salvar arquivo
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(logo_dir, filename)
+        file.save(file_path)
+        
+        # Atualizar configuração
+        config_key = 'general.system_logo'
+        logo_url = f'/static/img/{filename}'
+        
+        config = SystemConfig.query.filter_by(key=config_key).first()
+        
+        if config:
+            config.value = logo_url
+            config.updated_at = datetime.utcnow()
+            config.updated_by = current_user.id
+        else:
+            config = SystemConfig(
+                key=config_key,
+                value=logo_url,
+                created_by=current_user.id,
+                updated_by=current_user.id
+            )
+            db.session.add(config)
+        
+        db.session.commit()
         
         # Registrar atividade
         log_action(
             user_id=current_user.id,
-            action='create',
+            action='update',
             module='configuracoes',
-            entity_type='Backup',
-            details=f'Criação de backup: {backup_filename}'
+            entity_type='SystemConfig',
+            details='Upload de nova logo do sistema'
         )
         
-        return jsonify({
-            'success': True, 
-            'message': 'Backup criado com sucesso!',
-            'filename': backup_filename
-        })
+        return jsonify({'success': True, 'message': 'Logo atualizada com sucesso!', 'logo_url': logo_url})
     except Exception as e:
-        logger.error(f"Erro ao criar backup: {str(e)}")
-        return jsonify({'success': False, 'message': f'Erro ao criar backup: {str(e)}'}), 500
+        logger.error(f"Erro ao fazer upload da logo: {str(e)}")
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Erro ao fazer upload da logo: {str(e)}'}), 500
 
 
-@configuracoes_bp.route('/restore-backup/<filename>', methods=['POST'])
+@configuracoes_bp.route('/backup-config', methods=['GET'])
 @login_required
-def restore_backup(filename):
-    """Restaurar um backup do sistema."""
+def backup_config():
+    """Gerar backup das configurações."""
+    # Verificar se o usuário é administrador
+    if not current_user.role == 'admin':
+        flash('Acesso negado. Você não tem permissão para realizar backup de configurações.', 'danger')
+        return redirect(url_for('dashboard.index'))
+    
+    try:
+        # Obter todas as configurações
+        configs = {}
+        system_configs = SystemConfig.query.all()
+        
+        for config in system_configs:
+            if '.' in config.key:
+                section, name = config.key.split('.', 1)
+                if section not in configs:
+                    configs[section] = {}
+                configs[section][name] = config.value
+            else:
+                configs[config.key] = config.value
+        
+        # Converter para JSON
+        config_json = json.dumps(configs, indent=2)
+        
+        # Registrar atividade
+        log_action(
+            user_id=current_user.id,
+            action='backup',
+            module='configuracoes',
+            entity_type='SystemConfig',
+            details='Backup de configurações'
+        )
+        
+        # Retornar arquivo JSON para download
+        from flask import Response
+        response = Response(
+            config_json,
+            mimetype='application/json',
+            headers={'Content-Disposition': f'attachment;filename=zelopack_config_backup_{datetime.now().strftime("%Y%m%d")}.json'}
+        )
+        
+        return response
+    except Exception as e:
+        logger.error(f"Erro ao gerar backup de configurações: {str(e)}")
+        flash(f'Erro ao gerar backup de configurações: {str(e)}', 'danger')
+        return redirect(url_for('configuracoes.index'))
+
+
+@configuracoes_bp.route('/restaurar-config', methods=['POST'])
+@login_required
+def restore_config():
+    """Restaurar configurações a partir de backup."""
     # Verificar se o usuário é administrador
     if not current_user.role == 'admin':
         return jsonify({'success': False, 'message': 'Acesso negado'}), 403
     
     try:
-        # Verificar se o arquivo existe
-        backup_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'backups')
-        backup_path = os.path.join(backup_folder, filename)
+        if 'backup_file' not in request.files:
+            return jsonify({'success': False, 'message': 'Nenhum arquivo enviado'}), 400
         
-        if not os.path.exists(backup_path):
-            return jsonify({'success': False, 'message': 'Arquivo de backup não encontrado'}), 404
+        file = request.files['backup_file']
         
-        # Aqui você implementaria o código real para restaurar o backup
-        # Por simplificação, apenas simulamos a restauração
+        if file.filename == '':
+            return jsonify({'success': False, 'message': 'Nenhum arquivo selecionado'}), 400
+        
+        # Verificar extensão do arquivo
+        if not file.filename.endswith('.json'):
+            return jsonify({'success': False, 'message': 'Formato de arquivo inválido. É necessário um arquivo JSON.'}), 400
+        
+        # Ler arquivo
+        try:
+            content = file.read()
+            configs = json.loads(content)
+        except Exception:
+            return jsonify({'success': False, 'message': 'Arquivo JSON inválido'}), 400
+        
+        # Atualizar configurações
+        for section, settings in configs.items():
+            if isinstance(settings, dict):
+                for key, value in settings.items():
+                    config_key = f"{section}.{key}"
+                    update_single_config(config_key, value)
+            else:
+                update_single_config(section, settings)
+        
+        # Salvar alterações
+        db.session.commit()
         
         # Registrar atividade
         log_action(
             user_id=current_user.id,
             action='restore',
             module='configuracoes',
-            entity_type='Backup',
-            details=f'Restauração de backup: {filename}'
+            entity_type='SystemConfig',
+            details='Restauração de backup de configurações'
         )
         
-        return jsonify({
-            'success': True, 
-            'message': 'Backup restaurado com sucesso!'
-        })
+        return jsonify({'success': True, 'message': 'Configurações restauradas com sucesso!'})
     except Exception as e:
-        logger.error(f"Erro ao restaurar backup: {str(e)}")
-        return jsonify({'success': False, 'message': f'Erro ao restaurar backup: {str(e)}'}), 500
+        logger.error(f"Erro ao restaurar configurações: {str(e)}")
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Erro ao restaurar configurações: {str(e)}'}), 500
 
 
-@configuracoes_bp.route('/delete-backup/<filename>', methods=['POST'])
-@login_required
-def delete_backup(filename):
-    """Excluir um backup do sistema."""
-    # Verificar se o usuário é administrador
-    if not current_user.role == 'admin':
-        return jsonify({'success': False, 'message': 'Acesso negado'}), 403
+def update_single_config(key, value):
+    """Função auxiliar para atualizar uma configuração específica."""
+    config = SystemConfig.query.filter_by(key=key).first()
     
-    try:
-        # Verificar se o arquivo existe
-        backup_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'backups')
-        backup_path = os.path.join(backup_folder, filename)
-        
-        if not os.path.exists(backup_path):
-            return jsonify({'success': False, 'message': 'Arquivo de backup não encontrado'}), 404
-        
-        # Excluir arquivo
-        os.remove(backup_path)
-        
-        # Registrar atividade
-        log_action(
-            user_id=current_user.id,
-            action='delete',
-            module='configuracoes',
-            entity_type='Backup',
-            details=f'Exclusão de backup: {filename}'
+    if config:
+        config.value = value
+        config.updated_at = datetime.utcnow()
+        config.updated_by = current_user.id
+    else:
+        config = SystemConfig(
+            key=key,
+            value=value,
+            created_by=current_user.id,
+            updated_by=current_user.id
         )
-        
-        return jsonify({
-            'success': True, 
-            'message': 'Backup excluído com sucesso!'
-        })
-    except Exception as e:
-        logger.error(f"Erro ao excluir backup: {str(e)}")
-        return jsonify({'success': False, 'message': f'Erro ao excluir backup: {str(e)}'}), 500
+        db.session.add(config)
