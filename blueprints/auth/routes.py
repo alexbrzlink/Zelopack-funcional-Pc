@@ -235,6 +235,26 @@ def edit_user(id):
     return render_template('auth/edit_user.html', title='Editar Usuário', form=form, user=user)
 
 
+@auth_bp.route('/admin')
+@login_required
+def admin():
+    """Página de administração do sistema (apenas para administradores)."""
+    if not current_user.role == 'admin':
+        flash('Acesso negado. Você não tem permissão para acessar a área de administração.', 'danger')
+        return redirect(url_for('dashboard.index'))
+    
+    # Estatísticas do sistema para o painel de administração
+    stats = {
+        'total_users': User.query.count(),
+        'active_users': User.query.filter_by(is_active=True).count(),
+        'admin_users': User.query.filter_by(role='admin').count(),
+        'last_registered': User.query.order_by(User.id.desc()).first(),
+        'last_login': User.query.filter(User.last_login.isnot(None)).order_by(User.last_login.desc()).first()
+    }
+    
+    return render_template('auth/admin.html', title='Administração', stats=stats)
+
+
 @auth_bp.route('/user/<int:id>/delete', methods=['POST'])
 @login_required
 def delete_user(id):
