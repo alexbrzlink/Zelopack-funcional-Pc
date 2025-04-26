@@ -60,7 +60,7 @@ if os.path.exists(CONFIG_FILE):
 @login_required
 def index():
     """Página principal do módulo de cálculos técnicos."""
-    return render_template('calculos/index.html')
+    return render_template('calculos/index_new.html')
 
 
 @calculos_bp.route('/api/calcular/producao-200g', methods=['POST'])

@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+
+{% block title %}Cálculos Técnicos - Zelopack{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/calculos.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-calculos">
+    <!-- Sidebar para seleção de cálculos -->
+    <div class="sidebar-calculos">
+        <div class="sidebar-header">
+            <h5 class="mb-0"><i class="fas fa-calculator me-2"></i> Cálculos Técnicos</h5>
+        </div>
+        
+        <div class="sidebar-search position-relative">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="form-control search-input" id="searchCalculo" placeholder="Buscar cálculo...">
+        </div>
+        
+        <ul class="calculo-list" id="calculoList">
+            <!-- Categoria: Produção -->
+            <li class="calculo-category" data-category="producao">
+                <div><i class="fas fa-industry"></i> Produção</div>
+                <i class="fas fa-chevron-down"></i>
+            </li>
+            <li class="calculo-item active" data-target="producao-200g">
+                <i class="fas fa-balance-scale"></i> Produção 200g
+            </li>
+            <li class="calculo-item" data-target="producao-litro">
+                <i class="fas fa-tint"></i> Produção em Litros
+            </li>
+            
+            <!-- Categoria: Qualidade -->
+            <li class="calculo-category" data-category="qualidade">
+                <div><i class="fas fa-check-circle"></i> Qualidade</div>
+                <i class="fas fa-chevron-down"></i>
+            </li>
+            <li class="calculo-item" data-target="densidade">
+                <i class="fas fa-weight"></i> Densidade
+            </li>
+            <li class="calculo-item" data-target="ratio">
+                <i class="fas fa-divide"></i> Ratio
+            </li>
+            <li class="calculo-item" data-target="acidez">
+                <i class="fas fa-flask"></i> Acidez
+            </li>
+            <li class="calculo-item" data-target="ratio-simples">
+                <i class="fas fa-divide"></i> Ratio Simples
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Área principal para cálculos -->
+    <div class="main-calculos">
+        <!-- Área vazia para quando nenhum cálculo está selecionado -->
+        <div class="calculo-area" id="calculo-empty-state"></div>
+        
+        <!-- Cálculo: Produção 200g -->
+        <div class="calculo-area active" id="producao-200g-area">
+            <div class="area-header">
+                <h4 class="mb-0">Cálculo de Peso Líquido - Embalagem 200g</h4>
+                <div class="area-description">
+                    Determina o peso líquido de embalagens de 200g, subtraindo a tara (peso da embalagem) do peso bruto e verificando se está dentro da tolerância especificada.
+                </div>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="peso_bruto">
+                                Peso Bruto
+                                <span class="unit">(g)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Peso total da embalagem com o produto"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="peso_bruto" step="0.01" placeholder="0.00">
+                                <span class="input-unit">g</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="peso_tara">
+                                Peso da Tara
+                                <span class="unit">(g)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Peso da embalagem vazia"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="peso_tara" step="0.01" placeholder="0.00">
+                                <span class="input-unit">g</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="peso_especificado">
+                                Peso Especificado
+                                <span class="unit">(g)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Peso líquido nominal da embalagem"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control preserve-on-clear" id="peso_especificado" step="0.1" value="200" placeholder="200.0">
+                                <span class="input-unit">g</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="tolerancia">
+                                Tolerância
+                                <span class="unit">(%)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Margem de tolerância para o peso líquido"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control preserve-on-clear" id="tolerancia" step="0.1" value="2.5" placeholder="2.5">
+                                <span class="input-unit">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calculaPeso200g">
+                    <i class="fas fa-calculator"></i> Calcular Peso
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparPeso200g">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarPeso200g">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-peso200g" style="display:none;">
+                <div class="resultado-header">
+                    <h4><i class="fas fa-check-circle"></i> Resultado do Cálculo</h4>
+                    <button class="btn btn-sm btn-primary print-btn">
+                        <i class="fas fa-print"></i> Imprimir
+                    </button>
+                </div>
+                
+                <div class="resultado-content">
+                    <div class="resultado-row">
+                        <div class="resultado-label">Peso Líquido:</div>
+                        <div class="resultado-value" id="valor-peso-liquido">0.00 g</div>
+                    </div>
+                    
+                    <div class="alert peso-status">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <span id="status-peso">Aguardando cálculo</span>
+                    </div>
+                    
+                    <div class="alert peso-desvio">
+                        <i class="fas fa-percent me-2"></i>
+                        Desvio: <span id="desvio-peso">0.00%</span>
+                    </div>
+                    
+                    <div class="resultado-formula">
+                        <div class="formula-title">Fórmula Aplicada:</div>
+                        <div class="formula-content">
+                            Peso Líquido = Peso Bruto - Peso Tara<br>
+                            Peso Líquido = <span id="formula-bruto">0.00</span> - <span id="formula-tara">0.00</span> = <span id="formula-liquido">0.00</span> g
+                        </div>
+                    </div>
+                    
+                    <div class="resultado-details">
+                        <div class="details-title">Detalhes da Análise:</div>
+                        <div class="details-content">
+                            <div><strong>Tolerância mínima:</strong> <span id="tolerancia-min">0.00</span></div>
+                            <div><strong>Tolerância máxima:</strong> <span id="tolerancia-max">0.00</span></div>
+                            <div><strong>Diferença absoluta:</strong> <span id="diferenca-abs">0.00</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="timestamp">
+                        Calculado em: {% now 'local', '%d/%m/%Y %H:%M:%S' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cálculo: Densidade -->
+        <div class="calculo-area" id="densidade-area">
+            <div class="area-header">
+                <h4 class="mb-0">Cálculo de Densidade</h4>
+                <div class="area-description">
+                    Determina a densidade de uma substância com base em sua massa e volume.
+                </div>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="densidade_massa">
+                                Massa
+                                <span class="unit">(g)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Massa da amostra"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="densidade_massa" step="0.01" placeholder="0.00">
+                                <span class="input-unit">g</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="densidade_volume">
+                                Volume
+                                <span class="unit">(mL)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Volume da amostra"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="densidade_volume" step="0.01" placeholder="0.00">
+                                <span class="input-unit">mL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calculaDensidade">
+                    <i class="fas fa-calculator"></i> Calcular Densidade
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparDensidade">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarDensidade">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-densidade" style="display:none;">
+                <!-- Conteúdo da área de resultado será preenchido pelo JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Cálculo: Ratio -->
+        <div class="calculo-area" id="ratio-area">
+            <div class="area-header">
+                <h4 class="mb-0">Cálculo de Ratio (Brix/Acidez)</h4>
+                <div class="area-description">
+                    Calcula a relação entre Brix (açúcares solúveis) e acidez titulável.
+                </div>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="ratio_brix">
+                                Brix
+                                <span class="unit">(°Bx)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Teor de sólidos solúveis"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="ratio_brix" step="0.1" placeholder="0.0">
+                                <span class="input-unit">°Bx</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="ratio_acidez">
+                                Acidez
+                                <span class="unit">(g/100mL)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Acidez expressa em ácido cítrico"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="ratio_acidez" step="0.001" placeholder="0.000">
+                                <span class="input-unit">g/100mL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calcularRatio">
+                    <i class="fas fa-calculator"></i> Calcular Ratio
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparRatio">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarRatio">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-ratio" style="display:none;">
+                <!-- Conteúdo da área de resultado será preenchido pelo JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Cálculo: Acidez -->
+        <div class="calculo-area" id="acidez-area">
+            <div class="area-header">
+                <h4 class="mb-0">Cálculo de Acidez</h4>
+                <div class="area-description">
+                    Calcula a acidez titulável com base no volume de NaOH gasto na titulação.
+                </div>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="input-group-custom">
+                            <label for="volume_amostra">
+                                Volume da Amostra
+                                <span class="unit">(mL)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="volume_amostra" step="0.1" value="10.0" placeholder="10.0">
+                                <span class="input-unit">mL</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="input-group-custom">
+                            <label for="fator_titulacao">
+                                Fator de Titulação
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Fator da solução de NaOH"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="fator_titulacao" step="0.001" value="0.100" placeholder="0.000">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="input-group-custom">
+                            <label for="volume_naoh">
+                                Volume de NaOH
+                                <span class="unit">(mL)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="volume_naoh" step="0.1" placeholder="0.0">
+                                <span class="input-unit">mL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calcularAcidez">
+                    <i class="fas fa-calculator"></i> Calcular Acidez
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparAcidez">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarAcidez">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-acidez" style="display:none;">
+                <!-- Conteúdo da área de resultado será preenchido pelo JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Cálculo: Produção em Litros -->
+        <div class="calculo-area" id="producao-litro-area">
+            <div class="area-header">
+                <h4 class="mb-0">Cálculo de Produção em Litros</h4>
+                <div class="area-description">
+                    Converte o peso total de produção em volume (litros) utilizando a densidade do produto.
+                </div>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="peso_total">
+                                Peso Total
+                                <span class="unit">(kg)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Peso total da produção"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="peso_total" step="0.1" placeholder="0.0">
+                                <span class="input-unit">kg</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="densidade_pl">
+                                Densidade
+                                <span class="unit">(kg/L)</span>
+                                <i class="fas fa-info-circle help-icon" data-bs-toggle="tooltip" title="Densidade do produto"></i>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control preserve-on-clear" id="densidade_pl" step="0.001" value="1.045" placeholder="0.000">
+                                <span class="input-unit">kg/L</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calcularProducaoLitro">
+                    <i class="fas fa-calculator"></i> Calcular Volume
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparProducaoLitro">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarProducaoLitro">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-producao-litro" style="display:none;">
+                <!-- Conteúdo da área de resultado será preenchido pelo JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Cálculo: Ratio Simples -->
+        <div class="calculo-area" id="ratio-simples-area">
+            <div class="area-header">
+                <h4 class="mb-0">Cálculo de Ratio Simples</h4>
+                <div class="area-description">
+                    Cálculo simplificado da relação entre Brix e Acidez.
+                </div>
+            </div>
+            
+            <div class="calculo-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="brix_ratio">
+                                Brix
+                                <span class="unit">(°Bx)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="brix_ratio" step="0.1" placeholder="0.0">
+                                <span class="input-unit">°Bx</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="input-group-custom">
+                            <label for="acidez_ratio">
+                                Acidez
+                                <span class="unit">(%)</span>
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" class="form-control" id="acidez_ratio" step="0.01" placeholder="0.00">
+                                <span class="input-unit">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions-row">
+                <button class="btn btn-calculate" id="calcularRatioSimples">
+                    <i class="fas fa-calculator"></i> Calcular Ratio
+                </button>
+                <button class="btn btn-secondary btn-clear" id="limparRatioSimples">
+                    <i class="fas fa-eraser"></i> Limpar
+                </button>
+                <button class="btn btn-success btn-save" id="salvarRatioSimples">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+            
+            <div class="resultado-area" id="resultado-ratio-simples" style="display:none;">
+                <!-- Conteúdo da área de resultado será preenchido pelo JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/calculadora.js') }}"></script>
+{% endblock %}
