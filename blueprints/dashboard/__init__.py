@@ -1,6 +1,9 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from flask import Blueprint
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
-# Importando as rotas depois de definir o blueprint
-from blueprints.dashboard.routes import *
+# Importação das rotas após a definição do blueprint para evitar importações circulares
+from . import routes
