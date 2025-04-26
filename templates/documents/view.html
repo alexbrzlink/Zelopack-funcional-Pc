@@ -45,19 +45,154 @@
                         <div class="col-md-3">
                             <div class="document-preview text-center">
                                 {% if document.file_type == 'pdf' %}
-                                <i class="fas fa-file-pdf text-danger" style="font-size: 8rem;"></i>
+                                <div class="preview-container mb-2" style="background: #f8f9fa; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file-pdf text-danger" style="font-size: 6rem;"></i>
+                                    </div>
+                                    <div class="preview-thumbnail mt-2" style="width: 100%; height: 140px; overflow: hidden; position: relative; border-radius: 4px; border: 1px solid #ddd;">
+                                        {% if document.id %}
+                                        <a href="{{ url_for('documents.view_document', document_id=document.id, online=True) }}" class="stretched-link">
+                                            <img src="{{ url_for('documents.image_preview', document_id=document.id) }}" 
+                                                 alt="Prévia do PDF" class="img-fluid" 
+                                                 style="width: 100%; height: 100%; object-fit: cover; object-position: top left;">
+                                        </a>
+                                        {% else %}
+                                        <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                                            <span class="text-muted small">Prévia indisponível</span>
+                                        </div>
+                                        {% endif %}
+                                        <div class="preview-overlay d-flex align-items-center justify-content-center" 
+                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+                                                    background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.3s;
+                                                    color: #fff; font-size: 24px;">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                    </div>
+                                    <p class="mt-2 mb-0 badge bg-danger rounded-pill">{{ document.file_type|upper }}</p>
+                                </div>
                                 {% elif document.file_type in ['doc', 'docx'] %}
-                                <i class="fas fa-file-word text-primary" style="font-size: 8rem;"></i>
+                                <div class="preview-container mb-2" style="background: #f8f9fa; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file-word text-primary" style="font-size: 6rem;"></i>
+                                    </div>
+                                    <div class="preview-thumbnail mt-2" style="width: 100%; height: 140px; overflow: hidden; position: relative; border-radius: 4px; border: 1px solid #ddd;">
+                                        <div class="d-flex align-items-center justify-content-center flex-column h-100 bg-light p-2">
+                                            <p class="text-primary mb-1 fw-bold">{{ document.title }}</p>
+                                            <p class="text-muted small mb-0">Clique para visualizar</p>
+                                        </div>
+                                        {% if document.id %}
+                                        <a href="{{ url_for('documents.view_document', document_id=document.id, online=True) }}" class="stretched-link"></a>
+                                        {% endif %}
+                                    </div>
+                                    <p class="mt-2 mb-0 badge bg-primary rounded-pill">{{ document.file_type|upper }}</p>
+                                </div>
                                 {% elif document.file_type in ['xls', 'xlsx'] %}
-                                <i class="fas fa-file-excel text-success" style="font-size: 8rem;"></i>
+                                <div class="preview-container mb-2" style="background: #f8f9fa; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file-excel text-success" style="font-size: 6rem;"></i>
+                                    </div>
+                                    <div class="preview-thumbnail mt-2" style="width: 100%; height: 140px; overflow: hidden; position: relative; border-radius: 4px; border: 1px solid #ddd;">
+                                        <div class="d-flex align-items-center justify-content-center flex-column h-100 bg-light p-2">
+                                            <div class="excel-preview" style="width: 90%; height: 80%; background: #fff; border: 1px solid #ccc;">
+                                                <div style="height: 20px; background: #1e7e34; color: white; font-size: 10px; display: flex; align-items: center; padding-left: 5px;">Planilha</div>
+                                                <div style="display: flex; font-size: 10px; background: #f1f1f1;">
+                                                    <div style="width: 20px; background: #ddd; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;"></div>
+                                                    <div style="width: 30px; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;">A</div>
+                                                    <div style="width: 30px; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;">B</div>
+                                                    <div style="width: 30px; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;">C</div>
+                                                </div>
+                                                <div style="display: flex; font-size: 10px;">
+                                                    <div style="width: 20px; text-align: center; background: #f1f1f1; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;">1</div>
+                                                    <div style="width: 30px; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;"></div>
+                                                    <div style="width: 30px; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;"></div>
+                                                    <div style="width: 30px; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;"></div>
+                                                </div>
+                                                <div style="display: flex; font-size: 10px;">
+                                                    <div style="width: 20px; text-align: center; background: #f1f1f1; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;">2</div>
+                                                    <div style="width: 30px; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;"></div>
+                                                    <div style="width: 30px; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;"></div>
+                                                    <div style="width: 30px; text-align: center; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if document.id %}
+                                        <a href="{{ url_for('documents.view_document', document_id=document.id, online=True) }}" class="stretched-link"></a>
+                                        {% endif %}
+                                    </div>
+                                    <p class="mt-2 mb-0 badge bg-success rounded-pill">{{ document.file_type|upper }}</p>
+                                </div>
                                 {% elif document.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}
-                                <i class="fas fa-file-image text-info" style="font-size: 8rem;"></i>
+                                <div class="preview-container mb-2" style="background: #f8f9fa; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file-image text-info" style="font-size: 6rem;"></i>
+                                    </div>
+                                    <div class="preview-thumbnail mt-2" style="width: 100%; height: 140px; overflow: hidden; position: relative; border-radius: 4px; border: 1px solid #ddd;">
+                                        {% if document.id %}
+                                        <a href="{{ url_for('documents.view_document', document_id=document.id, online=True) }}" class="stretched-link">
+                                            <img src="{{ url_for('documents.download_document', document_id=document.id) }}" 
+                                                 alt="{{ document.title }}" class="img-fluid" 
+                                                 style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                                        </a>
+                                        {% else %}
+                                        <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                                            <span class="text-muted small">Prévia indisponível</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <p class="mt-2 mb-0 badge bg-info rounded-pill">{{ document.file_type|upper }}</p>
+                                </div>
                                 {% elif document.file_type == 'html' %}
-                                <i class="fas fa-file-code text-warning" style="font-size: 8rem;"></i>
+                                <div class="preview-container mb-2" style="background: #f8f9fa; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file-code text-warning" style="font-size: 6rem;"></i>
+                                    </div>
+                                    <div class="preview-thumbnail mt-2" style="width: 100%; height: 140px; overflow: hidden; position: relative; border-radius: 4px; border: 1px solid #ddd;">
+                                        <div class="d-flex align-items-center justify-content-center flex-column h-100 bg-light p-2">
+                                            <div class="html-preview" style="width: 90%; height: 80%; background: #fff; border: 1px solid #ccc; overflow: hidden;">
+                                                <div style="height: 20px; background: #ffc107; color: white; font-size: 10px; display: flex; align-items: center; padding-left: 5px;">HTML</div>
+                                                <div style="padding: 5px; font-size: 8px; color: #333; font-family: monospace;">
+                                                    <span style="color: #007bff;">&lt;html&gt;</span><br>
+                                                    <span style="margin-left: 10px; color: #007bff;">&lt;head&gt;</span><br>
+                                                    <span style="margin-left: 20px; color: #007bff;">&lt;title&gt;</span>{{ document.title }}<span style="color: #007bff;">&lt;/title&gt;</span><br>
+                                                    <span style="margin-left: 10px; color: #007bff;">&lt;/head&gt;</span><br>
+                                                    <span style="margin-left: 10px; color: #007bff;">&lt;body&gt;</span><br>
+                                                    <span style="margin-left: 20px; color: #007bff;">&lt;h1&gt;</span>Documento<span style="color: #007bff;">&lt;/h1&gt;</span><br>
+                                                    <span style="margin-left: 10px; color: #007bff;">&lt;/body&gt;</span><br>
+                                                    <span style="color: #007bff;">&lt;/html&gt;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if document.id %}
+                                        <a href="{{ url_for('documents.view_document', document_id=document.id, online=True) }}" class="stretched-link"></a>
+                                        {% endif %}
+                                    </div>
+                                    <p class="mt-2 mb-0 badge bg-warning rounded-pill">{{ document.file_type|upper }}</p>
+                                </div>
                                 {% else %}
-                                <i class="fas fa-file text-secondary" style="font-size: 8rem;"></i>
+                                <div class="preview-container mb-2" style="background: #f8f9fa; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                    <div class="document-icon">
+                                        <i class="fas fa-file text-secondary" style="font-size: 6rem;"></i>
+                                    </div>
+                                    <div class="preview-thumbnail mt-2" style="width: 100%; height: 140px; overflow: hidden; position: relative; border-radius: 4px; border: 1px solid #ddd;">
+                                        <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                                            <p class="text-muted small mb-0">Prévia não disponível<br>para este formato</p>
+                                        </div>
+                                        {% if document.id %}
+                                        <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="stretched-link"></a>
+                                        {% endif %}
+                                    </div>
+                                    <p class="mt-2 mb-0 badge bg-secondary rounded-pill">{{ document.file_type|upper }}</p>
+                                </div>
                                 {% endif %}
-                                <p class="mt-2">{{ document.file_type|upper }}</p>
+                                
+                                <div class="mt-3">
+                                    <a href="{{ url_for('documents.view_document', document_id=document.id, online=True) }}" class="btn btn-sm btn-primary w-100 mb-2">
+                                        <i class="fas fa-eye me-1"></i> Visualizar
+                                    </a>
+                                    <a href="{{ url_for('documents.download_document', document_id=document.id) }}" class="btn btn-sm btn-outline-primary w-100">
+                                        <i class="fas fa-download me-1"></i> Download
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-9">

@@ -1107,27 +1107,134 @@ def edit_online(document_id):
 @documents_bp.route('/image-preview/<int:document_id>')
 @login_required
 def image_preview(document_id):
-    """Gerar uma prévia da imagem para documentos do tipo imagem."""
+    """Gerar uma prévia da imagem para documentos do tipo imagem ou PDF."""
     document = TechnicalDocument.query.get_or_404(document_id)
     
     # Verificar permissão para documentos restritos
     if document.restricted_access and current_user.role != 'admin':
         abort(403)
     
+    # Constante para tamanho da thumbnail
+    THUMBNAIL_SIZE = (400, 400)
+    
     # Verificar se o documento é uma imagem
     image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp']
-    if document.file_type.lower() not in image_extensions:
-        abort(400)
     
     try:
-        img = Image.open(document.file_path)
-        img.thumbnail(THUMBNAIL_SIZE)
+        if document.file_type.lower() in image_extensions:
+            # Processar imagens diretas
+            img = Image.open(document.file_path)
+            img.thumbnail(THUMBNAIL_SIZE)
+            
+            img_io = io.BytesIO()
+            img.save(img_io, format=img.format or 'JPEG')
+            img_io.seek(0)
+            
+            return send_file(img_io, mimetype=f'image/{img.format.lower() if img.format else "jpeg"}')
         
+        elif document.file_type.lower() == 'pdf':
+            # Processar PDFs - gerar uma imagem da primeira página
+            try:
+                from pdf2image import convert_from_path
+                import tempfile
+                
+                # Gerar imagem da primeira página apenas
+                with tempfile.TemporaryDirectory() as path:
+                    images = convert_from_path(document.file_path, dpi=72, output_folder=path, 
+                                               first_page=1, last_page=1, size=THUMBNAIL_SIZE)
+                    
+                    if images and len(images) > 0:
+                        img = images[0]
+                        img_io = io.BytesIO()
+                        img.save(img_io, format='JPEG')
+                        img_io.seek(0)
+                        
+                        return send_file(img_io, mimetype='image/jpeg')
+            except ImportError:
+                # Se pdf2image não estiver disponível, tente usar PyPDF2 + reportlab para renderizar
+                try:
+                    from PyPDF2 import PdfReader
+                    from reportlab.lib.pagesizes import letter
+                    from reportlab.pdfgen import canvas
+                    
+                    pdf_reader = PdfReader(document.file_path)
+                    if len(pdf_reader.pages) > 0:
+                        # Criar imagem com texto "Prévia do PDF" no centro
+                        img = Image.new('RGB', (300, 400), color=(245, 245, 245))
+                        draw = ImageDraw.Draw(img)
+                        
+                        # Tente carregar uma fonte, ou use a fonte padrão
+                        try:
+                            font = ImageFont.truetype("arial.ttf", 16)
+                        except IOError:
+                            font = ImageFont.load_default()
+                        
+                        # Adicione o título do documento
+                        title = document.title
+                        if len(title) > 25:
+                            title = title[:22] + "..."
+                        
+                        # Desenhe informações do PDF
+                        draw.text((20, 20), f"PDF: {title}", fill=(0, 0, 0), font=font)
+                        draw.text((20, 50), f"Páginas: {len(pdf_reader.pages)}", fill=(0, 0, 0), font=font)
+                        draw.text((20, 80), "Prévia do documento", fill=(0, 0, 0), font=font)
+                        
+                        # Adicione um ícone de PDF (retângulo vermelho com "PDF")
+                        draw.rectangle([(100, 150), (200, 250)], fill=(220, 50, 50))
+                        draw.text((130, 190), "PDF", fill=(255, 255, 255), font=font)
+                        
+                        # Converta a imagem para enviar
+                        img_io = io.BytesIO()
+                        img.save(img_io, format='JPEG')
+                        img_io.seek(0)
+                        
+                        return send_file(img_io, mimetype='image/jpeg')
+                except (ImportError, Exception) as e:
+                    # Se tudo falhar, retorne um ícone de PDF padrão
+                    app.logger.error(f"Erro ao gerar prévia de PDF: {str(e)}")
+            
+        # Para qualquer outro tipo de arquivo ou se as conversões falharem
+        # Retornar um ícone padrão com base no tipo
+        img = Image.new('RGB', (300, 300), color=(245, 245, 245))
+        draw = ImageDraw.Draw(img)
+        
+        # Tente carregar uma fonte
+        try:
+            font = ImageFont.truetype("arial.ttf", 16)
+        except IOError:
+            font = ImageFont.load_default()
+        
+        # Informações básicas
+        if document.file_type.lower() == 'pdf':
+            draw.text((20, 20), "Documento PDF", fill=(0, 0, 0), font=font)
+            color = (220, 50, 50)  # Vermelho para PDF
+        elif document.file_type.lower() in ['doc', 'docx']:
+            draw.text((20, 20), "Documento Word", fill=(0, 0, 0), font=font)
+            color = (50, 50, 220)  # Azul para Word
+        elif document.file_type.lower() in ['xls', 'xlsx']:
+            draw.text((20, 20), "Planilha Excel", fill=(0, 0, 0), font=font)
+            color = (50, 150, 50)  # Verde para Excel
+        else:
+            draw.text((20, 20), f"Arquivo {document.file_type.upper()}", fill=(0, 0, 0), font=font)
+            color = (150, 150, 150)  # Cinza para outros tipos
+        
+        # Título do documento
+        title = document.title
+        if len(title) > 25:
+            title = title[:22] + "..."
+        draw.text((20, 50), title, fill=(0, 0, 0), font=font)
+        
+        # Ícone representativo
+        draw.rectangle([(100, 100), (200, 200)], fill=color)
+        draw.text((130, 140), document.file_type.upper(), fill=(255, 255, 255), font=font)
+        
+        # Converta e envie a imagem
         img_io = io.BytesIO()
-        img.save(img_io, format=img.format or 'JPEG')
+        img.save(img_io, format='JPEG')
         img_io.seek(0)
         
-        return send_file(img_io, mimetype=f'image/{img.format.lower() if img.format else "jpeg"}')
+        return send_file(img_io, mimetype='image/jpeg')
+    
     except Exception as e:
         current_app.logger.error(f"Erro ao gerar prévia da imagem: {str(e)}")
         abort(500)
