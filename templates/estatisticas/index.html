@@ -1,0 +1,329 @@
+{% extends 'base.html' %}
+
+{% block title %}Estatísticas - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-header {
+        background: linear-gradient(135deg, #FF5D73 0%, #FF2D4D 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .stats-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stats-header p {
+        opacity: 0.85;
+        max-width: 80%;
+    }
+    
+    .stat-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 1.5rem;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .stat-value {
+        font-size: 3rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #FF5D73 0%, #FF2D4D 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .module-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .module-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+    }
+    
+    .module-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--color-start) 0%, var(--color-end) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+    
+    .module-card:hover .module-icon {
+        transform: scale(1.1);
+    }
+    
+    .chart-card {
+        border-radius: 10px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .chart-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    
+    .chart-img {
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+    }
+    
+    .chart-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        color: #495057;
+        font-weight: 500;
+        padding: 1rem 1.5rem;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #FF2D4D;
+        background-color: transparent;
+        border-bottom: 2px solid #FF2D4D;
+    }
+    
+    .tab-content {
+        padding-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Cabeçalho de Estatísticas -->
+    <div class="stats-header mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-chart-line me-2"></i> Estatísticas</h1>
+                <p class="mb-0">Análise de dados e visualizações gráficas com indicadores chave do sistema.</p>
+            </div>
+            <div class="d-none d-md-block">
+                <a href="{{ url_for('estatisticas.dashboard') }}" class="btn btn-light">
+                    <i class="fas fa-tachometer-alt me-2"></i> Dashboard Completo
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Estatísticas Rápidas -->
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card shadow stat-card">
+                <div class="card-body text-center">
+                    <div class="stat-value">{{ stats.total_reports }}</div>
+                    <div class="stat-label">Laudos Técnicos</div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('estatisticas.laudos') }}" class="btn btn-outline-danger btn-sm w-100">
+                        <i class="fas fa-search-plus me-1"></i> Ver Detalhes
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card shadow stat-card">
+                <div class="card-body text-center">
+                    <div class="stat-value">{{ stats.total_suppliers }}</div>
+                    <div class="stat-label">Fornecedores</div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('estatisticas.fornecedores') }}" class="btn btn-outline-danger btn-sm w-100">
+                        <i class="fas fa-search-plus me-1"></i> Ver Detalhes
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card shadow stat-card">
+                <div class="card-body text-center">
+                    <div class="stat-value">{{ stats.total_users }}</div>
+                    <div class="stat-label">Usuários</div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('estatisticas.usuarios') }}" class="btn btn-outline-danger btn-sm w-100">
+                        <i class="fas fa-search-plus me-1"></i> Ver Detalhes
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card shadow stat-card">
+                <div class="card-body text-center">
+                    <div class="stat-value">{{ stats.recent_activities }}</div>
+                    <div class="stat-label">Atividades Recentes</div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('estatisticas.atividades') }}" class="btn btn-outline-danger btn-sm w-100">
+                        <i class="fas fa-search-plus me-1"></i> Ver Detalhes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gráficos Principais -->
+    <div class="row mt-4">
+        <div class="col-md-6 mb-4">
+            <div class="card chart-card">
+                <div class="card-header bg-white py-3">
+                    <h5 class="chart-title mb-0">
+                        <i class="fas fa-chart-pie me-2 text-primary"></i> 
+                        Laudos por Categoria
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <img src="data:image/png;base64,{{ stats.pie_chart }}" alt="Laudos por Categoria" class="chart-img">
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card chart-card">
+                <div class="card-header bg-white py-3">
+                    <h5 class="chart-title mb-0">
+                        <i class="fas fa-chart-bar me-2 text-primary"></i>
+                        Evolução de Laudos por Mês
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <img src="data:image/png;base64,{{ stats.bar_chart }}" alt="Laudos por Mês" class="chart-img">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mais Análises -->
+    <div class="row mt-3">
+        <div class="col-12 mb-4">
+            <h4 class="mb-3">
+                <i class="fas fa-chart-line me-2"></i> Mais Análises
+            </h4>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card module-card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-file-alt module-icon" style="--color-start: #FF5D73; --color-end: #FF2D4D;"></i>
+                    <h5>Laudos Técnicos</h5>
+                    <p class="text-muted small mb-4">Análise detalhada de laudos por categoria, fornecedor e período.</p>
+                    <a href="{{ url_for('estatisticas.laudos') }}" class="btn btn-danger">
+                        <i class="fas fa-chart-pie me-1"></i> Analisar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card module-card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-users module-icon" style="--color-start: #FF5D73; --color-end: #FF2D4D;"></i>
+                    <h5>Usuários</h5>
+                    <p class="text-muted small mb-4">Estatísticas de usuários por função, status e atividade no sistema.</p>
+                    <a href="{{ url_for('estatisticas.usuarios') }}" class="btn btn-danger">
+                        <i class="fas fa-chart-pie me-1"></i> Analisar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card module-card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-building module-icon" style="--color-start: #FF5D73; --color-end: #FF2D4D;"></i>
+                    <h5>Fornecedores</h5>
+                    <p class="text-muted small mb-4">Análise de fornecedores por país, categoria e volume de laudos.</p>
+                    <a href="{{ url_for('estatisticas.fornecedores') }}" class="btn btn-danger">
+                        <i class="fas fa-chart-pie me-1"></i> Analisar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card module-card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-history module-icon" style="--color-start: #FF5D73; --color-end: #FF2D4D;"></i>
+                    <h5>Atividades</h5>
+                    <p class="text-muted small mb-4">Estatísticas de atividades por tipo, módulo e período de tempo.</p>
+                    <a href="{{ url_for('estatisticas.atividades') }}" class="btn btn-danger">
+                        <i class="fas fa-chart-pie me-1"></i> Analisar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Completo -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body text-center p-5">
+                    <h3 class="mb-3">Dashboard Completo</h3>
+                    <p class="text-muted mb-4">
+                        Acesse o dashboard completo com todos os gráficos e indicadores em uma única página.
+                    </p>
+                    <a href="{{ url_for('estatisticas.dashboard') }}" class="btn btn-lg btn-danger">
+                        <i class="fas fa-tachometer-alt me-2"></i> Acessar Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ativar o link de estatísticas no menu
+        const navItems = document.querySelectorAll('.nav-item .nav-link');
+        navItems.forEach(item => item.classList.remove('active'));
+        
+        const statsLink = document.querySelector('a[href="{{ url_for("estatisticas.index") }}"]');
+        if (statsLink) {
+            statsLink.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}
