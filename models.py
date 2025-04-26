@@ -510,6 +510,11 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
+    @property
+    def is_admin(self):
+        """Verifica se o usuário é administrador."""
+        return self.role == 'admin'
+    
     def __repr__(self):
         return f'<User {self.username}>'
     

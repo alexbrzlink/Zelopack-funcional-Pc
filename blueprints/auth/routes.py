@@ -252,7 +252,12 @@ def admin():
         'last_login': User.query.filter(User.last_login.isnot(None)).order_by(User.last_login.desc()).first()
     }
     
-    return render_template('auth/admin.html', title='Administração', stats=stats)
+    # Adicionar variáveis de data para o template
+    from datetime import datetime, timedelta
+    now = datetime.utcnow()
+    dt = timedelta(days=1)  # Para simular eventos recentes
+    
+    return render_template('auth/admin.html', title='Administração', stats=stats, now=now, dt=dt)
 
 
 @auth_bp.route('/user/<int:id>/delete', methods=['POST'])

@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}Painel de Administração - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+    
+    .admin-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .admin-card .card-header {
+        font-weight: 600;
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #00978D;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        text-transform: uppercase;
+    }
+    
+    .stat-change {
+        font-size: 0.85rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 2rem;
+    }
+    
+    .stat-change.positive {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+    }
+    
+    .stat-change.neutral {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+    
+    .stat-change.negative {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+    
+    .user-action-btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>
+                <i class="fas fa-tachometer-alt me-2"></i>
+                Painel de Administração
+            </h2>
+            <p class="text-muted">
+                Gerencie usuários, configurações e acompanhe o status do sistema.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Cards com estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow admin-card">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-users me-2"></i> Usuários
+                </div>
+                <div class="card-body text-center">
+                    <div class="stat-value">{{ stats.total_users }}</div>
+                    <div class="stat-label mb-2">Total de Usuários</div>
+                    <div class="d-flex justify-content-around">
+                        <div>
+                            <div class="fw-bold text-success">{{ stats.active_users }}</div>
+                            <div class="small text-muted">Ativos</div>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-primary">{{ stats.admin_users }}</div>
+                            <div class="small text-muted">Administradores</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Último cadastro: 
+                        {{ stats.last_registered.created_at.strftime('%d/%m/%Y') if stats.last_registered else 'N/A' }}
+                    </span>
+                    <a href="{{ url_for('auth.users') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-users me-1"></i> Gerenciar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow admin-card">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-sitemap me-2"></i> Sistema
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Status do Sistema</h5>
+                    <div class="d-flex flex-column">
+                        <div class="mb-2 d-flex justify-content-between">
+                            <span>Status:</span>
+                            <span class="badge bg-success">Online</span>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <span>Base de Dados:</span>
+                            <span class="badge bg-success">Conectada</span>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <span>Último Login:</span>
+                            <span>{{ stats.last_login.last_login.strftime('%d/%m/%Y %H:%M') if stats.last_login and stats.last_login.last_login else 'N/A' }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <button class="btn btn-sm btn-success">
+                        <i class="fas fa-sync-alt me-1"></i> Atualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow admin-card">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-cogs me-2"></i> Configurações
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Ações Rápidas</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-primary user-action-btn">
+                            <i class="fas fa-user-plus me-1"></i> Novo Usuário
+                        </a>
+                        <a href="{{ url_for('auth.users') }}" class="btn btn-info user-action-btn">
+                            <i class="fas fa-user-edit me-1"></i> Editar Usuários
+                        </a>
+                        <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary user-action-btn">
+                            <i class="fas fa-chart-line me-1"></i> Ver Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Módulos do Sistema -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-cubes me-2"></i> Módulos do Sistema
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-file-alt fa-3x mb-3 text-primary"></i>
+                                    <h5>Gerenciamento de Laudos</h5>
+                                    <p class="small">Cadastro e visualização de laudos técnicos.</p>
+                                    <a href="{{ url_for('reports.index') }}" class="btn btn-sm btn-outline-primary">Acessar</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-calculator fa-3x mb-3 text-success"></i>
+                                    <h5>Cálculos Técnicos</h5>
+                                    <p class="small">Ferramentas de cálculo para laboratório.</p>
+                                    <a href="{{ url_for('calculos.index') }}" class="btn btn-sm btn-outline-success">Acessar</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-edit fa-3x mb-3 text-info"></i>
+                                    <h5>Formulários</h5>
+                                    <p class="small">Formulários e questionários do sistema.</p>
+                                    <a href="{{ url_for('forms.index') }}" class="btn btn-sm btn-outline-info">Acessar</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-folder fa-3x mb-3 text-warning"></i>
+                                    <h5>Documentos</h5>
+                                    <p class="small">Gerenciamento de documentos técnicos.</p>
+                                    <a href="{{ url_for('documents.index') }}" class="btn btn-sm btn-outline-warning">Acessar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Histórico de Atividades (Placeholder) -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <i class="fas fa-history me-2"></i> Últimas Atividades do Sistema
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Usuário</th>
+                                    <th>Ação</th>
+                                    <th>Detalhes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{ now.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>{{ current_user.name }}</td>
+                                    <td><span class="badge bg-info">Acesso</span></td>
+                                    <td>Acessou o painel de administração</td>
+                                </tr>
+                                <!-- Histórico fictício para ilustração -->
+                                <tr>
+                                    <td>{{ (now - dt).strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>Sistema</td>
+                                    <td><span class="badge bg-success">Atualização</span></td>
+                                    <td>Backup automático realizado com sucesso</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <button class="btn btn-sm btn-secondary" disabled>
+                        <i class="fas fa-search me-1"></i> Ver Histórico Completo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Adiciona a data atual para o histórico simulado
+    document.addEventListener('DOMContentLoaded', function() {
+        // Adicionar classe ativa ao link de administração no menu
+        const navItems = document.querySelectorAll('.nav-item .nav-link');
+        navItems.forEach(item => item.classList.remove('active'));
+        const adminLink = document.querySelector('a[href="{{ url_for("auth.admin") }}"]');
+        if (adminLink) {
+            adminLink.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}
