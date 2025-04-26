@@ -51,7 +51,7 @@ def index():
         categories = [ordem_producao_dir]
     
     # Adicionar uma mensagem informativa
-    flash("Os formulários de BLENDER, LABORATÓRIO, PORTARIA, QUALIDADE e TBA foram reorganizados na seção de Documentos.", "info")
+    flash("Os formulários agora possuem visualização online, impressão direta e download. Clique no botão correspondente para a ação desejada.", "success")
     
     return render_template(
         'forms/index.html',
