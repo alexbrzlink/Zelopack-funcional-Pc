@@ -1,0 +1,513 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurações - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .config-header {
+        background: linear-gradient(135deg, #6f42c1 0%, #4527a0 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .config-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .config-header p {
+        opacity: 0.85;
+        max-width: 80%;
+    }
+    
+    .module-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .module-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+    }
+    
+    .module-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--color-start) 0%, var(--color-end) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+    
+    .module-card:hover .module-icon {
+        transform: scale(1.1);
+    }
+    
+    .config-section {
+        margin-bottom: 2rem;
+    }
+    
+    .config-section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #343a40;
+    }
+    
+    .config-item {
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .config-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .config-item-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .config-item-description {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+    
+    .config-input {
+        margin-top: 0.5rem;
+    }
+    
+    .action-btn {
+        margin-right: 0.5rem;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        color: #495057;
+        font-weight: 500;
+        padding: 1rem 1.5rem;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #6f42c1;
+        background-color: transparent;
+        border-bottom: 2px solid #6f42c1;
+    }
+    
+    .tab-content {
+        padding-top: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Cabeçalho de Configurações -->
+    <div class="config-header mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-cogs me-2"></i> Configurações</h1>
+                <p class="mb-0">Configurações gerais e personalizações do sistema.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Módulos de Configuração -->
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card module-card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-sliders-h module-icon" style="--color-start: #6f42c1; --color-end: #4527a0;"></i>
+                    <h5>Gerais</h5>
+                    <p class="text-muted small mb-4">Configurações gerais do sistema e da aplicação.</p>
+                    <a href="{{ url_for('configuracoes.gerais') }}" class="btn btn-primary">
+                        <i class="fas fa-cog me-1"></i> Configurar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card module-card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-envelope module-icon" style="--color-start: #6f42c1; --color-end: #4527a0;"></i>
+                    <h5>E-mail</h5>
+                    <p class="text-muted small mb-4">Configurações de email, notificações e alertas.</p>
+                    <a href="{{ url_for('configuracoes.email') }}" class="btn btn-primary">
+                        <i class="fas fa-cog me-1"></i> Configurar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card module-card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-shield-alt module-icon" style="--color-start: #6f42c1; --color-end: #4527a0;"></i>
+                    <h5>Segurança</h5>
+                    <p class="text-muted small mb-4">Configurações de segurança, permissões e acessos.</p>
+                    <a href="{{ url_for('configuracoes.seguranca') }}" class="btn btn-primary">
+                        <i class="fas fa-cog me-1"></i> Configurar
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card module-card">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-paint-brush module-icon" style="--color-start: #6f42c1; --color-end: #4527a0;"></i>
+                    <h5>Personalização</h5>
+                    <p class="text-muted small mb-4">Personalização da interface e aparência do sistema.</p>
+                    <a href="{{ url_for('configuracoes.personalizar') }}" class="btn btn-primary">
+                        <i class="fas fa-cog me-1"></i> Configurar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Seção de Backup e Restauração -->
+    <div class="row mt-4">
+        <div class="col-12 mb-3">
+            <h4><i class="fas fa-sync-alt me-2"></i> Backup e Restauração</h4>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Backup de Configurações</h5>
+                    <p class="card-text">
+                        Crie um backup das configurações atuais do sistema para restauração futura.
+                        Isso inclui todas as personalizações, configurações de email e segurança.
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button class="btn btn-primary backup-config-btn">
+                        <i class="fas fa-download me-1"></i> Criar Backup
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Restaurar Configurações</h5>
+                    <p class="card-text">
+                        Restaure configurações anteriores a partir de um arquivo de backup.
+                        Isso irá substituir todas as configurações atuais do sistema.
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button class="btn btn-outline-primary restore-config-btn">
+                        <i class="fas fa-upload me-1"></i> Restaurar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Configurações Gerais -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Configurações de Sistema</h5>
+                </div>
+                <div class="card-body">
+                    <div class="config-section">
+                        <h6 class="config-section-title">Geral</h6>
+                        
+                        <div class="config-item">
+                            <div class="config-item-title">Nome do Sistema</div>
+                            <div class="config-item-description">Nome exibido no título e cabeçalho do sistema</div>
+                            <div class="config-input">
+                                <input type="text" class="form-control" name="system_name" value="{{ configs.get('general.system_name', 'Zelopack') }}">
+                            </div>
+                        </div>
+                        
+                        <div class="config-item">
+                            <div class="config-item-title">Logo do Sistema</div>
+                            <div class="config-item-description">Logo exibido no cabeçalho e relatórios</div>
+                            <div class="config-input">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="system_logo" value="{{ configs.get('general.system_logo', '/static/img/logo.png') }}" readonly>
+                                    <button class="btn btn-outline-primary" id="changeLogo">Alterar</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-item">
+                            <div class="config-item-title">Timezone</div>
+                            <div class="config-item-description">Fuso horário para exibição de datas e horas</div>
+                            <div class="config-input">
+                                <select class="form-select" name="timezone">
+                                    <option value="America/Sao_Paulo" selected>América/São Paulo</option>
+                                    <option value="America/Recife">América/Recife</option>
+                                    <option value="America/Manaus">América/Manaus</option>
+                                    <option value="America/Rio_Branco">América/Rio Branco</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-section">
+                        <h6 class="config-section-title">Notificações</h6>
+                        
+                        <div class="config-item">
+                            <div class="config-item-title">Notificações por Email</div>
+                            <div class="config-item-description">Enviar notificações por email para eventos importantes</div>
+                            <div class="config-input">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                    <label class="form-check-label" for="emailNotifications">Ativar notificações por email</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-item">
+                            <div class="config-item-title">Notificações do Sistema</div>
+                            <div class="config-item-description">Exibir notificações no sistema para eventos importantes</div>
+                            <div class="config-input">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="systemNotifications" checked>
+                                    <label class="form-check-label" for="systemNotifications">Ativar notificações do sistema</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-end">
+                        <button class="btn btn-primary save-config-btn">
+                            <i class="fas fa-save me-1"></i> Salvar Configurações
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para upload de logo -->
+<div class="modal fade" id="logoModal" tabindex="-1" aria-labelledby="logoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoModalLabel">Alterar Logo do Sistema</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="logoFile" class="form-label">Selecione uma imagem</label>
+                    <input class="form-control" type="file" id="logoFile" accept="image/*">
+                    <div class="form-text">Tamanho recomendado: 200x60 pixels. Formatos: PNG, JPG, SVG.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary upload-logo-btn">Enviar Logo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para backup de configurações -->
+<div class="modal fade" id="backupConfigModal" tabindex="-1" aria-labelledby="backupConfigModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="backupConfigModalLabel">Backup de Configurações</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Esta operação irá gerar um arquivo com todas as configurações atuais do sistema.</p>
+                <p>O arquivo será baixado automaticamente após a conclusão do processo.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary confirm-backup-config-btn">
+                    <i class="fas fa-download me-1"></i> Gerar Backup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para restauração de configurações -->
+<div class="modal fade" id="restoreConfigModal" tabindex="-1" aria-labelledby="restoreConfigModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="restoreConfigModalLabel">Restaurar Configurações</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="restoreFile" class="form-label">Selecione o arquivo de backup</label>
+                    <input class="form-control" type="file" id="restoreFile" accept=".json">
+                </div>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Atenção:</strong> Esta operação irá substituir todas as configurações atuais do sistema. Esta ação não pode ser desfeita.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger confirm-restore-config-btn">
+                    <i class="fas fa-upload me-1"></i> Restaurar Configurações
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ativar o link de configurações no menu
+        const navItems = document.querySelectorAll('.nav-item .nav-link');
+        navItems.forEach(item => item.classList.remove('active'));
+        
+        const configLink = document.querySelector('a[href="{{ url_for("configuracoes.index") }}"]');
+        if (configLink) {
+            configLink.classList.add('active');
+        }
+        
+        // Modal de logo
+        const logoModal = new bootstrap.Modal(document.getElementById('logoModal'));
+        const changeLogo = document.getElementById('changeLogo');
+        
+        if (changeLogo) {
+            changeLogo.addEventListener('click', function() {
+                logoModal.show();
+            });
+        }
+        
+        // Modal de backup de configurações
+        const backupConfigModal = new bootstrap.Modal(document.getElementById('backupConfigModal'));
+        const backupConfigBtn = document.querySelector('.backup-config-btn');
+        
+        if (backupConfigBtn) {
+            backupConfigBtn.addEventListener('click', function() {
+                backupConfigModal.show();
+            });
+        }
+        
+        // Modal de restauração de configurações
+        const restoreConfigModal = new bootstrap.Modal(document.getElementById('restoreConfigModal'));
+        const restoreConfigBtn = document.querySelector('.restore-config-btn');
+        
+        if (restoreConfigBtn) {
+            restoreConfigBtn.addEventListener('click', function() {
+                restoreConfigModal.show();
+            });
+        }
+        
+        // Salvar configurações
+        const saveConfigBtn = document.querySelector('.save-config-btn');
+        
+        if (saveConfigBtn) {
+            saveConfigBtn.addEventListener('click', function() {
+                // Coletar dados do formulário
+                const systemName = document.querySelector('input[name="system_name"]').value;
+                const systemLogo = document.querySelector('input[name="system_logo"]').value;
+                const timezone = document.querySelector('select[name="timezone"]').value;
+                const emailNotifications = document.getElementById('emailNotifications').checked;
+                const systemNotifications = document.getElementById('systemNotifications').checked;
+                
+                // Criar objeto de configurações
+                const configData = {
+                    section: 'general',
+                    settings: {
+                        'system_name': systemName,
+                        'system_logo': systemLogo,
+                        'timezone': timezone,
+                        'email_notifications': emailNotifications,
+                        'system_notifications': systemNotifications
+                    }
+                };
+                
+                // Mostrar loading
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Salvando...';
+                this.disabled = true;
+                
+                // Enviar requisição
+                fetch('{{ url_for("configuracoes.update_config") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(configData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Resetar botão
+                    this.innerHTML = '<i class="fas fa-save me-1"></i> Salvar Configurações';
+                    this.disabled = false;
+                    
+                    if (data.success) {
+                        // Exibir mensagem de sucesso
+                        alert('Configurações salvas com sucesso!');
+                    } else {
+                        alert('Erro ao salvar configurações: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    
+                    // Resetar botão
+                    this.innerHTML = '<i class="fas fa-save me-1"></i> Salvar Configurações';
+                    this.disabled = false;
+                    
+                    alert('Erro ao salvar configurações. Tente novamente.');
+                });
+            });
+        }
+        
+        // Backup de configurações
+        const confirmBackupConfigBtn = document.querySelector('.confirm-backup-config-btn');
+        
+        if (confirmBackupConfigBtn) {
+            confirmBackupConfigBtn.addEventListener('click', function() {
+                // Simulação do download de um arquivo de backup
+                const dummyData = {
+                    'general': {
+                        'system_name': document.querySelector('input[name="system_name"]').value,
+                        'system_logo': document.querySelector('input[name="system_logo"]').value,
+                        'timezone': document.querySelector('select[name="timezone"]').value,
+                        'email_notifications': document.getElementById('emailNotifications').checked,
+                        'system_notifications': document.getElementById('systemNotifications').checked
+                    }
+                };
+                
+                // Criar blob e download
+                const dataStr = JSON.stringify(dummyData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const dateStr = new Date().toISOString().slice(0, 10);
+                
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(dataBlob);
+                downloadLink.download = `zelopack_config_backup_${dateStr}.json`;
+                downloadLink.click();
+                
+                // Fechar modal
+                backupConfigModal.hide();
+            });
+        }
+    });
+</script>
+{% endblock %}

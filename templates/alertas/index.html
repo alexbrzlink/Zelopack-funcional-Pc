@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+
+{% block title %}Alertas - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .alerts-header {
+        background: linear-gradient(135deg, #FF9800 0%, #E65100 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .alerts-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .alerts-header p {
+        opacity: 0.85;
+        max-width: 80%;
+    }
+    
+    .alert-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 1.5rem;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .alert-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .alert-content {
+        padding: 1.5rem;
+    }
+    
+    .alert-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    
+    .alert-icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+    }
+    
+    .alert-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .alert-subtitle {
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .alert-message {
+        margin-bottom: 1rem;
+    }
+    
+    .alert-info {
+        border-left: 4px solid #0d6efd;
+    }
+    
+    .alert-warning {
+        border-left: 4px solid #ffc107;
+    }
+    
+    .alert-danger {
+        border-left: 4px solid #dc3545;
+    }
+    
+    .alert-success {
+        border-left: 4px solid #198754;
+    }
+    
+    .alert-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .alert-actions button {
+        margin-left: 0.5rem;
+    }
+    
+    .empty-alerts {
+        text-align: center;
+        padding: 3rem 1rem;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+    }
+    
+    .empty-alerts i {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-alerts h3 {
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-alerts p {
+        color: #999;
+    }
+    
+    .alert-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .sections-nav .nav-link {
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.5rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .sections-nav .nav-link:hover {
+        background-color: rgba(0,0,0,0.05);
+    }
+    
+    .sections-nav .nav-link.active {
+        background-color: #FF9800;
+        color: white;
+    }
+    
+    .tab-content {
+        padding-top: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Cabeçalho de Alertas -->
+    <div class="alerts-header mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-exclamation-triangle me-2"></i> Alertas</h1>
+                <p class="mb-0">Central de alertas e notificações para monitoramento do sistema.</p>
+            </div>
+            <div class="d-none d-md-block">
+                {% if current_user.role == 'admin' %}
+                <div class="btn-group">
+                    <a href="{{ url_for('alertas.create') }}" class="btn btn-light">
+                        <i class="fas fa-plus me-2"></i> Novo Alerta
+                    </a>
+                    <a href="{{ url_for('alertas.all_alerts') }}" class="btn btn-light">
+                        <i class="fas fa-list-alt me-2"></i> Todos os Alertas
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navegação das seções -->
+    <ul class="nav sections-nav mb-4">
+        <li class="nav-item">
+            <a class="nav-link active" href="#todos" data-bs-toggle="tab">
+                <i class="fas fa-bell me-2"></i>
+                Todos <span class="badge bg-secondary">{{ alerts|length }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#info" data-bs-toggle="tab">
+                <i class="fas fa-info-circle me-2 text-primary"></i>
+                Informações <span class="badge bg-primary">{{ alerts_by_type.info|length }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#warning" data-bs-toggle="tab">
+                <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                Avisos <span class="badge bg-warning">{{ alerts_by_type.warning|length }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#danger" data-bs-toggle="tab">
+                <i class="fas fa-exclamation-circle me-2 text-danger"></i>
+                Alertas <span class="badge bg-danger">{{ alerts_by_type.danger|length }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#success" data-bs-toggle="tab">
+                <i class="fas fa-check-circle me-2 text-success"></i>
+                Sucessos <span class="badge bg-success">{{ alerts_by_type.success|length }}</span>
+            </a>
+        </li>
+    </ul>
+    
+    <!-- Conteúdo das abas -->
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="todos">
+            <!-- Lista de todos os alertas -->
+            {% if alerts %}
+                <div class="row">
+                    {% for alert in alerts %}
+                        <div class="col-md-6 mb-4">
+                            <div class="alert-card card shadow alert-{{ alert.type }}">
+                                <div class="alert-content">
+                                    <div class="alert-header">
+                                        <div class="alert-icon">
+                                            <i class="{{ alert.get_icon() }} text-{{ alert.get_color() }}"></i>
+                                        </div>
+                                        <div>
+                                            <div class="alert-title">{{ alert.title }}</div>
+                                            <div class="alert-subtitle">
+                                                {{ alert.created_at.strftime('%d/%m/%Y %H:%M') }}
+                                                {% if alert.module %}
+                                                    • <span class="text-capitalize">{{ alert.module }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alert-message">
+                                        {{ alert.message }}
+                                    </div>
+                                    <div class="alert-actions">
+                                        {% if not alert.is_read %}
+                                            <button class="btn btn-sm btn-outline-secondary mark-read-btn" data-id="{{ alert.id }}">
+                                                <i class="fas fa-check me-1"></i> Marcar como lido
+                                            </button>
+                                        {% endif %}
+                                        {% if current_user.role == 'admin' %}
+                                            <button class="btn btn-sm btn-outline-danger deactivate-btn" data-id="{{ alert.id }}">
+                                                <i class="fas fa-times me-1"></i> Desativar
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                    {% if alert.is_read %}
+                                        <span class="alert-badge bg-secondary text-white">Lido</span>
+                                    {% else %}
+                                        <span class="alert-badge bg-{{ alert.get_color() }} text-white">Novo</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-alerts">
+                    <i class="fas fa-bell-slash"></i>
+                    <h3>Nenhum alerta ativo</h3>
+                    <p>Não há alertas ou notificações para exibir no momento.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Abas para cada tipo de alerta -->
+        {% for type, alerts_list in alerts_by_type.items() %}
+            <div class="tab-pane fade" id="{{ type }}">
+                {% if alerts_list %}
+                    <div class="row">
+                        {% for alert in alerts_list %}
+                            <div class="col-md-6 mb-4">
+                                <div class="alert-card card shadow alert-{{ alert.type }}">
+                                    <div class="alert-content">
+                                        <div class="alert-header">
+                                            <div class="alert-icon">
+                                                <i class="{{ alert.get_icon() }} text-{{ alert.get_color() }}"></i>
+                                            </div>
+                                            <div>
+                                                <div class="alert-title">{{ alert.title }}</div>
+                                                <div class="alert-subtitle">
+                                                    {{ alert.created_at.strftime('%d/%m/%Y %H:%M') }}
+                                                    {% if alert.module %}
+                                                        • <span class="text-capitalize">{{ alert.module }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="alert-message">
+                                            {{ alert.message }}
+                                        </div>
+                                        <div class="alert-actions">
+                                            {% if not alert.is_read %}
+                                                <button class="btn btn-sm btn-outline-secondary mark-read-btn" data-id="{{ alert.id }}">
+                                                    <i class="fas fa-check me-1"></i> Marcar como lido
+                                                </button>
+                                            {% endif %}
+                                            {% if current_user.role == 'admin' %}
+                                                <button class="btn btn-sm btn-outline-danger deactivate-btn" data-id="{{ alert.id }}">
+                                                    <i class="fas fa-times me-1"></i> Desativar
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                        {% if alert.is_read %}
+                                            <span class="alert-badge bg-secondary text-white">Lido</span>
+                                        {% else %}
+                                            <span class="alert-badge bg-{{ alert.get_color() }} text-white">Novo</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-alerts">
+                        <i class="fas fa-bell-slash"></i>
+                        <h3>Nenhum alerta de tipo {{ type }}</h3>
+                        <p>Não há alertas ou notificações deste tipo para exibir no momento.</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ativar o link de alertas no menu
+        const navItems = document.querySelectorAll('.nav-item .nav-link');
+        navItems.forEach(item => item.classList.remove('active'));
+        
+        const alertsLink = document.querySelector('a[href="{{ url_for("alertas.index") }}"]');
+        if (alertsLink) {
+            alertsLink.classList.add('active');
+        }
+        
+        // Marcar como lido
+        document.querySelectorAll('.mark-read-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const alertId = this.getAttribute('data-id');
+                
+                // Enviar requisição para marcar como lido
+                fetch(`/alertas/marcar-lido/${alertId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Atualizar a interface
+                        const alertCard = this.closest('.alert-card');
+                        const badge = alertCard.querySelector('.alert-badge');
+                        
+                        // Atualizar o badge
+                        badge.className = 'alert-badge bg-secondary text-white';
+                        badge.textContent = 'Lido';
+                        
+                        // Remover o botão
+                        this.remove();
+                    } else {
+                        alert('Erro ao marcar alerta como lido: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao marcar alerta como lido');
+                });
+            });
+        });
+        
+        // Desativar alerta
+        document.querySelectorAll('.deactivate-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja desativar este alerta?')) {
+                    const alertId = this.getAttribute('data-id');
+                    
+                    // Enviar requisição para desativar
+                    fetch(`/alertas/desativar/${alertId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remover o card
+                            const alertCard = this.closest('.col-md-6');
+                            alertCard.remove();
+                        } else {
+                            alert('Erro ao desativar alerta: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        alert('Erro ao desativar alerta');
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

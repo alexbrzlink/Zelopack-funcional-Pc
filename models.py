@@ -769,6 +769,135 @@ class UserActivity(db.Model):
             return None
 
 
+class SystemConfig(db.Model):
+    """Modelo para configurações do sistema."""
+    __tablename__ = 'system_configs'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(100), unique=True, nullable=False)
+    value = db.Column(db.Text, nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    updated_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    
+    # Relações
+    creator = db.relationship('User', foreign_keys=[created_by], backref='created_configs')
+    updater = db.relationship('User', foreign_keys=[updated_by], backref='updated_configs')
+    
+    def __repr__(self):
+        return f"<SystemConfig {self.key}: {self.value}>"
+        
+    def to_dict(self):
+        """Converte a configuração para dicionário."""
+        return {
+            'id': self.id,
+            'key': self.key,
+            'value': self.value,
+            'description': self.description,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'updated_at': self.updated_at.strftime('%d/%m/%Y %H:%M'),
+            'created_by': self.created_by,
+            'updated_by': self.updated_by
+        }
+
+
+class Alert(db.Model):
+    """Modelo para alertas do sistema."""
+    __tablename__ = 'alerts'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    type = db.Column(db.String(50), nullable=False)  # info, warning, danger, success
+    module = db.Column(db.String(50), nullable=False)  # reports, users, suppliers, etc.
+    entity_type = db.Column(db.String(50), nullable=True)  # Report, User, etc.
+    entity_id = db.Column(db.Integer, nullable=True)  # ID da entidade
+    is_read = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    expires_at = db.Column(db.DateTime, nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    target_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Usuário destinatário
+    
+    # Relações
+    creator = db.relationship('User', foreign_keys=[created_by], backref='created_alerts')
+    target_user = db.relationship('User', foreign_keys=[target_user_id], backref='alerts')
+    
+    def __repr__(self):
+        return f"<Alert {self.id}: {self.title}>"
+    
+    def to_dict(self):
+        """Converte o alerta para dicionário."""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'message': self.message,
+            'type': self.type,
+            'module': self.module,
+            'entity_type': self.entity_type,
+            'entity_id': self.entity_id,
+            'is_read': self.is_read,
+            'is_active': self.is_active,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'expires_at': self.expires_at.strftime('%d/%m/%Y %H:%M') if self.expires_at else None,
+            'created_by': self.created_by,
+            'target_user_id': self.target_user_id
+        }
+    
+    def get_icon(self):
+        """Retorna o ícone correspondente ao tipo de alerta."""
+        icon_map = {
+            'info': 'fas fa-info-circle',
+            'warning': 'fas fa-exclamation-triangle',
+            'danger': 'fas fa-exclamation-circle',
+            'success': 'fas fa-check-circle'
+        }
+        return icon_map.get(self.type, 'fas fa-bell')
+    
+    def get_color(self):
+        """Retorna a cor correspondente ao tipo de alerta."""
+        color_map = {
+            'info': 'primary',
+            'warning': 'warning',
+            'danger': 'danger',
+            'success': 'success'
+        }
+        return color_map.get(self.type, 'secondary')
+
+
+class DatabaseBackup(db.Model):
+    """Modelo para backups do banco de dados."""
+    __tablename__ = 'database_backups'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(500), nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)  # Tamanho em bytes
+    description = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    
+    # Relações
+    creator = db.relationship('User', foreign_keys=[created_by], backref='created_backups')
+    
+    def __repr__(self):
+        return f"<DatabaseBackup {self.id}: {self.filename}>"
+    
+    def to_dict(self):
+        """Converte o backup para dicionário."""
+        return {
+            'id': self.id,
+            'filename': self.filename,
+            'file_path': self.file_path,
+            'file_size': self.file_size,
+            'description': self.description,
+            'created_at': self.created_at.strftime('%d/%m/%Y %H:%M'),
+            'created_by': self.created_by
+        }
+
+
 class AutomaticReport(db.Model):
     """Modelo para laudos gerados automaticamente a partir de templates."""
     id = db.Column(db.Integer, primary_key=True)
