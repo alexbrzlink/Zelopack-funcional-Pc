@@ -551,8 +551,11 @@
             </div>
             
             <div class="formula-box">
-                <div class="formula-title">Fórmula:</div>
-                <div>Tempo = (TQ Total - TQ Atual) ÷ Vazão da Linha</div>
+                <div class="formula-title">Fórmulas:</div>
+                <div>
+                    <div class="mb-2"><strong>Tempo de Finalização:</strong> Tempo = (TQ Total - TQ Atual) ÷ Vazão da Linha</div>
+                    <div><strong>Tempo até Metade do TQ:</strong> Tempo = (TQ Total ÷ 2 - TQ Atual) ÷ Vazão da Linha</div>
+                </div>
             </div>
             
             <form id="formTempoFinalizacao">
@@ -561,12 +564,18 @@
                         <div class="form-group field-tooltip">
                             <label class="form-label">Capacidade Total do TQ:</label>
                             <div class="input-with-unit">
-                                <input type="number" class="form-control" name="tq_total" step="1" placeholder="Ex: 1000" required>
+                                <input type="number" class="form-control" name="tq_total" step="1" max="32000" placeholder="Ex: 1000" required>
                                 <span class="input-unit">L</span>
                             </div>
-                            <div class="tooltip-icon" title="Informe a capacidade total do tanque em litros"><i class="fas fa-info-circle"></i></div>
-                            <div class="tooltip-text">Capacidade máxima do tanque em litros</div>
+                            <div class="tooltip-icon" title="Informe a capacidade total do tanque em litros (máx. 32.000)"><i class="fas fa-info-circle"></i></div>
+                            <div class="tooltip-text">Capacidade máxima do tanque - limite de 32.000 litros</div>
                             <small class="form-text text-muted">Volume total que o tanque comporta</small>
+                        </div>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="producaoCompleta">
+                            <label class="form-check-label" for="producaoCompleta">
+                                Produção Completa <small class="text-muted">(sem limite de litros)</small>
+                            </label>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -585,8 +594,8 @@
                         <div class="form-group field-tooltip">
                             <label class="form-label">Linha Utilizada:</label>
                             <select class="form-select" name="linha">
-                                <option value="1000ml">1000ml (200 L/min)</option>
-                                <option value="200ml">200ml (80 L/min)</option>
+                                <option value="1000ml">1000ml</option>
+                                <option value="200ml">200ml</option>
                             </select>
                             <div class="tooltip-icon" title="Escolha a linha de produção"><i class="fas fa-info-circle"></i></div>
                             <div class="tooltip-text">Define a vazão do processo</div>
@@ -739,6 +748,24 @@ document.addEventListener('DOMContentLoaded', function() {
         horaAtualInput.value = horaFormatada;
     }
     
+    // Controla o comportamento da opção "Produção Completa"
+    const checkbox = document.getElementById('producaoCompleta');
+    const inputTqTotal = document.querySelector('input[name="tq_total"]');
+    
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            // Remove o limite e o atributo max quando "Produção Completa" está marcado
+            inputTqTotal.removeAttribute('max');
+            // Atualiza a dica visual
+            document.querySelector('.tooltip-text').textContent = 'Modo produção completa - sem limite de litros';
+        } else {
+            // Restaura o limite de 32000 litros quando desmarcado
+            inputTqTotal.setAttribute('max', 32000);
+            // Restaura a dica visual
+            document.querySelector('.tooltip-text').textContent = 'Capacidade máxima do tanque - limite de 32.000 litros';
+        }
+    });
+    
     // Filtro de pesquisa para ícones de cálculo
     const searchInput = document.getElementById('searchCalc');
     searchInput.addEventListener('input', function() {
@@ -829,6 +856,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const tempoFinalMinutos = volumeRestante / vazao;
         
         // Calcular o tempo até a metade do TQ
+        // Fórmula correta: Tempo = (TQ Total ÷ 2 - TQ ATUAL) ÷ Vazão da Linha
         const meioTqLitros = tqTotal / 2;
         const volumeAteMeio = Math.max(0, meioTqLitros - tqAtual);
         const tempoMeioMinutos = volumeAteMeio / vazao;
