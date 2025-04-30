@@ -758,6 +758,256 @@ def profile():
     return render_template('auth/profile.html')
 
 
+@auth_bp.route('/usuarios')
+@login_required
+@admin_required
+def usuarios():
+    """
+    Página de gerenciamento de usuários (apenas administradores).
+    """
+    users = User.query.all()
+    return render_template('auth/usuarios.html', users=users)
+    
+    
+@auth_bp.route('/usuario/novo', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def novo_usuario():
+    """
+    Formulário para adicionar novo usuário.
+    """
+    if request.method == 'POST':
+        username = request.form['username']
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        is_admin = 'is_admin' in request.form
+        
+        # Verificar se o usuário já existe
+        existing_user = User.query.filter(
+            (User.username == username) | (User.email == email)
+        ).first()
+        
+        if existing_user:
+            flash('Usuário ou email já existe no sistema.', 'danger')
+            return render_template('auth/form_usuario.html', user=None)
+        
+        # Verificar complexidade da senha
+        if not verify_password_complexity(password):
+            flash('A senha não atende aos requisitos de complexidade.', 'danger')
+            return render_template('auth/form_usuario.html', user=None)
+        
+        # Criar novo usuário
+        new_user = User(
+            username=username,
+            name=name,
+            email=email,
+            password_hash=generate_password_hash(password),
+            is_admin=is_admin,
+            active=True,
+            created_at=datetime.utcnow()
+        )
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        # Registrar atividade
+        log_action(
+            user_id=current_user.id,
+            action='create',
+            module='auth',
+            entity_type='User',
+            entity_id=new_user.id,
+            details=f'Criação de usuário: {username}'
+        )
+        
+        flash(f'Usuário {username} criado com sucesso!', 'success')
+        return redirect(url_for('auth.usuarios'))
+    
+    return render_template('auth/form_usuario.html', user=None)
+    
+    
+@auth_bp.route('/usuario/<int:user_id>/editar', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def editar_usuario(user_id):
+    """
+    Formulário para editar usuário existente.
+    """
+    user = User.query.get_or_404(user_id)
+    
+    if request.method == 'POST':
+        username = request.form['username']
+        name = request.form['name']
+        email = request.form['email']
+        is_admin = 'is_admin' in request.form
+        
+        # Verificar se o username/email já existe em outro usuário
+        existing_user = User.query.filter(
+            ((User.username == username) | (User.email == email)) & 
+            (User.id != user_id)
+        ).first()
+        
+        if existing_user:
+            flash('Usuário ou email já existe no sistema.', 'danger')
+            return render_template('auth/form_usuario.html', user=user)
+        
+        # Atualizar dados
+        user.username = username
+        user.name = name
+        user.email = email
+        user.is_admin = is_admin
+        
+        db.session.commit()
+        
+        # Registrar atividade
+        log_action(
+            user_id=current_user.id,
+            action='update',
+            module='auth',
+            entity_type='User',
+            entity_id=user.id,
+            details=f'Atualização de usuário: {username}'
+        )
+        
+        flash(f'Usuário {username} atualizado com sucesso!', 'success')
+        return redirect(url_for('auth.usuarios'))
+    
+    return render_template('auth/form_usuario.html', user=user)
+    
+    
+@auth_bp.route('/usuario/<int:user_id>/excluir')
+@login_required
+@admin_required
+def excluir_usuario(user_id):
+    """
+    Excluir um usuário do sistema.
+    """
+    user = User.query.get_or_404(user_id)
+    
+    # Não permitir excluir o próprio usuário
+    if user.id == current_user.id:
+        flash('Você não pode excluir seu próprio usuário.', 'danger')
+        return redirect(url_for('auth.usuarios'))
+    
+    username = user.username
+    db.session.delete(user)
+    db.session.commit()
+    
+    # Registrar atividade
+    log_action(
+        user_id=current_user.id,
+        action='delete',
+        module='auth',
+        entity_type='User',
+        entity_id=user_id,
+        details=f'Exclusão de usuário: {username}'
+    )
+    
+    flash(f'Usuário {username} excluído com sucesso!', 'success')
+    return redirect(url_for('auth.usuarios'))
+    
+    
+@auth_bp.route('/usuario/<int:user_id>/desativar')
+@login_required
+@admin_required
+def desativar_usuario(user_id):
+    """
+    Desativar um usuário do sistema.
+    """
+    user = User.query.get_or_404(user_id)
+    
+    # Não permitir desativar o próprio usuário
+    if user.id == current_user.id:
+        flash('Você não pode desativar seu próprio usuário.', 'danger')
+        return redirect(url_for('auth.usuarios'))
+    
+    user.active = False
+    db.session.commit()
+    
+    # Registrar atividade
+    log_action(
+        user_id=current_user.id,
+        action='update',
+        module='auth',
+        entity_type='User',
+        entity_id=user.id,
+        details=f'Desativação de usuário: {user.username}'
+    )
+    
+    flash(f'Usuário {user.username} desativado com sucesso!', 'success')
+    return redirect(url_for('auth.usuarios'))
+    
+    
+@auth_bp.route('/usuario/<int:user_id>/ativar')
+@login_required
+@admin_required
+def ativar_usuario(user_id):
+    """
+    Ativar um usuário do sistema.
+    """
+    user = User.query.get_or_404(user_id)
+    user.active = True
+    db.session.commit()
+    
+    # Registrar atividade
+    log_action(
+        user_id=current_user.id,
+        action='update',
+        module='auth',
+        entity_type='User',
+        entity_id=user.id,
+        details=f'Ativação de usuário: {user.username}'
+    )
+    
+    flash(f'Usuário {user.username} ativado com sucesso!', 'success')
+    return redirect(url_for('auth.usuarios'))
+    
+    
+@auth_bp.route('/usuario/<int:user_id>/reset-senha', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def reset_usuario_senha(user_id):
+    """
+    Redefinir a senha de um usuário.
+    """
+    user = User.query.get_or_404(user_id)
+    
+    if request.method == 'POST':
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        if password != confirm_password:
+            flash('As senhas não coincidem.', 'danger')
+            return render_template('auth/reset_usuario_senha.html', user=user)
+        
+        # Verificar complexidade da senha
+        if not verify_password_complexity(password):
+            flash('A senha não atende aos requisitos de complexidade.', 'danger')
+            return render_template('auth/reset_usuario_senha.html', user=user)
+        
+        # Atualizar senha
+        user.password_hash = generate_password_hash(password)
+        user.password_changed_at = datetime.utcnow()
+        
+        db.session.commit()
+        
+        # Registrar atividade
+        log_action(
+            user_id=current_user.id,
+            action='update',
+            module='auth',
+            entity_type='User',
+            entity_id=user.id,
+            details=f'Redefinição de senha para usuário: {user.username}'
+        )
+        
+        flash(f'Senha do usuário {user.username} redefinida com sucesso!', 'success')
+        return redirect(url_for('auth.usuarios'))
+    
+    return render_template('auth/reset_usuario_senha.html', user=user)
+
+
 @auth_bp.route('/admin-security', methods=['GET'])
 @login_required
 @admin_required

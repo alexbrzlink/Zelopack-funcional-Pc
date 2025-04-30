@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Gerenciamento de Usuários{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="fas fa-users me-2"></i> Gerenciamento de Usuários
+        </h2>
+        <a href="{{ url_for('auth.novo_usuario') }}" class="btn btn-primary">
+            <i class="fas fa-user-plus me-1"></i> Novo Usuário
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0">Lista de Usuários</h5>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="filtroUsuarios" placeholder="Filtrar usuários...">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Usuário</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Papel</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Último Login</th>
+                            <th scope="col">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% if user.is_admin %}
+                                <span class="badge bg-danger">Administrador</span>
+                                {% else %}
+                                <span class="badge bg-primary">Usuário</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.active %}
+                                <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                <span class="badge bg-warning text-dark">Inativo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.last_login %}
+                                <small>{{ user.last_login.strftime('%d/%m/%Y %H:%M') }}</small>
+                                {% else %}
+                                <small class="text-muted">Nunca</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('auth.editar_usuario', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.id }}">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    {% if user.active %}
+                                    <a href="{{ url_for('auth.desativar_usuario', user_id=user.id) }}" class="btn btn-sm btn-outline-warning">
+                                        <i class="fas fa-ban"></i>
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ url_for('auth.ativar_usuario', user_id=user.id) }}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-check"></i>
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ url_for('auth.reset_usuario_senha', user_id=user.id) }}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-key"></i>
+                                    </a>
+                                </div>
+                                
+                                <!-- Modal de confirmação de exclusão -->
+                                <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ user.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel{{ user.id }}">Confirmação</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Tem certeza que deseja excluir o usuário <strong>{{ user.name }}</strong>?</p>
+                                                <p class="text-danger"><small>Esta ação não pode ser desfeita.</small></p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                <a href="{{ url_for('auth.excluir_usuario', user_id=user.id) }}" class="btn btn-danger">Confirmar Exclusão</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-3">
+                                <p class="mb-0 text-muted">
+                                    <i class="fas fa-info-circle me-1"></i> Nenhum usuário cadastrado.
+                                </p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Filtro para a tabela de usuários
+    document.addEventListener('DOMContentLoaded', function() {
+        const filtroInput = document.getElementById('filtroUsuarios');
+        
+        filtroInput.addEventListener('keyup', function() {
+            const termo = filtroInput.value.toLowerCase();
+            const tabela = document.querySelector('table tbody');
+            const linhas = tabela.querySelectorAll('tr');
+            
+            linhas.forEach(function(linha) {
+                const colunas = linha.querySelectorAll('td');
+                let encontrado = false;
+                
+                if (colunas.length > 1) {
+                    colunas.forEach(function(coluna, index) {
+                        if (index < 4) {  // Apenas as primeiras 4 colunas (ID, Nome, Usuário, Email)
+                            if (coluna.textContent.toLowerCase().includes(termo)) {
+                                encontrado = true;
+                            }
+                        }
+                    });
+                    
+                    if (encontrado) {
+                        linha.style.display = '';
+                    } else {
+                        linha.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
