@@ -79,6 +79,8 @@ else:
 
 # Adicionar mais isenções para CSRF em rotas de teste/desenvolvimento
 csrf.exempt('app.check_admin_user')  # Isento para permitir o diagnóstico do admin
+csrf.exempt('app.login_direct')  # Isento para permitir login automático
+csrf.exempt('auth.login')  # Temporariamente isento para resolver problemas de login
 
 # Adicionar proteção global para problemas de CSRF token em dispositivos móveis
 @app.after_request
