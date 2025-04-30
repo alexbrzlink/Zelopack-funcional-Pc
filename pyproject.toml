@@ -28,4 +28,6 @@ dependencies = [
     "trafilatura>=2.0.0",
     "seaborn>=0.13.2",
     "pdf2image>=1.17.0",
+    "pyotp>=2.9.0",
+    "qrcode>=8.1",
 ]

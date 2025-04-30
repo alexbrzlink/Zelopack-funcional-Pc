@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+
+{% block title %}Verificação em Duas Etapas - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .two-factor-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .two-factor-card {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        border: none;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #0b4a8e 0%, #156bc1 100%);
+        color: white;
+        border-bottom: none;
+        padding: 1.5rem;
+    }
+    
+    .verification-title {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .verification-icon {
+        font-size: 4rem;
+        color: #0b4a8e;
+        margin-bottom: 1.5rem;
+    }
+    
+    .verification-code-input {
+        letter-spacing: 0.5rem;
+        font-size: 1.5rem;
+        text-align: center;
+        font-weight: 700;
+    }
+    
+    .qr-code-container {
+        max-width: 200px;
+        margin: 0 auto 1.5rem auto;
+    }
+    
+    .verification-method-selector {
+        margin-bottom: 1.5rem;
+    }
+    
+    .verification-method {
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .verification-method:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .verification-method.active {
+        border-color: #0b4a8e;
+        background-color: #e6f0ff;
+    }
+    
+    .verification-method-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        border-radius: 50%;
+        background-color: #f2f2f2;
+        color: #0b4a8e;
+    }
+    
+    .verification-method.active .verification-method-icon {
+        background-color: #0b4a8e;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container two-factor-container my-5">
+    <div class="card two-factor-card">
+        <div class="card-header text-center">
+            <h4 class="verification-title">Verificação em Duas Etapas</h4>
+            <p class="mb-0">Segurança adicional para sua conta de administrador</p>
+        </div>
+        <div class="card-body p-4">
+            <div class="text-center mb-4">
+                <i class="fas fa-shield-alt verification-icon"></i>
+                <h5 class="mb-3">Verificação necessária</h5>
+                <p class="text-muted">Para proteger sua conta de administrador, é necessário verificar sua identidade.</p>
+            </div>
+            
+            {% if method_selection %}
+                <div class="verification-method-selector">
+                    <h6 class="mb-3">Escolha um método de verificação:</h6>
+                    
+                    <form method="post" action="{{ url_for('auth.select_two_factor_method') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="verification-method {% if selected_method == 'email' %}active{% endif %}" data-method="email">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="method" id="methodEmail" value="email" {% if selected_method == 'email' %}checked{% endif %}>
+                                <label class="form-check-label d-flex align-items-center" for="methodEmail">
+                                    <span class="verification-method-icon"><i class="fas fa-envelope"></i></span>
+                                    <div>
+                                        <strong>E-mail</strong>
+                                        <p class="mb-0 small text-muted">Receba um código de verificação por e-mail</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="verification-method {% if selected_method == 'sms' %}active{% endif %}" data-method="sms">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="method" id="methodSMS" value="sms" {% if selected_method == 'sms' %}checked{% endif %}>
+                                <label class="form-check-label d-flex align-items-center" for="methodSMS">
+                                    <span class="verification-method-icon"><i class="fas fa-sms"></i></span>
+                                    <div>
+                                        <strong>SMS</strong>
+                                        <p class="mb-0 small text-muted">Receba um código de verificação por SMS</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="verification-method {% if selected_method == 'totp' %}active{% endif %}" data-method="totp">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="method" id="methodTOTP" value="totp" {% if selected_method == 'totp' %}checked{% endif %}>
+                                <label class="form-check-label d-flex align-items-center" for="methodTOTP">
+                                    <span class="verification-method-icon"><i class="fas fa-mobile-alt"></i></span>
+                                    <div>
+                                        <strong>Aplicativo Autenticador</strong>
+                                        <p class="mb-0 small text-muted">Use um aplicativo como Google Authenticator</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary">Continuar</button>
+                        </div>
+                    </form>
+                </div>
+            {% elif totp_setup %}
+                <div class="totp-setup text-center">
+                    <h6 class="mb-3">Configure o Aplicativo Autenticador</h6>
+                    <p class="text-muted small mb-3">Escaneie o QR code abaixo com seu aplicativo autenticador (Google Authenticator, Authy, etc).</p>
+                    
+                    <div class="qr-code-container">
+                        <img src="data:image/png;base64,{{ totp_setup.qr_code }}" alt="QR Code" class="img-fluid border">
+                    </div>
+                    
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" value="{{ totp_setup.secret_key }}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" id="copySecretBtn">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <p class="text-muted small mb-4">Se não conseguir escanear o código QR, insira manualmente o código secreto acima no seu aplicativo.</p>
+                    
+                    <form method="post" action="{{ url_for('auth.verify_totp_setup') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="secret_key" value="{{ totp_setup.secret_key }}">
+                        
+                        <div class="mb-3">
+                            <label for="verificationCode" class="form-label">Digite o código gerado pelo aplicativo</label>
+                            <input type="text" class="form-control verification-code-input" id="verificationCode" name="code" maxlength="6" required pattern="[0-9]{6}" autocomplete="off" inputmode="numeric">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Verificar</button>
+                            <a href="{{ url_for('auth.two_factor') }}" class="btn btn-outline-secondary">Voltar</a>
+                        </div>
+                    </form>
+                </div>
+            {% else %}
+                <form method="post" action="{{ url_for('auth.verify_two_factor') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="mb-4">
+                        {% if method == 'email' %}
+                            <p class="mb-3"><i class="fas fa-envelope me-2"></i> Um código de verificação foi enviado para seu e-mail.</p>
+                        {% elif method == 'sms' %}
+                            <p class="mb-3"><i class="fas fa-sms me-2"></i> Um código de verificação foi enviado para seu telefone.</p>
+                        {% elif method == 'totp' %}
+                            <p class="mb-3"><i class="fas fa-mobile-alt me-2"></i> Digite o código do seu aplicativo autenticador.</p>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="verificationCode" class="form-label">Código de Verificação</label>
+                            <input type="text" class="form-control verification-code-input" id="verificationCode" name="code" maxlength="6" required pattern="[0-9]{6}" autocomplete="off" inputmode="numeric">
+                            <div class="form-text">Digite o código de 6 dígitos enviado.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Verificar</button>
+                        {% if method != 'totp' %}
+                            <button type="button" class="btn btn-outline-secondary" id="resendCodeBtn">Reenviar Código</button>
+                        {% endif %}
+                        <a href="{{ url_for('auth.two_factor') }}" class="btn btn-link">Escolher outro método</a>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Seleção de método de verificação
+        const methodOptions = document.querySelectorAll('.verification-method');
+        methodOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Marcar radio button
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // Atualizar classe ativa
+                methodOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Botão para copiar chave secreta
+        const copySecretBtn = document.getElementById('copySecretBtn');
+        if (copySecretBtn) {
+            copySecretBtn.addEventListener('click', function() {
+                const secretInput = this.previousElementSibling;
+                secretInput.select();
+                document.execCommand('copy');
+                
+                // Notificar usuário
+                this.innerHTML = '<i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-copy"></i>';
+                }, 2000);
+            });
+        }
+        
+        // Botão para reenviar código
+        const resendCodeBtn = document.getElementById('resendCodeBtn');
+        if (resendCodeBtn) {
+            resendCodeBtn.addEventListener('click', function() {
+                // Desabilitar botão temporariamente
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+                
+                // Enviar solicitação para reenviar código
+                fetch('{{ url_for("auth.resend_two_factor_code") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Notificar sucesso
+                        showMessage('success', 'Código reenviado com sucesso!');
+                        
+                        // Atualizar botão
+                        let countdown = 60;
+                        const intervalId = setInterval(() => {
+                            resendCodeBtn.innerHTML = `Reenviar Código (${countdown}s)`;
+                            countdown--;
+                            
+                            if (countdown < 0) {
+                                clearInterval(intervalId);
+                                resendCodeBtn.innerHTML = 'Reenviar Código';
+                                resendCodeBtn.disabled = false;
+                            }
+                        }, 1000);
+                    } else {
+                        // Notificar erro
+                        showMessage('danger', data.message || 'Erro ao reenviar código. Tente novamente.');
+                        
+                        // Restaurar botão
+                        resendCodeBtn.innerHTML = 'Reenviar Código';
+                        resendCodeBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    showMessage('danger', 'Erro ao processar solicitação. Tente novamente.');
+                    
+                    // Restaurar botão
+                    resendCodeBtn.innerHTML = 'Reenviar Código';
+                    resendCodeBtn.disabled = false;
+                });
+            });
+        }
+        
+        // Função para mostrar mensagens
+        function showMessage(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            
+            // Inserir antes do formulário
+            const form = document.querySelector('form');
+            form.parentNode.insertBefore(alertDiv, form);
+            
+            // Remover automaticamente após alguns segundos
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 300);
+            }, 5000);
+        }
+    });
+</script>
+{% endblock %}

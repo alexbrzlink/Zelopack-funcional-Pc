@@ -1,9 +1,10 @@
-import logging
-logger = logging.getLogger(__name__)
+"""
+Blueprint de autenticação.
+Gerencia autenticação, autorização e recursos avançados de segurança.
+"""
 
 from flask import Blueprint
 
-auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+auth_bp = Blueprint('auth', __name__, template_folder='templates')
 
-# Importação das rotas após a definição do blueprint para evitar importações circulares
 from . import routes
