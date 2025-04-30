@@ -556,6 +556,7 @@ from blueprints.estatisticas.routes import estatisticas_bp
 from blueprints.configuracoes.routes import configuracoes_bp
 from blueprints.alertas.routes import alertas_bp
 from blueprints.banco_dados.routes import banco_dados_bp
+from blueprints.estoque import estoque_bp
 
 app.register_blueprint(reports_bp)
 app.register_blueprint(dashboard_bp)
@@ -568,6 +569,7 @@ app.register_blueprint(estatisticas_bp)
 app.register_blueprint(configuracoes_bp)
 app.register_blueprint(alertas_bp)
 app.register_blueprint(banco_dados_bp)
+app.register_blueprint(estoque_bp)
 
 # Registrar blueprint do editor universal
 from blueprints.forms.routes_editor import editor_bp
