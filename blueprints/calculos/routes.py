@@ -233,7 +233,7 @@ def tecnicos():
             "Peso Líquido (Zeragem de Embalagem) (kg)": peso_liquido_zeragem,
         }
 
-    return render_template('calculos/technical_abas.html', results=results)
+    return render_template('calculos/technical_abas_new.html', results=results)
 
 
 @calculos_bp.route('/api/calcular/producao-200g', methods=['POST'])

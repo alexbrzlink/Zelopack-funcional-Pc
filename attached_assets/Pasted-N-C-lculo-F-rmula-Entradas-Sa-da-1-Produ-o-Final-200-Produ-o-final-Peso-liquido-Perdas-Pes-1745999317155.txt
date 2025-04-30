@@ -1,0 +1,30 @@
+Nº	Cálculo	Fórmula	Entradas	Saída
+1	Produção Final (200)	Produção_final = Peso_liquido - Perdas	Peso líquido, Perdas	Produção final (kg)
+2	Produção (Litro)	Produção_L = Peso_liquido ÷ Densidade	Peso líquido, Densidade	Produção líquida (L)
+3	Abaixar Brix	Qtd_Água_L = [(Brix_atual - Brix_desejado) × Volume_atual] ÷ Brix_desejado	Brix atual, Brix desejado, Volume atual	Quantidade de água (L)
+4	Brix Corrigido	Brix_corrigido = Brix_medido + Fator_correcao	Brix medido, Fator de correção	Brix corrigido
+5	Peso Bruto	Peso_bruto = Peso_liquido + Peso_embalagem	Peso líquido, Peso da embalagem	Peso bruto (kg)
+6	Corantes	Qtd_corante = (Volume × Concentração_desejada) ÷ Concentração_corante	Volume, Concentração desejada, Concentração corante	Quantidade de corante (L)
+7	Densidade	Densidade = Peso ÷ Volume	Peso, Volume	Densidade (g/mL)
+8	Ratio	Ratio = Brix ÷ Acidez	Brix, Acidez	Ratio
+9	Ratio - Brix	Brix = Ratio × Acidez	Ratio, Acidez	Brix
+10	Ratio - Acidez	Acidez = Brix ÷ Ratio	Brix, Ratio	Acidez
+11	Acidez (%)	Acidez = (Volume_titulante × Normalidade × 0.064) ÷ Volume_amostra	Volume titulante, Normalidade, Volume amostra	Acidez (%)
+12	Cálculo de Soda	Qtd_soda = (Volume × Acidez_atual) ÷ (Concentração_soda × 100)	Volume, Acidez atual, Concentração soda	Quantidade de soda (L)
+13	Vitamina C	Vitamina_C = (Volume_titulante × Fator) ÷ Volume_amostra	Volume titulante, Fator, Volume amostra	Vitamina C (mg/L)
+14	Soda-Antigo / Soda-Diversey	Qtd_soda = (Volume × Acidez_atual) ÷ (Concentração_soda × 100)	Volume, Acidez atual, Concentração soda	Quantidade de soda (L)
+15	Ácido-Diversey / Ácido-Antigo	Acidez = (Volume_titulante × Normalidade × 0.064) ÷ Volume_amostra	Volume titulante, Normalidade, Volume amostra	Acidez (%)
+16	Saber Perda de Base (%)	Perda = [(Volume_inicial - Volume_final) ÷ Volume_inicial] × 100	Volume inicial, Volume final	Perda (%)
+17	Quantidade de Açúcar a Puxar	Qtd_açúcar = [(Brix_desejado - Brix_atual) × Volume × Densidade] ÷ 100	Brix atual, Brix desejado, Volume, Densidade	Quantidade de açúcar (kg)
+18	Aumentar Brix Açúcar Batido	Qtd_açúcar = [(Brix_desejado - Brix_atual) × Volume × Densidade] ÷ 100	Brix atual, Brix desejado, Volume, Densidade	Quantidade de açúcar (kg)
+19	Previsão Brix	Brix_previsto = (Brix1 × Vol1 + Brix2 × Vol2) ÷ (Vol1 + Vol2)	Brix1, Vol1, Brix2, Vol2	Brix previsto
+20	Previsão Acidez	Acidez_prevista = (Acidez1 × Vol1 + Acidez2 × Vol2) ÷ (Vol1 + Vol2)	Acidez1, Vol1, Acidez2, Vol2	Acidez prevista (%)
+21	Tempo de Finalização	Tempo = Volume ÷ Vazão	Volume, Vazão	Tempo (min)
+22	Aumentar Acidez	Qtd_ácido = (Acidez_desejada - Acidez_atual) × Volume × Fator	Acidez atual, Acidez desejada, Volume, Fator	Quantidade de ácido (L)
+23	Diminuir Acidez	Novo_Volume = (Volume_atual × Acidez_atual) ÷ Acidez_desejada	Acidez atual, Acidez desejada, Volume atual	Novo volume (L)
+24	Correção de Brix	Novo_Volume = (Brix_inicial × Volume_inicial) ÷ Brix_desejado	Brix inicial, Brix desejado, Volume inicial	Novo volume (L)
+25	Conversão Cristal Líquido	Volume_solução = Açúcar_cristal ÷ Densidade	Açúcar cristal, Densidade	Volume solução (L)
+26	Correção Açúcar Cristal	Qtd_açúcar = (Brix_desejado - Brix_atual) × Volume ÷ 100	Brix atual, Brix desejado, Volume	Quantidade de açúcar cristal (kg)
+27	Conversão Líquido - Cristal	Peso_cristal = Volume_solução × Densidade × Percentual_açúcar	Volume solução, Densidade, % açúcar	Peso cristal (kg)
+28	Peso Líquido 200	Peso_liquido = Peso_bruto - Tara	Peso bruto, Tara	Peso líquido (kg)
+29	Peso Líquido Litro / Zeragem de Embalagem	Volume = Peso_liquido ÷ Densidade / Peso_liquido = Peso_total - Embalagem	Peso líquido, Densidade / Peso total, Embalagem	Volume líquido (L) / Peso líquido (kg)

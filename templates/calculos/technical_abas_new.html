@@ -1,0 +1,865 @@
+{% extends 'base.html' %}
+
+{% block title %}Cálculos Técnicos Avançados - Zelopack{% endblock %}
+
+{% block styles %}
+<style>
+    .card-calc {
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .card-calc:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #007bff;
+        font-weight: 600;
+    }
+    
+    .nav-tabs .nav-link.active {
+        font-weight: bold;
+        border-top: 3px solid #007bff;
+    }
+    
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    
+    .btn-calculate {
+        background-color: #007bff;
+        color: white;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .btn-calculate:hover {
+        background-color: #0069d9;
+        transform: translateY(-2px);
+    }
+    
+    .result-box {
+        background-color: #f8f9fa;
+        border-left: 4px solid #28a745;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 4px;
+    }
+    
+    .result-item {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .result-item:last-child {
+        border-bottom: none;
+    }
+    
+    .result-value {
+        font-weight: bold;
+        color: #28a745;
+    }
+    
+    .input-with-unit {
+        position: relative;
+    }
+    
+    .input-unit {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 14px;
+    }
+    
+    .tab-pane {
+        padding: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .calculation-group {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+    
+    .formula-box {
+        background-color: #f0f5ff;
+        border-radius: 4px;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        font-family: "Courier New", monospace;
+    }
+    
+    .formula-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        color: #0D47A1;
+    }
+    
+    .tab-description {
+        margin-bottom: 15px;
+        font-style: italic;
+        color: #666;
+    }
+    
+    .nav-tabs {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .nav-tabs .nav-item {
+        margin-right: 2px;
+        margin-bottom: 5px;
+    }
+    
+    .search-box {
+        margin-bottom: 20px;
+    }
+    
+    .no-results {
+        padding: 20px;
+        text-align: center;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-3"><i class="fas fa-calculator"></i> Cálculos Técnicos Avançados</h2>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-flask"></i> Calculadora Técnica (29 cálculos)</span>
+                        
+                        <div class="search-box">
+                            <input type="text" class="form-control" id="searchCalc" placeholder="Buscar cálculo...">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Navegação de abas -->
+                    <ul class="nav nav-tabs mb-3" id="calcTabs" role="tablist">
+                        {% for i in range(1, 30) %}
+                            {% set id = i %}
+                            {% set active = 'active' if i == 1 else '' %}
+                            {% set show = 'show' if i == 1 else '' %}
+                            {% set selected = 'true' if i == 1 else 'false' %}
+                            
+                            {% if i == 1 %}
+                                {% set title = 'Produção Final' %}
+                                {% set icon = 'industry' %}
+                            {% elif i == 2 %}
+                                {% set title = 'Produção (Litro)' %}
+                                {% set icon = 'tint' %}
+                            {% elif i == 3 %}
+                                {% set title = 'Abaixar Brix' %}
+                                {% set icon = 'water' %}
+                            {% elif i == 4 %}
+                                {% set title = 'Brix Corrigido' %}
+                                {% set icon = 'thermometer-half' %}
+                            {% elif i == 5 %}
+                                {% set title = 'Peso Bruto' %}
+                                {% set icon = 'weight-hanging' %}
+                            {% elif i == 6 %}
+                                {% set title = 'Corantes' %}
+                                {% set icon = 'fill-drip' %}
+                            {% elif i == 7 %}
+                                {% set title = 'Densidade' %}
+                                {% set icon = 'vial' %}
+                            {% elif i == 8 %}
+                                {% set title = 'Ratio' %}
+                                {% set icon = 'balance-scale' %}
+                            {% elif i == 9 %}
+                                {% set title = 'Ratio - Brix' %}
+                                {% set icon = 'calculator' %}
+                            {% elif i == 10 %}
+                                {% set title = 'Ratio - Acidez' %}
+                                {% set icon = 'flask' %}
+                            {% elif i == 11 %}
+                                {% set title = 'Acidez (%)' %}
+                                {% set icon = 'burn' %}
+                            {% elif i == 12 %}
+                                {% set title = 'Cálculo de Soda' %}
+                                {% set icon = 'prescription-bottle' %}
+                            {% elif i == 13 %}
+                                {% set title = 'Vitamina C' %}
+                                {% set icon = 'tablets' %}
+                            {% elif i == 14 %}
+                                {% set title = 'Soda-Diversey' %}
+                                {% set icon = 'prescription-bottle-alt' %}
+                            {% elif i == 15 %}
+                                {% set title = 'Ácido-Diversey' %}
+                                {% set icon = 'vial' %}
+                            {% elif i == 16 %}
+                                {% set title = 'Perda de Base' %}
+                                {% set icon = 'percent' %}
+                            {% elif i == 17 %}
+                                {% set title = 'Açúcar a Puxar' %}
+                                {% set icon = 'cubes' %}
+                            {% elif i == 18 %}
+                                {% set title = 'Açúcar Batido' %}
+                                {% set icon = 'candy-cane' %}
+                            {% elif i == 19 %}
+                                {% set title = 'Previsão Brix' %}
+                                {% set icon = 'chart-line' %}
+                            {% elif i == 20 %}
+                                {% set title = 'Previsão Acidez' %}
+                                {% set icon = 'chart-bar' %}
+                            {% elif i == 21 %}
+                                {% set title = 'Tempo Finalização' %}
+                                {% set icon = 'clock' %}
+                            {% elif i == 22 %}
+                                {% set title = 'Aumentar Acidez' %}
+                                {% set icon = 'arrow-up' %}
+                            {% elif i == 23 %}
+                                {% set title = 'Diminuir Acidez' %}
+                                {% set icon = 'arrow-down' %}
+                            {% elif i == 24 %}
+                                {% set title = 'Correção de Brix' %}
+                                {% set icon = 'prescription' %}
+                            {% elif i == 25 %}
+                                {% set title = 'Cristal → Líquido' %}
+                                {% set icon = 'exchange-alt' %}
+                            {% elif i == 26 %}
+                                {% set title = 'Correção Açúcar' %}
+                                {% set icon = 'edit' %}
+                            {% elif i == 27 %}
+                                {% set title = 'Líquido → Cristal' %}
+                                {% set icon = 'exchange-alt' %}
+                            {% elif i == 28 %}
+                                {% set title = 'Peso Líquido 200' %}
+                                {% set icon = 'weight' %}
+                            {% elif i == 29 %}
+                                {% set title = 'Peso Líquido Litro' %}
+                                {% set icon = 'fill' %}
+                            {% endif %}
+                            
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {{ active }}" id="calc-{{ id }}-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#calc-{{ id }}" type="button" role="tab" 
+                                    aria-controls="calc-{{ id }}" aria-selected="{{ selected }}">
+                                <i class="fas fa-{{ icon }}"></i> {{ title }}
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <!-- Conteúdo das abas -->
+                    <div class="tab-content" id="calcTabContent">
+                        {% for i in range(1, 30) %}
+                            {% set id = i %}
+                            {% set active = 'active' if i == 1 else '' %}
+                            {% set show = 'show' if i == 1 else '' %}
+                            
+                            {% if i == 1 %}
+                                {% set title = 'Produção Final (200)' %}
+                                {% set description = 'Calcula a produção final considerando perdas durante o processo.' %}
+                                {% set formula = 'Produção_final = Peso_liquido - Perdas' %}
+                                {% set inputs = [
+                                    {'name': 'peso_liquido', 'label': 'Peso Líquido', 'unit': 'kg', 'step': '0.01'},
+                                    {'name': 'perdas', 'label': 'Perdas', 'unit': 'kg', 'step': '0.01'}
+                                ] %}
+                            {% elif i == 2 %}
+                                {% set title = 'Produção (Litro)' %}
+                                {% set description = 'Converte a produção de peso (kg) para volume (L) usando a densidade.' %}
+                                {% set formula = 'Produção_L = Peso_liquido ÷ Densidade' %}
+                                {% set inputs = [
+                                    {'name': 'peso_liquido', 'label': 'Peso Líquido', 'unit': 'kg', 'step': '0.01'},
+                                    {'name': 'densidade', 'label': 'Densidade', 'unit': 'g/mL', 'step': '0.001', 'value': '1.0'}
+                                ] %}
+                            {% elif i == 3 %}
+                                {% set title = 'Abaixar Brix' %}
+                                {% set description = 'Calcula a quantidade de água necessária para diluir o produto e reduzir o brix para o valor desejado.' %}
+                                {% set formula = 'Qtd_Água_L = [(Brix_atual - Brix_desejado) × Volume_atual] ÷ Brix_desejado' %}
+                                {% set inputs = [
+                                    {'name': 'brix_atual', 'label': 'Brix Atual', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'brix_desejado', 'label': 'Brix Desejado', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'volume_atual', 'label': 'Volume Atual', 'unit': 'L', 'step': '0.1'}
+                                ] %}
+                            {% elif i == 4 %}
+                                {% set title = 'Brix Corrigido' %}
+                                {% set description = 'Corrige o valor de Brix medido considerando a temperatura da amostra.' %}
+                                {% set formula = 'Brix_corrigido = Brix_medido + Fator_correcao' %}
+                                {% set inputs = [
+                                    {'name': 'brix_medido', 'label': 'Brix Medido', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'temperatura', 'label': 'Temperatura', 'unit': '°C', 'step': '0.1', 'value': '20'}
+                                ] %}
+                            {% elif i == 5 %}
+                                {% set title = 'Peso Bruto' %}
+                                {% set description = 'Calcula o peso bruto adicionando o peso da embalagem ao peso líquido.' %}
+                                {% set formula = 'Peso_bruto = Peso_liquido + Peso_embalagem' %}
+                                {% set inputs = [
+                                    {'name': 'peso_liquido', 'label': 'Peso Líquido', 'unit': 'kg', 'step': '0.01'},
+                                    {'name': 'peso_embalagem', 'label': 'Peso Embalagem', 'unit': 'kg', 'step': '0.01'}
+                                ] %}
+                            {% elif i == 6 %}
+                                {% set title = 'Corantes' %}
+                                {% set description = 'Calcula a quantidade de corante necessária para atingir a concentração desejada.' %}
+                                {% set formula = 'Qtd_corante = (Volume × Concentração_desejada) ÷ Concentração_corante' %}
+                                {% set inputs = [
+                                    {'name': 'volume', 'label': 'Volume Total', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'concentracao_desejada', 'label': 'Concentração Desejada', 'unit': '%', 'step': '0.001'},
+                                    {'name': 'concentracao_corante', 'label': 'Concentração do Corante', 'unit': '%', 'step': '0.1', 'value': '100'}
+                                ] %}
+                            {% elif i == 7 %}
+                                {% set title = 'Densidade' %}
+                                {% set description = 'Calcula a densidade de um material com base em seu peso e volume.' %}
+                                {% set formula = 'Densidade = Peso ÷ Volume' %}
+                                {% set inputs = [
+                                    {'name': 'peso', 'label': 'Peso', 'unit': 'g', 'step': '0.01'},
+                                    {'name': 'volume', 'label': 'Volume', 'unit': 'mL', 'step': '0.01'}
+                                ] %}
+                            {% elif i == 8 %}
+                                {% set title = 'Ratio' %}
+                                {% set description = 'Calcula o ratio (razão entre Brix e Acidez), um importante indicador de qualidade.' %}
+                                {% set formula = 'Ratio = Brix ÷ Acidez' %}
+                                {% set inputs = [
+                                    {'name': 'brix_atual', 'label': 'Brix', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'acidez', 'label': 'Acidez', 'unit': '%', 'step': '0.01'}
+                                ] %}
+                            {% elif i == 9 %}
+                                {% set title = 'Ratio - Brix' %}
+                                {% set description = 'Calcula o valor de Brix a partir de um ratio desejado e acidez conhecida.' %}
+                                {% set formula = 'Brix = Ratio × Acidez' %}
+                                {% set inputs = [
+                                    {'name': 'ratio', 'label': 'Ratio Desejado', 'unit': '', 'step': '0.1'},
+                                    {'name': 'acidez', 'label': 'Acidez', 'unit': '%', 'step': '0.01'}
+                                ] %}
+                            {% elif i == 10 %}
+                                {% set title = 'Ratio - Acidez' %}
+                                {% set description = 'Calcula a acidez necessária para atingir um ratio desejado com um brix conhecido.' %}
+                                {% set formula = 'Acidez = Brix ÷ Ratio' %}
+                                {% set inputs = [
+                                    {'name': 'brix_atual', 'label': 'Brix Atual', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'ratio', 'label': 'Ratio Desejado', 'unit': '', 'step': '0.1'}
+                                ] %}
+                            {% elif i == 11 %}
+                                {% set title = 'Acidez (%)' %}
+                                {% set description = 'Calcula a acidez percentual a partir do volume de titulante e normalidade.' %}
+                                {% set formula = 'Acidez = (Volume_titulante × Normalidade × 0.064) ÷ Volume_amostra' %}
+                                {% set inputs = [
+                                    {'name': 'volume_titulante', 'label': 'Volume Titulante', 'unit': 'mL', 'step': '0.1'},
+                                    {'name': 'normalidade', 'label': 'Normalidade', 'unit': 'N', 'step': '0.01', 'value': '0.1'},
+                                    {'name': 'volume_amostra', 'label': 'Volume Amostra', 'unit': 'mL', 'step': '0.1', 'value': '10'}
+                                ] %}
+                            {% elif i == 12 %}
+                                {% set title = 'Cálculo de Soda' %}
+                                {% set description = 'Calcula a quantidade de soda necessária para neutralizar acidez em um volume de produto.' %}
+                                {% set formula = 'Qtd_soda = (Volume × Acidez_atual) ÷ (Concentração_soda × 100)' %}
+                                {% set inputs = [
+                                    {'name': 'volume', 'label': 'Volume', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'acidez_atual', 'label': 'Acidez Atual', 'unit': '%', 'step': '0.01'},
+                                    {'name': 'concentracao_soda', 'label': 'Concentração Soda', 'unit': '%', 'step': '0.1', 'value': '50'}
+                                ] %}
+                            {% elif i == 13 %}
+                                {% set title = 'Vitamina C' %}
+                                {% set description = 'Calcula a concentração de vitamina C em uma amostra.' %}
+                                {% set formula = 'Vitamina_C = (Volume_titulante × Fator) ÷ Volume_amostra' %}
+                                {% set inputs = [
+                                    {'name': 'volume_titulante', 'label': 'Volume Titulante', 'unit': 'mL', 'step': '0.1'},
+                                    {'name': 'fator', 'label': 'Fator', 'unit': '', 'step': '0.01', 'value': '1'},
+                                    {'name': 'volume_amostra', 'label': 'Volume Amostra', 'unit': 'mL', 'step': '0.1', 'value': '10'}
+                                ] %}
+                            {% elif i == 14 %}
+                                {% set title = 'Soda-Diversey' %}
+                                {% set description = 'Calcula a quantidade de soda Diversey necessária para neutralizar acidez.' %}
+                                {% set formula = 'Qtd_soda = (Volume × Acidez_atual) ÷ (Concentração_soda × 100)' %}
+                                {% set inputs = [
+                                    {'name': 'volume', 'label': 'Volume', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'acidez_atual', 'label': 'Acidez Atual', 'unit': '%', 'step': '0.01'},
+                                    {'name': 'concentracao_soda', 'label': 'Concentração Soda', 'unit': '%', 'step': '0.1', 'value': '50'}
+                                ] %}
+                            {% elif i == 15 %}
+                                {% set title = 'Ácido-Diversey' %}
+                                {% set description = 'Calcula a acidez em soluções para produtos Diversey.' %}
+                                {% set formula = 'Acidez = (Volume_titulante × Normalidade × 0.064) ÷ Volume_amostra' %}
+                                {% set inputs = [
+                                    {'name': 'volume_titulante', 'label': 'Volume Titulante', 'unit': 'mL', 'step': '0.1'},
+                                    {'name': 'normalidade', 'label': 'Normalidade', 'unit': 'N', 'step': '0.01', 'value': '0.1'},
+                                    {'name': 'volume_amostra', 'label': 'Volume Amostra', 'unit': 'mL', 'step': '0.1', 'value': '10'}
+                                ] %}
+                            {% elif i == 16 %}
+                                {% set title = 'Perda de Base' %}
+                                {% set description = 'Calcula a porcentagem de perda de base entre volumes inicial e final.' %}
+                                {% set formula = 'Perda = [(Volume_inicial - Volume_final) ÷ Volume_inicial] × 100' %}
+                                {% set inputs = [
+                                    {'name': 'volume_inicial', 'label': 'Volume Inicial', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'volume_final', 'label': 'Volume Final', 'unit': 'L', 'step': '0.1'}
+                                ] %}
+                            {% elif i == 17 %}
+                                {% set title = 'Quantidade de Açúcar a Puxar' %}
+                                {% set description = 'Calcula a quantidade de açúcar necessária para aumentar o Brix de um volume de produto.' %}
+                                {% set formula = 'Qtd_açúcar = [(Brix_desejado - Brix_atual) × Volume × Densidade] ÷ 100' %}
+                                {% set inputs = [
+                                    {'name': 'brix_atual', 'label': 'Brix Atual', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'brix_desejado', 'label': 'Brix Desejado', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'volume', 'label': 'Volume', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'densidade', 'label': 'Densidade', 'unit': 'g/mL', 'step': '0.001', 'value': '1.0'}
+                                ] %}
+                            {% elif i == 18 %}
+                                {% set title = 'Aumentar Brix Açúcar Batido' %}
+                                {% set description = 'Calcula a quantidade de açúcar batido necessária para aumentar o Brix.' %}
+                                {% set formula = 'Qtd_açúcar = [(Brix_desejado - Brix_atual) × Volume × Densidade] ÷ 100' %}
+                                {% set inputs = [
+                                    {'name': 'brix_atual', 'label': 'Brix Atual', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'brix_desejado', 'label': 'Brix Desejado', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'volume', 'label': 'Volume', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'densidade', 'label': 'Densidade', 'unit': 'g/mL', 'step': '0.001', 'value': '1.0'}
+                                ] %}
+                            {% elif i == 19 %}
+                                {% set title = 'Previsão Brix' %}
+                                {% set description = 'Calcula o Brix previsto para uma mistura de dois produtos com Brix conhecidos.' %}
+                                {% set formula = 'Brix_previsto = (Brix1 × Vol1 + Brix2 × Vol2) ÷ (Vol1 + Vol2)' %}
+                                {% set inputs = [
+                                    {'name': 'brix1', 'label': 'Brix Produto 1', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'vol1', 'label': 'Volume Produto 1', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'brix2', 'label': 'Brix Produto 2', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'vol2', 'label': 'Volume Produto 2', 'unit': 'L', 'step': '0.1'}
+                                ] %}
+                            {% elif i == 20 %}
+                                {% set title = 'Previsão Acidez' %}
+                                {% set description = 'Calcula a acidez prevista para uma mistura de dois produtos com acidez conhecida.' %}
+                                {% set formula = 'Acidez_prevista = (Acidez1 × Vol1 + Acidez2 × Vol2) ÷ (Vol1 + Vol2)' %}
+                                {% set inputs = [
+                                    {'name': 'acidez1', 'label': 'Acidez Produto 1', 'unit': '%', 'step': '0.01'},
+                                    {'name': 'vol1', 'label': 'Volume Produto 1', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'acidez2', 'label': 'Acidez Produto 2', 'unit': '%', 'step': '0.01'},
+                                    {'name': 'vol2', 'label': 'Volume Produto 2', 'unit': 'L', 'step': '0.1'}
+                                ] %}
+                            {% elif i == 21 %}
+                                {% set title = 'Tempo de Finalização' %}
+                                {% set description = 'Calcula o tempo estimado para finalizar um processo com base no volume e vazão.' %}
+                                {% set formula = 'Tempo = Volume ÷ Vazão' %}
+                                {% set inputs = [
+                                    {'name': 'volume', 'label': 'Volume', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'vazao', 'label': 'Vazão', 'unit': 'L/min', 'step': '0.1'}
+                                ] %}
+                            {% elif i == 22 %}
+                                {% set title = 'Aumentar Acidez' %}
+                                {% set description = 'Calcula a quantidade de ácido necessária para aumentar a acidez de um produto.' %}
+                                {% set formula = 'Qtd_ácido = (Acidez_desejada - Acidez_atual) × Volume × Fator' %}
+                                {% set inputs = [
+                                    {'name': 'acidez_atual', 'label': 'Acidez Atual', 'unit': '%', 'step': '0.01'},
+                                    {'name': 'acidez_desejada', 'label': 'Acidez Desejada', 'unit': '%', 'step': '0.01'},
+                                    {'name': 'volume', 'label': 'Volume', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'fator', 'label': 'Fator', 'unit': '', 'step': '0.01', 'value': '1'}
+                                ] %}
+                            {% elif i == 23 %}
+                                {% set title = 'Diminuir Acidez' %}
+                                {% set description = 'Calcula o novo volume necessário para diminuir a acidez de um produto por diluição.' %}
+                                {% set formula = 'Novo_Volume = (Volume_atual × Acidez_atual) ÷ Acidez_desejada' %}
+                                {% set inputs = [
+                                    {'name': 'volume_atual', 'label': 'Volume Atual', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'acidez_atual', 'label': 'Acidez Atual', 'unit': '%', 'step': '0.01'},
+                                    {'name': 'acidez_desejada', 'label': 'Acidez Desejada', 'unit': '%', 'step': '0.01'}
+                                ] %}
+                            {% elif i == 24 %}
+                                {% set title = 'Correção de Brix' %}
+                                {% set description = 'Calcula o novo volume necessário para corrigir o Brix de um produto por diluição.' %}
+                                {% set formula = 'Novo_Volume = (Brix_inicial × Volume_inicial) ÷ Brix_desejado' %}
+                                {% set inputs = [
+                                    {'name': 'brix_inicial', 'label': 'Brix Inicial', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'volume_inicial', 'label': 'Volume Inicial', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'brix_desejado', 'label': 'Brix Desejado', 'unit': '°Bx', 'step': '0.1'}
+                                ] %}
+                            {% elif i == 25 %}
+                                {% set title = 'Conversão Cristal Líquido' %}
+                                {% set description = 'Calcula o volume de solução resultante da diluição de açúcar cristal.' %}
+                                {% set formula = 'Volume_solução = Açúcar_cristal ÷ Densidade' %}
+                                {% set inputs = [
+                                    {'name': 'acucar_cristal', 'label': 'Açúcar Cristal', 'unit': 'kg', 'step': '0.1'},
+                                    {'name': 'densidade', 'label': 'Densidade', 'unit': 'g/mL', 'step': '0.001', 'value': '1.0'}
+                                ] %}
+                            {% elif i == 26 %}
+                                {% set title = 'Correção Açúcar Cristal' %}
+                                {% set description = 'Calcula a quantidade de açúcar cristal necessária para corrigir o Brix.' %}
+                                {% set formula = 'Qtd_açúcar = (Brix_desejado - Brix_atual) × Volume ÷ 100' %}
+                                {% set inputs = [
+                                    {'name': 'brix_atual', 'label': 'Brix Atual', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'brix_desejado', 'label': 'Brix Desejado', 'unit': '°Bx', 'step': '0.1'},
+                                    {'name': 'volume', 'label': 'Volume', 'unit': 'L', 'step': '0.1'}
+                                ] %}
+                            {% elif i == 27 %}
+                                {% set title = 'Conversão Líquido - Cristal' %}
+                                {% set description = 'Calcula o peso de açúcar cristal obtido a partir de um volume de solução.' %}
+                                {% set formula = 'Peso_cristal = Volume_solução × Densidade × (Percentual_açúcar ÷ 100)' %}
+                                {% set inputs = [
+                                    {'name': 'volume_solucao', 'label': 'Volume Solução', 'unit': 'L', 'step': '0.1'},
+                                    {'name': 'densidade', 'label': 'Densidade', 'unit': 'g/mL', 'step': '0.001', 'value': '1.0'},
+                                    {'name': 'percentual_acucar', 'label': 'Percentual de Açúcar', 'unit': '%', 'step': '0.1'}
+                                ] %}
+                            {% elif i == 28 %}
+                                {% set title = 'Peso Líquido 200' %}
+                                {% set description = 'Calcula o peso líquido de um produto subtraindo a tara do peso bruto.' %}
+                                {% set formula = 'Peso_liquido = Peso_bruto - Tara' %}
+                                {% set inputs = [
+                                    {'name': 'peso_bruto', 'label': 'Peso Bruto', 'unit': 'kg', 'step': '0.001'},
+                                    {'name': 'tara', 'label': 'Tara', 'unit': 'kg', 'step': '0.001'}
+                                ] %}
+                            {% elif i == 29 %}
+                                {% set title = 'Peso Líquido Litro / Zeragem' %}
+                                {% set description = 'Calcula o volume líquido a partir do peso líquido e densidade. Também pode calcular o peso líquido zerando a embalagem.' %}
+                                {% set formula = 'Volume = Peso_liquido ÷ Densidade / Peso_liquido = Peso_total - Embalagem' %}
+                                {% set inputs = [
+                                    {'name': 'peso_liquido', 'label': 'Peso Líquido', 'unit': 'kg', 'step': '0.01'},
+                                    {'name': 'densidade', 'label': 'Densidade', 'unit': 'g/mL', 'step': '0.001', 'value': '1.0'},
+                                    {'name': 'peso_total', 'label': 'Peso Total', 'unit': 'kg', 'step': '0.01'},
+                                    {'name': 'embalagem', 'label': 'Peso Embalagem', 'unit': 'kg', 'step': '0.01'}
+                                ] %}
+                            {% endif %}
+                        
+                        <div class="tab-pane fade {{ show }} {{ active }}" id="calc-{{ id }}" role="tabpanel" aria-labelledby="calc-{{ id }}-tab">
+                            <div class="tab-description">
+                                {{ description }}
+                            </div>
+                            
+                            <div class="formula-box">
+                                <div class="formula-title">Fórmula:</div>
+                                <div>{{ formula }}</div>
+                            </div>
+                            
+                            <div class="calculation-group">
+                                <form id="form-calc-{{ id }}">
+                                    <div class="row">
+                                        {% for input in inputs %}
+                                            <div class="col-md-{% if inputs|length <= 2 %}6{% elif inputs|length <= 3 %}4{% else %}3{% endif %}">
+                                                <div class="form-group">
+                                                    <label class="form-label">{{ input.label }}:</label>
+                                                    <div class="input-with-unit">
+                                                        <input type="number" class="form-control" name="{{ input.name }}" 
+                                                               step="{{ input.step }}" {% if input.value is defined %}value="{{ input.value }}"{% endif %} required>
+                                                        <span class="input-unit">{{ input.unit }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-12 text-end">
+                                            <button type="button" class="btn btn-light me-2 btn-limpar">Limpar</button>
+                                            <button type="button" class="btn btn-calculate" data-calc="{{ id }}">
+                                                <span class="loader"></span> Calcular
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                
+                                <div class="result-box mt-4" id="result-calc-{{ id }}" style="display:none;">
+                                    <div class="result-item">
+                                        <div class="result-label">Resultado:</div>
+                                        <div class="result-value" id="valor-calc-{{ id }}">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Dica:</strong> Busque o cálculo desejado utilizando a barra de pesquisa no topo. Cada cálculo possui sua própria aba separada.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listeners para botões de calcular
+    document.querySelectorAll('.btn-calculate').forEach(button => {
+        button.addEventListener('click', function() {
+            const calcId = this.getAttribute('data-calc');
+            calcular(calcId);
+        });
+    });
+    
+    // Event listeners para limpar formulários
+    document.querySelectorAll('.btn-limpar').forEach(button => {
+        button.addEventListener('click', function() {
+            const form = this.closest('form');
+            form.reset();
+            const resultBox = this.closest('.calculation-group').querySelector('.result-box');
+            if (resultBox) resultBox.style.display = 'none';
+        });
+    });
+    
+    // Filtro de pesquisa
+    const searchInput = document.getElementById('searchCalc');
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        document.querySelectorAll('#calcTabs .nav-item').forEach(item => {
+            const text = item.textContent.toLowerCase();
+            const shouldShow = text.includes(searchTerm);
+            
+            item.style.display = shouldShow ? '' : 'none';
+        });
+        
+        // Se estamos escondendo a aba ativa, ative a primeira aba visível
+        const activeTab = document.querySelector('#calcTabs .nav-link.active');
+        if (activeTab && activeTab.parentElement.style.display === 'none') {
+            const firstVisibleTab = document.querySelector('#calcTabs .nav-item:not([style*="display: none"]) .nav-link');
+            if (firstVisibleTab) {
+                // Ativar a primeira aba visível via Bootstrap API
+                const tabEl = document.querySelector(firstVisibleTab.getAttribute('data-bs-target'));
+                const tab = new bootstrap.Tab(firstVisibleTab);
+                tab.show();
+            }
+        }
+    });
+    
+    // Função principal de cálculo
+    function calcular(id) {
+        const formId = 'form-calc-' + id;
+        const form = document.getElementById(formId);
+        const resultBox = document.getElementById('result-calc-' + id);
+        const resultValue = document.getElementById('valor-calc-' + id);
+        
+        // Obter os valores dos campos
+        const inputs = form.querySelectorAll('input[type="number"]');
+        const values = {};
+        
+        inputs.forEach(input => {
+            values[input.name] = parseFloat(input.value) || 0;
+        });
+        
+        // Realizar o cálculo com base no ID
+        let resultado = 0;
+        let unidade = '';
+        
+        switch(parseInt(id)) {
+            case 1: // Produção Final (200)
+                resultado = values.peso_liquido - values.perdas;
+                unidade = 'kg';
+                break;
+                
+            case 2: // Produção (Litro)
+                if (values.densidade !== 0) {
+                    resultado = values.peso_liquido / values.densidade;
+                    unidade = 'L';
+                }
+                break;
+                
+            case 3: // Abaixar Brix
+                if (values.brix_desejado !== 0) {
+                    resultado = ((values.brix_atual - values.brix_desejado) * values.volume_atual) / values.brix_desejado;
+                    unidade = 'L';
+                }
+                break;
+                
+            case 4: // Brix Corrigido
+                const fatorCorrecao = 0.002 * (values.temperatura - 20);
+                resultado = values.brix_medido + fatorCorrecao;
+                unidade = '°Bx';
+                break;
+                
+            case 5: // Peso Bruto
+                resultado = values.peso_liquido + values.peso_embalagem;
+                unidade = 'kg';
+                break;
+                
+            case 6: // Corantes
+                if (values.concentracao_corante !== 0) {
+                    resultado = (values.volume * values.concentracao_desejada) / values.concentracao_corante;
+                    unidade = 'L';
+                }
+                break;
+                
+            case 7: // Densidade
+                if (values.volume !== 0) {
+                    resultado = values.peso / values.volume;
+                    unidade = 'g/mL';
+                }
+                break;
+                
+            case 8: // Ratio
+                if (values.acidez !== 0) {
+                    resultado = values.brix_atual / values.acidez;
+                }
+                break;
+                
+            case 9: // Ratio - Brix
+                resultado = values.ratio * values.acidez;
+                unidade = '°Bx';
+                break;
+                
+            case 10: // Ratio - Acidez
+                if (values.ratio !== 0) {
+                    resultado = values.brix_atual / values.ratio;
+                    unidade = '%';
+                }
+                break;
+                
+            case 11: // Acidez (%)
+                if (values.volume_amostra !== 0) {
+                    resultado = (values.volume_titulante * values.normalidade * 0.064) / values.volume_amostra;
+                    unidade = '%';
+                }
+                break;
+                
+            case 12: // Cálculo de Soda
+                if (values.concentracao_soda !== 0) {
+                    resultado = (values.volume * values.acidez_atual) / (values.concentracao_soda * 100);
+                    unidade = 'L';
+                }
+                break;
+                
+            case 13: // Vitamina C
+                if (values.volume_amostra !== 0) {
+                    resultado = (values.volume_titulante * values.fator) / values.volume_amostra;
+                    unidade = 'mg/L';
+                }
+                break;
+                
+            case 14: // Soda-Diversey
+                if (values.concentracao_soda !== 0) {
+                    resultado = (values.volume * values.acidez_atual) / (values.concentracao_soda * 100);
+                    unidade = 'L';
+                }
+                break;
+                
+            case 15: // Ácido-Diversey
+                if (values.volume_amostra !== 0) {
+                    resultado = (values.volume_titulante * values.normalidade * 0.064) / values.volume_amostra;
+                    unidade = '%';
+                }
+                break;
+                
+            case 16: // Perda de Base
+                if (values.volume_inicial !== 0) {
+                    resultado = ((values.volume_inicial - values.volume_final) / values.volume_inicial) * 100;
+                    unidade = '%';
+                }
+                break;
+                
+            case 17: // Qtd. Açúcar a Puxar
+                resultado = ((values.brix_desejado - values.brix_atual) * values.volume * values.densidade) / 100;
+                unidade = 'kg';
+                break;
+                
+            case 18: // Aumentar Brix Açúcar Batido
+                resultado = ((values.brix_desejado - values.brix_atual) * values.volume * values.densidade) / 100;
+                unidade = 'kg';
+                break;
+                
+            case 19: // Previsão Brix
+                if ((values.vol1 + values.vol2) !== 0) {
+                    resultado = (values.brix1 * values.vol1 + values.brix2 * values.vol2) / (values.vol1 + values.vol2);
+                    unidade = '°Bx';
+                }
+                break;
+                
+            case 20: // Previsão Acidez
+                if ((values.vol1 + values.vol2) !== 0) {
+                    resultado = (values.acidez1 * values.vol1 + values.acidez2 * values.vol2) / (values.vol1 + values.vol2);
+                    unidade = '%';
+                }
+                break;
+                
+            case 21: // Tempo de Finalização
+                if (values.vazao !== 0) {
+                    resultado = values.volume / values.vazao;
+                    unidade = 'min';
+                }
+                break;
+                
+            case 22: // Aumentar Acidez
+                resultado = (values.acidez_desejada - values.acidez_atual) * values.volume * values.fator;
+                unidade = 'L';
+                break;
+                
+            case 23: // Diminuir Acidez
+                if (values.acidez_desejada !== 0) {
+                    resultado = (values.volume_atual * values.acidez_atual) / values.acidez_desejada;
+                    unidade = 'L';
+                }
+                break;
+                
+            case 24: // Correção de Brix
+                if (values.brix_desejado !== 0) {
+                    resultado = (values.brix_inicial * values.volume_inicial) / values.brix_desejado;
+                    unidade = 'L';
+                }
+                break;
+                
+            case 25: // Conversão Cristal Líquido
+                if (values.densidade !== 0) {
+                    resultado = values.acucar_cristal / values.densidade;
+                    unidade = 'L';
+                }
+                break;
+                
+            case 26: // Correção Açúcar Cristal
+                resultado = (values.brix_desejado - values.brix_atual) * values.volume / 100;
+                unidade = 'kg';
+                break;
+                
+            case 27: // Conversão Líquido - Cristal
+                resultado = values.volume_solucao * values.densidade * (values.percentual_acucar / 100);
+                unidade = 'kg';
+                break;
+                
+            case 28: // Peso Líquido 200
+                resultado = values.peso_bruto - values.tara;
+                unidade = 'kg';
+                break;
+                
+            case 29: // Peso Líquido Litro / Zeragem
+                let resultado1 = 0;
+                let resultado2 = 0;
+                
+                if (values.densidade !== 0) {
+                    resultado1 = values.peso_liquido / values.densidade;
+                }
+                
+                resultado2 = values.peso_total - values.embalagem;
+                
+                resultValue.innerHTML = `
+                    Volume Líquido: ${resultado1.toFixed(2)} L<br>
+                    Peso Líquido (Zeragem): ${resultado2.toFixed(2)} kg
+                `;
+                resultBox.style.display = 'block';
+                return;
+        }
+        
+        // Mostrar o resultado
+        resultValue.textContent = resultado.toFixed(2) + (unidade ? ' ' + unidade : '');
+        resultBox.style.display = 'block';
+    }
+});
+</script>
+{% endblock %}
