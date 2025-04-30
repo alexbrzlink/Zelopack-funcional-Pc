@@ -49,7 +49,7 @@ def login():
         username = request.form.get('username', '')
         password = request.form.get('password', '')
         
-        if username == 'admin' and password == 'admin123':
+        if username == 'admin' and password == 'Alex':
             user = User.query.filter_by(username='admin').first()
             if user:
                 login_user(user, remember=True)

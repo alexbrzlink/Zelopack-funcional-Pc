@@ -49,9 +49,8 @@
                         </div>
                         
                         <form method="POST" action="" id="login-form" class="form-animate-in">
-                            <!-- Para resolver problemas de CSRF, temporariamente descomentar essa linha:
+                            <!-- Este campo é necessário para proteção CSRF -->
                             {{ form.hidden_tag() }}
-                            -->
                             <div class="form-floating position-relative">
                                 {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="Nome de Usuário", id="username", required=true, autocomplete="username") }}
                                 <i class="fas fa-user input-icon"></i>
