@@ -330,6 +330,202 @@ def relatorios():
                          itens_vencimento=itens_vencimento,
                          dados_categorias=dados_categorias)
 
+# Rotas para controle específico de luvas
+
+@estoque_bp.route('/luvas')
+@login_required
+def estoque_luvas():
+    """Página específica para gerenciamento de estoque de luvas."""
+    try:
+        # Buscar categoria de luvas (criar se não existir)
+        categoria_luvas = CategoriaEstoque.query.filter_by(nome='Luvas').first()
+        if not categoria_luvas:
+            categoria_luvas = CategoriaEstoque(nome='Luvas', descricao='Luvas de proteção em diversos tamanhos')
+            db.session.add(categoria_luvas)
+            db.session.commit()
+            
+        # Buscar itens de luvas por tamanho
+        luvas_p = ItemEstoque.query.filter_by(nome='Luvas Tamanho P', categoria_id=categoria_luvas.id).first()
+        luvas_m = ItemEstoque.query.filter_by(nome='Luvas Tamanho M', categoria_id=categoria_luvas.id).first()
+        luvas_g = ItemEstoque.query.filter_by(nome='Luvas Tamanho G', categoria_id=categoria_luvas.id).first()
+        luvas_xg = ItemEstoque.query.filter_by(nome='Luvas Tamanho XG', categoria_id=categoria_luvas.id).first()
+        
+        # Criar itens de luvas se não existirem
+        if not luvas_p:
+            luvas_p = ItemEstoque(
+                codigo='LUVAS-P',
+                nome='Luvas Tamanho P',
+                categoria_id=categoria_luvas.id,
+                unidade_medida='pares',
+                quantidade_minima=10,
+                quantidade_atual=0,
+                e_reagente=False
+            )
+            db.session.add(luvas_p)
+            
+        if not luvas_m:
+            luvas_m = ItemEstoque(
+                codigo='LUVAS-M',
+                nome='Luvas Tamanho M',
+                categoria_id=categoria_luvas.id,
+                unidade_medida='pares',
+                quantidade_minima=20,
+                quantidade_atual=0,
+                e_reagente=False
+            )
+            db.session.add(luvas_m)
+            
+        if not luvas_g:
+            luvas_g = ItemEstoque(
+                codigo='LUVAS-G',
+                nome='Luvas Tamanho G',
+                categoria_id=categoria_luvas.id,
+                unidade_medida='pares',
+                quantidade_minima=20,
+                quantidade_atual=0,
+                e_reagente=False
+            )
+            db.session.add(luvas_g)
+            
+        if not luvas_xg:
+            luvas_xg = ItemEstoque(
+                codigo='LUVAS-XG',
+                nome='Luvas Tamanho XG',
+                categoria_id=categoria_luvas.id,
+                unidade_medida='pares',
+                quantidade_minima=10,
+                quantidade_atual=0,
+                e_reagente=False
+            )
+            db.session.add(luvas_xg)
+            
+        db.session.commit()
+        
+        # Obter histórico de movimentações para cada tamanho
+        items_luvas = [luvas_p, luvas_m, luvas_g, luvas_xg]
+        
+        # Montar dicionário com dados para a view
+        dados_luvas = []
+        
+        for item in items_luvas:
+            # Obter as últimas 10 movimentações para este item
+            movimentacoes = MovimentacaoEstoque.query.filter_by(item_id=item.id).order_by(
+                MovimentacaoEstoque.data_movimentacao.desc()).limit(10).all()
+                
+            # Adicionar à lista
+            dados_luvas.append({
+                'id': item.id,
+                'tamanho': item.nome.split('Tamanho ')[1],
+                'codigo': item.codigo,
+                'quantidade_atual': item.quantidade_atual,
+                'quantidade_minima': item.quantidade_minima,
+                'status': 'baixo' if item.verificar_estoque_baixo() else 'ok',
+                'movimentacoes': movimentacoes
+            })
+        
+        return render_template('estoque/luvas.html', dados_luvas=dados_luvas)
+        
+    except Exception as e:
+        flash(f'Erro ao carregar estoque de luvas: {str(e)}', 'danger')
+        return redirect(url_for('estoque.index'))
+
+@estoque_bp.route('/luvas/registrar', methods=['POST'])
+@login_required
+def registrar_movimentacao_luvas():
+    """Registra movimentação no estoque de luvas."""
+    try:
+        item_id = request.form.get('item_id')
+        tipo = request.form.get('tipo')
+        quantidade = float(request.form.get('quantidade', 1))
+        tamanho_luva = request.form.get('tamanho_luva')
+        
+        # Validações
+        if not all([item_id, tipo, quantidade, tamanho_luva]):
+            flash('Todos os campos são obrigatórios.', 'warning')
+            return redirect(url_for('estoque.estoque_luvas'))
+            
+        if tipo not in ['entrada', 'saida']:
+            flash('Tipo de movimentação inválido.', 'warning')
+            return redirect(url_for('estoque.estoque_luvas'))
+            
+        if quantidade <= 0:
+            flash('A quantidade deve ser maior que zero.', 'warning')
+            return redirect(url_for('estoque.estoque_luvas'))
+            
+        # Buscar o item
+        item = ItemEstoque.query.get_or_404(item_id)
+        
+        # Verificar disponibilidade para saída
+        if tipo == 'saida' and quantidade > item.quantidade_atual:
+            flash(f'Quantidade insuficiente em estoque. Disponível: {item.quantidade_atual} pares.', 'danger')
+            return redirect(url_for('estoque.estoque_luvas'))
+            
+        # Criar a movimentação
+        pessoa = request.form.get('pessoa', '')
+        observacoes = request.form.get('observacoes', '')
+        
+        movimentacao = MovimentacaoEstoque(
+            item_id=item.id,
+            tipo=tipo,
+            quantidade=quantidade,
+            responsavel=current_user.name,
+            motivo=f"{'Entrada' if tipo == 'entrada' else 'Retirada'} de luvas {tamanho_luva}",
+            observacoes=observacoes,
+            
+            # Campos específicos para luvas
+            tamanho_luva=tamanho_luva,
+            pessoa_entrega=pessoa if tipo == 'entrada' else None,
+            pessoa_retirada=pessoa if tipo == 'saida' else None
+        )
+        
+        db.session.add(movimentacao)
+        
+        # Atualizar quantidade
+        if tipo == 'entrada':
+            item.quantidade_atual += quantidade
+        else:
+            item.quantidade_atual -= quantidade
+            
+        db.session.commit()
+        
+        flash(f"{'Entrada' if tipo == 'entrada' else 'Retirada'} de {quantidade} pares de luvas tamanho {tamanho_luva} registrada com sucesso!", 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erro ao registrar movimentação: {str(e)}', 'danger')
+        
+    return redirect(url_for('estoque.estoque_luvas'))
+
+@estoque_bp.route('/luvas/historico/<tamanho>')
+@login_required
+def historico_luvas(tamanho):
+    """Exibe histórico completo de movimentações de um tamanho específico de luvas."""
+    try:
+        # Validar tamanho
+        if tamanho not in ['P', 'M', 'G', 'XG']:
+            flash('Tamanho de luva inválido.', 'warning')
+            return redirect(url_for('estoque.estoque_luvas'))
+            
+        # Buscar item correspondente
+        item = ItemEstoque.query.filter_by(nome=f'Luvas Tamanho {tamanho}').first()
+        
+        if not item:
+            flash('Item não encontrado.', 'warning')
+            return redirect(url_for('estoque.estoque_luvas'))
+            
+        # Buscar todas as movimentações
+        movimentacoes = MovimentacaoEstoque.query.filter_by(item_id=item.id).order_by(
+            MovimentacaoEstoque.data_movimentacao.desc()).all()
+            
+        return render_template('estoque/historico_luvas.html', 
+                             item=item,
+                             tamanho=tamanho,
+                             movimentacoes=movimentacoes)
+                             
+    except Exception as e:
+        flash(f'Erro ao carregar histórico: {str(e)}', 'danger')
+        return redirect(url_for('estoque.estoque_luvas'))
+
 # Rota para excluir item (via AJAX)
 @estoque_bp.route('/item/<int:item_id>/excluir', methods=['POST'])
 @login_required

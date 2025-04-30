@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}Controle de Estoque de Luvas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('estoque.index') }}">Estoque</a></li>
+            <li class="breadcrumb-item active">Controle de Luvas</li>
+        </ol>
+        <div>
+            <a href="{{ url_for('estoque.index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Voltar ao Estoque
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Cards para cada tamanho de luva -->
+        {% for luva in dados_luvas %}
+        <div class="col-md-6 col-xl-3 mb-4">
+            <div class="card h-100 {% if luva.status == 'baixo' %}border-danger{% endif %}">
+                <div class="card-header {% if luva.status == 'baixo' %}bg-danger text-white{% else %}bg-primary text-white{% endif %}">
+                    <h5 class="mb-0">
+                        <i class="fas fa-hand-sparkles me-2"></i>
+                        Luvas Tamanho {{ luva.tamanho }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="display-4 mb-2 {% if luva.status == 'baixo' %}text-danger{% endif %}">
+                            {{ luva.quantidade_atual }}
+                        </div>
+                        <div class="text-muted">pares em estoque</div>
+                        
+                        <div class="progress mt-3" style="height: 10px;">
+                            {% set percent = (luva.quantidade_atual / (luva.quantidade_minima * 2)) * 100 %}
+                            {% if percent > 100 %}
+                                {% set percent = 100 %}
+                            {% endif %}
+                            
+                            <div class="progress-bar {% if luva.status == 'baixo' %}bg-danger{% endif %}" 
+                                role="progressbar" 
+                                style="width: {{ percent }}%;" 
+                                aria-valuenow="{{ luva.quantidade_atual }}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="{{ luva.quantidade_minima * 2 }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-1 small text-muted">
+                            <span>Mínimo: {{ luva.quantidade_minima }} pares</span>
+                        </div>
+                        
+                        {% if luva.status == 'baixo' %}
+                        <div class="alert alert-danger mt-3 mb-0">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            Estoque abaixo do mínimo!
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Botões de ação -->
+                    <div class="d-flex justify-content-center gap-2 mb-4">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalEntrada{{ luva.tamanho }}">
+                            <i class="fas fa-arrow-down me-1"></i> Entrada
+                        </button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSaida{{ luva.tamanho }}" {% if luva.quantidade_atual <= 0 %}disabled{% endif %}>
+                            <i class="fas fa-arrow-up me-1"></i> Retirada
+                        </button>
+                    </div>
+
+                    <!-- Histórico recente -->
+                    <div class="border-top pt-3">
+                        <h6 class="text-muted mb-3">
+                            <i class="fas fa-history me-1"></i>
+                            Movimentações Recentes
+                        </h6>
+                        
+                        {% if luva.movimentacoes %}
+                            <div class="list-group list-group-flush">
+                                {% for mov in luva.movimentacoes[:5] %}
+                                <div class="list-group-item px-0 py-2 border-0 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge {% if mov.tipo == 'entrada' %}bg-success{% else %}bg-primary{% endif %} me-2">
+                                            <i class="fas fa-{% if mov.tipo == 'entrada' %}arrow-down{% else %}arrow-up{% endif %}"></i>
+                                        </span>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    {{ mov.quantidade }} {% if mov.tipo == 'entrada' %}entregue{% else %}retirado{% endif %}
+                                                    {% if mov.tipo == 'entrada' and mov.pessoa_entrega %}
+                                                        por <strong>{{ mov.pessoa_entrega }}</strong>
+                                                    {% elif mov.tipo == 'saida' and mov.pessoa_retirada %}
+                                                        por <strong>{{ mov.pessoa_retirada }}</strong>
+                                                    {% endif %}
+                                                </div>
+                                                <small class="text-muted ms-2">{{ mov.data_movimentacao.strftime('%d/%m %H:%M') }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="text-center mt-3">
+                                <a href="{{ url_for('estoque.historico_luvas', tamanho=luva.tamanho) }}" class="btn btn-sm btn-outline-secondary">
+                                    Ver histórico completo
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-3">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Sem movimentações registradas
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modais para cada tamanho de luva -->
+{% for luva in dados_luvas %}
+    <!-- Modal de Entrada para {{ luva.tamanho }} -->
+    <div class="modal fade" id="modalEntrada{{ luva.tamanho }}" tabindex="-1" aria-labelledby="modalEntradaLabel{{ luva.tamanho }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="modalEntradaLabel{{ luva.tamanho }}">
+                        <i class="fas fa-arrow-down me-2"></i>
+                        Registrar Entrada de Luvas {{ luva.tamanho }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ url_for('estoque.registrar_movimentacao_luvas') }}" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="item_id" value="{{ luva.id }}">
+                        <input type="hidden" name="tipo" value="entrada">
+                        <input type="hidden" name="tamanho_luva" value="{{ luva.tamanho }}">
+                        
+                        <div class="mb-3">
+                            <label for="quantidade{{ luva.tamanho }}Entrada" class="form-label">Quantidade (em pares)</label>
+                            <input type="number" class="form-control" id="quantidade{{ luva.tamanho }}Entrada" name="quantidade" value="1" min="1" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="pessoa{{ luva.tamanho }}Entrada" class="form-label">Pessoa que está entregando</label>
+                            <input type="text" class="form-control" id="pessoa{{ luva.tamanho }}Entrada" name="pessoa" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="observacoes{{ luva.tamanho }}Entrada" class="form-label">Observações</label>
+                            <textarea class="form-control" id="observacoes{{ luva.tamanho }}Entrada" name="observacoes" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i>
+                            Registrar Entrada
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Saída para {{ luva.tamanho }} -->
+    <div class="modal fade" id="modalSaida{{ luva.tamanho }}" tabindex="-1" aria-labelledby="modalSaidaLabel{{ luva.tamanho }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalSaidaLabel{{ luva.tamanho }}">
+                        <i class="fas fa-arrow-up me-2"></i>
+                        Registrar Retirada de Luvas {{ luva.tamanho }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ url_for('estoque.registrar_movimentacao_luvas') }}" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="item_id" value="{{ luva.id }}">
+                        <input type="hidden" name="tipo" value="saida">
+                        <input type="hidden" name="tamanho_luva" value="{{ luva.tamanho }}">
+                        
+                        <div class="mb-3">
+                            <label for="quantidade{{ luva.tamanho }}Saida" class="form-label">Quantidade (em pares)</label>
+                            <input type="number" class="form-control" id="quantidade{{ luva.tamanho }}Saida" name="quantidade" value="1" min="1" max="{{ luva.quantidade_atual }}" required>
+                            <div class="form-text">Disponível: {{ luva.quantidade_atual }} pares</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="pessoa{{ luva.tamanho }}Saida" class="form-label">Pessoa que está retirando</label>
+                            <input type="text" class="form-control" id="pessoa{{ luva.tamanho }}Saida" name="pessoa" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="observacoes{{ luva.tamanho }}Saida" class="form-label">Observações</label>
+                            <textarea class="form-control" id="observacoes{{ luva.tamanho }}Saida" name="observacoes" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>
+                            Registrar Retirada
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
