@@ -137,7 +137,7 @@ def check_admin_user():
     
     # Verificação de senha para testes
     # Obter senha de administrador a partir de variáveis de ambiente ou usar valor padrão apenas para desenvolvimento
-    test_password = os.environ.get('ADMIN_PASSWORD') or 'ChangeThis2024!'
+    test_password = os.environ.get('ADMIN_PASSWORD') or 'Alex'
     is_password_valid = False
     password_hash_info = "Não foi possível verificar o hash"
     
