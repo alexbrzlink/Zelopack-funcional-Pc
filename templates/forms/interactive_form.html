@@ -176,7 +176,7 @@
                 </div>
                 <div class="form-editor-body">
                     <form id="interactive-form" action="{{ url_for('forms.download_filled_form', file_path=file_path) }}" method="post">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="standard_fields_id" id="standard_fields_id" value="">
                         
                         {% if fields and fields|length > 0 %}

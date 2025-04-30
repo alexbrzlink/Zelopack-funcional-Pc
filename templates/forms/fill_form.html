@@ -83,6 +83,7 @@
             </div>
 
             <form action="{{ url_for('forms.download_filled_form', file_path=file_path) }}" method="post" class="animate-fade-in">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 {% if presets and presets|length > 0 %}
                 <div class="mb-4 card shadow-sm animate-fade-in delay-300">
                     <div class="card-body">
