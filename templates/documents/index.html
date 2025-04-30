@@ -2,282 +2,250 @@
 
 {% block title %}Documentos - Zelopack{% endblock %}
 
+{% block extra_css %}
+<style>
+    .card-feature {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        height: 100%;
+        border: none;
+    }
+    
+    .card-feature:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+    
+    .card-feature .card-header {
+        background: linear-gradient(135deg, #00978D 0%, #09827B 100%);
+        color: white;
+        font-weight: bold;
+        border: none;
+    }
+    
+    .card-feature .card-body {
+        padding: 1.5rem;
+    }
+    
+    .card-feature .feature-icon {
+        font-size: 2.5rem;
+        color: #09827B;
+        margin-bottom: 1rem;
+    }
+    
+    .btn-feature {
+        background-color: #09827B;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-feature:hover {
+        background-color: #00635C;
+        color: white;
+    }
+    
+    .feature-description {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+        height: 80px;
+        overflow: hidden;
+    }
+    
+    .document-list {
+        margin-top: 20px;
+    }
+    
+    .document-item {
+        border-left: 3px solid #00978D;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        background-color: #f8f9fa;
+        transition: all 0.2s;
+    }
+    
+    .document-item:hover {
+        background-color: #e9ecef;
+        transform: translateX(5px);
+    }
+    
+    .document-item .doc-title {
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .document-item .doc-meta {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .stats-box {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #00978D;
+    }
+    
+    .stats-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">
-                        <i class="fas fa-file-alt me-2"></i> Documentos
-                    </h4>
-                    <div>
-                        <a href="{{ url_for('documents.upload_document') }}" class="btn btn-sm btn-light me-2">
-                            <i class="fas fa-upload me-1"></i> Upload
-                        </a>
-                        <a href="{{ url_for('documents.create_document_online') }}" class="btn btn-sm btn-light me-2">
-                            <i class="fas fa-edit me-1"></i> Criar Online
-                        </a>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="lead">Bem-vindo ao Gerenciador de Documentos da Zelopack!</p>
-                    <p>Aqui você pode acessar todos os documentos importantes da empresa, incluindo formulários, procedimentos operacionais, e outros documentos fundamentais para suas atividades diárias.</p>
-                </div>
-            </div>
+        <div class="col">
+            <h2 class="mb-3">
+                <i class="fas fa-folder"></i> Documentos Técnicos
+            </h2>
+            <p class="lead">
+                Gerencie documentação técnica, relatórios e formulários
+            </p>
         </div>
     </div>
-
-    <!-- Formulários por Categoria -->
-    {% if formularios %}
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-clipboard-list me-2"></i> Formulários e Documentos Operacionais
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <ul class="nav nav-tabs" id="formulariosTabs" role="tablist">
-                        {% for categoria, documentos in formularios.items() %}
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if loop.first %}active{% endif %}" 
-                                    id="tab-{{ categoria|lower }}" 
-                                    data-bs-toggle="tab" 
-                                    data-bs-target="#content-{{ categoria|lower }}" 
-                                    type="button" 
-                                    role="tab" 
-                                    aria-controls="content-{{ categoria|lower }}" 
-                                    aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
-                                {{ categoria }}
-                            </button>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    
-                    <div class="tab-content pt-3" id="formulariosTabsContent">
-                        {% for categoria, documentos in formularios.items() %}
-                        <div class="tab-pane fade {% if loop.first %}show active{% endif %}" 
-                             id="content-{{ categoria|lower }}" 
-                             role="tabpanel" 
-                             aria-labelledby="tab-{{ categoria|lower }}">
-                             
-                            <!-- Descrição da categoria -->
-                            <div class="alert alert-light mb-3">
-                                {% if categoria == 'BLENDER' %}
-                                    <p><strong>FORMULÁRIOS BLENDER</strong><br>
-                                    Acesse todos os formulários desta categoria</p>
-                                {% elif categoria == 'LABORATORIO' %}
-                                    <p><strong>FORMULÁRIOS LABORATÓRIO</strong><br>
-                                    Acesse todos os formulários desta categoria</p>
-                                {% elif categoria == 'PORTARIA' %}
-                                    <p><strong>FORMULÁRIOS PORTARIA</strong><br>
-                                    Acesse todos os formulários desta categoria</p>
-                                {% elif categoria == 'QUALIDADE' %}
-                                    <p><strong>FORMULÁRIOS QUALIDADE</strong><br>
-                                    Documentos para garantia da qualidade e atendimento de normas</p>
-                                {% elif categoria == 'TBA' %}
-                                    <p><strong>FORMULÁRIOS TBA</strong><br>
-                                    Documentos relacionados aos tanques e equipamentos TBA</p>
-                                {% else %}
-                                    <p><strong>FORMULÁRIOS {{ categoria }}</strong></p>
-                                {% endif %}
-                                <a href="#" class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ url_for('documents.search_documents') }}?document_type=formulario&category={{ categoria|lower }}'">
-                                    <i class="fas fa-search me-1"></i> Visualizar todos
-                                </a>
-                            </div>
-                            
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Nome</th>
-                                            <th>Descrição</th>
-                                            <th>Atualizado</th>
-                                            <th>Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Documentos do banco de dados -->
-                                        {% if documentos.documentos_bd %}
-                                            {% for doc in documentos.documentos_bd %}
-                                            <tr>
-                                                <td>
-                                                    <i class="fa {{ doc.get_icon_class() }} me-2"></i>
-                                                    {{ doc.title }}
-                                                </td>
-                                                <td>{{ doc.description|truncate(50) if doc.description else "---" }}</td>
-                                                <td>{{ doc.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
-                                                <td>
-                                                    <a href="{{ url_for('documents.view_document', document_id=doc.id) }}" class="btn btn-sm btn-primary" title="Visualizar">
-                                                        <i class="fa fa-eye"></i>
-                                                    </a>
-                                                    <a href="{{ url_for('documents.download_document', document_id=doc.id) }}" class="btn btn-sm btn-success" title="Download">
-                                                        <i class="fa fa-download"></i>
-                                                    </a>
-                                                    <a href="{{ url_for('documents.print_document', document_id=doc.id) }}" class="btn btn-sm btn-secondary" title="Imprimir" target="_blank">
-                                                        <i class="fa fa-print"></i>
-                                                    </a>
-                                                    {% if doc.file_type == 'html' %}
-                                                    <a href="{{ url_for('documents.edit_online', document_id=doc.id) }}" class="btn btn-sm btn-warning" title="Editar Online">
-                                                        <i class="fa fa-pencil-alt"></i>
-                                                    </a>
-                                                    {% endif %}
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        {% endif %}
-                                        
-                                        <!-- Documentos virtuais (sistema de arquivos) -->
-                                        {% if documentos.documentos_virtuais %}
-                                            {% for doc in documentos.documentos_virtuais %}
-                                            <tr>
-                                                <td>
-                                                    <i class="fa {{ doc.icon_class }} me-2"></i>
-                                                    {{ doc.title }}
-                                                </td>
-                                                <td>{{ doc.description|truncate(50) if doc.description else "---" }}</td>
-                                                <td>{{ doc.created_at }}</td>
-                                                <td>
-                                                    <a href="{{ url_for('documents.view_virtual_document', file_path=doc.file_path, online='true') }}" class="btn btn-sm btn-primary" title="Visualizar Online">
-                                                        <i class="fa fa-eye"></i>
-                                                    </a>
-                                                    <a href="{{ url_for('documents.download_virtual_document', file_path=doc.file_path) }}" class="btn btn-sm btn-success" title="Download">
-                                                        <i class="fa fa-download"></i>
-                                                    </a>
-                                                    <a href="{{ url_for('documents.print_virtual_document', file_path=doc.file_path) }}" class="btn btn-sm btn-secondary" title="Imprimir" target="_blank">
-                                                        <i class="fa fa-print"></i>
-                                                    </a>
-                                                    <a href="{{ url_for('forms.fill_form', file_path=doc.file_path) }}" class="btn btn-sm btn-info" title="Preencher">
-                                                        <i class="fa fa-pencil-alt"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        {% endif %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
+    
     <div class="row">
-        <!-- Estatísticas e Categorias -->
-        <div class="col-md-3 mb-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">Estatísticas</h5>
+        <!-- Editor de Documentos -->
+        <div class="col-md-4 mb-4">
+            <div class="card card-feature">
+                <div class="card-header">
+                    <i class="fas fa-edit me-2"></i> Editor de Documentos
                 </div>
-                <div class="list-group list-group-flush">
-                    {% for name, count in stats.items() %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ name }}
-                        <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                <div class="card-body d-flex flex-column">
+                    <div class="feature-icon text-center">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h5 class="card-title">Editor em Tempo Real</h5>
+                    <div class="feature-description">
+                        Novo editor de documentos com colaboração em tempo real, templates profissionais e exportação em múltiplos formatos.
+                    </div>
+                    <div class="mt-auto">
+                        <a href="{{ url_for('documents.editor') }}" class="btn btn-feature w-100">
+                            <i class="fas fa-edit me-2"></i> Abrir Editor
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Documentos Recentes -->
+        <div class="col-md-4 mb-4">
+            <div class="card card-feature">
+                <div class="card-header">
+                    <i class="fas fa-file-upload me-2"></i> Upload de Documentos
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="feature-icon text-center">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h5 class="card-title">Fazer Upload</h5>
+                    <div class="feature-description">
+                        Faça upload de documentos, relatórios e outros arquivos importantes para acesso centralizado.
+                    </div>
+                    <div class="mt-auto">
+                        <a href="{{ url_for('documents.upload_document') }}" class="btn btn-feature w-100">
+                            <i class="fas fa-upload me-2"></i> Enviar Documento
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Biblioteca de Templates -->
+        <div class="col-md-4 mb-4">
+            <div class="card card-feature">
+                <div class="card-header">
+                    <i class="fas fa-book me-2"></i> Biblioteca
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="feature-icon text-center">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <h5 class="card-title">Templates e Modelos</h5>
+                    <div class="feature-description">
+                        Acesse nossa biblioteca de templates e modelos pré-formatados para laudos, relatórios e documentação técnica.
+                    </div>
+                    <div class="mt-auto">
+                        <a href="#" class="btn btn-feature w-100">
+                            <i class="fas fa-search me-2"></i> Explorar Biblioteca
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Estatísticas e Documentos Recentes -->
+    <div class="row mt-4">
+        <!-- Estatísticas -->
+        <div class="col-md-4">
+            <h4><i class="fas fa-chart-pie me-2"></i> Estatísticas</h4>
+            <div class="stats-box">
+                <div class="row">
+                    {% for category, count in stats.items() %}
+                    <div class="col-md-6 mb-3">
+                        <div class="stats-number">{{ count }}</div>
+                        <div class="stats-label">{{ category }}</div>
                     </div>
                     {% endfor %}
                 </div>
             </div>
-            
-            <div class="card shadow-sm">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">Ações Rápidas</h5>
+        </div>
+        
+        <!-- Documentos Recentes -->
+        <div class="col-md-8">
+            <h4><i class="fas fa-history me-2"></i> Documentos Recentes</h4>
+            <div class="document-list">
+                {% for doc in recent_docs %}
+                <div class="document-item">
+                    <div class="d-flex justify-content-between">
+                        <div class="doc-title">
+                            <i class="fas fa-file-{{ doc.file_type }} me-2"></i>
+                            <a href="{{ url_for('documents.view_document', document_id=doc.id) }}">{{ doc.title }}</a>
+                        </div>
+                        <div class="doc-actions">
+                            <a href="{{ url_for('documents.view_document', document_id=doc.id) }}?online=true" class="btn btn-sm btn-outline-primary me-1" title="Visualizar online">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('documents.download_document', document_id=doc.id) }}" class="btn btn-sm btn-outline-secondary" title="Download">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="doc-meta">
+                        <span><i class="fas fa-user me-1"></i> {{ doc.author }}</span>
+                        <span class="ms-3"><i class="fas fa-calendar-alt me-1"></i> {{ doc.upload_date.strftime('%d/%m/%Y') }}</span>
+                        <span class="ms-3"><i class="fas fa-tag me-1"></i> {{ doc.document_type|capitalize }}</span>
+                    </div>
                 </div>
-                <div class="list-group list-group-flush">
-                    <a href="{{ url_for('documents.upload_document') }}" class="list-group-item list-group-item-action">
-                        <i class="fas fa-upload me-2"></i> Upload de Documento
-                    </a>
-                    <a href="{{ url_for('documents.create_document_online') }}" class="list-group-item list-group-item-action">
-                        <i class="fas fa-edit me-2"></i> Criar Documento Online
-                    </a>
-                    <a href="{{ url_for('documents.search_documents') }}" class="list-group-item list-group-item-action">
-                        <i class="fas fa-search me-2"></i> Busca Avançada
-                    </a>
+                {% endfor %}
+                
+                {% if not recent_docs %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> Nenhum documento encontrado. Comece a criar ou fazer upload de documentos.
                 </div>
+                {% endif %}
             </div>
         </div>
-
-        <!-- Documentos Recentes -->
-        <div class="col-md-9">
-            <div class="card shadow-sm">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">Documentos Recentes</h5>
-                </div>
-                <div class="card-body">
-                    {% if recent_docs %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Tipo</th>
-                                    <th>Atualizado</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for doc in recent_docs %}
-                                <tr>
-                                    <td>
-                                        <i class="fa {{ doc.get_icon_class() }} me-2"></i>
-                                        {{ doc.title }}
-                                    </td>
-                                    <td>
-                                        {% if doc.document_type == 'pop' %}
-                                            POP
-                                        {% elif doc.document_type == 'ficha_tecnica' %}
-                                            Ficha Técnica
-                                        {% elif doc.document_type == 'certificado' %}
-                                            Certificado
-                                        {% elif doc.document_type == 'instrucao' %}
-                                            Instrução
-                                        {% elif doc.document_type == 'planilha' %}
-                                            Planilha
-                                        {% elif doc.document_type == 'manual' %}
-                                            Manual
-                                        {% elif doc.document_type == 'formulario' %}
-                                            Formulário
-                                        {% else %}
-                                            {{ doc.document_type|capitalize }}
-                                        {% endif %}
-                                        {% if doc.category %}
-                                            <span class="badge bg-info">{{ doc.category }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ doc.updated_at.strftime('%d/%m/%Y %H:%M') }}</td>
-                                    <td>
-                                        <a href="{{ url_for('documents.view_document', document_id=doc.id) }}" class="btn btn-sm btn-primary" title="Visualizar">
-                                            <i class="fa fa-eye"></i>
-                                        </a>
-                                        <a href="{{ url_for('documents.download_document', document_id=doc.id) }}" class="btn btn-sm btn-success" title="Download">
-                                            <i class="fa fa-download"></i>
-                                        </a>
-                                        <a href="{{ url_for('documents.print_document', document_id=doc.id) }}" class="btn btn-sm btn-secondary" title="Imprimir" target="_blank">
-                                            <i class="fa fa-print"></i>
-                                        </a>
-                                        {% if doc.file_type == 'html' %}
-                                        <a href="{{ url_for('documents.edit_online', document_id=doc.id) }}" class="btn btn-sm btn-warning" title="Editar Online">
-                                            <i class="fa fa-pencil-alt"></i>
-                                        </a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% else %}
-                    <div class="alert alert-info">
-                        <i class="fa fa-info-circle me-2"></i> Nenhum documento recente disponível.
-                    </div>
-                    {% endif %}
-                </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Novidade!</strong> Editor de documentos com colaboração em tempo real adicionado. Experimente agora clicando no botão "Abrir Editor".
             </div>
         </div>
     </div>
@@ -286,9 +254,12 @@
 
 {% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Adicionar classe ativa no item de menu correspondente
-        document.querySelector('#nav-documents').classList.add('active');
+$(document).ready(function() {
+    // Inicializar tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+});
 </script>
 {% endblock %}
