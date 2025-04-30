@@ -6,7 +6,6 @@ from reportlab.pdfgen import canvas
 from docx import Document
 from io import BytesIO
 
-from app import socketio
 from . import editor_bp
 
 # Carregar dados do Excel
@@ -76,6 +75,8 @@ def editor():
                          produtos=produtos, 
                          marcas=marcas, 
                          fornecedores_df=fornecedores_df)
+
+from app import socketio
 
 @socketio.on('update_content')
 def handle_update_content(data):

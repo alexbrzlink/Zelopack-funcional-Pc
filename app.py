@@ -12,6 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user, login_user
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import DeclarativeBase
+from flask_socketio import SocketIO
 
 # Configurar logging
 logging.basicConfig(level=logging.DEBUG)
@@ -28,6 +29,9 @@ app = Flask(__name__)
 # Uso de variável de ambiente para secret_key com geração de chave segura caso não definida
 import secrets
 app.secret_key = os.environ.get("SESSION_SECRET") or secrets.token_hex(32)
+
+# Inicializa o Socket.IO
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Configurar banco de dados
 database_url = os.environ.get("DATABASE_URL")
@@ -557,6 +561,9 @@ from blueprints.configuracoes.routes import configuracoes_bp
 from blueprints.alertas.routes import alertas_bp
 from blueprints.banco_dados.routes import banco_dados_bp
 from blueprints.estoque import estoque_bp
+# Importar novos blueprints
+from blueprints.editor import editor_bp as document_editor_bp
+from blueprints.technical import technical_bp
 
 app.register_blueprint(reports_bp)
 app.register_blueprint(dashboard_bp)
@@ -572,8 +579,12 @@ app.register_blueprint(banco_dados_bp)
 app.register_blueprint(estoque_bp)
 
 # Registrar blueprint do editor universal
-from blueprints.forms.routes_editor import editor_bp
-app.register_blueprint(editor_bp)
+from blueprints.forms.routes_editor import editor_bp as forms_editor_bp
+app.register_blueprint(forms_editor_bp)
+
+# Registrar novos blueprints
+app.register_blueprint(document_editor_bp)
+app.register_blueprint(technical_bp)
 
 # Função para atualizar o banco de dados de forma incremental
 def setup_database():
