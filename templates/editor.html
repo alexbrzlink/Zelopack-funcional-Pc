@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Editor de Laudos{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Editor de Laudos</li>
+    </ol>
+</nav>
+
+<h1>Editor de Laudos</h1>
+<form method="POST">
+    <div class="mb-3">
+        <label for="empresa" class="form-label" aria-label="Selecione a empresa">Empresa</label>
+        <select class="form-select" id="empresa" name="empresa" onchange="updateOptions()">
+            <option value="">Selecione uma empresa</option>
+            {% for empresa in empresas %}
+            <option value="{{ empresa }}">{{ empresa }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="produto" class="form-label" aria-label="Selecione um produto">Produto</label>
+        <select class="form-select" id="produto" name="produto">
+            <option value="">Selecione um produto</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="marca" class="form-label" aria-label="Selecione uma marca">Marca</label>
+        <select class="form-select" id="marca" name="marca">
+            <option value="">Selecione uma marca</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="content" class="form-label">Conteúdo do Laudo</label>
+        <textarea class="form-control" id="content" name="content" rows="10" oninput="updateContent(this.value)"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="format" class="form-label">Exportar como</label>
+        <select class="form-select" id="format" name="format">
+            <option value="pdf">PDF</option>
+            <option value="word">Word</option>
+            <option value="excel">Excel</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Exportar</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+<script>
+    const socket = io();
+    
+    socket.on('content_updated', function(data) {
+        if (document.getElementById('content').value !== data.content) {
+            document.getElementById('content').value = data.content;
+        }
+    });
+
+    function updateContent(content) {
+        socket.emit('update_content', { content: content });
+    }
+
+    function updateOptions() {
+        const empresa = document.getElementById('empresa').value;
+        const produtoSelect = document.getElementById('produto');
+        const marcaSelect = document.getElementById('marca');
+
+        produtoSelect.innerHTML = '<option value="">Selecione um produto</option>';
+        marcaSelect.innerHTML = '<option value="">Selecione uma marca</option>';
+
+        if (empresa) {
+            const fornecedores = [
+                {% for _, row in fornecedores_df.iterrows() %}
+                { "EMPRESA": "{{ row['EMPRESA'] }}", "PRODUTO": "{{ row['PRODUTO'] }}", "MARCA": "{{ row['MARCA'] }}" },
+                {% endfor %}
+            ];
+            
+            const filtered = fornecedores.filter(f => f.EMPRESA === empresa);
+            const produtos = [...new Set(filtered.map(f => f.PRODUTO))];
+            const marcas = [...new Set(filtered.map(f => f.MARCA))];
+
+            produtos.forEach(produto => {
+                const option = document.createElement('option');
+                option.value = produto;
+                option.text = produto;
+                produtoSelect.appendChild(option);
+            });
+
+            marcas.forEach(marca => {
+                const option = document.createElement('option');
+                option.value = marca;
+                option.text = marca;
+                marcaSelect.appendChild(option);
+            });
+        }
+    }
+</script>
+{% endblock %}
