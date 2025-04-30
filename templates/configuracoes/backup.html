@@ -1,0 +1,776 @@
+{% extends 'base.html' %}
+
+{% block title %}Backup e Restauração - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .config-header {
+        background: linear-gradient(135deg, #156bc1 0%, #0b4a8e 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .config-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .config-header p {
+        opacity: 0.85;
+        max-width: 80%;
+    }
+    
+    .card-backup {
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .card-backup:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+    }
+    
+    .backup-icon {
+        font-size: 1.8rem;
+        margin-right: 0.5rem;
+        color: #156bc1;
+    }
+    
+    .nav-breadcrumb {
+        background-color: transparent;
+        margin-bottom: 2rem;
+    }
+    
+    .backup-list {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    
+    .backup-list-item {
+        border-left: 3px solid #156bc1;
+        transition: all 0.2s ease;
+    }
+    
+    .backup-list-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .backup-list-item .badge {
+        font-size: 0.7rem;
+    }
+    
+    .backup-date {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .backup-size {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .btn-action {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .backup-info-list {
+        font-size: 0.9rem;
+    }
+    
+    .backup-info-list .list-group-item {
+        padding: 0.5rem 1rem;
+    }
+    
+    .backup-warning {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 0.25rem;
+    }
+    
+    .backup-success {
+        background-color: #d1e7dd;
+        border-left: 4px solid #198754;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Navegação -->
+    <nav aria-label="breadcrumb" class="nav-breadcrumb mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Início</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('configuracoes.index') }}">Configurações</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Backup e Restauração</li>
+        </ol>
+    </nav>
+
+    <!-- Cabeçalho de Configurações -->
+    <div class="config-header mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-sync-alt me-2"></i> Backup e Restauração</h1>
+                <p class="mb-0">Crie backups do sistema ou restaure um backup anterior.</p>
+            </div>
+            <div>
+                <a href="{{ url_for('configuracoes.index') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div class="row">
+        <!-- Criação de Backup -->
+        <div class="col-lg-6 mb-4">
+            <div class="card card-backup h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-download me-2 backup-icon"></i> Criar Backup</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Crie um backup completo do sistema incluindo banco de dados, configurações e arquivos.</p>
+                    
+                    <form id="createBackupForm">
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="includeUploads" name="include_uploads" checked>
+                                <label class="form-check-label" for="includeUploads">Incluir arquivos de upload</label>
+                            </div>
+                            <div class="form-text">Inclui todos os arquivos enviados por usuários (laudos, documentos, etc.)</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="includeLogs" name="include_logs">
+                                <label class="form-check-label" for="includeLogs">Incluir arquivos de log</label>
+                            </div>
+                            <div class="form-text">Inclui logs de sistema (aumenta o tamanho do backup)</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" id="createBackupBtn">
+                                <i class="fas fa-save me-1"></i> Criar Backup do Sistema
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="backup-success mt-3 d-none" id="backupSuccess">
+                        <h6><i class="fas fa-check-circle me-1"></i> Backup Criado com Sucesso!</h6>
+                        <p class="mb-0" id="backupSuccessMessage"></p>
+                        <div class="text-end mt-2">
+                            <a href="#" class="btn btn-sm btn-outline-primary" id="downloadBackupBtn">
+                                <i class="fas fa-download me-1"></i> Baixar Backup
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6><i class="fas fa-cog me-2"></i> Backup de Configurações</h6>
+                    <p class="small">Crie um backup apenas das configurações do sistema (sem banco de dados ou arquivos).</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('configuracoes.backup_config') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-cogs me-1"></i> Baixar Configurações
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Restauração de Backup -->
+        <div class="col-lg-6 mb-4">
+            <div class="card card-backup h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-upload me-2 backup-icon"></i> Restaurar Sistema</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Restaure o sistema a partir de um backup existente.</p>
+                    
+                    {% if backups %}
+                        <div class="backup-warning mb-3">
+                            <h6><i class="fas fa-exclamation-triangle me-1"></i> Atenção!</h6>
+                            <p class="mb-0">A restauração irá substituir todos os dados atuais do sistema. Esta ação não pode ser desfeita.</p>
+                        </div>
+                        
+                        <form id="restoreBackupForm">
+                            <div class="mb-3">
+                                <label for="backupFile" class="form-label">Selecione um backup</label>
+                                <select class="form-select" id="backupFile" name="backup_file" required>
+                                    <option value="" selected disabled>Escolha um backup...</option>
+                                    {% for backup in backups %}
+                                        <option value="{{ backup.file_name }}">
+                                            {{ backup.info.name }} ({{ backup.info.created_at|replace('T', ' ')|replace('Z', '') }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="restoreUploads" name="restore_uploads" checked>
+                                    <label class="form-check-label" for="restoreUploads">Restaurar arquivos de upload</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="restoreLogs" name="restore_logs">
+                                    <label class="form-check-label" for="restoreLogs">Restaurar arquivos de log</label>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-danger" id="restoreBackupBtn">
+                                    <i class="fas fa-sync me-1"></i> Restaurar Sistema
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <hr class="my-4">
+                        
+                        <h6><i class="fas fa-cog me-2"></i> Restaurar Configurações</h6>
+                        <p class="small">Restaure apenas as configurações do sistema a partir de um arquivo JSON.</p>
+                        
+                        <form id="restoreConfigForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="configFile" class="form-label">Arquivo de Configurações</label>
+                                <input class="form-control" type="file" id="configFile" name="backup_file" accept=".json">
+                                <div class="form-text">Selecione um arquivo de backup de configurações (formato JSON)</div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-outline-danger" id="restoreConfigBtn">
+                                    <i class="fas fa-cogs me-1"></i> Restaurar Configurações
+                                </button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Nenhum backup encontrado.
+                            <p class="mb-0 mt-2">Crie um backup do sistema antes de realizar uma restauração.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lista de Backups Disponíveis -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-backup">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-list me-2 backup-icon"></i> Backups Disponíveis</h5>
+                </div>
+                <div class="card-body">
+                    {% if backups %}
+                        <div class="table-responsive backup-list">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Data</th>
+                                        <th>Tamanho</th>
+                                        <th>Detalhes</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for backup in backups %}
+                                        <tr class="backup-list-item">
+                                            <td>
+                                                {{ backup.info.name }}
+                                                {% if backup.info.includes_uploads %}
+                                                    <span class="badge bg-info ms-1">Uploads</span>
+                                                {% endif %}
+                                                {% if backup.info.includes_logs %}
+                                                    <span class="badge bg-secondary ms-1">Logs</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="backup-date">
+                                                {{ backup.info.created_at|replace('T', ' ')|replace('Z', '') }}
+                                            </td>
+                                            <td class="backup-size">
+                                                {{ (backup.size / 1024 / 1024)|round(2) }} MB
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-info btn-action view-backup-info" data-backup="{{ backup.file_name }}">
+                                                    <i class="fas fa-info-circle"></i> Info
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a href="{{ url_for('configuracoes.download_backup', filename=backup.file_name) }}" class="btn btn-sm btn-outline-primary btn-action">
+                                                        <i class="fas fa-download"></i> Baixar
+                                                    </a>
+                                                    <button class="btn btn-sm btn-outline-danger btn-action delete-backup" data-backup="{{ backup.file_name }}">
+                                                        <i class="fas fa-trash-alt"></i> Excluir
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Nenhum backup encontrado.
+                            <p class="mb-0 mt-2">Crie um backup do sistema utilizando o formulário acima.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de detalhes do backup -->
+<div class="modal fade" id="backupInfoModal" tabindex="-1" aria-labelledby="backupInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="backupInfoModalLabel">Detalhes do Backup</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group backup-info-list" id="backupInfoList">
+                    <!-- Preenchido via JavaScript -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmação de restauração -->
+<div class="modal fade" id="restoreConfirmModal" tabindex="-1" aria-labelledby="restoreConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="restoreConfirmModalLabel">Confirmar Restauração</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Atenção!</strong> Esta ação irá substituir todos os dados atuais do sistema.
+                </div>
+                <p>Você está prestes a restaurar o sistema a partir do backup:</p>
+                <p><strong id="restoreBackupName">Nome do Backup</strong></p>
+                <p>Esta ação não pode ser desfeita. Tem certeza que deseja continuar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmRestoreBtn">
+                    <i class="fas fa-sync me-1"></i> Sim, Restaurar Sistema
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p>Você está prestes a excluir o backup:</p>
+                <p><strong id="deleteBackupName">Nome do Backup</strong></p>
+                <p>Esta ação não pode ser desfeita. Tem certeza que deseja excluir este backup?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash-alt me-1"></i> Sim, Excluir Backup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Referências aos elementos
+        const createBackupForm = document.getElementById('createBackupForm');
+        const restoreBackupForm = document.getElementById('restoreBackupForm');
+        const restoreConfigForm = document.getElementById('restoreConfigForm');
+        const backupSuccessDiv = document.getElementById('backupSuccess');
+        const backupSuccessMessage = document.getElementById('backupSuccessMessage');
+        const downloadBackupBtn = document.getElementById('downloadBackupBtn');
+        
+        // Modais
+        const backupInfoModal = new bootstrap.Modal(document.getElementById('backupInfoModal'));
+        const restoreConfirmModal = new bootstrap.Modal(document.getElementById('restoreConfirmModal'));
+        const deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+        
+        // Botões de ação
+        const viewBackupInfoBtns = document.querySelectorAll('.view-backup-info');
+        const deleteBackupBtns = document.querySelectorAll('.delete-backup');
+        const restoreBackupBtn = document.getElementById('restoreBackupBtn');
+        const confirmRestoreBtn = document.getElementById('confirmRestoreBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        
+        // Variáveis de estado
+        let currentBackupToRestore = '';
+        let currentBackupToDelete = '';
+        let lastCreatedBackup = '';
+        
+        // Criar backup
+        createBackupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const includeUploads = document.getElementById('includeUploads').checked;
+            const includeLogs = document.getElementById('includeLogs').checked;
+            
+            const createBackupBtn = document.getElementById('createBackupBtn');
+            createBackupBtn.disabled = true;
+            createBackupBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Criando Backup...';
+            
+            // Criar FormData
+            const formData = new FormData();
+            formData.append('include_uploads', includeUploads);
+            formData.append('include_logs', includeLogs);
+            
+            // Enviar solicitação
+            fetch('{{ url_for("configuracoes.create_system_backup") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                createBackupBtn.disabled = false;
+                createBackupBtn.innerHTML = '<i class="fas fa-save me-1"></i> Criar Backup do Sistema';
+                
+                if (data.success) {
+                    // Exibir mensagem de sucesso
+                    backupSuccessDiv.classList.remove('d-none');
+                    backupSuccessMessage.textContent = `Backup criado: ${data.file_name}`;
+                    
+                    // Configurar botão de download
+                    lastCreatedBackup = data.file_name;
+                    downloadBackupBtn.href = `{{ url_for('configuracoes.download_backup', filename='') }}${data.file_name}`;
+                    
+                    // Notificar usuário
+                    showNotification('success', 'Backup criado com sucesso!');
+                    
+                    // Recarregar a página após 2 segundos
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showNotification('error', `Erro ao criar backup: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                createBackupBtn.disabled = false;
+                createBackupBtn.innerHTML = '<i class="fas fa-save me-1"></i> Criar Backup do Sistema';
+                console.error('Erro:', error);
+                showNotification('error', 'Erro ao processar solicitação.');
+            });
+        });
+        
+        // Restaurar backup (mostrar modal de confirmação)
+        if (restoreBackupForm) {
+            restoreBackupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const backupFile = document.getElementById('backupFile').value;
+                if (!backupFile) {
+                    showNotification('error', 'Por favor, selecione um backup para restaurar.');
+                    return;
+                }
+                
+                // Mostrar informações no modal
+                document.getElementById('restoreBackupName').textContent = backupFile;
+                currentBackupToRestore = backupFile;
+                
+                // Mostrar modal de confirmação
+                restoreConfirmModal.show();
+            });
+        }
+        
+        // Confirmar restauração
+        if (confirmRestoreBtn) {
+            confirmRestoreBtn.addEventListener('click', function() {
+                if (!currentBackupToRestore) {
+                    restoreConfirmModal.hide();
+                    return;
+                }
+                
+                // Desabilitar botão
+                confirmRestoreBtn.disabled = true;
+                confirmRestoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Restaurando...';
+                
+                // Obter opções
+                const restoreUploads = document.getElementById('restoreUploads').checked;
+                const restoreLogs = document.getElementById('restoreLogs').checked;
+                
+                // Criar FormData
+                const formData = new FormData();
+                formData.append('backup_file', currentBackupToRestore);
+                formData.append('restore_uploads', restoreUploads);
+                formData.append('restore_logs', restoreLogs);
+                
+                // Enviar solicitação
+                fetch('{{ url_for("configuracoes.restore_system") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCsrfToken()
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    confirmRestoreBtn.disabled = false;
+                    confirmRestoreBtn.innerHTML = '<i class="fas fa-sync me-1"></i> Sim, Restaurar Sistema';
+                    restoreConfirmModal.hide();
+                    
+                    if (data.success) {
+                        // Notificar usuário
+                        showNotification('success', 'Sistema restaurado com sucesso!');
+                        
+                        // Recarregar a página após 2 segundos
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        showNotification('error', `Erro ao restaurar sistema: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    confirmRestoreBtn.disabled = false;
+                    confirmRestoreBtn.innerHTML = '<i class="fas fa-sync me-1"></i> Sim, Restaurar Sistema';
+                    restoreConfirmModal.hide();
+                    console.error('Erro:', error);
+                    showNotification('error', 'Erro ao processar solicitação.');
+                });
+            });
+        }
+        
+        // Restaurar configurações
+        if (restoreConfigForm) {
+            restoreConfigForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const configFile = document.getElementById('configFile').files[0];
+                if (!configFile) {
+                    showNotification('error', 'Por favor, selecione um arquivo de configurações.');
+                    return;
+                }
+                
+                // Desabilitar botão
+                const restoreConfigBtn = document.getElementById('restoreConfigBtn');
+                restoreConfigBtn.disabled = true;
+                restoreConfigBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Restaurando...';
+                
+                // Criar FormData
+                const formData = new FormData();
+                formData.append('backup_file', configFile);
+                
+                // Enviar solicitação
+                fetch('{{ url_for("configuracoes.restore_config") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCsrfToken()
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    restoreConfigBtn.disabled = false;
+                    restoreConfigBtn.innerHTML = '<i class="fas fa-cogs me-1"></i> Restaurar Configurações';
+                    
+                    if (data.success) {
+                        showNotification('success', 'Configurações restauradas com sucesso!');
+                        
+                        // Recarregar a página após 2 segundos
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        showNotification('error', `Erro ao restaurar configurações: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    restoreConfigBtn.disabled = false;
+                    restoreConfigBtn.innerHTML = '<i class="fas fa-cogs me-1"></i> Restaurar Configurações';
+                    console.error('Erro:', error);
+                    showNotification('error', 'Erro ao processar solicitação.');
+                });
+            });
+        }
+        
+        // Ver informações do backup
+        viewBackupInfoBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const backupFile = this.getAttribute('data-backup');
+                
+                // Procurar informações do backup na lista de backups
+                {% if backups %}
+                const backups = {{ backups|tojson }};
+                const backup = backups.find(b => b.file_name === backupFile);
+                
+                if (backup) {
+                    // Preencher modal com informações
+                    const infoList = document.getElementById('backupInfoList');
+                    infoList.innerHTML = '';
+                    
+                    // Nome e data
+                    infoList.innerHTML += `
+                        <li class="list-group-item"><strong>Nome:</strong> ${backup.info.name}</li>
+                        <li class="list-group-item"><strong>Criado em:</strong> ${backup.info.created_at.replace('T', ' ').replace('Z', '')}</li>
+                    `;
+                    
+                    // Versão
+                    if (backup.info.version) {
+                        infoList.innerHTML += `<li class="list-group-item"><strong>Versão do Sistema:</strong> ${backup.info.version}</li>`;
+                    }
+                    
+                    // Tamanho
+                    const sizeMB = (backup.size / 1024 / 1024).toFixed(2);
+                    infoList.innerHTML += `<li class="list-group-item"><strong>Tamanho:</strong> ${sizeMB} MB</li>`;
+                    
+                    // Conteúdo
+                    const includesUploads = backup.info.includes_uploads ? 'Sim' : 'Não';
+                    const includesLogs = backup.info.includes_logs ? 'Sim' : 'Não';
+                    infoList.innerHTML += `
+                        <li class="list-group-item"><strong>Inclui Uploads:</strong> ${includesUploads}</li>
+                        <li class="list-group-item"><strong>Inclui Logs:</strong> ${includesLogs}</li>
+                    `;
+                    
+                    // Mostrar modal
+                    backupInfoModal.show();
+                }
+                {% endif %}
+            });
+        });
+        
+        // Excluir backup (mostrar modal de confirmação)
+        deleteBackupBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const backupFile = this.getAttribute('data-backup');
+                
+                // Mostrar informações no modal
+                document.getElementById('deleteBackupName').textContent = backupFile;
+                currentBackupToDelete = backupFile;
+                
+                // Mostrar modal de confirmação
+                deleteConfirmModal.show();
+            });
+        });
+        
+        // Confirmar exclusão
+        if (confirmDeleteBtn) {
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (!currentBackupToDelete) {
+                    deleteConfirmModal.hide();
+                    return;
+                }
+                
+                // Desabilitar botão
+                confirmDeleteBtn.disabled = true;
+                confirmDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Excluindo...';
+                
+                // Criar FormData
+                const formData = new FormData();
+                formData.append('backup_file', currentBackupToDelete);
+                
+                // Enviar solicitação
+                fetch('{{ url_for("configuracoes.delete_backup") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCsrfToken()
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    confirmDeleteBtn.disabled = false;
+                    confirmDeleteBtn.innerHTML = '<i class="fas fa-trash-alt me-1"></i> Sim, Excluir Backup';
+                    deleteConfirmModal.hide();
+                    
+                    if (data.success) {
+                        showNotification('success', 'Backup excluído com sucesso!');
+                        
+                        // Recarregar a página após 1 segundo
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification('error', `Erro ao excluir backup: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    confirmDeleteBtn.disabled = false;
+                    confirmDeleteBtn.innerHTML = '<i class="fas fa-trash-alt me-1"></i> Sim, Excluir Backup';
+                    deleteConfirmModal.hide();
+                    console.error('Erro:', error);
+                    showNotification('error', 'Erro ao processar solicitação.');
+                });
+            });
+        }
+        
+        // Função para obter token CSRF
+        function getCsrfToken() {
+            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        }
+        
+        // Função para mostrar notificações
+        function showNotification(type, message) {
+            const alertClass = type === 'success' ? 'alert-success' : 
+                              type === 'error' ? 'alert-danger' : 
+                              type === 'info' ? 'alert-info' : 'alert-warning';
+                              
+            const alertIcon = type === 'success' ? '<i class="fas fa-check-circle me-2"></i>' : 
+                             type === 'error' ? '<i class="fas fa-exclamation-circle me-2"></i>' : 
+                             type === 'info' ? '<i class="fas fa-info-circle me-2"></i>' : '<i class="fas fa-exclamation-triangle me-2"></i>';
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                ${alertIcon} ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Remover automaticamente após 5 segundos
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(alertDiv);
+                }, 300);
+            }, 5000);
+        }
+    });
+</script>
+{% endblock %}

@@ -181,7 +181,12 @@
     <!-- Seção de Backup e Restauração -->
     <div class="row mt-4">
         <div class="col-12 mb-3">
-            <h4><i class="fas fa-sync-alt me-2"></i> Backup e Restauração</h4>
+            <div class="d-flex justify-content-between align-items-center">
+                <h4><i class="fas fa-sync-alt me-2"></i> Backup e Restauração</h4>
+                <a href="{{ url_for('configuracoes.backup_page') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-cog me-1"></i> Gerenciar Backups
+                </a>
+            </div>
         </div>
         
         <div class="col-md-6 mb-4">
@@ -194,9 +199,9 @@
                     </p>
                 </div>
                 <div class="card-footer bg-transparent">
-                    <button class="btn btn-primary backup-config-btn">
+                    <a href="{{ url_for('configuracoes.backup_config') }}" class="btn btn-primary">
                         <i class="fas fa-download me-1"></i> Criar Backup
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -204,16 +209,16 @@
         <div class="col-md-6 mb-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Restaurar Configurações</h5>
+                    <h5 class="card-title">Backup Completo do Sistema</h5>
                     <p class="card-text">
-                        Restaure configurações anteriores a partir de um arquivo de backup.
-                        Isso irá substituir todas as configurações atuais do sistema.
+                        Crie um backup completo do sistema, incluindo banco de dados, configurações e arquivos.
+                        Permite restauração completa em caso de problemas.
                     </p>
                 </div>
                 <div class="card-footer bg-transparent">
-                    <button class="btn btn-outline-primary restore-config-btn">
-                        <i class="fas fa-upload me-1"></i> Restaurar
-                    </button>
+                    <a href="{{ url_for('configuracoes.backup_page') }}" class="btn btn-primary">
+                        <i class="fas fa-database me-1"></i> Backup Completo
+                    </a>
                 </div>
             </div>
         </div>
