@@ -367,3 +367,143 @@ def check_admin_security_requirements(view_func):
         return view_func(*args, **kwargs)
     
     return decorated_function
+
+def generate_reset_token(user_id, expires_in=3600):
+    """
+    Gera um token seguro para redefinição de senha.
+    
+    Args:
+        user_id: ID do usuário
+        expires_in: Tempo de expiração em segundos (padrão: 1 hora)
+        
+    Returns:
+        str: Token codificado
+    """
+    # Criar dados do token
+    now = int(time.time())
+    token_data = {
+        'user_id': user_id,
+        'exp': now + expires_in,
+        'iat': now,
+        'jti': secrets.token_hex(16)  # ID único do token
+    }
+    
+    # Codificar dados para JSON e depois para Base64
+    json_data = json.dumps(token_data)
+    encoded = base64.urlsafe_b64encode(json_data.encode())
+    
+    # Gerar assinatura (em produção, usaria um segredo persistente)
+    from app import app
+    secret = app.config['SECRET_KEY']
+    signature = hashlib.sha256((encoded.decode() + secret).encode()).hexdigest()
+    
+    # Combinar token e assinatura
+    return f"{encoded.decode()}.{signature}"
+
+
+def verify_reset_token(token):
+    """
+    Verifica se um token de redefinição é válido.
+    
+    Args:
+        token: Token a ser verificado
+        
+    Returns:
+        int ou None: ID do usuário se token válido, None caso contrário
+    """
+    try:
+        # Separar token e assinatura
+        encoded, signature = token.split('.')
+        
+        # Verificar assinatura
+        from app import app
+        secret = app.config['SECRET_KEY']
+        expected_signature = hashlib.sha256((encoded + secret).encode()).hexdigest()
+        
+        if signature != expected_signature:
+            logger.warning("Assinatura de token inválida")
+            return None
+        
+        # Decodificar token
+        decoded = base64.urlsafe_b64decode(encoded.encode()).decode()
+        token_data = json.loads(decoded)
+        
+        # Verificar expiração
+        now = int(time.time())
+        if now > token_data.get('exp', 0):
+            logger.warning("Token expirado")
+            return None
+        
+        # Retornar ID do usuário
+        return token_data.get('user_id')
+    except Exception as e:
+        logger.error(f"Erro ao verificar token: {str(e)}")
+        return None
+
+
+def log_password_change(user_id, password):
+    """
+    Registra uma alteração de senha no histórico.
+    
+    Args:
+        user_id: ID do usuário
+        password: Nova senha (texto puro)
+    """
+    try:
+        from werkzeug.security import generate_password_hash
+        
+        # Gerar hash da senha
+        password_hash = generate_password_hash(password)
+        
+        # Adicionar ao histórico
+        add_password_to_history(user_id, password_hash)
+        
+        # Registrar ação de alteração de senha
+        try:
+            log_action(
+                user_id=user_id,
+                action='password_change',
+                module='auth',
+                entity_type='User',
+                entity_id=user_id,
+                details='Alteração de senha'
+            )
+        except Exception:
+            # Falha ao registrar log não deve impedir a operação
+            pass
+    except Exception as e:
+        logger.error(f"Erro ao registrar alteração de senha: {str(e)}")
+
+
+def validate_admin_password(password):
+    """
+    Verifica se a senha atende aos requisitos para administradores.
+    
+    Args:
+        password: Senha a ser verificada
+        
+    Returns:
+        Tuple (bool, str): (atende_requisitos, mensagem_erro)
+    """
+    # Verificar complexidade
+    valid, message = verify_password_complexity(password)
+    if not valid:
+        return valid, message
+    
+    # Verificar comprimento mínimo (especial para admins)
+    if len(password) < 10:
+        return False, "Senhas de administrador devem ter pelo menos 10 caracteres."
+    
+    # Verificar entropia da senha
+    import math
+    charset_size = 0
+    if re.search(r'[a-z]', password): charset_size += 26
+    if re.search(r'[A-Z]', password): charset_size += 26
+    if re.search(r'[0-9]', password): charset_size += 10
+    if re.search(r'[!@#$%^&*(),.?":{}|<>]', password): charset_size += 30
+    
+    entropy = math.log2(charset_size ** len(password))
+    if entropy < 50:  # 50 bits é um bom limite para senhas seguras
+        return False, "Senha de administrador muito fraca. Use uma combinação mais complexa de caracteres."
+    
+    return True, ""
