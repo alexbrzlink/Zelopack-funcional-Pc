@@ -321,81 +321,8 @@ def api_calcular_producao_200g():
         }), 500
 
 
-@calculos_bp.route('/api/calcular/brix-padrao', methods=['POST'])
-@login_required
-def api_calcular_brix_padrao():
-    """API para cálculo de Brix Padrão com correção de temperatura."""
-    data = request.get_json()
-    
-    try:
-        brix_medido = float(data.get('brix_medido', 0))
-        temperatura = float(data.get('temperatura', FATORES_CONVERSAO['brix']['temperatura_referencia']))
-        fator_correcao = data.get('fator_correcao', 'standard')
-        
-        if fator_correcao == 'custom':
-            fator = float(data.get('custom_factor', 1.0))
-        else:
-            fator = FATORES_CONVERSAO['brix']['fator_correcao'].get(fator_correcao, 1.0)
-        
-        # Validar dados
-        if brix_medido <= 0:
-            return jsonify({
-                'success': False,
-                'message': 'O valor de Brix medido deve ser positivo.'
-            }), 400
-        
-        # Cálculo da correção de temperatura
-        temp_ref = FATORES_CONVERSAO['brix']['temperatura_referencia']
-        delta_temp = temperatura - temp_ref
-        
-        # Correção aproximada: a cada 1°C acima de 20°C, adicionar 0.06 ao Brix
-        correcao_temp = delta_temp * 0.06
-        
-        # Aplicar correção de temperatura
-        if temperatura != temp_ref:
-            brix_corrigido_temp = (
-                brix_medido - correcao_temp if temperatura > temp_ref 
-                else brix_medido + abs(correcao_temp)
-            )
-        else:
-            brix_corrigido_temp = brix_medido
-        
-        # Aplicar fator de correção do tipo de produto
-        brix_final = brix_corrigido_temp * fator
-        
-        resultado = {
-            'success': True,
-            'brix_original': brix_medido,
-            'brix_corrigido_temp': brix_corrigido_temp,
-            'brix_final': brix_final,
-            'correcao_aplicada': correcao_temp,
-            'fator_aplicado': fator,
-            'temp_ref': temp_ref,
-            'temperatura': temperatura
-        }
-        
-        # Registrar cálculo no histórico
-        registrar_historico_calculo('brix-padrao', {
-            'brix_medido': brix_medido,
-            'temperatura': temperatura,
-            'fator_correcao': fator_correcao,
-            'fator_personalizado': fator if fator_correcao == 'custom' else None,
-            'resultado': resultado
-        })
-        
-        return jsonify(resultado)
-        
-    except ValueError as e:
-        return jsonify({
-            'success': False,
-            'message': f'Erro de formato nos valores informados: {str(e)}'
-        }), 400
-    except Exception as e:
-        logging.error(f"Erro ao calcular Brix padrão: {str(e)}")
-        return jsonify({
-            'success': False,
-            'message': 'Ocorreu um erro ao processar o cálculo.'
-        }), 500
+# Rota removida conforme solicitação do usuário para remover a calculadora padrão
+# A funcionalidade de cálculo de Brix está disponível na calculadora avançada
 
 
 @calculos_bp.route('/api/calcular/producao-litro', methods=['POST'])
