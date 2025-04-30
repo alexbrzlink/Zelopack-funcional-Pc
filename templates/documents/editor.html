@@ -1,0 +1,516 @@
+{% extends 'base.html' %}
+
+{% block title %}Editor de Documentos - Zelopack{% endblock %}
+
+{% block styles %}
+<style>
+    .editor-container {
+        display: flex;
+        height: calc(100vh - 250px);
+        min-height: 600px;
+    }
+    
+    .sidebar {
+        width: 300px;
+        padding: 15px;
+        border-right: 1px solid #ddd;
+        background-color: #f8f9fa;
+        overflow-y: auto;
+    }
+    
+    .editor-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .toolbar {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        background-color: #f1f3f4;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .toolbar button {
+        border: none;
+        background-color: #fff;
+        border-radius: 3px;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .toolbar button:hover {
+        background-color: #e6e6e6;
+    }
+    
+    .toolbar button.active {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .toolbar select {
+        padding: 5px;
+        border-radius: 3px;
+        border: 1px solid #ddd;
+    }
+    
+    .content-area {
+        flex: 1;
+        padding: 15px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        margin: 0 15px 15px 15px;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        overflow-y: auto;
+    }
+    
+    #editor-content {
+        width: 100%;
+        height: 100%;
+        border: none;
+        outline: none;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        overflow-y: auto;
+        resize: none;
+    }
+    
+    .template-item {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .template-item:hover {
+        background-color: #e9ecef;
+        border-color: #007bff;
+    }
+    
+    .export-panel {
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .export-panel button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    
+    .btn-pdf {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .btn-word {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .btn-excel {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .user-cursor {
+        position: absolute;
+        width: 2px;
+        height: 20px;
+        background-color: #007bff;
+    }
+    
+    .user-label {
+        position: absolute;
+        background-color: #007bff;
+        color: white;
+        font-size: 10px;
+        padding: 2px 5px;
+        border-radius: 3px;
+        white-space: nowrap;
+    }
+    
+    .collaborator-list {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+    
+    .collaborator {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    
+    .collaborator-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-3"><i class="fas fa-file-alt"></i> Editor de Documentos Técnicos</h2>
+    
+    <div class="editor-container">
+        <div class="sidebar">
+            <h4>Informações do Documento</h4>
+            <form id="document-form" method="POST">
+                <div class="form-group">
+                    <label for="empresa">Empresa:</label>
+                    <select class="form-control" id="empresa" name="empresa" required>
+                        <option value="">Selecione a empresa</option>
+                        {% for empresa in empresas %}
+                        <option value="{{ empresa }}">{{ empresa }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="produto">Produto:</label>
+                    <select class="form-control" id="produto" name="produto" required>
+                        <option value="">Selecione o produto</option>
+                        {% for produto in produtos %}
+                        <option value="{{ produto }}">{{ produto }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="marca">Marca:</label>
+                    <select class="form-control" id="marca" name="marca" required>
+                        <option value="">Selecione a marca</option>
+                        {% for marca in marcas %}
+                        <option value="{{ marca }}">{{ marca }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <h5 class="mt-4">Templates</h5>
+                <div class="template-list">
+                    <div class="template-item" data-template="laudo-microbiologico">
+                        <strong>Laudo Microbiológico</strong>
+                        <p class="small text-muted m-0">Template para análises microbiológicas</p>
+                    </div>
+                    <div class="template-item" data-template="laudo-fisico-quimico">
+                        <strong>Laudo Físico-Químico</strong>
+                        <p class="small text-muted m-0">Template para análises físico-químicas</p>
+                    </div>
+                    <div class="template-item" data-template="laudo-sensorial">
+                        <strong>Laudo Sensorial</strong>
+                        <p class="small text-muted m-0">Template para análises sensoriais</p>
+                    </div>
+                </div>
+                
+                <div class="collaborator-list">
+                    <h5>Colaboradores Online</h5>
+                    <div id="online-users">
+                        <div class="collaborator">
+                            <div class="collaborator-dot" style="background-color: #007bff;"></div>
+                            <span>Você</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <input type="hidden" name="content" id="hidden-content">
+                <input type="hidden" name="format" id="export-format">
+                
+                <div class="export-panel">
+                    <button type="button" class="btn-pdf" onclick="exportDocument('pdf')">
+                        <i class="far fa-file-pdf"></i> PDF
+                    </button>
+                    <button type="button" class="btn-word" onclick="exportDocument('word')">
+                        <i class="far fa-file-word"></i> Word
+                    </button>
+                    <button type="button" class="btn-excel" onclick="exportDocument('excel')">
+                        <i class="far fa-file-excel"></i> Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="editor-area">
+            <div class="toolbar">
+                <button id="bold-btn" title="Negrito"><i class="fas fa-bold"></i></button>
+                <button id="italic-btn" title="Itálico"><i class="fas fa-italic"></i></button>
+                <button id="underline-btn" title="Sublinhado"><i class="fas fa-underline"></i></button>
+                <select id="font-size">
+                    <option value="1">8pt</option>
+                    <option value="2">10pt</option>
+                    <option value="3" selected>12pt</option>
+                    <option value="4">14pt</option>
+                    <option value="5">18pt</option>
+                    <option value="6">24pt</option>
+                    <option value="7">36pt</option>
+                </select>
+                <button id="align-left" title="Alinhar à esquerda"><i class="fas fa-align-left"></i></button>
+                <button id="align-center" title="Centralizar"><i class="fas fa-align-center"></i></button>
+                <button id="align-right" title="Alinhar à direita"><i class="fas fa-align-right"></i></button>
+                <button id="list-ul" title="Lista não ordenada"><i class="fas fa-list-ul"></i></button>
+                <button id="list-ol" title="Lista ordenada"><i class="fas fa-list-ol"></i></button>
+                <button id="indent" title="Aumentar recuo"><i class="fas fa-indent"></i></button>
+                <button id="outdent" title="Diminuir recuo"><i class="fas fa-outdent"></i></button>
+                <button id="insert-table" title="Inserir tabela"><i class="fas fa-table"></i></button>
+                <button id="insert-image" title="Inserir imagem"><i class="fas fa-image"></i></button>
+                <button id="undo" title="Desfazer"><i class="fas fa-undo"></i></button>
+                <button id="redo" title="Refazer"><i class="fas fa-redo"></i></button>
+            </div>
+            
+            <div class="content-area">
+                <textarea id="editor-content" placeholder="Digite o conteúdo do documento aqui..."></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    // Conectar ao Socket.IO
+    const socket = io();
+    const userId = Math.random().toString(36).substring(2, 10);
+    let lastCursorPosition = { x: 0, y: 0 };
+    
+    // Carregar templates pré-definidos
+    const templates = {
+        'laudo-microbiologico': `LAUDO DE ANÁLISE MICROBIOLÓGICA
+Empresa: [EMPRESA]
+Produto: [PRODUTO]
+Marca: [MARCA]
+Data da análise: ${new Date().toLocaleDateString('pt-BR')}
+
+RESULTADOS:
+1. Contagem Padrão em Placas: <resultado> UFC/g ou mL
+2. Coliformes Totais: <resultado> NMP/g ou mL
+3. Coliformes Termotolerantes (E. coli): <resultado> NMP/g ou mL
+4. Staphylococcus coagulase positiva: <resultado> UFC/g ou mL
+5. Salmonella sp.: <resultado> em 25g ou mL
+6. Bolores e Leveduras: <resultado> UFC/g ou mL
+
+PARECER TÉCNICO:
+A amostra analisada atende aos parâmetros microbiológicos estabelecidos pela legislação vigente (RDC nº 331/2019).
+
+RESPONSÁVEL TÉCNICO:
+Nome: ______________________________
+CRQ/CRF/CRBio: ______________________
+Data: ___/___/_____`,
+
+        'laudo-fisico-quimico': `LAUDO DE ANÁLISE FÍSICO-QUÍMICA
+Empresa: [EMPRESA]
+Produto: [PRODUTO]
+Marca: [MARCA]
+Data da análise: ${new Date().toLocaleDateString('pt-BR')}
+
+RESULTADOS:
+1. pH: <resultado>
+2. Brix: <resultado> °Bx
+3. Acidez: <resultado> g/100g
+4. Densidade: <resultado> g/mL
+5. Sólidos Solúveis: <resultado> %
+6. Viscosidade: <resultado> cP
+7. Teor Alcoólico: <resultado> % v/v
+
+PARECER TÉCNICO:
+A amostra analisada atende aos parâmetros físico-químicos estabelecidos pela legislação vigente.
+
+RESPONSÁVEL TÉCNICO:
+Nome: ______________________________
+CRQ: _______________________________
+Data: ___/___/_____`,
+
+        'laudo-sensorial': `LAUDO DE ANÁLISE SENSORIAL
+Empresa: [EMPRESA]
+Produto: [PRODUTO]
+Marca: [MARCA]
+Data da análise: ${new Date().toLocaleDateString('pt-BR')}
+
+METODOLOGIA:
+Análise sensorial realizada por equipe de 5 provadores treinados utilizando escala hedônica de 9 pontos.
+
+RESULTADOS:
+1. Aparência: <resultado> pontos
+2. Cor: <resultado> pontos
+3. Odor: <resultado> pontos
+4. Sabor: <resultado> pontos
+5. Textura: <resultado> pontos
+6. Aceitação Global: <resultado> pontos
+
+OBSERVAÇÕES:
+<observações da análise>
+
+PARECER TÉCNICO:
+A amostra analisada apresenta características sensoriais satisfatórias, com boa aceitação global.
+
+RESPONSÁVEL TÉCNICO:
+Nome: ______________________________
+Registro: __________________________
+Data: ___/___/_____`
+    };
+    
+    // Substituir dados do template
+    function populateTemplate(template) {
+        const empresa = document.getElementById('empresa').value || '[EMPRESA]';
+        const produto = document.getElementById('produto').value || '[PRODUTO]';
+        const marca = document.getElementById('marca').value || '[MARCA]';
+        
+        return template
+            .replace(/\[EMPRESA\]/g, empresa)
+            .replace(/\[PRODUTO\]/g, produto)
+            .replace(/\[MARCA\]/g, marca);
+    }
+    
+    // Carregar template ao clicar
+    document.querySelectorAll('.template-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const templateId = item.getAttribute('data-template');
+            const templateContent = templates[templateId];
+            
+            document.getElementById('editor-content').value = populateTemplate(templateContent);
+            
+            // Enviar atualização para outros usuários
+            socket.emit('update_content', {
+                content: document.getElementById('editor-content').value,
+                userId: userId
+            });
+        });
+    });
+    
+    // Atualização em tempo real
+    document.getElementById('editor-content').addEventListener('input', (e) => {
+        socket.emit('update_content', {
+            content: e.target.value,
+            userId: userId
+        });
+    });
+    
+    // Receber atualizações
+    socket.on('content_updated', (data) => {
+        if (data.userId !== userId) {
+            document.getElementById('editor-content').value = data.content;
+        }
+    });
+    
+    // Função para exportar documento
+    function exportDocument(format) {
+        const content = document.getElementById('editor-content').value;
+        document.getElementById('hidden-content').value = content;
+        document.getElementById('export-format').value = format;
+        document.getElementById('document-form').submit();
+    }
+    
+    // Editor de texto simples
+    document.getElementById('bold-btn').addEventListener('click', () => {
+        const textarea = document.getElementById('editor-content');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+        
+        const newText = '**' + selectedText + '**';
+        const newContent = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+        
+        textarea.value = newContent;
+        socket.emit('update_content', { content: textarea.value, userId: userId });
+    });
+    
+    document.getElementById('italic-btn').addEventListener('click', () => {
+        const textarea = document.getElementById('editor-content');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(start, end);
+        
+        const newText = '*' + selectedText + '*';
+        const newContent = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+        
+        textarea.value = newContent;
+        socket.emit('update_content', { content: textarea.value, userId: userId });
+    });
+    
+    // Capturar posição do cursor para colaboração em tempo real
+    document.getElementById('editor-content').addEventListener('mousemove', (e) => {
+        const rect = e.target.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Apenas enviar se a posição tiver mudado significativamente
+        if (Math.abs(x - lastCursorPosition.x) > 5 || Math.abs(y - lastCursorPosition.y) > 5) {
+            lastCursorPosition = { x, y };
+            socket.emit('cursor_move', {
+                userId: userId,
+                position: { x, y }
+            });
+        }
+    });
+    
+    // Função para buscar dados para seletores dinâmicos
+    document.getElementById('empresa').addEventListener('change', function() {
+        const empresa = this.value;
+        const produtoSelect = document.getElementById('produto');
+        
+        // Limpar opções atuais
+        produtoSelect.innerHTML = '<option value="">Selecione o produto</option>';
+        
+        // Filtrar produtos por empresa selecionada
+        {% if fornecedores_df is defined and fornecedores_df|length > 0 %}
+        const produtosFiltrados = [];
+        {% for _, row in fornecedores_df.iterrows() %}
+        if ('{{ row.EMPRESA }}' === empresa) {
+            produtosFiltrados.push('{{ row.PRODUTO }}');
+        }
+        {% endfor %}
+        
+        // Adicionar opções únicas
+        [...new Set(produtosFiltrados)].forEach(produto => {
+            const option = document.createElement('option');
+            option.value = produto;
+            option.textContent = produto;
+            produtoSelect.appendChild(option);
+        });
+        {% endif %}
+    });
+    
+    // Filtrar marcas quando produto é selecionado
+    document.getElementById('produto').addEventListener('change', function() {
+        const empresa = document.getElementById('empresa').value;
+        const produto = this.value;
+        const marcaSelect = document.getElementById('marca');
+        
+        // Limpar opções atuais
+        marcaSelect.innerHTML = '<option value="">Selecione a marca</option>';
+        
+        // Filtrar marcas por empresa e produto selecionados
+        {% if fornecedores_df is defined and fornecedores_df|length > 0 %}
+        const marcasFiltradas = [];
+        {% for _, row in fornecedores_df.iterrows() %}
+        if ('{{ row.EMPRESA }}' === empresa && '{{ row.PRODUTO }}' === produto) {
+            marcasFiltradas.push('{{ row.MARCA }}');
+        }
+        {% endfor %}
+        
+        // Adicionar opções únicas
+        [...new Set(marcasFiltradas)].forEach(marca => {
+            const option = document.createElement('option');
+            option.value = marca;
+            option.textContent = marca;
+            marcaSelect.appendChild(option);
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}

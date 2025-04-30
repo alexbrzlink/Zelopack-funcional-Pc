@@ -1,0 +1,458 @@
+{% extends 'base.html' %}
+
+{% block title %}Cálculos Técnicos Avançados - Zelopack{% endblock %}
+
+{% block styles %}
+<style>
+    .card-calc {
+        transition: all 0.3s ease;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .card-calc:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #007bff;
+        font-weight: 600;
+    }
+    
+    .nav-tabs .nav-link.active {
+        font-weight: bold;
+        border-top: 3px solid #007bff;
+    }
+    
+    .form-control:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    
+    .btn-calculate {
+        background-color: #007bff;
+        color: white;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .btn-calculate:hover {
+        background-color: #0069d9;
+        transform: translateY(-2px);
+    }
+    
+    .result-box {
+        background-color: #f8f9fa;
+        border-left: 4px solid #28a745;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 4px;
+    }
+    
+    .result-item {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .result-item:last-child {
+        border-bottom: none;
+    }
+    
+    .result-value {
+        font-weight: bold;
+        color: #28a745;
+    }
+    
+    .input-with-unit {
+        position: relative;
+    }
+    
+    .input-unit {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 14px;
+    }
+    
+    .calculation-group {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+    
+    .tab-content {
+        padding-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-3"><i class="fas fa-calculator"></i> Cálculos Técnicos Avançados</h2>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-flask"></i> Calculadora Técnica
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <ul class="nav nav-tabs" id="calculatorTabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="producao-tab" data-toggle="tab" href="#producao" role="tab">Produção</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="brix-tab" data-toggle="tab" href="#brix" role="tab">Brix</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="acidez-tab" data-toggle="tab" href="#acidez" role="tab">Acidez</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="outros-tab" data-toggle="tab" href="#outros" role="tab">Outros</a>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" id="calculatorTabContent">
+                            <!-- Aba de Produção -->
+                            <div class="tab-pane fade show active" id="producao" role="tabpanel">
+                                <div class="calculation-group">
+                                    <h5>Produção Final (200)</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Peso Líquido (kg):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="peso_liquido" placeholder="Peso líquido">
+                                            <span class="input-unit">kg</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Perdas (kg):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="perdas" placeholder="Perdas">
+                                            <span class="input-unit">kg</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="calculation-group">
+                                    <h5>Produção (Litro)</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Peso Líquido (kg):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="peso_liquido" placeholder="Peso líquido">
+                                            <span class="input-unit">kg</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Densidade (g/mL):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.001" class="form-control" name="densidade" placeholder="Densidade">
+                                            <span class="input-unit">g/mL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="calculation-group">
+                                    <h5>Densidade</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Peso (g):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="peso" placeholder="Peso">
+                                            <span class="input-unit">g</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Volume (mL):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="volume" placeholder="Volume">
+                                            <span class="input-unit">mL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Aba de Brix -->
+                            <div class="tab-pane fade" id="brix" role="tabpanel">
+                                <div class="calculation-group">
+                                    <h5>Abaixar Brix</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Brix Atual (°):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="brix_atual" placeholder="Brix atual">
+                                            <span class="input-unit">°</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Brix Desejado (°):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="brix_desejado" placeholder="Brix desejado">
+                                            <span class="input-unit">°</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Volume Atual (L):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="volume_atual" placeholder="Volume atual">
+                                            <span class="input-unit">L</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="calculation-group">
+                                    <h5>Brix Corrigido</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Brix Medido (°):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="brix_medido" placeholder="Brix medido">
+                                            <span class="input-unit">°</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Temperatura (°C):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="temperatura" placeholder="Temperatura" value="20">
+                                            <span class="input-unit">°C</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="calculation-group">
+                                    <h5>Quantidade de Açúcar a Puxar</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Brix Atual (°):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="brix_atual" placeholder="Brix atual">
+                                            <span class="input-unit">°</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Brix Desejado (°):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="brix_desejado" placeholder="Brix desejado">
+                                            <span class="input-unit">°</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Volume (L):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="volume" placeholder="Volume">
+                                            <span class="input-unit">L</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Densidade (g/mL):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.001" class="form-control" name="densidade" placeholder="Densidade" value="1.0">
+                                            <span class="input-unit">g/mL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Aba de Acidez -->
+                            <div class="tab-pane fade" id="acidez" role="tabpanel">
+                                <div class="calculation-group">
+                                    <h5>Acidez (%)</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Volume Titulante (mL):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="volume_titulante" placeholder="Volume titulante">
+                                            <span class="input-unit">mL</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Normalidade:</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="normalidade" placeholder="Normalidade" value="0.1">
+                                            <span class="input-unit">N</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Volume Amostra (mL):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="volume_amostra" placeholder="Volume amostra" value="10">
+                                            <span class="input-unit">mL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="calculation-group">
+                                    <h5>Ratio</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Brix Atual (°):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="brix_atual" placeholder="Brix atual">
+                                            <span class="input-unit">°</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Acidez (%):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="acidez" placeholder="Acidez">
+                                            <span class="input-unit">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="calculation-group">
+                                    <h5>Ratio - Brix</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Ratio:</label>
+                                        <input type="number" step="0.1" class="form-control" name="ratio" placeholder="Ratio">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Acidez (%):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="acidez" placeholder="Acidez">
+                                            <span class="input-unit">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Aba de Outros Cálculos -->
+                            <div class="tab-pane fade" id="outros" role="tabpanel">
+                                <div class="calculation-group">
+                                    <h5>Peso Bruto</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Peso Líquido (kg):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="peso_liquido" placeholder="Peso líquido">
+                                            <span class="input-unit">kg</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Peso Embalagem (kg):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.001" class="form-control" name="peso_embalagem" placeholder="Peso embalagem">
+                                            <span class="input-unit">kg</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="calculation-group">
+                                    <h5>Corantes</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Volume (L):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="volume" placeholder="Volume">
+                                            <span class="input-unit">L</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Concentração Desejada (%):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="concentracao_desejada" placeholder="Concentração desejada">
+                                            <span class="input-unit">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Concentração Corante (%):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.01" class="form-control" name="concentracao_corante" placeholder="Concentração corante" value="1">
+                                            <span class="input-unit">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="calculation-group">
+                                    <h5>Tempo de Finalização</h5>
+                                    <div class="form-group">
+                                        <label class="form-label">Volume (L):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="volume" placeholder="Volume">
+                                            <span class="input-unit">L</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Vazão (L/min):</label>
+                                        <div class="input-with-unit">
+                                            <input type="number" step="0.1" class="form-control" name="vazao" placeholder="Vazão" value="1">
+                                            <span class="input-unit">L/min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-calculate btn-block mt-3">
+                            <i class="fas fa-calculator"></i> Calcular
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-clipboard-list"></i> Resultados dos Cálculos
+                </div>
+                <div class="card-body">
+                    {% if results %}
+                    <div class="result-box">
+                        <h4>Resultados Calculados</h4>
+                        <div class="row">
+                            {% for key, value in results.items() %}
+                            <div class="col-md-6">
+                                <div class="result-item">
+                                    <strong>{{ key }}:</strong>
+                                    <span class="result-value">{{ value|round(4) }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Preencha os campos necessários e clique em Calcular para ver os resultados.
+                    </div>
+                    
+                    <div class="card-calc">
+                        <div class="card-header">
+                            <i class="fas fa-lightbulb"></i> Ajuda Rápida
+                        </div>
+                        <div class="card-body">
+                            <p>Esta calculadora técnica permite realizar diversos cálculos comuns no ambiente industrial de processamento de sucos:</p>
+                            <ul>
+                                <li><strong>Produção:</strong> Cálculos relacionados a volumes, pesos e densidades.</li>
+                                <li><strong>Brix:</strong> Cálculos para ajuste de concentrações de açúcar.</li>
+                                <li><strong>Acidez:</strong> Determinação de acidez e ratio (relação brix/acidez).</li>
+                                <li><strong>Outros:</strong> Cálculos para determinação de adição de corantes, tempo de processo, etc.</li>
+                            </ul>
+                            <p class="mb-0"><em>Selecione a aba apropriada, preencha os campos necessários e clique em Calcular.</em></p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Ativar as abas Bootstrap
+    $(document).ready(function() {
+        $('#calculatorTabs a').click(function(e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    });
+</script>
+{% endblock %}
