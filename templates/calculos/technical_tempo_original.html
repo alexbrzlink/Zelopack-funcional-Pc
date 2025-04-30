@@ -546,17 +546,139 @@
                 <i class="fas fa-clock"></i> Tempo Finalização (TQ)
             </div>
             
-            <div class="calculator-description mb-3">
-                Calcula o tempo estimado para finalizar o TQ com base na capacidade total, volume atual e linha utilizada.
-            </div>
-            
-            <div class="formula-box">
-                <div class="formula-title">Fórmulas:</div>
-                <div>
-                    <div class="mb-2"><strong>Tempo de Finalização:</strong> Tempo = (TQ Total - TQ Atual) ÷ Vazão da Linha</div>
-                    <div><strong>Tempo até Metade do TQ:</strong> Tempo = (TQ Total ÷ 2 - TQ Atual) ÷ Vazão da Linha</div>
+            <div class="info-card-wrapper">
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <i class="fas fa-info-circle pulse-icon"></i>
+                        <h4 class="text-center mb-0">Cálculo de Tempo de Finalização do TQ</h4>
+                    </div>
+                    <div class="info-card-body">
+                        <p class="text-center description-text">
+                            Este cálculo determina o tempo estimado para finalizar o enchimento do tanque (TQ), 
+                            baseado na capacidade total, volume atual e linha utilizada.
+                        </p>
+                        <div class="formula-container">
+                            <div class="formula-item">
+                                <div class="formula-title"><i class="fas fa-clock"></i> Tempo de Finalização:</div>
+                                <div class="formula-equation">Tempo = (TQ Total - TQ Atual) ÷ Vazão da Linha</div>
+                            </div>
+                            <div class="formula-item">
+                                <div class="formula-title"><i class="fas fa-balance-scale"></i> Tempo até Metade do TQ:</div>
+                                <div class="formula-equation">Tempo = (TQ Total ÷ 2 - TQ Atual) ÷ Vazão da Linha</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
+            <style>
+                .info-card-wrapper {
+                    display: flex;
+                    justify-content: center;
+                    margin-bottom: 2rem;
+                }
+                
+                .info-card {
+                    width: 100%;
+                    background: linear-gradient(135deg, #e6f7ff 0%, #f0f8ff 100%);
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(0, 136, 204, 0.1);
+                    overflow: hidden;
+                    border: 1px solid #d1ecff;
+                    transition: all 0.3s ease;
+                }
+                
+                .info-card:hover {
+                    box-shadow: 0 8px 25px rgba(0, 136, 204, 0.2);
+                    transform: translateY(-2px);
+                }
+                
+                .info-card-header {
+                    background: linear-gradient(to right, #0088cc, #33bbff);
+                    color: #fff;
+                    padding: 15px 20px;
+                    border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                
+                .info-card-header h4 {
+                    font-weight: 600;
+                    margin-left: 10px;
+                    letter-spacing: 0.5px;
+                }
+                
+                .info-card-body {
+                    padding: 20px;
+                }
+                
+                .description-text {
+                    color: #0c5a80;
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                    margin-bottom: 20px;
+                    line-height: 1.6;
+                }
+                
+                .formula-container {
+                    background-color: rgba(255, 255, 255, 0.7);
+                    border-radius: 8px;
+                    padding: 15px;
+                    box-shadow: inset 0 0 8px rgba(0, 136, 204, 0.1);
+                }
+                
+                .formula-item {
+                    margin-bottom: 12px;
+                    padding-bottom: 12px;
+                    border-bottom: 1px dashed rgba(0, 136, 204, 0.3);
+                }
+                
+                .formula-item:last-child {
+                    margin-bottom: 0;
+                    padding-bottom: 0;
+                    border-bottom: none;
+                }
+                
+                .formula-title {
+                    color: #0088cc;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 5px;
+                }
+                
+                .formula-title i {
+                    margin-right: 8px;
+                }
+                
+                .formula-equation {
+                    background-color: rgba(0, 136, 204, 0.05);
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    font-family: 'Courier New', monospace;
+                    font-weight: 500;
+                    color: #0c5a80;
+                    text-align: center;
+                    border-left: 3px solid #0088cc;
+                }
+                
+                .pulse-icon {
+                    animation: pulse 2s infinite;
+                }
+                
+                @keyframes pulse {
+                    0% {
+                        transform: scale(1);
+                    }
+                    50% {
+                        transform: scale(1.2);
+                    }
+                    100% {
+                        transform: scale(1);
+                    }
+                }
+            </style>
             
             <form id="formTempoFinalizacao">
                 <div class="row">
@@ -625,75 +747,427 @@
                 </div>
             </form>
             
-            <div class="result-box mt-4 fade-in-up" id="resultadoCalculo" style="display:none;">
+            <div class="result-container mt-4 fade-in-up" id="resultadoCalculo" style="display:none;">
                 <!-- Cabeçalho do resultado -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0 text-primary"><i class="fas fa-chart-pie me-2"></i>Resultados do Cálculo</h5>
-                    <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Atualizado agora</span>
+                <div class="result-header">
+                    <div class="result-title">
+                        <i class="fas fa-chart-pie pulse-icon"></i>
+                        <h4>Resultados do Cálculo</h4>
+                    </div>
+                    <div class="result-status">
+                        <span class="status-badge">
+                            <i class="fas fa-check-circle"></i> Atualizado agora
+                        </span>
+                    </div>
                 </div>
                 
                 <!-- Resultados especiais para o cálculo de Tempo de Finalização (TQ) -->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="result-item">
-                            <div class="result-label"><i class="fas fa-hourglass-half me-2 text-primary"></i>Tempo Restante:</div>
-                            <div class="result-value" id="tempoRestante">-</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label"><i class="fas fa-flag-checkered me-2 text-primary"></i>Horário de Finalização:</div>
-                            <div class="result-value" id="horaFinalizacao">-</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label"><i class="fas fa-balance-scale me-2 text-primary"></i>Horário de Metade do TQ:</div>
-                            <div class="result-value" id="horaMetade">-</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-label"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Vazão Utilizada:</div>
-                            <div class="result-value" id="vazaoUtilizada">-</div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <!-- Indicador visual com status -->
-                        <div class="card mb-3 border-0 shadow-sm">
-                            <div class="card-header bg-light">
-                                <strong><i class="fas fa-tasks me-2"></i>Status do TQ:</strong>
-                                <span class="float-end badge" id="statusBadge">Carregando...</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="progress" style="height: 30px; margin-bottom: 8px;">
-                                    <div class="progress-bar bg-success" id="tqProgress" role="progressbar" 
-                                        style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                <div class="result-content">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="result-metrics">
+                                <div class="metric-item">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-hourglass-half"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Tempo Restante</div>
+                                        <div class="metric-value" id="tempoRestante">-</div>
+                                    </div>
                                 </div>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted">0L</small>
-                                    <small class="text-muted">50%</small>
-                                    <small class="text-muted" id="tqTotalValue">0L</small>
+                                
+                                <div class="metric-item">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-flag-checkered"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Horário de Finalização</div>
+                                        <div class="metric-value" id="horaFinalizacao">-</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="metric-item">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-balance-scale"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Horário de Metade do TQ</div>
+                                        <div class="metric-value" id="horaMetade">-</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="metric-item">
+                                    <div class="metric-icon">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                    </div>
+                                    <div class="metric-info">
+                                        <div class="metric-label">Vazão Utilizada</div>
+                                        <div class="metric-value" id="vazaoUtilizada">-</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Relógio digital interativo -->
-                        <div class="digital-clock">
-                            <div class="clock-container">
-                                <div class="clock-time" id="currentTime">--:--</div>
-                                <div class="clock-label">Hora Atual</div>
-                            </div>
-                            <div class="clock-arrow">
-                                <i class="fas fa-chevron-right"></i>
-                            </div>
-                            <div class="clock-container">
-                                <div class="clock-time" id="halfTime">--:--</div>
-                                <div class="clock-label">Metade TQ</div>
-                            </div>
-                            <div class="clock-arrow">
-                                <i class="fas fa-chevron-right"></i>
-                            </div>
-                            <div class="clock-container">
-                                <div class="clock-time" id="finishTime">--:--</div>
-                                <div class="clock-label">Finalização</div>
+                        <div class="col-md-6">
+                            <!-- Indicador visual com status -->
+                            <div class="progress-card">
+                                <div class="progress-header">
+                                    <div class="progress-title">
+                                        <i class="fas fa-tasks"></i>
+                                        <span>Status do TQ</span>
+                                    </div>
+                                    <div class="progress-status" id="statusBadge">Carregando...</div>
+                                </div>
+                                <div class="progress-body">
+                                    <div class="tank-progress">
+                                        <div class="tank-fill" id="tqProgress" style="width: 0%;"><span>0%</span></div>
+                                    </div>
+                                    <div class="tank-markers">
+                                        <div class="marker-start">0L</div>
+                                        <div class="marker-middle">50%</div>
+                                        <div class="marker-end" id="tqTotalValue">0L</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                
+                <style>
+                    .result-container {
+                        background: #fff;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 15px rgba(0, 136, 204, 0.1);
+                        overflow: hidden;
+                        border: 1px solid #d1ecff;
+                    }
+                    
+                    .result-header {
+                        background: linear-gradient(to right, #0088cc, #33bbff);
+                        color: #fff;
+                        padding: 15px 20px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                    
+                    .result-title {
+                        display: flex;
+                        align-items: center;
+                    }
+                    
+                    .result-title i {
+                        margin-right: 10px;
+                        font-size: 1.2rem;
+                    }
+                    
+                    .result-title h4 {
+                        margin: 0;
+                        font-size: 1.2rem;
+                        font-weight: 600;
+                    }
+                    
+                    .status-badge {
+                        background: rgba(255, 255, 255, 0.2);
+                        padding: 5px 10px;
+                        border-radius: 20px;
+                        font-size: 0.9rem;
+                        display: flex;
+                        align-items: center;
+                    }
+                    
+                    .status-badge i {
+                        margin-right: 5px;
+                    }
+                    
+                    .result-content {
+                        padding: 20px;
+                    }
+                    
+                    .result-metrics {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                    }
+                    
+                    .metric-item {
+                        display: flex;
+                        align-items: center;
+                        padding: 10px;
+                        border-radius: 8px;
+                        background: linear-gradient(135deg, #f8fcff 0%, #f0f8ff 100%);
+                        border: 1px solid #e6f7ff;
+                        transition: all 0.3s ease;
+                    }
+                    
+                    .metric-item:hover {
+                        transform: translateX(5px);
+                        box-shadow: 0 2px 8px rgba(0, 136, 204, 0.1);
+                    }
+                    
+                    .metric-icon {
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(to right, #0088cc, #33bbff);
+                        color: #fff;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-right: 15px;
+                        flex-shrink: 0;
+                    }
+                    
+                    .metric-info {
+                        flex-grow: 1;
+                    }
+                    
+                    .metric-label {
+                        font-size: 0.9rem;
+                        color: #6c757d;
+                        margin-bottom: 3px;
+                    }
+                    
+                    .metric-value {
+                        font-size: 1.3rem;
+                        font-weight: 600;
+                        color: #0c5a80;
+                    }
+                    
+                    .progress-card {
+                        background: linear-gradient(135deg, #f8fcff 0%, #f0f8ff 100%);
+                        border-radius: 8px;
+                        overflow: hidden;
+                        border: 1px solid #e6f7ff;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    
+                    .progress-header {
+                        background: linear-gradient(to right, #0088cc, #33bbff);
+                        color: #fff;
+                        padding: 10px 15px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                    
+                    .progress-title {
+                        display: flex;
+                        align-items: center;
+                        font-weight: 600;
+                    }
+                    
+                    .progress-title i {
+                        margin-right: 8px;
+                    }
+                    
+                    .progress-status {
+                        padding: 3px 8px;
+                        border-radius: 4px;
+                        font-size: 0.8rem;
+                        background: rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .progress-body {
+                        padding: 15px;
+                        display: flex;
+                        flex-direction: column;
+                        flex-grow: 1;
+                        justify-content: center;
+                    }
+                    
+                    .tank-progress {
+                        height: 35px;
+                        background: rgba(0, 136, 204, 0.1);
+                        border-radius: 30px;
+                        overflow: hidden;
+                        position: relative;
+                        margin-bottom: 10px;
+                        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+                    }
+                    
+                    .tank-fill {
+                        height: 100%;
+                        background: linear-gradient(to right, #0088cc, #33bbff);
+                        border-radius: 30px;
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #fff;
+                        font-weight: 600;
+                        transition: width 0.8s ease;
+                        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+                    }
+                    
+                    .tank-markers {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 0 5px;
+                        font-size: 0.8rem;
+                        color: #6c757d;
+                    }
+                </style>
+                        
+                        <!-- Relógio digital interativo -->
+                        <div class="digital-timeline">
+                            <div class="timeline-header">
+                                <i class="fas fa-stopwatch"></i> Linha do Tempo de Processamento
+                            </div>
+                            <div class="timeline-content">
+                                <div class="timeline-step current">
+                                    <div class="timeline-icon">
+                                        <i class="fas fa-play-circle"></i>
+                                    </div>
+                                    <div class="timeline-clock">
+                                        <div class="clock-time" id="currentTime">--:--</div>
+                                    </div>
+                                    <div class="timeline-label">Hora Atual</div>
+                                </div>
+                                <div class="timeline-connection">
+                                    <div class="connection-line"></div>
+                                    <div class="connection-arrow">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </div>
+                                <div class="timeline-step half">
+                                    <div class="timeline-icon">
+                                        <i class="fas fa-dot-circle"></i>
+                                    </div>
+                                    <div class="timeline-clock">
+                                        <div class="clock-time" id="halfTime">--:--</div>
+                                    </div>
+                                    <div class="timeline-label">Metade do TQ</div>
+                                </div>
+                                <div class="timeline-connection">
+                                    <div class="connection-line"></div>
+                                    <div class="connection-arrow">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </div>
+                                <div class="timeline-step finish">
+                                    <div class="timeline-icon">
+                                        <i class="fas fa-flag-checkered"></i>
+                                    </div>
+                                    <div class="timeline-clock">
+                                        <div class="clock-time" id="finishTime">--:--</div>
+                                    </div>
+                                    <div class="timeline-label">Finalização</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <style>
+                            .digital-timeline {
+                                background: linear-gradient(to right, #f0f8ff, #e6f7ff);
+                                border-radius: 12px;
+                                box-shadow: 0 4px 15px rgba(0, 136, 204, 0.1);
+                                overflow: hidden;
+                                margin-top: 20px;
+                                border: 1px solid #d1ecff;
+                            }
+                            
+                            .timeline-header {
+                                background: linear-gradient(to right, #0088cc, #33bbff);
+                                color: #fff;
+                                padding: 12px 20px;
+                                font-weight: 600;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 1.1rem;
+                            }
+                            
+                            .timeline-header i {
+                                margin-right: 10px;
+                            }
+                            
+                            .timeline-content {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                padding: 20px;
+                            }
+                            
+                            .timeline-step {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                text-align: center;
+                                position: relative;
+                                flex: 1;
+                            }
+                            
+                            .timeline-icon {
+                                width: 40px;
+                                height: 40px;
+                                background-color: #fff;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                box-shadow: 0 2px 10px rgba(0, 136, 204, 0.2);
+                                margin-bottom: 10px;
+                                border: 2px solid;
+                                z-index: 2;
+                            }
+                            
+                            .timeline-step.current .timeline-icon {
+                                border-color: #0088cc;
+                                color: #0088cc;
+                            }
+                            
+                            .timeline-step.half .timeline-icon {
+                                border-color: #33bbff;
+                                color: #33bbff;
+                            }
+                            
+                            .timeline-step.finish .timeline-icon {
+                                border-color: #28a745;
+                                color: #28a745;
+                            }
+                            
+                            .timeline-clock {
+                                font-size: 1.8rem;
+                                font-weight: bold;
+                                font-family: 'Courier New', monospace;
+                                padding: 5px 12px;
+                                border-radius: 6px;
+                                color: #0c5a80;
+                                border-bottom: 2px solid rgba(0, 136, 204, 0.3);
+                                width: 100px;
+                                text-align: center;
+                            }
+                            
+                            .timeline-label {
+                                font-size: 0.85rem;
+                                color: #0c5a80;
+                                font-weight: 500;
+                                margin-top: 6px;
+                            }
+                            
+                            .timeline-connection {
+                                position: relative;
+                                display: flex;
+                                align-items: center;
+                                flex: 0.5;
+                                height: 20px;
+                                z-index: 1;
+                            }
+                            
+                            .connection-line {
+                                height: 2px;
+                                background: linear-gradient(to right, #0088cc, #33bbff);
+                                flex-grow: 1;
+                            }
+                            
+                            .connection-arrow {
+                                color: #33bbff;
+                                margin: 0 5px;
+                            }
+                        </style>
                     </div>
                 </div>
             </div>
