@@ -236,6 +236,13 @@ def tecnicos():
     return render_template('calculos/technical_abas_new.html', results=results)
 
 
+@calculos_bp.route('/tempo-tq')
+@login_required
+def tempo_tq():
+    """Rota específica para cálculo de tempo de finalização do TQ."""
+    return render_template('calculos/technical_tempo_original.html')
+
+
 @calculos_bp.route('/api/calcular/producao-200g', methods=['POST'])
 @login_required
 def api_calcular_producao_200g():
