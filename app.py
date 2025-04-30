@@ -1,10 +1,9 @@
+import os
+
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
-from flask_socketio import SocketIO
-from flask_caching import Cache
-import os
 
 
 class Base(DeclarativeBase):
@@ -12,18 +11,12 @@ class Base(DeclarativeBase):
 
 
 db = SQLAlchemy(model_class=Base)
-# Inicialização do app e das extensões
+# create the app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "zelopack-dev-key")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # needed for url_for to generate with https
 
-# Inicialização do Socket.IO para funcionalidade em tempo real
-socketio = SocketIO(app)
-
-# Inicialização do Cache
-cache = Cache(app, config={'CACHE_TYPE': 'SimpleCache'})
-
-# Configure the database
+# configure the database, relative to the app instance folder
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///zelopack.db")
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
@@ -38,14 +31,7 @@ with app.app_context():
 
     db.create_all()
 
-# Registrar blueprints
-from editor import editor_bp
-from technical import technical_bp
-
-app.register_blueprint(editor_bp)
-app.register_blueprint(technical_bp)
-
-# Rota para a página inicial
+# Definir rota principal
 @app.route('/')
 def index():
     return render_template('index.html')
