@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if categoria %}
+        Editar Categoria: {{ categoria.nome }}
+    {% else %}
+        Nova Categoria
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('estoque.index') }}">Estoque</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('estoque.listar_categorias') }}">Categorias</a></li>
+            <li class="breadcrumb-item active">
+                {% if categoria %}
+                    Editar
+                {% else %}
+                    Nova Categoria
+                {% endif %}
+            </li>
+        </ol>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        {% if categoria %}
+                            <i class="fas fa-edit me-2"></i>
+                            Editar Categoria
+                        {% else %}
+                            <i class="fas fa-plus-circle me-2"></i>
+                            Nova Categoria de Estoque
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome da Categoria *</label>
+                            <input type="text" class="form-control" id="nome" name="nome" value="{{ categoria.nome if categoria else '' }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="3">{{ categoria.descricao if categoria else '' }}</textarea>
+                            <div class="form-text">Descrição adicional sobre esta categoria de itens.</div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>
+                                {% if categoria %}
+                                    Atualizar Categoria
+                                {% else %}
+                                    Salvar Categoria
+                                {% endif %}
+                            </button>
+                            
+                            <a href="{{ url_for('estoque.listar_categorias') }}" class="btn btn-secondary ms-2">
+                                <i class="fas fa-times me-1"></i>
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

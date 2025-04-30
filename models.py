@@ -1113,6 +1113,11 @@ class MovimentacaoEstoque(db.Model):
     motivo = db.Column(db.Text, nullable=True)
     observacoes = db.Column(db.Text, nullable=True)
     
+    # Campos para gerenciamento de luvas
+    pessoa_retirada = db.Column(db.String(100), nullable=True)
+    pessoa_entrega = db.Column(db.String(100), nullable=True)
+    tamanho_luva = db.Column(db.String(10), nullable=True)  # P, M, G, XG
+    
     # Relacionamento
     item = db.relationship('ItemEstoque', back_populates='movimentacoes')
     

@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if acao == 'novo' %}
+        Adicionar Novo Item
+    {% else %}
+        Editar Item: {{ item.nome }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('estoque.index') }}">Estoque</a></li>
+            {% if acao == 'novo' %}
+                <li class="breadcrumb-item active">Adicionar Novo Item</li>
+            {% else %}
+                <li class="breadcrumb-item"><a href="{{ url_for('estoque.detalhe_item', item_id=item.id) }}">{{ item.nome }}</a></li>
+                <li class="breadcrumb-item active">Editar</li>
+            {% endif %}
+        </ol>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        {% if acao == 'novo' %}
+                            <i class="fas fa-plus-circle me-2"></i>
+                            Adicionar Novo Item ao Estoque
+                        {% else %}
+                            <i class="fas fa-edit me-2"></i>
+                            Editar Item: {{ item.nome }}
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="formItem">
+                        <div class="row">
+                            <!-- Detalhes básicos do item -->
+                            <div class="col-md-6">
+                                <h5 class="border-bottom pb-2 mb-3">Informações Básicas</h5>
+
+                                <div class="mb-3">
+                                    <label for="codigo" class="form-label">Código do Item *</label>
+                                    <input type="text" class="form-control" id="codigo" name="codigo" value="{{ item.codigo if item else '' }}" required>
+                                    <div class="form-text">Código único para identificar o item no estoque</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="nome" class="form-label">Nome do Item *</label>
+                                    <input type="text" class="form-control" id="nome" name="nome" value="{{ item.nome if item else '' }}" required>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="categoria_id" class="form-label">Categoria *</label>
+                                        <select class="form-select" id="categoria_id" name="categoria_id" required>
+                                            <option value="">-- Selecione uma categoria --</option>
+                                            {% for categoria in categorias %}
+                                                <option value="{{ categoria.id }}" {% if item and item.categoria_id == categoria.id %}selected{% endif %}>
+                                                    {{ categoria.nome }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        {% if not categorias %}
+                                            <div class="form-text text-warning">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                                Nenhuma categoria disponível. 
+                                                <a href="{{ url_for('estoque.nova_categoria') }}" target="_blank">Clique aqui para criar</a>.
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="unidade_medida" class="form-label">Unidade de Medida *</label>
+                                        <select class="form-select" id="unidade_medida" name="unidade_medida" required>
+                                            <option value="">-- Selecione --</option>
+                                            <option value="un" {% if item and item.unidade_medida == 'un' %}selected{% endif %}>Unidade (un)</option>
+                                            <option value="ml" {% if item and item.unidade_medida == 'ml' %}selected{% endif %}>Mililitro (ml)</option>
+                                            <option value="L" {% if item and item.unidade_medida == 'L' %}selected{% endif %}>Litro (L)</option>
+                                            <option value="g" {% if item and item.unidade_medida == 'g' %}selected{% endif %}>Grama (g)</option>
+                                            <option value="kg" {% if item and item.unidade_medida == 'kg' %}selected{% endif %}>Quilograma (kg)</option>
+                                            <option value="frascos" {% if item and item.unidade_medida == 'frascos' %}selected{% endif %}>Frascos</option>
+                                            <option value="caixas" {% if item and item.unidade_medida == 'caixas' %}selected{% endif %}>Caixas</option>
+                                            <option value="ampolas" {% if item and item.unidade_medida == 'ampolas' %}selected{% endif %}>Ampolas</option>
+                                            <option value="pacotes" {% if item and item.unidade_medida == 'pacotes' %}selected{% endif %}>Pacotes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="quantidade_minima" class="form-label">Quantidade Mínima</label>
+                                        <input type="number" class="form-control" id="quantidade_minima" name="quantidade_minima" min="0" step="0.01" value="{{ item.quantidade_minima if item else '0' }}">
+                                        <div class="form-text">Nível mínimo para alerta de estoque baixo</div>
+                                    </div>
+                                    
+                                    {% if acao == 'novo' %}
+                                    <div class="col-md-6 mb-3">
+                                        <label for="quantidade_inicial" class="form-label">Quantidade Inicial</label>
+                                        <input type="number" class="form-control" id="quantidade_inicial" name="quantidade_inicial" min="0" step="0.01" value="0">
+                                        <div class="form-text">Quantidade inicial ao cadastrar o item</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="localizacao" class="form-label">Localização no Laboratório</label>
+                                    <input type="text" class="form-control" id="localizacao" name="localizacao" value="{{ item.localizacao if item else '' }}">
+                                    <div class="form-text">Ex: Prateleira A, Armário 3, Laboratório de Microbiologia</div>
+                                </div>
+                                
+                                {% if acao == 'novo' %}
+                                <div class="mb-3">
+                                    <label for="lote_inicial" class="form-label">Lote Inicial</label>
+                                    <input type="text" class="form-control" id="lote_inicial" name="lote_inicial">
+                                    <div class="form-text">Número do lote para a quantidade inicial</div>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="mb-3">
+                                    <label for="descricao" class="form-label">Descrição</label>
+                                    <textarea class="form-control" id="descricao" name="descricao" rows="3">{{ item.descricao if item else '' }}</textarea>
+                                </div>
+                            </div>
+                            
+                            <!-- Detalhes específicos para reagentes -->
+                            <div class="col-md-6">
+                                <h5 class="border-bottom pb-2 mb-3">Dados Adicionais</h5>
+                                
+                                <div class="mb-3 form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="e_reagente" name="e_reagente" {% if item and item.e_reagente %}checked{% endif %}>
+                                    <label class="form-check-label" for="e_reagente">
+                                        <i class="fas fa-flask me-1"></i> Este item é um reagente químico
+                                    </label>
+                                </div>
+                                
+                                <div class="mb-3 form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="e_perigoso" name="e_perigoso" {% if item and item.e_perigoso %}checked{% endif %}>
+                                    <label class="form-check-label" for="e_perigoso">
+                                        <i class="fas fa-exclamation-triangle me-1"></i> Material perigoso/tóxico
+                                    </label>
+                                </div>
+                                
+                                <div id="camposReagente" class="{% if not item or not item.e_reagente %}d-none{% endif %}">
+                                    <div class="mb-3">
+                                        <label for="formula_quimica" class="form-label">Fórmula Química</label>
+                                        <input type="text" class="form-control" id="formula_quimica" name="formula_quimica" value="{{ item.formula_quimica if item else '' }}">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="cas_number" class="form-label">Número CAS</label>
+                                        <input type="text" class="form-control" id="cas_number" name="cas_number" value="{{ item.cas_number if item else '' }}">
+                                        <div class="form-text">Número de registro CAS (Chemical Abstracts Service)</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="concentracao" class="form-label">Concentração</label>
+                                        <input type="text" class="form-control" id="concentracao" name="concentracao" value="{{ item.concentracao if item else '' }}">
+                                        <div class="form-text">Ex: 30%, 1 mol/L, P.A.</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="fabricante" class="form-label">Fabricante</label>
+                                    <input type="text" class="form-control" id="fabricante" name="fabricante" value="{{ item.fabricante if item else '' }}">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="data_validade" class="form-label">Data de Validade</label>
+                                    <input type="date" class="form-control" id="data_validade" name="data_validade" value="{{ item.data_validade.strftime('%Y-%m-%d') if item and item.data_validade else '' }}">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="observacoes" class="form-label">Observações</label>
+                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{ item.observacoes if item else '' }}</textarea>
+                                    <div class="form-text">Informações adicionais, restrições, cuidados especiais, etc.</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>
+                                    {% if acao == 'novo' %}
+                                        Adicionar Item
+                                    {% else %}
+                                        Salvar Alterações
+                                    {% endif %}
+                                </button>
+                                
+                                <a href="{% if acao == 'novo' %}{{ url_for('estoque.index') }}{% else %}{{ url_for('estoque.detalhe_item', item_id=item.id) }}{% endif %}" class="btn btn-secondary ms-2">
+                                    <i class="fas fa-times me-1"></i>
+                                    Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mostrar/ocultar campos específicos para reagentes
+    const checkboxReagente = document.getElementById('e_reagente');
+    const camposReagente = document.getElementById('camposReagente');
+    
+    checkboxReagente.addEventListener('change', function() {
+        if (this.checked) {
+            camposReagente.classList.remove('d-none');
+        } else {
+            camposReagente.classList.add('d-none');
+        }
+    });
+    
+    // Validação do formulário
+    const form = document.getElementById('formItem');
+    form.addEventListener('submit', function(event) {
+        let valido = true;
+        
+        // Verificar se categoria está selecionada
+        const categoria = document.getElementById('categoria_id');
+        if (!categoria.value) {
+            alert('Selecione uma categoria para o item.');
+            valido = false;
+        }
+        
+        // Verificar se unidade de medida está selecionada
+        const unidade = document.getElementById('unidade_medida');
+        if (!unidade.value) {
+            alert('Selecione uma unidade de medida.');
+            valido = false;
+        }
+        
+        if (!valido) {
+            event.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

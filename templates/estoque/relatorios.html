@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatórios de Estoque{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('estoque.index') }}">Estoque</a></li>
+            <li class="breadcrumb-item active">Relatórios</li>
+        </ol>
+        <div>
+            <a href="{{ url_for('estoque.index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Voltar ao Estoque
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Alertas e Informações Importantes -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Alertas do Estoque
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <!-- Alerta de estoque baixo -->
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                                        Itens com Estoque Baixo
+                                    </h6>
+                                    <p class="mb-1 text-muted">Itens com quantidade abaixo do mínimo estabelecido</p>
+                                </div>
+                                <h3>
+                                    <span class="badge bg-danger">{{ itens_estoque_baixo|length }}</span>
+                                </h3>
+                            </div>
+                            
+                            {% if itens_estoque_baixo %}
+                            <div class="table-responsive mt-3">
+                                <table class="table table-sm table-hover table-striped">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Item</th>
+                                            <th>Categoria</th>
+                                            <th>Atual</th>
+                                            <th>Mínimo</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in itens_estoque_baixo %}
+                                        <tr>
+                                            <td>{{ item.codigo }}</td>
+                                            <td>
+                                                <a href="{{ url_for('estoque.detalhe_item', item_id=item.id) }}">
+                                                    {{ item.nome }}
+                                                </a>
+                                            </td>
+                                            <td>{{ item.categoria.nome }}</td>
+                                            <td class="text-danger">{{ item.quantidade_atual }} {{ item.unidade_medida }}</td>
+                                            <td>{{ item.quantidade_minima }} {{ item.unidade_medida }}</td>
+                                            <td>
+                                                <a href="{{ url_for('estoque.registrar_entrada', item_id=item.id) }}" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-arrow-down"></i> Entrada
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-success mt-3 mb-0">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Não há itens com estoque abaixo do mínimo.
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Alerta de itens próximos ao vencimento -->
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <i class="fas fa-calendar-times text-warning me-2"></i>
+                                        Itens Próximos ao Vencimento
+                                    </h6>
+                                    <p class="mb-1 text-muted">Itens que vencem nos próximos 30 dias</p>
+                                </div>
+                                <h3>
+                                    <span class="badge bg-warning text-dark">{{ itens_vencimento|length }}</span>
+                                </h3>
+                            </div>
+                            
+                            {% if itens_vencimento %}
+                            <div class="table-responsive mt-3">
+                                <table class="table table-sm table-hover table-striped">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Item</th>
+                                            <th>Categoria</th>
+                                            <th>Validade</th>
+                                            <th>Dias Restantes</th>
+                                            <th>Qtd. Atual</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in itens_vencimento %}
+                                        <tr>
+                                            <td>{{ item.codigo }}</td>
+                                            <td>
+                                                <a href="{{ url_for('estoque.detalhe_item', item_id=item.id) }}">
+                                                    {{ item.nome }}
+                                                </a>
+                                            </td>
+                                            <td>{{ item.categoria.nome }}</td>
+                                            <td>{{ item.data_validade.strftime('%d/%m/%Y') }}</td>
+                                            <td class="{% if item.dias_ate_vencimento() <= 0 %}text-danger{% elif item.dias_ate_vencimento() <= 15 %}text-warning{% endif %}">
+                                                {% if item.dias_ate_vencimento() <= 0 %}
+                                                    Vencido há {{ item.dias_ate_vencimento()|abs }} dias
+                                                {% else %}
+                                                    {{ item.dias_ate_vencimento() }} dias
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ item.quantidade_atual }} {{ item.unidade_medida }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-success mt-3 mb-0">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Não há itens próximos ao vencimento.
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estatísticas por Categoria -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Distribuição por Categoria
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if dados_categorias %}
+                        <div id="graficoCategoria" style="height: 300px;"></div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-chart-pie fa-3x mb-3"></i>
+                                <p>Não há dados suficientes para gerar estatísticas.</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Exportação de Relatórios -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-export me-2"></i>
+                        Exportar Relatórios
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Exporte relatórios detalhados do sistema de estoque para análise e documentação.</p>
+                    
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Inventário Completo</h6>
+                                <p class="mb-1 small text-muted">Relatório de todos os itens no estoque</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">
+                                <i class="fas fa-file-excel"></i>
+                            </span>
+                        </a>
+                        
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Lista de Materiais com Estoque Baixo</h6>
+                                <p class="mb-1 small text-muted">Itens que precisam de reposição</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">
+                                <i class="fas fa-file-excel"></i>
+                            </span>
+                        </a>
+                        
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Relatório de Validade</h6>
+                                <p class="mb-1 small text-muted">Itens organizados por data de validade</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">
+                                <i class="fas fa-file-excel"></i>
+                            </span>
+                        </a>
+                        
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Histórico de Movimentações</h6>
+                                <p class="mb-1 small text-muted">Registro de entradas e saídas do estoque</p>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">
+                                <i class="fas fa-file-excel"></i>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% if dados_categorias %}
+    // Dados para o gráfico
+    const dados = {
+        labels: [{% for cat in dados_categorias %}'{{ cat.nome }}',{% endfor %}],
+        datasets: [{
+            label: 'Itens por Categoria',
+            data: [{% for cat in dados_categorias %}{{ cat.total }},{% endfor %}],
+            backgroundColor: [
+                'rgba(75, 192, 192, 0.7)',
+                'rgba(54, 162, 235, 0.7)',
+                'rgba(153, 102, 255, 0.7)',
+                'rgba(255, 159, 64, 0.7)',
+                'rgba(255, 99, 132, 0.7)',
+                'rgba(255, 205, 86, 0.7)',
+                'rgba(201, 203, 207, 0.7)'
+            ],
+            borderColor: [
+                'rgb(75, 192, 192)',
+                'rgb(54, 162, 235)',
+                'rgb(153, 102, 255)',
+                'rgb(255, 159, 64)',
+                'rgb(255, 99, 132)',
+                'rgb(255, 205, 86)',
+                'rgb(201, 203, 207)'
+            ],
+            borderWidth: 1
+        }]
+    };
+    
+    // Configuração do gráfico
+    const config = {
+        type: 'pie',
+        data: dados,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                title: {
+                    display: true,
+                    text: 'Distribuição de Itens por Categoria'
+                }
+            }
+        },
+    };
+    
+    // Renderizar o gráfico
+    const ctx = document.getElementById('graficoCategoria').getContext('2d');
+    new Chart(ctx, config);
+    {% endif %}
+});
+</script>
+{% endblock %}

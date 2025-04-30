@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if tipo == 'entrada' %}
+        Registrar Entrada - {{ item.nome }}
+    {% else %}
+        Registrar Saída - {{ item.nome }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('estoque.index') }}">Estoque</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('estoque.detalhe_item', item_id=item.id) }}">{{ item.nome }}</a></li>
+            <li class="breadcrumb-item active">
+                {% if tipo == 'entrada' %}
+                    Registrar Entrada
+                {% else %}
+                    Registrar Saída
+                {% endif %}
+            </li>
+        </ol>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header {% if tipo == 'entrada' %}bg-success{% else %}bg-primary{% endif %} text-white">
+                    <h5 class="mb-0">
+                        {% if tipo == 'entrada' %}
+                            <i class="fas fa-arrow-down me-2"></i>
+                            Registrar Entrada de Material
+                        {% else %}
+                            <i class="fas fa-arrow-up me-2"></i>
+                            Registrar Saída de Material
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Informações do Item -->
+                    <div class="alert {% if tipo == 'entrada' %}alert-success{% else %}alert-primary{% endif %} d-flex align-items-center mb-4">
+                        <div>
+                            <h5 class="alert-heading">{{ item.nome }}</h5>
+                            <p class="mb-0">
+                                <strong>Código:</strong> {{ item.codigo }} | 
+                                <strong>Categoria:</strong> {{ item.categoria.nome }} | 
+                                <strong>Unidade:</strong> {{ item.unidade_medida }}
+                            </p>
+                            <p class="mb-0">
+                                <strong>Estoque Atual:</strong> {{ item.quantidade_atual }} {{ item.unidade_medida }}
+                                {% if tipo == 'saida' and item.quantidade_atual <= 0 %}
+                                <span class="badge bg-danger ms-2">Sem estoque disponível</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if tipo == 'saida' and item.quantidade_atual <= 0 %}
+                    <div class="alert alert-danger mb-4">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Atenção:</strong> Não há quantidade disponível em estoque para realizar uma saída.
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" id="formMovimentacao">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="quantidade" class="form-label">Quantidade *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="quantidade" name="quantidade" min="0.01" step="0.01" required {% if tipo == 'saida' and item.quantidade_atual <= 0 %}disabled{% endif %}>
+                                    <span class="input-group-text">{{ item.unidade_medida }}</span>
+                                </div>
+                                {% if tipo == 'saida' %}
+                                <div class="form-text text-danger" id="avisoQuantidade"></div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="lote" class="form-label">Lote</label>
+                                <input type="text" class="form-control" id="lote" name="lote" {% if tipo == 'saida' and item.quantidade_atual <= 0 %}disabled{% endif %}>
+                            </div>
+                        </div>
+                        
+                        {% if tipo == 'entrada' %}
+                        <div class="mb-3">
+                            <label for="nota_fiscal" class="form-label">Nota Fiscal</label>
+                            <input type="text" class="form-control" id="nota_fiscal" name="nota_fiscal">
+                        </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="motivo" class="form-label">Motivo *</label>
+                            <select class="form-select" id="motivo" name="motivo" required {% if tipo == 'saida' and item.quantidade_atual <= 0 %}disabled{% endif %}>
+                                <option value="">-- Selecione um motivo --</option>
+                                {% if tipo == 'entrada' %}
+                                    <option value="Compra">Compra</option>
+                                    <option value="Transferência">Transferência de outro laboratório</option>
+                                    <option value="Doação">Doação</option>
+                                    <option value="Devolução">Devolução</option>
+                                    <option value="Ajuste de Estoque">Ajuste de Estoque</option>
+                                    <option value="Outro">Outro</option>
+                                {% else %}
+                                    <option value="Uso em Laboratório">Uso em Laboratório</option>
+                                    <option value="Uso em Produção">Uso em Produção</option>
+                                    <option value="Análise">Análise</option>
+                                    <option value="Transferência">Transferência para outro laboratório</option>
+                                    <option value="Descarte">Descarte por vencimento</option>
+                                    <option value="Amostra">Separação de Amostra</option>
+                                    <option value="Perdas">Perdas ou Avarias</option>
+                                    <option value="Ajuste de Estoque">Ajuste de Estoque</option>
+                                    <option value="Outro">Outro</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                        
+                        <div id="divOutroMotivo" class="mb-3 d-none">
+                            <label for="outroMotivo" class="form-label">Especifique o motivo</label>
+                            <input type="text" class="form-control" id="outroMotivo" {% if tipo == 'saida' and item.quantidade_atual <= 0 %}disabled{% endif %}>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="observacoes" class="form-label">Observações</label>
+                            <textarea class="form-control" id="observacoes" name="observacoes" rows="3" {% if tipo == 'saida' and item.quantidade_atual <= 0 %}disabled{% endif %}></textarea>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn {% if tipo == 'entrada' %}btn-success{% else %}btn-primary{% endif %}" {% if tipo == 'saida' and item.quantidade_atual <= 0 %}disabled{% endif %}>
+                                {% if tipo == 'entrada' %}
+                                    <i class="fas fa-arrow-down me-1"></i>
+                                    Registrar Entrada
+                                {% else %}
+                                    <i class="fas fa-arrow-up me-1"></i>
+                                    Registrar Saída
+                                {% endif %}
+                            </button>
+                            
+                            <a href="{{ url_for('estoque.detalhe_item', item_id=item.id) }}" class="btn btn-secondary ms-2">
+                                <i class="fas fa-times me-1"></i>
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validação de quantidade para saída
+    {% if tipo == 'saida' %}
+    const inputQuantidade = document.getElementById('quantidade');
+    const avisoQuantidade = document.getElementById('avisoQuantidade');
+    const quantidadeAtual = {{ item.quantidade_atual }};
+    
+    inputQuantidade.addEventListener('input', function() {
+        const quantidade = parseFloat(this.value);
+        if (quantidade > quantidadeAtual) {
+            avisoQuantidade.textContent = `Quantidade excede o estoque atual de ${quantidadeAtual} {{ item.unidade_medida }}`;
+            this.classList.add('is-invalid');
+        } else {
+            avisoQuantidade.textContent = '';
+            this.classList.remove('is-invalid');
+        }
+    });
+    {% endif %}
+    
+    // Mostrar campo adicional para "Outro" motivo
+    const selectMotivo = document.getElementById('motivo');
+    const divOutroMotivo = document.getElementById('divOutroMotivo');
+    const inputOutroMotivo = document.getElementById('outroMotivo');
+    
+    selectMotivo.addEventListener('change', function() {
+        if (this.value === 'Outro') {
+            divOutroMotivo.classList.remove('d-none');
+        } else {
+            divOutroMotivo.classList.add('d-none');
+        }
+    });
+    
+    // Capturar motivo personalizado no envio do formulário
+    const form = document.getElementById('formMovimentacao');
+    form.addEventListener('submit', function(event) {
+        if (selectMotivo.value === 'Outro') {
+            if (!inputOutroMotivo.value.trim()) {
+                event.preventDefault();
+                alert('Por favor, especifique o motivo.');
+                return;
+            }
+            
+            selectMotivo.value = inputOutroMotivo.value;
+        }
+        
+        {% if tipo == 'saida' %}
+        const quantidade = parseFloat(inputQuantidade.value);
+        if (quantidade > quantidadeAtual) {
+            event.preventDefault();
+            alert(`Quantidade excede o estoque atual de ${quantidadeAtual} {{ item.unidade_medida }}`);
+            return;
+        }
+        {% endif %}
+    });
+});
+</script>
+{% endblock %}
