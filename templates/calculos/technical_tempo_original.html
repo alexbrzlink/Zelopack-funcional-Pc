@@ -4,69 +4,148 @@
 
 {% block styles %}
 <style>
+    /* Estilos modernos e interativos */
+    :root {
+        --primary: #0088cc;
+        --secondary: #17a2b8;
+        --success: #28a745;
+        --info: #17a2b8;
+        --warning: #ffc107;
+        --danger: #dc3545;
+        --light: #f8f9fa;
+        --dark: #343a40;
+        --white: #ffffff;
+        --gray: #6c757d;
+        --gray-dark: #343a40;
+        --gray-light: #e9ecef;
+    }
+    
+    body {
+        font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+    }
+    
     .card-calc {
         transition: all 0.3s ease;
         margin-bottom: 15px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        border: none;
+        border-radius: 8px;
     }
     
     .card-calc:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
     }
     
     .card-header {
-        background-color: #f8f9fa;
-        border-bottom: 2px solid #007bff;
+        background-color: var(--white);
+        border-bottom: 2px solid rgba(0,136,204,0.2);
         font-weight: 600;
+        padding: 20px;
+        border-radius: 8px 8px 0 0;
     }
     
-    .nav-tabs .nav-link.active {
-        font-weight: bold;
-        border-top: 3px solid #007bff;
+    .card-body {
+        padding: 25px;
     }
     
-    .form-control:focus {
-        border-color: #80bdff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-    }
-    
-    .btn-calculate {
-        background-color: #007bff;
-        color: white;
-        font-weight: 600;
-        padding: 8px 16px;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
+    .form-control {
+        border-radius: 6px;
+        padding: 10px 15px;
+        border: 1px solid #dce1e8;
+        box-shadow: none;
+        height: auto;
+        font-size: 1rem;
         transition: all 0.2s;
     }
     
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(0,136,204,0.15);
+    }
+    
+    .form-select {
+        border-radius: 6px;
+        padding: 10px 30px 10px 15px;
+        height: auto;
+        border: 1px solid #dce1e8;
+        background-position: right 15px center;
+        cursor: pointer;
+    }
+    
+    .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(0,136,204,0.15);
+    }
+    
+    .btn-calculate {
+        background: linear-gradient(135deg, var(--primary), #00a2e8);
+        color: white;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 10px rgba(0,136,204,0.2);
+    }
+    
     .btn-calculate:hover {
-        background-color: #0069d9;
+        background: linear-gradient(135deg, #0099e6, #00b3ff);
         transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,136,204,0.25);
+    }
+    
+    .btn-secondary {
+        background-color: var(--light);
+        color: var(--dark);
+        border: 1px solid #dce1e8;
+        font-weight: 500;
+        padding: 10px 20px;
+        border-radius: 6px;
+        transition: all 0.3s;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #e9ecef;
     }
     
     .result-box {
-        background-color: #f8f9fa;
-        border-left: 4px solid #28a745;
-        padding: 15px;
-        margin-top: 20px;
-        border-radius: 4px;
+        background-color: var(--white);
+        border-left: 4px solid var(--success);
+        padding: 20px;
+        margin-top: 25px;
+        border-radius: 8px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+        transition: all 0.3s ease;
+    }
+    
+    .result-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
     }
     
     .result-item {
-        padding: 8px 0;
-        border-bottom: 1px solid #eee;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     
     .result-item:last-child {
         border-bottom: none;
     }
     
+    .result-label {
+        font-weight: 500;
+        color: var(--gray);
+    }
+    
     .result-value {
-        font-weight: bold;
-        color: #28a745;
+        font-weight: 700;
+        color: var(--success);
+        font-size: 1.1rem;
     }
     
     .input-with-unit {
@@ -75,50 +154,53 @@
     
     .input-unit {
         position: absolute;
-        right: 10px;
+        right: 15px;
         top: 50%;
         transform: translateY(-50%);
-        color: #6c757d;
-        font-size: 14px;
-    }
-    
-    .tab-pane {
-        padding: 20px;
+        color: var(--gray);
+        font-weight: 500;
+        font-size: 0.9rem;
+        pointer-events: none;
     }
     
     .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
     
-    .calculation-group {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 15px;
-        margin-bottom: 20px;
+    .form-text {
+        margin-top: 5px;
+        font-size: 0.85rem;
+        color: var(--gray);
     }
     
     .form-label {
-        font-weight: 500;
-        margin-bottom: 5px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--dark);
+        display: block;
     }
     
     .formula-box {
-        background-color: #f0f5ff;
-        border-radius: 4px;
-        padding: 10px 15px;
-        margin-bottom: 15px;
-        font-family: "Courier New", monospace;
+        background: linear-gradient(135deg, #f0f5ff, #e6f3ff);
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        font-family: 'Fira Code', 'Courier New', monospace;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.03);
+        border: 1px solid rgba(0,136,204,0.1);
     }
     
     .formula-title {
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 5px;
-        color: #0D47A1;
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+        color: var(--primary);
     }
     
-    .search-box {
-        margin-bottom: 20px;
+    .search-box .input-group {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        border-radius: 8px;
+        overflow: hidden;
     }
     
     .calculation-icons {
@@ -131,41 +213,219 @@
     .calc-icon {
         display: flex;
         align-items: center;
-        background-color: #f8f9fa;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 6px 10px;
+        background-color: var(--white);
+        border: 1px solid #dce1e8;
+        border-radius: 6px;
+        padding: 8px 12px;
         font-size: 0.9rem;
         cursor: pointer;
         transition: all 0.2s;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
     }
     
     .calc-icon:hover {
-        background-color: #e9ecef;
-        border-color: #adb5bd;
+        background-color: #f7f9fc;
+        border-color: #c3ccd7;
+        transform: translateY(-2px);
+        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
     }
     
     .calc-icon i {
-        margin-right: 6px;
-        color: #007bff;
+        margin-right: 8px;
+        color: var(--primary);
     }
     
     .calc-icon.active {
-        background-color: #e7f1ff;
-        border-color: #007bff;
-        font-weight: 500;
+        background-color: rgba(0,136,204,0.08);
+        border-color: var(--primary);
+        font-weight: 600;
+        color: var(--primary);
     }
     
     #calculatorContainer {
-        margin-top: 20px;
+        margin-top: 25px;
+        transition: all 0.3s ease;
     }
     
     .calculator-header {
+        font-weight: 700;
+        font-size: 1.15rem;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid rgba(0,0,0,0.06);
+        color: var(--primary);
+    }
+    
+    .calculator-description {
+        color: var(--gray);
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+    
+    .progress {
+        height: 24px;
+        border-radius: 12px;
+        background-color: #e9ecef;
+        overflow: hidden;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .progress-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-weight: 600;
-        font-size: 1.1rem;
-        margin-bottom: 15px;
-        padding-bottom: 8px;
-        border-bottom: 2px solid #f0f0f0;
+        color: white;
+        transition: width 0.6s ease;
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+    
+    /* Relógio digital estilizado */
+    .digital-clock {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    
+    .clock-container {
+        text-align: center;
+        background-color: white;
+        padding: 10px 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        margin: 0 10px;
+    }
+    
+    .clock-time {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark);
+        font-family: 'Fira Code', monospace;
+        margin-bottom: 3px;
+    }
+    
+    .clock-label {
+        font-size: 0.8rem;
+        color: var(--gray);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .clock-arrow {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin: 0 5px;
+    }
+    
+    /* Animação de loading para o botão calcular */
+    @keyframes spinner {
+        to {transform: rotate(360deg);}
+    }
+    
+    .loader {
+        display: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid transparent;
+        border-top-color: white;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: spinner 0.8s linear infinite;
+    }
+    
+    .loading .loader {
+        display: inline-block;
+    }
+    
+    /* Estilo para campos com tooltips/descrições */
+    .field-tooltip {
+        position: relative;
+    }
+    
+    .field-tooltip .tooltip-icon {
+        position: absolute;
+        right: -25px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary);
+        opacity: 0.7;
+        cursor: help;
+        font-size: 0.9rem;
+    }
+    
+    .field-tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    .tooltip-text {
+        visibility: hidden;
+        position: absolute;
+        bottom: calc(100% + 5px);
+        left: 0;
+        width: 100%;
+        background-color: rgba(0,0,0,0.8);
+        color: white;
+        text-align: center;
+        border-radius: 4px;
+        padding: 5px 10px;
+        z-index: 1;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.85rem;
+    }
+    
+    .tooltip-text::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 15%;
+        border-width: 5px;
+        border-style: solid;
+        border-color: rgba(0,0,0,0.8) transparent transparent transparent;
+    }
+    
+    /* Animação para resultados */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 10px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+    
+    .fade-in-up {
+        animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    .live-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: var(--success);
+        border-radius: 50%;
+        margin-right: 5px;
+        animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 5px rgba(40, 167, 69, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+        }
     }
 </style>
 {% endblock %}
@@ -298,98 +558,131 @@
             <form id="formTempoFinalizacao">
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="form-group">
+                        <div class="form-group field-tooltip">
                             <label class="form-label">Capacidade Total do TQ:</label>
                             <div class="input-with-unit">
-                                <input type="number" class="form-control" name="tq_total" step="1" required>
+                                <input type="number" class="form-control" name="tq_total" step="1" placeholder="Ex: 1000" required>
                                 <span class="input-unit">L</span>
                             </div>
+                            <div class="tooltip-icon" title="Informe a capacidade total do tanque em litros"><i class="fas fa-info-circle"></i></div>
+                            <div class="tooltip-text">Capacidade máxima do tanque em litros</div>
+                            <small class="form-text text-muted">Volume total que o tanque comporta</small>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="form-group">
+                        <div class="form-group field-tooltip">
                             <label class="form-label">Volume Atual no TQ:</label>
                             <div class="input-with-unit">
-                                <input type="number" class="form-control" name="tq_atual" step="1" required>
+                                <input type="number" class="form-control" name="tq_atual" step="1" placeholder="Ex: 250" required>
                                 <span class="input-unit">L</span>
                             </div>
+                            <div class="tooltip-icon" title="Volume atual no tanque"><i class="fas fa-info-circle"></i></div>
+                            <div class="tooltip-text">Volume já presente no tanque em litros</div>
+                            <small class="form-text text-muted">Quanto já está no tanque agora</small>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="form-group">
+                        <div class="form-group field-tooltip">
                             <label class="form-label">Linha Utilizada:</label>
                             <select class="form-select" name="linha">
                                 <option value="1000ml">1000ml (200 L/min)</option>
                                 <option value="200ml">200ml (80 L/min)</option>
                             </select>
+                            <div class="tooltip-icon" title="Escolha a linha de produção"><i class="fas fa-info-circle"></i></div>
+                            <div class="tooltip-text">Define a vazão do processo</div>
+                            <small class="form-text text-muted">Selecione a linha em operação</small>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="form-group">
-                            <label class="form-label">Hora Atual:</label>
+                        <div class="form-group field-tooltip">
+                            <label class="form-label">Hora Atual: <span class="live-indicator"></span><small class="text-success">atualizado</small></label>
                             <input type="time" class="form-control" name="hora_atual" required>
+                            <div class="tooltip-icon" title="Hora de início do cálculo"><i class="fas fa-info-circle"></i></div>
+                            <div class="tooltip-text">Ponto inicial para o cálculo de finalização</div>
+                            <small class="form-text text-muted">Atualizado automaticamente</small>
                         </div>
                     </div>
                 </div>
                 
                 <div class="row mt-3">
                     <div class="col-12 text-end">
-                        <button type="button" class="btn btn-light me-2" id="btnLimpar">Limpar</button>
+                        <button type="button" class="btn btn-secondary me-2" id="btnLimpar">
+                            <i class="fas fa-eraser me-1"></i> Limpar
+                        </button>
                         <button type="button" class="btn btn-calculate" id="btnCalcular">
-                            <span class="loader"></span> Calcular
+                            <span class="loader"></span> <i class="fas fa-calculator me-1"></i> Calcular
                         </button>
                     </div>
                 </div>
             </form>
             
-            <div class="result-box mt-4" id="resultadoCalculo" style="display:none;">
+            <div class="result-box mt-4 fade-in-up" id="resultadoCalculo" style="display:none;">
+                <!-- Cabeçalho do resultado -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 text-primary"><i class="fas fa-chart-pie me-2"></i>Resultados do Cálculo</h5>
+                    <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Atualizado agora</span>
+                </div>
+                
                 <!-- Resultados especiais para o cálculo de Tempo de Finalização (TQ) -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="result-item">
-                            <div class="result-label">Tempo Restante:</div>
+                            <div class="result-label"><i class="fas fa-hourglass-half me-2 text-primary"></i>Tempo Restante:</div>
                             <div class="result-value" id="tempoRestante">-</div>
                         </div>
                         <div class="result-item">
-                            <div class="result-label">Horário de Finalização:</div>
+                            <div class="result-label"><i class="fas fa-flag-checkered me-2 text-primary"></i>Horário de Finalização:</div>
                             <div class="result-value" id="horaFinalizacao">-</div>
                         </div>
                         <div class="result-item">
-                            <div class="result-label">Horário de Metade do TQ:</div>
+                            <div class="result-label"><i class="fas fa-balance-scale me-2 text-primary"></i>Horário de Metade do TQ:</div>
                             <div class="result-value" id="horaMetade">-</div>
                         </div>
                         <div class="result-item">
-                            <div class="result-label">Vazão Utilizada:</div>
+                            <div class="result-label"><i class="fas fa-tachometer-alt me-2 text-primary"></i>Vazão Utilizada:</div>
                             <div class="result-value" id="vazaoUtilizada">-</div>
                         </div>
                     </div>
                     
                     <div class="col-md-6">
-                        <!-- Indicador visual -->
-                        <div class="mt-2 mb-3">
-                            <div class="progress" style="height: 30px;">
-                                <div class="progress-bar bg-success" id="tqProgress" role="progressbar" 
-                                    style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                        <!-- Indicador visual com status -->
+                        <div class="card mb-3 border-0 shadow-sm">
+                            <div class="card-header bg-light">
+                                <strong><i class="fas fa-tasks me-2"></i>Status do TQ:</strong>
+                                <span class="float-end badge" id="statusBadge">Carregando...</span>
                             </div>
-                            <div class="d-flex justify-content-between mt-1">
-                                <small>0L</small>
-                                <small>50%</small>
-                                <small id="tqTotalValue">0L</small>
+                            <div class="card-body">
+                                <div class="progress" style="height: 30px; margin-bottom: 8px;">
+                                    <div class="progress-bar bg-success" id="tqProgress" role="progressbar" 
+                                        style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">0L</small>
+                                    <small class="text-muted">50%</small>
+                                    <small class="text-muted" id="tqTotalValue">0L</small>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Relógio digital -->
-                        <div class="mt-3 d-flex justify-content-center align-items-center">
-                            <div class="text-center">
-                                <i class="fas fa-clock fa-2x mb-2 text-primary"></i>
-                                <div class="h4" id="currentTime">--:--</div>
-                                <div class="small text-muted">Hora Atual</div>
+                        <!-- Relógio digital interativo -->
+                        <div class="digital-clock">
+                            <div class="clock-container">
+                                <div class="clock-time" id="currentTime">--:--</div>
+                                <div class="clock-label">Hora Atual</div>
                             </div>
-                            <div class="mx-4">→</div>
-                            <div class="text-center">
-                                <i class="fas fa-flag-checkered fa-2x mb-2 text-success"></i>
-                                <div class="h4" id="finishTime">--:--</div>
-                                <div class="small text-muted">Hora Finalização</div>
+                            <div class="clock-arrow">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="clock-container">
+                                <div class="clock-time" id="halfTime">--:--</div>
+                                <div class="clock-label">Metade TQ</div>
+                            </div>
+                            <div class="clock-arrow">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="clock-container">
+                                <div class="clock-time" id="finishTime">--:--</div>
+                                <div class="clock-label">Finalização</div>
                             </div>
                         </div>
                     </div>
@@ -411,6 +704,31 @@
 
 {% block scripts %}
 <script>
+// Função para atualizar o relógio em tempo real
+let clockInterval;
+
+function updateClockInRealTime() {
+    // Limpar qualquer intervalo existente
+    if (clockInterval) {
+        clearInterval(clockInterval);
+    }
+    
+    // Atualizar o relógio a cada segundo
+    clockInterval = setInterval(function() {
+        const agora = new Date();
+        const horaFormatada = agora.getHours().toString().padStart(2, '0') + ':' + 
+                           agora.getMinutes().toString().padStart(2, '0');
+        
+        // Atualizar apenas o relógio atual
+        if (document.getElementById('currentTime')) {
+            document.getElementById('currentTime').textContent = horaFormatada;
+        } else {
+            // Se o elemento não existir mais, parar o intervalo
+            clearInterval(clockInterval);
+        }
+    }, 60000); // Atualizar a cada minuto
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Preenche o campo de hora atual com a hora do sistema
     const horaAtualInput = document.querySelector('input[name="hora_atual"]');
@@ -557,15 +875,46 @@ document.addEventListener('DOMContentLoaded', function() {
         progressBar.setAttribute('aria-valuenow', percentualAtual);
         
         // Atualizar o relógio digital
-        document.getElementById('currentTime').textContent = 
-            `${horaAtual.getHours().toString().padStart(2, '0')}:${horaAtual.getMinutes().toString().padStart(2, '0')}`;
+        const currentTimeStr = `${horaAtual.getHours().toString().padStart(2, '0')}:${horaAtual.getMinutes().toString().padStart(2, '0')}`;
+        document.getElementById('currentTime').textContent = currentTimeStr;
         document.getElementById('finishTime').textContent = horaFinalizacaoFormatada;
+        
+        // Atualizar o relógio de metade do TQ
+        if (volumeAteMeio > 0) {
+            document.getElementById('halfTime').textContent = horaMeioFormatada;
+        } else {
+            document.getElementById('halfTime').textContent = 'Passou';
+            document.getElementById('halfTime').style.color = '#28a745';
+        }
         
         // Atualizar o valor total do TQ na escala
         document.getElementById('tqTotalValue').textContent = tqTotal + 'L';
         
-        // Mostrar a caixa de resultado
-        document.getElementById('resultadoCalculo').style.display = 'block';
+        // Atualizar o status badge
+        const statusBadge = document.getElementById('statusBadge');
+        if (percentualAtual < 25) {
+            statusBadge.className = 'float-end badge bg-danger';
+            statusBadge.textContent = 'Início do processo';
+        } else if (percentualAtual < 50) {
+            statusBadge.className = 'float-end badge bg-warning';
+            statusBadge.textContent = 'Em andamento';
+        } else if (percentualAtual < 75) {
+            statusBadge.className = 'float-end badge bg-info';
+            statusBadge.textContent = 'Mais da metade';
+        } else if (percentualAtual < 95) {
+            statusBadge.className = 'float-end badge bg-primary';
+            statusBadge.textContent = 'Quase finalizado';
+        } else {
+            statusBadge.className = 'float-end badge bg-success';
+            statusBadge.textContent = 'Finalizado';
+        }
+        
+        // Mostrar a caixa de resultado com animação fade-in
+        const resultBox = document.getElementById('resultadoCalculo');
+        resultBox.style.display = 'block';
+        
+        // Atualização em tempo real do relógio
+        updateClockInRealTime();
     }
 });
 </script>
