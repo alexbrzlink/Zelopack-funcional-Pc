@@ -1,37 +1,12 @@
-# Requisitos do ZELOPACK - Sistema de Gerenciamento de Laudos
-# Certifique-se de instalar estas dependências antes de executar o aplicativo
-
-# Framework Web
-flask==2.3.3
-flask-login==0.6.2
-flask-sqlalchemy==3.1.1
-flask-wtf==1.2.1
-email-validator==2.1.0
-werkzeug==2.3.7
-jinja2==3.1.2
-
-# Banco de Dados
-sqlalchemy==2.0.20
-psycopg2-binary==2.9.7
-
-# Servidor WSGI
-gunicorn==21.2.0
-
-# Processamento de Dados
-matplotlib==3.8.0
-numpy==1.25.2
-pandas==2.1.0
+flask==2.3.2
+flask-socketio==5.3.6
+reportlab==4.0.9
+python-docx==1.1.0
 openpyxl==3.1.2
-
-# Processamento de Imagens e Documentos
-pillow==10.0.1
-pypdf2==3.0.1
-python-docx==1.0.1
-reportlab==4.0.5
-
-# Comunicação e Notificações
-sendgrid==6.10.0
-twilio==8.9.1
-
-# Ferramentas de Empacotamento
-pyinstaller==6.13.0
+pandas==2.2.2
+flask-login==0.6.3
+flask-sqlalchemy==3.0.5
+flask-talisman==1.2.0
+flask-caching==2.1.0
+flask-bcrypt==1.0.1
+gunicorn==22.0.0
