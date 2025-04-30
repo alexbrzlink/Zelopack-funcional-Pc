@@ -2,6 +2,8 @@ from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Text
+from sqlalchemy.orm import relationship
 import json
 import os
 
@@ -1025,6 +1027,97 @@ class ReportTemplate(db.Model):
         from flask import url_for
         return url_for('templates.download_template', template_id=self.id)
 
+
+class CategoriaEstoque(db.Model):
+    """Modelo para categorias de itens de estoque."""
+    __tablename__ = 'categorias_estoque'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False, unique=True)
+    descricao = db.Column(db.Text, nullable=True)
+    
+    # Relacionamentos
+    itens = db.relationship('ItemEstoque', back_populates='categoria', cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f'<CategoriaEstoque {self.nome}>'
+        
+class ItemEstoque(db.Model):
+    """Modelo para itens de estoque, incluindo reagentes químicos."""
+    __tablename__ = 'itens_estoque'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    codigo = db.Column(db.String(50), unique=True, nullable=False)
+    nome = db.Column(db.String(255), nullable=False)
+    descricao = db.Column(db.Text, nullable=True)
+    categoria_id = db.Column(db.Integer, db.ForeignKey('categorias_estoque.id'), nullable=False)
+    unidade_medida = db.Column(db.String(20), nullable=False)
+    quantidade_minima = db.Column(db.Float, default=0)
+    quantidade_atual = db.Column(db.Float, default=0)
+    localizacao = db.Column(db.String(100), nullable=True)
+    observacoes = db.Column(db.Text, nullable=True)
+    
+    # Para reagentes químicos
+    formula_quimica = db.Column(db.String(100), nullable=True)
+    cas_number = db.Column(db.String(20), nullable=True)
+    concentracao = db.Column(db.String(50), nullable=True)
+    data_validade = db.Column(db.DateTime, nullable=True)
+    fabricante = db.Column(db.String(100), nullable=True)
+    
+    # Marcadores
+    e_reagente = db.Column(db.Boolean, default=False)
+    e_perigoso = db.Column(db.Boolean, default=False)
+    
+    # Metadados
+    data_cadastro = db.Column(db.DateTime, default=datetime.utcnow)
+    data_atualizacao = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relacionamentos
+    categoria = db.relationship('CategoriaEstoque', back_populates='itens')
+    movimentacoes = db.relationship('MovimentacaoEstoque', back_populates='item', cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f'<ItemEstoque {self.codigo}: {self.nome}>'
+    
+    def calcular_quantidade_atual(self):
+        """Calcula a quantidade atual com base nas movimentações."""
+        entradas = sum(m.quantidade for m in self.movimentacoes if m.tipo == 'entrada')
+        saidas = sum(m.quantidade for m in self.movimentacoes if m.tipo == 'saida')
+        self.quantidade_atual = entradas - saidas
+        return self.quantidade_atual
+        
+    def verificar_estoque_baixo(self):
+        """Verifica se o estoque está abaixo do mínimo."""
+        return self.quantidade_atual < self.quantidade_minima
+        
+    def dias_ate_vencimento(self):
+        """Calcula quantos dias faltam até o vencimento."""
+        if not self.data_validade:
+            return None
+        hoje = datetime.utcnow().date()
+        diferenca = self.data_validade.date() - hoje
+        return diferenca.days
+
+class MovimentacaoEstoque(db.Model):
+    """Modelo para registrar movimentações (entradas e saídas) de estoque."""
+    __tablename__ = 'movimentacoes_estoque'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    item_id = db.Column(db.Integer, db.ForeignKey('itens_estoque.id'), nullable=False)
+    tipo = db.Column(db.String(20), nullable=False)  # 'entrada' ou 'saida'
+    quantidade = db.Column(db.Float, nullable=False)
+    data_movimentacao = db.Column(db.DateTime, default=datetime.utcnow)
+    lote = db.Column(db.String(50), nullable=True)
+    nota_fiscal = db.Column(db.String(50), nullable=True)
+    responsavel = db.Column(db.String(100), nullable=True)
+    motivo = db.Column(db.Text, nullable=True)
+    observacoes = db.Column(db.Text, nullable=True)
+    
+    # Relacionamento
+    item = db.relationship('ItemEstoque', back_populates='movimentacoes')
+    
+    def __repr__(self):
+        return f'<MovimentacaoEstoque {self.tipo} de {self.quantidade} {self.item.unidade_medida} de {self.item.nome}>'
 
 class ReportAttachment(db.Model):
     """Modelo para anexos de laudos."""
