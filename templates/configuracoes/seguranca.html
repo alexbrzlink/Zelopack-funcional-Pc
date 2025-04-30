@@ -118,7 +118,8 @@
     <!-- Formulário de Configurações -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <form id="securityConfigForm">
+            <form id="securityConfigForm" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="config-section">
                     <h5 class="config-section-title"><i class="fas fa-lock me-2"></i> Políticas de Senha</h5>
                     

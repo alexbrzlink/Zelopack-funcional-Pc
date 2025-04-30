@@ -110,7 +110,8 @@
     <!-- Formulário de Configurações -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <form id="emailConfigForm">
+            <form id="emailConfigForm" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="config-section">
                     <h5 class="config-section-title"><i class="fas fa-server me-2"></i> Servidor SMTP</h5>
                     
