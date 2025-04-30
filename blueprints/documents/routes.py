@@ -338,6 +338,99 @@ def view_document(document_id):
     )
 
 
+@documents_bp.route('/editor', methods=['GET', 'POST'])
+@login_required
+def editor():
+    """Editor de documentos técnicos em tempo real."""
+    # Obter empresas, produtos e marcas do banco de dados
+    # Para fins de demonstração, usaremos alguns exemplos
+    empresas = ['Zelopack', 'Fornecedor A', 'Fornecedor B', 'Cliente X', 'Cliente Y']
+    produtos = ['Suco de Laranja', 'Suco de Uva', 'Néctar de Maracujá', 'Refresco de Limão', 'Água de Coco']
+    marcas = ['Marca A', 'Marca B', 'Marca C', 'Marca Premium', 'Marca Econômica']
+    
+    # Verificar se há dados de fornecedores disponíveis
+    fornecedores_df = None
+    try:
+        import pandas as pd
+        import os
+        
+        fornecedores_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'fornecedores.xlsx')
+        if os.path.exists(fornecedores_path):
+            fornecedores_df = pd.read_excel(fornecedores_path)
+    except Exception as e:
+        logging.error(f"Erro ao carregar dados de fornecedores: {str(e)}")
+    
+    # Processar envio de documentos
+    if request.method == 'POST':
+        content = request.form.get('content', '')
+        format_type = request.form.get('format', 'pdf')
+        
+        # Criar documento temporário
+        with tempfile.NamedTemporaryFile(suffix=f'.{format_type}', delete=False) as temp_file:
+            temp_path = temp_file.name
+            
+            if format_type == 'pdf':
+                # Criar PDF usando ReportLab se disponível
+                if canvas and letter:
+                    pdf = canvas.Canvas(temp_path, pagesize=letter)
+                    lines = content.split('\n')
+                    y = 750  # Posição inicial Y
+                    for line in lines:
+                        pdf.drawString(50, y, line)
+                        y -= 15  # Espaçamento entre linhas
+                    pdf.save()
+                else:
+                    # Fallback simples se ReportLab não estiver disponível
+                    with open(temp_path, 'w', encoding='utf-8') as f:
+                        f.write(content)
+            elif format_type == 'word':
+                # Criar arquivo DOCX simples
+                try:
+                    from docx import Document
+                    doc = Document()
+                    for paragraph in content.split('\n\n'):
+                        doc.add_paragraph(paragraph)
+                    doc.save(temp_path)
+                except ImportError:
+                    # Fallback: salvar como texto simples
+                    with open(temp_path, 'w', encoding='utf-8') as f:
+                        f.write(content)
+            elif format_type == 'excel':
+                # Criar arquivo Excel simples
+                try:
+                    import pandas as pd
+                    # Converter texto para linhas e colunas CSV
+                    data = []
+                    for line in content.split('\n'):
+                        if line.strip():
+                            data.append(line.split(','))
+                    df = pd.DataFrame(data)
+                    df.to_excel(temp_path, index=False, header=False)
+                except ImportError:
+                    # Fallback: salvar como CSV
+                    with open(temp_path, 'w', encoding='utf-8') as f:
+                        f.write(content)
+            else:
+                # Formato de texto simples
+                with open(temp_path, 'w', encoding='utf-8') as f:
+                    f.write(content)
+            
+            # Retornar o arquivo para download
+            return send_file(
+                temp_path,
+                as_attachment=True,
+                download_name=f"documento_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.{format_type}"
+            )
+    
+    return render_template(
+        'documents/editor.html',
+        empresas=empresas,
+        produtos=produtos,
+        marcas=marcas,
+        fornecedores_df=fornecedores_df
+    )
+
+
 @documents_bp.route('/edit/<int:document_id>', methods=['GET', 'POST'])
 @login_required
 def edit_document(document_id):

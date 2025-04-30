@@ -1,6 +1,9 @@
 from flask import redirect, url_for, flash
 from flask_login import current_user, login_user
-from app import app, db
+from app import app, db, socketio
+
+# Importar eventos em tempo real para editor de documentos
+from blueprints.documents import events
 
 @app.route('/')
 def index():
