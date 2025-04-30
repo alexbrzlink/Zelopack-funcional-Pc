@@ -452,12 +452,17 @@
                                     {'name': 'vol2', 'label': 'Volume Produto 2', 'unit': 'L', 'step': '0.1'}
                                 ] %}
                             {% elif i == 21 %}
-                                {% set title = 'Tempo de Finalização' %}
-                                {% set description = 'Calcula o tempo estimado para finalizar um processo com base no volume e vazão.' %}
-                                {% set formula = 'Tempo = Volume ÷ Vazão' %}
+                                {% set title = 'Tempo de Finalização (TQ)' %}
+                                {% set description = 'Calcula o tempo estimado para finalizar o TQ com base na capacidade total, volume atual e linha utilizada.' %}
+                                {% set formula = 'Tempo = (TQ Total - TQ Atual) ÷ Vazão da Linha' %}
                                 {% set inputs = [
-                                    {'name': 'volume', 'label': 'Volume', 'unit': 'L', 'step': '0.1'},
-                                    {'name': 'vazao', 'label': 'Vazão', 'unit': 'L/min', 'step': '0.1'}
+                                    {'name': 'tq_total', 'label': 'Capacidade Total do TQ', 'unit': 'L', 'step': '1'},
+                                    {'name': 'tq_atual', 'label': 'Volume Atual no TQ', 'unit': 'L', 'step': '1'},
+                                    {'name': 'linha', 'label': 'Linha Utilizada', 'unit': '', 'step': '', 'select': [
+                                        {'value': '1000ml', 'text': '1000ml (200 L/min)'},
+                                        {'value': '200ml', 'text': '200ml (80 L/min)'}
+                                    ]},
+                                    {'name': 'hora_atual', 'label': 'Hora Atual', 'unit': '', 'type': 'time', 'value': ''}
                                 ] %}
                             {% elif i == 22 %}
                                 {% set title = 'Aumentar Acidez' %}
@@ -550,11 +555,22 @@
                                             <div class="col-md-{% if inputs|length <= 2 %}6{% elif inputs|length <= 3 %}4{% else %}3{% endif %}">
                                                 <div class="form-group">
                                                     <label class="form-label">{{ input.label }}:</label>
-                                                    <div class="input-with-unit">
-                                                        <input type="number" class="form-control" name="{{ input.name }}" 
-                                                               step="{{ input.step }}" {% if input.value is defined %}value="{{ input.value }}"{% endif %} required>
-                                                        <span class="input-unit">{{ input.unit }}</span>
-                                                    </div>
+                                                    {% if input.select is defined %}
+                                                        <select class="form-select" name="{{ input.name }}">
+                                                            {% for option in input.select %}
+                                                                <option value="{{ option.value }}">{{ option.text }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    {% elif input.type is defined and input.type == 'time' %}
+                                                        <input type="time" class="form-control" name="{{ input.name }}" 
+                                                               {% if input.value is defined %}value="{{ input.value }}"{% endif %} required>
+                                                    {% else %}
+                                                        <div class="input-with-unit">
+                                                            <input type="number" class="form-control" name="{{ input.name }}" 
+                                                                   step="{{ input.step }}" {% if input.value is defined %}value="{{ input.value }}"{% endif %} required>
+                                                            <span class="input-unit">{{ input.unit }}</span>
+                                                        </div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         {% endfor %}
@@ -570,12 +586,62 @@
                                     </div>
                                 </form>
                                 
+                                {% if i == 21 %}
+                                <div class="result-box mt-4" id="result-calc-{{ id }}" style="display:none;">
+                                    <!-- Resultados especiais para o cálculo de Tempo de Finalização (TQ) -->
+                                    <div class="result-item">
+                                        <div class="result-label">Tempo Restante:</div>
+                                        <div class="result-value" id="tempo-restante-{{ id }}">-</div>
+                                    </div>
+                                    <div class="result-item">
+                                        <div class="result-label">Horário de Finalização:</div>
+                                        <div class="result-value" id="hora-finalizacao-{{ id }}">-</div>
+                                    </div>
+                                    <div class="result-item">
+                                        <div class="result-label">Horário de Metade do TQ:</div>
+                                        <div class="result-value" id="hora-metade-{{ id }}">-</div>
+                                    </div>
+                                    <div class="result-item">
+                                        <div class="result-label">Vazão Utilizada:</div>
+                                        <div class="result-value" id="vazao-utilizada-{{ id }}">-</div>
+                                    </div>
+                                    
+                                    <!-- Indicador visual -->
+                                    <div class="mt-4">
+                                        <div class="progress" style="height: 30px;">
+                                            <div class="progress-bar bg-success" id="tq-progress-{{ id }}" role="progressbar" 
+                                                style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-1">
+                                            <small>0L</small>
+                                            <small>50%</small>
+                                            <small id="tq-total-value-{{ id }}">0L</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Relógio digital -->
+                                    <div class="mt-3 d-flex justify-content-center align-items-center">
+                                        <div class="text-center">
+                                            <i class="fas fa-clock fa-2x mb-2 text-primary"></i>
+                                            <div class="h4" id="current-time-{{ id }}">--:--</div>
+                                            <div class="small text-muted">Hora Atual</div>
+                                        </div>
+                                        <div class="mx-4">→</div>
+                                        <div class="text-center">
+                                            <i class="fas fa-flag-checkered fa-2x mb-2 text-success"></i>
+                                            <div class="h4" id="finish-time-{{ id }}">--:--</div>
+                                            <div class="small text-muted">Hora Finalização</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
                                 <div class="result-box mt-4" id="result-calc-{{ id }}" style="display:none;">
                                     <div class="result-item">
                                         <div class="result-label">Resultado:</div>
                                         <div class="result-value" id="valor-calc-{{ id }}">-</div>
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
                         {% endfor %}
@@ -599,6 +665,14 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Preenche o campo de hora atual com a hora do sistema no cálculo de Tempo de Finalização (TQ)
+    const horaAtualInput = document.querySelector('#form-calc-21 input[name="hora_atual"]');
+    if (horaAtualInput) {
+        const agora = new Date();
+        const horaFormatada = agora.getHours().toString().padStart(2, '0') + ':' + 
+                             agora.getMinutes().toString().padStart(2, '0');
+        horaAtualInput.value = horaFormatada;
+    }
     // Event listeners para botões de calcular
     document.querySelectorAll('.btn-calculate').forEach(button => {
         button.addEventListener('click', function() {
@@ -790,11 +864,84 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 break;
                 
-            case 21: // Tempo de Finalização
-                if (values.vazao !== 0) {
-                    resultado = values.volume / values.vazao;
-                    unidade = 'min';
+            case 21: // Tempo de Finalização (TQ)
+                // Obter valores específicos para o cálculo de TQ
+                const tqTotal = parseFloat(form.querySelector('input[name="tq_total"]').value) || 0;
+                const tqAtual = parseFloat(form.querySelector('input[name="tq_atual"]').value) || 0;
+                const linha = form.querySelector('select[name="linha"]').value;
+                const horaAtualInput = form.querySelector('input[name="hora_atual"]').value || '';
+                
+                // Definir a vazão com base na linha selecionada
+                let vazao = 0;
+                if (linha === '1000ml') {
+                    vazao = 200; // 200 L/min para linha 1000ml
+                } else if (linha === '200ml') {
+                    vazao = 80;  // 80 L/min para linha 200ml
                 }
+                
+                // Calcular volume restante
+                const volumeRestante = tqTotal - tqAtual;
+                
+                // Calcular tempo para finalizar em minutos
+                const tempoFinalMinutos = volumeRestante / vazao;
+                
+                // Calcular o tempo até a metade do TQ
+                const meioTqLitros = tqTotal / 2;
+                const volumeAteMeio = Math.max(0, meioTqLitros - tqAtual);
+                const tempoMeioMinutos = volumeAteMeio / vazao;
+                
+                // Calcular o percentual atual do TQ
+                const percentualAtual = (tqAtual / tqTotal) * 100;
+                
+                // Formatar o tempo restante
+                const tempoHoras = Math.floor(tempoFinalMinutos / 60);
+                const tempoMinutos = Math.floor(tempoFinalMinutos % 60);
+                const tempoSegundos = Math.floor((tempoFinalMinutos % 1) * 60);
+                const tempoFormatado = `${tempoHoras > 0 ? tempoHoras + 'h ' : ''}${tempoMinutos}min ${tempoSegundos}s`;
+                
+                // Obter hora atual a partir do input ou usar a hora atual do sistema
+                let horaAtual;
+                if (horaAtualInput) {
+                    const [horas, minutos] = horaAtualInput.split(':').map(Number);
+                    horaAtual = new Date();
+                    horaAtual.setHours(horas, minutos, 0);
+                } else {
+                    horaAtual = new Date();
+                }
+                
+                // Calcular hora de finalização
+                const horaFinalizacao = new Date(horaAtual.getTime() + tempoFinalMinutos * 60000);
+                const horaFinalizacaoFormatada = `${horaFinalizacao.getHours().toString().padStart(2, '0')}:${horaFinalizacao.getMinutes().toString().padStart(2, '0')}`;
+                
+                // Calcular hora de metade
+                const horaMeio = new Date(horaAtual.getTime() + tempoMeioMinutos * 60000);
+                const horaMeioFormatada = volumeAteMeio > 0 ? 
+                    `${horaMeio.getHours().toString().padStart(2, '0')}:${horaMeio.getMinutes().toString().padStart(2, '0')}` : 
+                    'Já passou da metade';
+                
+                // Exibir os resultados no HTML
+                document.getElementById('tempo-restante-' + id).textContent = tempoFormatado;
+                document.getElementById('hora-finalizacao-' + id).textContent = horaFinalizacaoFormatada;
+                document.getElementById('hora-metade-' + id).textContent = horaMeioFormatada;
+                document.getElementById('vazao-utilizada-' + id).textContent = vazao + ' L/min';
+                
+                // Atualizar a barra de progresso
+                const progressBar = document.getElementById('tq-progress-' + id);
+                progressBar.style.width = percentualAtual + '%';
+                progressBar.textContent = percentualAtual.toFixed(1) + '%';
+                progressBar.setAttribute('aria-valuenow', percentualAtual);
+                
+                // Atualizar o relógio digital
+                document.getElementById('current-time-' + id).textContent = 
+                    `${horaAtual.getHours().toString().padStart(2, '0')}:${horaAtual.getMinutes().toString().padStart(2, '0')}`;
+                document.getElementById('finish-time-' + id).textContent = horaFinalizacaoFormatada;
+                
+                // Atualizar o valor total do TQ na escala
+                document.getElementById('tq-total-value-' + id).textContent = tqTotal + 'L';
+                
+                // Mostrar a caixa de resultado
+                resultBox.style.display = 'block';
+                return; // Importante: retornar aqui para não executar o código comum abaixo
                 break;
                 
             case 22: // Aumentar Acidez
