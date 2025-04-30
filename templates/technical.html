@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Cálculos Técnicos{% endblock %}
+
+{% block content %}
+<h1>Cálculos Técnicos</h1>
+<form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label for="peso_liquido" class="form-label">Peso Líquido (kg)</label>
+            <input type="number" step="0.01" class="form-control" id="peso_liquido" name="peso_liquido" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="perdas" class="form-label">Perdas (kg)</label>
+            <input type="number" step="0.01" class="form-control" id="perdas" name="perdas" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="densidade" class="form-label">Densidade (g/mL)</label>
+            <input type="number" step="0.01" class="form-control" id="densidade" name="densidade" value="1">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="brix_atual" class="form-label">Brix Atual</label>
+            <input type="number" step="0.01" class="form-control" id="brix_atual" name="brix_atual" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="brix_desejado" class="form-label">Brix Desejado</label>
+            <input type="number" step="0.01" class="form-control" id="brix_desejado" name="brix_desejado" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="volume_atual" class="form-label">Volume Atual (L)</label>
+            <input type="number" step="0.01" class="form-control" id="volume_atual" name="volume_atual" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="brix_medido" class="form-label">Brix Medido</label>
+            <input type="number" step="0.01" class="form-control" id="brix_medido" name="brix_medido" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="temperatura" class="form-label">Temperatura (°C)</label>
+            <input type="number" step="0.1" class="form-control" id="temperatura" name="temperatura" value="20">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="peso_embalagem" class="form-label">Peso da Embalagem (kg)</label>
+            <input type="number" step="0.01" class="form-control" id="peso_embalagem" name="peso_embalagem" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="volume" class="form-label">Volume (L)</label>
+            <input type="number" step="0.01" class="form-control" id="volume" name="volume" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="concentracao_desejada" class="form-label">Concentração Desejada</label>
+            <input type="number" step="0.01" class="form-control" id="concentracao_desejada" name="concentracao_desejada" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="concentracao_corante" class="form-label">Concentração do Corante</label>
+            <input type="number" step="0.01" class="form-control" id="concentracao_corante" name="concentracao_corante" value="1">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="peso" class="form-label">Peso (kg)</label>
+            <input type="number" step="0.01" class="form-control" id="peso" name="peso" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="acidez" class="form-label">Acidez (%)</label>
+            <input type="number" step="0.01" class="form-control" id="acidez" name="acidez" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="ratio" class="form-label">Ratio</label>
+            <input type="number" step="0.01" class="form-control" id="ratio" name="ratio" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="volume_titulante" class="form-label">Volume Titulante (mL)</label>
+            <input type="number" step="0.01" class="form-control" id="volume_titulante" name="volume_titulante" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="normalidade" class="form-label">Normalidade</label>
+            <input type="number" step="0.01" class="form-control" id="normalidade" name="normalidade" value="0.1">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="volume_amostra" class="form-label">Volume da Amostra (mL)</label>
+            <input type="number" step="0.01" class="form-control" id="volume_amostra" name="volume_amostra" value="10">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="acidez_atual" class="form-label">Acidez Atual (%)</label>
+            <input type="number" step="0.01" class="form-control" id="acidez_atual" name="acidez_atual" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="concentracao_soda" class="form-label">Concentração da Soda</label>
+            <input type="number" step="0.01" class="form-control" id="concentracao_soda" name="concentracao_soda" value="1">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="fator" class="form-label">Fator</label>
+            <input type="number" step="0.01" class="form-control" id="fator" name="fator" value="1">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="volume_inicial" class="form-label">Volume Inicial (L)</label>
+            <input type="number" step="0.01" class="form-control" id="volume_inicial" name="volume_inicial" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="volume_final" class="form-label">Volume Final (L)</label>
+            <input type="number" step="0.01" class="form-control" id="volume_final" name="volume_final" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="brix1" class="form-label">Brix 1</label>
+            <input type="number" step="0.01" class="form-control" id="brix1" name="brix1" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="vol1" class="form-label">Volume 1 (L)</label>
+            <input type="number" step="0.01" class="form-control" id="vol1" name="vol1" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="brix2" class="form-label">Brix 2</label>
+            <input type="number" step="0.01" class="form-control" id="brix2" name="brix2" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="vol2" class="form-label">Volume 2 (L)</label>
+            <input type="number" step="0.01" class="form-control" id="vol2" name="vol2" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="acidez1" class="form-label">Acidez 1 (%)</label>
+            <input type="number" step="0.01" class="form-control" id="acidez1" name="acidez1" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="acidez2" class="form-label">Acidez 2 (%)</label>
+            <input type="number" step="0.01" class="form-control" id="acidez2" name="acidez2" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="vazao" class="form-label">Vazão (L/min)</label>
+            <input type="number" step="0.01" class="form-control" id="vazao" name="vazao" value="1">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="acidez_desejada" class="form-label">Acidez Desejada (%)</label>
+            <input type="number" step="0.01" class="form-control" id="acidez_desejada" name="acidez_desejada" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="brix_inicial" class="form-label">Brix Inicial</label>
+            <input type="number" step="0.01" class="form-control" id="brix_inicial" name="brix_inicial" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="acucar_cristal" class="form-label">Açúcar Cristal (kg)</label>
+            <input type="number" step="0.01" class="form-control" id="acucar_cristal" name="acucar_cristal" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="volume_solucao" class="form-label">Volume Solução (L)</label>
+            <input type="number" step="0.01" class="form-control" id="volume_solucao" name="volume_solucao" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="percentual_acucar" class="form-label">Percentual de Açúcar (%)</label>
+            <input type="number" step="0.01" class="form-control" id="percentual_acucar" name="percentual_acucar" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="peso_bruto" class="form-label">Peso Bruto (kg)</label>
+            <input type="number" step="0.01" class="form-control" id="peso_bruto" name="peso_bruto" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="tara" class="form-label">Tara (kg)</label>
+            <input type="number" step="0.01" class="form-control" id="tara" name="tara" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="peso_total" class="form-label">Peso Total (kg)</label>
+            <input type="number" step="0.01" class="form-control" id="peso_total" name="peso_total" value="0">
+        </div>
+        <div class="col-md-4 mb-3">
+            <label for="embalagem" class="form-label">Peso da Embalagem (kg)</label>
+            <input type="number" step="0.01" class="form-control" id="embalagem" name="embalagem" value="0">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Calcular</button>
+</form>
+
+{% if results %}
+<h2>Resultados</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Cálculo</th>
+            <th>Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, value in results.items() %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ value | round(2) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
