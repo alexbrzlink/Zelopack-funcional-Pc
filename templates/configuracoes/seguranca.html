@@ -1,0 +1,452 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurações de Segurança - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .config-header {
+        background: linear-gradient(135deg, #4682b4 0%, #1e5799 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .config-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .config-header p {
+        opacity: 0.85;
+        max-width: 80%;
+    }
+    
+    .config-section {
+        margin-bottom: 2rem;
+    }
+    
+    .config-section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #343a40;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 0.5rem;
+    }
+    
+    .config-item {
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        transition: all 0.2s ease;
+        background-color: #f8f9fa;
+        border-left: 4px solid #4682b4;
+    }
+    
+    .config-item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .config-item-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+    
+    .config-item-description {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+    
+    .config-input {
+        margin-top: 0.5rem;
+    }
+    
+    .action-btn {
+        margin-right: 0.5rem;
+    }
+    
+    .feature-icon {
+        background-color: #f8f9fa;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #4682b4;
+        margin-bottom: 1rem;
+    }
+    
+    .nav-breadcrumb {
+        background-color: transparent;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Navegação -->
+    <nav aria-label="breadcrumb" class="nav-breadcrumb mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Início</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('configuracoes.index') }}">Configurações</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Segurança</li>
+        </ol>
+    </nav>
+
+    <!-- Cabeçalho de Configurações -->
+    <div class="config-header mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-shield-alt me-2"></i> Configurações de Segurança</h1>
+                <p class="mb-0">Configure parâmetros de segurança, permissões e acessos do sistema.</p>
+            </div>
+            <div>
+                <a href="{{ url_for('configuracoes.index') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Formulário de Configurações -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form id="securityConfigForm">
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-lock me-2"></i> Políticas de Senha</h5>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Complexidade de Senha</div>
+                        <div class="config-item-description">Exigir senhas fortes com requisitos mínimos de segurança</div>
+                        <div class="config-input">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="passwordComplexity" name="security.password_complexity" {% if configs.get('password_complexity') == 'true' %}checked{% endif %}>
+                                <label class="form-check-label" for="passwordComplexity">Exigir senhas complexas</label>
+                            </div>
+                            <div class="form-text text-muted">
+                                Quando ativado, as senhas devem conter pelo menos:
+                                <ul class="mt-2">
+                                    <li>8 caracteres de comprimento</li>
+                                    <li>Uma letra maiúscula</li>
+                                    <li>Uma letra minúscula</li>
+                                    <li>Um número</li>
+                                    <li>Um caractere especial</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Validade de Senha</div>
+                        <div class="config-item-description">Período máximo para expiração e troca de senha</div>
+                        <div class="config-input">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="passwordExpiration" name="security.password_expiration_enabled" {% if configs.get('password_expiration_enabled') == 'true' %}checked{% endif %}>
+                                        <label class="form-check-label" for="passwordExpiration">Ativar expiração de senha</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="passwordExpirationDays" name="security.password_expiration_days" value="{{ configs.get('password_expiration_days', '90') }}" min="30" max="365">
+                                        <span class="input-group-text">dias</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Histórico de Senhas</div>
+                        <div class="config-item-description">Evitar reutilização de senhas anteriores</div>
+                        <div class="config-input">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="passwordHistory" name="security.password_history_enabled" {% if configs.get('password_history_enabled') == 'true' %}checked{% endif %}>
+                                        <label class="form-check-label" for="passwordHistory">Manter histórico de senhas</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="passwordHistoryCount" name="security.password_history_count" value="{{ configs.get('password_history_count', '5') }}" min="3" max="20">
+                                        <span class="input-group-text">senhas anteriores</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-sign-in-alt me-2"></i> Controle de Acesso</h5>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Bloqueio de Conta</div>
+                        <div class="config-item-description">Bloquear conta após tentativas consecutivas de login sem sucesso</div>
+                        <div class="config-input">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mb-3">
+                                        <input class="form-check-input" type="checkbox" id="accountLockout" name="security.account_lockout_enabled" {% if configs.get('account_lockout_enabled') == 'true' %}checked{% endif %}>
+                                        <label class="form-check-label" for="accountLockout">Ativar bloqueio de conta</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="accountLockoutAttempts" name="security.account_lockout_attempts" value="{{ configs.get('account_lockout_attempts', '5') }}" min="3" max="10">
+                                        <span class="input-group-text">tentativas</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Tempo de bloqueio:</label>
+                                <select class="form-select" id="accountLockoutDuration" name="security.account_lockout_duration">
+                                    <option value="15" {% if configs.get('account_lockout_duration') == '15' %}selected{% endif %}>15 minutos</option>
+                                    <option value="30" {% if configs.get('account_lockout_duration') == '30' %}selected{% endif %}>30 minutos</option>
+                                    <option value="60" {% if configs.get('account_lockout_duration') == '60' %}selected{% endif %}>1 hora</option>
+                                    <option value="1440" {% if configs.get('account_lockout_duration') == '1440' %}selected{% endif %}>24 horas</option>
+                                    <option value="0" {% if configs.get('account_lockout_duration') == '0' %}selected{% endif %}>Permanente (requer desbloqueio manual)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Tempo de Sessão</div>
+                        <div class="config-item-description">Tempo máximo de inatividade antes de encerrar a sessão</div>
+                        <div class="config-input">
+                            <select class="form-select" id="sessionTimeout" name="security.session_timeout">
+                                <option value="15" {% if configs.get('session_timeout') == '15' %}selected{% endif %}>15 minutos</option>
+                                <option value="30" {% if configs.get('session_timeout') == '30' %}selected{% endif %}>30 minutos</option>
+                                <option value="60" {% if configs.get('session_timeout') == '60' %}selected{% endif %}>1 hora</option>
+                                <option value="120" {% if configs.get('session_timeout') == '120' %}selected{% endif %}>2 horas</option>
+                                <option value="240" {% if configs.get('session_timeout') == '240' %}selected{% endif %}>4 horas</option>
+                                <option value="480" {% if configs.get('session_timeout') == '480' %}selected{% endif %}>8 horas</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Restrição de IP</div>
+                        <div class="config-item-description">Restringir acesso ao sistema por endereço IP</div>
+                        <div class="config-input">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="ipRestriction" name="security.ip_restriction_enabled" {% if configs.get('ip_restriction_enabled') == 'true' %}checked{% endif %}>
+                                <label class="form-check-label" for="ipRestriction">Ativar restrição de IP</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="allowedIPs" class="form-label">IPs permitidos (um por linha):</label>
+                                <textarea class="form-control" id="allowedIPs" name="security.allowed_ips" rows="4" placeholder="192.168.1.0/24">{{ configs.get('allowed_ips', '') }}</textarea>
+                                <div class="form-text">Digite IPs individuais ou intervalos CIDR, um por linha.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-user-shield me-2"></i> Autenticação Avançada</h5>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Verificação em Duas Etapas</div>
+                        <div class="config-item-description">Adiciona uma camada extra de segurança no login</div>
+                        <div class="config-input">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="twoFactorAuth" name="security.two_factor_enabled" {% if configs.get('two_factor_enabled') == 'true' %}checked{% endif %}>
+                                <label class="form-check-label" for="twoFactorAuth">Ativar verificação em duas etapas</label>
+                            </div>
+                            <select class="form-select" id="twoFactorMethod" name="security.two_factor_method">
+                                <option value="email" {% if configs.get('two_factor_method') == 'email' %}selected{% endif %}>Email</option>
+                                <option value="sms" {% if configs.get('two_factor_method') == 'sms' %}selected{% endif %}>SMS</option>
+                                <option value="totp" {% if configs.get('two_factor_method') == 'totp' %}selected{% endif %}>Aplicativo Autenticador (TOTP)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-end mt-4">
+                    <button type="button" class="btn btn-outline-secondary me-2" id="resetSecurityForm">
+                        <i class="fas fa-undo me-1"></i> Restaurar Padrões
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="saveSecurityConfig">
+                        <i class="fas fa-save me-1"></i> Salvar Configurações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Referências aos elementos
+        const form = document.getElementById('securityConfigForm');
+        const resetBtn = document.getElementById('resetSecurityForm');
+        const saveBtn = document.getElementById('saveSecurityConfig');
+        
+        // Evento de envio do formulário
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Coletar dados do formulário
+            const formData = new FormData(form);
+            const settings = {};
+            
+            for (const [key, value] of formData.entries()) {
+                // Remover o prefixo "security." para enviar apenas o nome da configuração
+                const configName = key.replace('security.', '');
+                settings[configName] = value;
+            }
+            
+            // Verificar se os checkboxes não marcados (não incluídos no FormData)
+            const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const configName = checkbox.name.replace('security.', '');
+                if (!formData.has(checkbox.name)) {
+                    settings[configName] = 'false';
+                } else {
+                    settings[configName] = 'true';
+                }
+            });
+            
+            // Enviar dados para o servidor
+            fetch('{{ url_for("configuracoes.update_config") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({
+                    section: 'security',
+                    settings: settings
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', 'Configurações de segurança atualizadas com sucesso!');
+                } else {
+                    showNotification('error', 'Erro ao atualizar configurações: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                showNotification('error', 'Erro ao processar solicitação.');
+            });
+        });
+        
+        // Botão para resetar o formulário
+        resetBtn.addEventListener('click', function() {
+            if (confirm('Deseja restaurar todas as configurações de segurança para os valores padrão? Esta ação não pode ser desfeita.')) {
+                form.reset();
+                
+                // Definir valores padrão para checkboxes e campos
+                document.getElementById('passwordComplexity').checked = true;
+                document.getElementById('passwordExpiration').checked = true;
+                document.getElementById('passwordExpirationDays').value = '90';
+                document.getElementById('passwordHistory').checked = true;
+                document.getElementById('passwordHistoryCount').value = '5';
+                document.getElementById('accountLockout').checked = true;
+                document.getElementById('accountLockoutAttempts').value = '5';
+                document.getElementById('accountLockoutDuration').value = '30';
+                document.getElementById('sessionTimeout').value = '30';
+                document.getElementById('ipRestriction').checked = false;
+                document.getElementById('allowedIPs').value = '';
+                document.getElementById('twoFactorAuth').checked = false;
+                document.getElementById('twoFactorMethod').value = 'email';
+                
+                showNotification('info', 'Formulário restaurado para valores padrão. Clique em Salvar para aplicar as alterações.');
+            }
+        });
+        
+        // Função para obter token CSRF
+        function getCsrfToken() {
+            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        }
+        
+        // Função para mostrar notificações
+        function showNotification(type, message) {
+            const alertClass = type === 'success' ? 'alert-success' : 
+                              type === 'error' ? 'alert-danger' : 
+                              type === 'info' ? 'alert-info' : 'alert-warning';
+                              
+            const alertIcon = type === 'success' ? '<i class="fas fa-check-circle me-2"></i>' : 
+                             type === 'error' ? '<i class="fas fa-exclamation-circle me-2"></i>' : 
+                             type === 'info' ? '<i class="fas fa-info-circle me-2"></i>' : '<i class="fas fa-exclamation-triangle me-2"></i>';
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                ${alertIcon} ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Remover automaticamente após 5 segundos
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(alertDiv);
+                }, 300);
+            }, 5000);
+        }
+        
+        // Controlar estados dependentes de checkboxes
+        function toggleDependentFields() {
+            const passwordExpiration = document.getElementById('passwordExpiration');
+            const passwordExpirationDays = document.getElementById('passwordExpirationDays');
+            
+            const passwordHistory = document.getElementById('passwordHistory');
+            const passwordHistoryCount = document.getElementById('passwordHistoryCount');
+            
+            const accountLockout = document.getElementById('accountLockout');
+            const accountLockoutAttempts = document.getElementById('accountLockoutAttempts');
+            const accountLockoutDuration = document.getElementById('accountLockoutDuration');
+            
+            const ipRestriction = document.getElementById('ipRestriction');
+            const allowedIPs = document.getElementById('allowedIPs');
+            
+            const twoFactorAuth = document.getElementById('twoFactorAuth');
+            const twoFactorMethod = document.getElementById('twoFactorMethod');
+            
+            // Senha
+            passwordExpirationDays.disabled = !passwordExpiration.checked;
+            passwordHistoryCount.disabled = !passwordHistory.checked;
+            
+            // Bloqueio de conta
+            accountLockoutAttempts.disabled = !accountLockout.checked;
+            accountLockoutDuration.disabled = !accountLockout.checked;
+            
+            // Restrição de IP
+            allowedIPs.disabled = !ipRestriction.checked;
+            
+            // Verificação em duas etapas
+            twoFactorMethod.disabled = !twoFactorAuth.checked;
+        }
+        
+        // Adicionar listeners para alterações nos checkboxes
+        document.getElementById('passwordExpiration').addEventListener('change', toggleDependentFields);
+        document.getElementById('passwordHistory').addEventListener('change', toggleDependentFields);
+        document.getElementById('accountLockout').addEventListener('change', toggleDependentFields);
+        document.getElementById('ipRestriction').addEventListener('change', toggleDependentFields);
+        document.getElementById('twoFactorAuth').addEventListener('change', toggleDependentFields);
+        
+        // Inicializar estados
+        toggleDependentFields();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,658 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurações de E-mail - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .config-header {
+        background: linear-gradient(135deg, #2c92d3 0%, #1565c0 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .config-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .config-header p {
+        opacity: 0.85;
+        max-width: 80%;
+    }
+    
+    .config-section {
+        margin-bottom: 2rem;
+    }
+    
+    .config-section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #343a40;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 0.5rem;
+    }
+    
+    .config-item {
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        transition: all 0.2s ease;
+        background-color: #f8f9fa;
+        border-left: 4px solid #2c92d3;
+    }
+    
+    .config-item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .config-item-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+    
+    .config-item-description {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+    
+    .config-input {
+        margin-top: 0.5rem;
+    }
+    
+    .test-email-btn {
+        margin-top: 1rem;
+    }
+    
+    .nav-breadcrumb {
+        background-color: transparent;
+        margin-bottom: 2rem;
+    }
+    
+    .email-templates-table th,
+    .email-templates-table td {
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Navegação -->
+    <nav aria-label="breadcrumb" class="nav-breadcrumb mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Início</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('configuracoes.index') }}">Configurações</a></li>
+            <li class="breadcrumb-item active" aria-current="page">E-mail</li>
+        </ol>
+    </nav>
+
+    <!-- Cabeçalho de Configurações -->
+    <div class="config-header mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-envelope me-2"></i> Configurações de E-mail</h1>
+                <p class="mb-0">Configure os parâmetros de envio de e-mail e notificações do sistema.</p>
+            </div>
+            <div>
+                <a href="{{ url_for('configuracoes.index') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Formulário de Configurações -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form id="emailConfigForm">
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-server me-2"></i> Servidor SMTP</h5>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Servidor de E-mail</div>
+                        <div class="config-item-description">Configurações do servidor SMTP para envio de e-mails</div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="smtpServer" class="form-label">Servidor SMTP</label>
+                                <input type="text" class="form-control" id="smtpServer" name="email.smtp_server" placeholder="smtp.exemplo.com.br" value="{{ configs.get('smtp_server', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtpPort" class="form-label">Porta</label>
+                                <input type="number" class="form-control" id="smtpPort" name="email.smtp_port" placeholder="587" value="{{ configs.get('smtp_port', '587') }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="smtpUsername" class="form-label">Usuário</label>
+                                <input type="text" class="form-control" id="smtpUsername" name="email.smtp_username" placeholder="usuario@exemplo.com.br" value="{{ configs.get('smtp_username', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="smtpPassword" class="form-label">Senha</label>
+                                <input type="password" class="form-control" id="smtpPassword" name="email.smtp_password" placeholder="********" value="{{ configs.get('smtp_password', '') }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="smtpEncryption" class="form-label">Criptografia</label>
+                                <select class="form-select" id="smtpEncryption" name="email.smtp_encryption">
+                                    <option value="none" {% if configs.get('smtp_encryption') == 'none' %}selected{% endif %}>Nenhuma</option>
+                                    <option value="ssl" {% if configs.get('smtp_encryption') == 'ssl' %}selected{% endif %}>SSL</option>
+                                    <option value="tls" {% if configs.get('smtp_encryption') == 'tls' or not configs.get('smtp_encryption') %}selected{% endif %}>TLS</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mt-4">
+                                    <input class="form-check-input" type="checkbox" id="smtpAuth" name="email.smtp_auth" {% if configs.get('smtp_auth') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="smtpAuth">
+                                        Requer autenticação
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">E-mail do Remetente</div>
+                        <div class="config-item-description">Configuração do endereço de e-mail que envia as mensagens</div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fromEmail" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="fromEmail" name="email.from_email" placeholder="noreply@zelopack.com.br" value="{{ configs.get('from_email', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fromName" class="form-label">Nome de Exibição</label>
+                                <input type="text" class="form-control" id="fromName" name="email.from_name" placeholder="Sistema Zelopack" value="{{ configs.get('from_name', 'Sistema Zelopack') }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-end">
+                        <button type="button" class="btn btn-outline-primary test-email-btn" id="testEmailBtn">
+                            <i class="fas fa-paper-plane me-1"></i> Testar Configurações
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-bell me-2"></i> Configurações de Notificações</h5>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Notificações por E-mail</div>
+                        <div class="config-item-description">Configurar quais eventos do sistema geram notificações por e-mail</div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="notifyNewReport" name="email.notify_new_report" {% if configs.get('notify_new_report', 'true') == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="notifyNewReport">
+                                Notificar sobre novos laudos
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="notifyReportUpdate" name="email.notify_report_update" {% if configs.get('notify_report_update', 'true') == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="notifyReportUpdate">
+                                Notificar sobre atualizações em laudos
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="notifyUserCreate" name="email.notify_user_create" {% if configs.get('notify_user_create', 'true') == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="notifyUserCreate">
+                                Notificar sobre novos usuários
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="notifyLowStock" name="email.notify_low_stock" {% if configs.get('notify_low_stock', 'true') == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="notifyLowStock">
+                                Notificar sobre estoque baixo
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="notifySystemEvents" name="email.notify_system_events" {% if configs.get('notify_system_events', 'true') == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="notifySystemEvents">
+                                Notificar sobre eventos do sistema (backups, manutenção, etc.)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Destinatários de Notificações Administrativas</div>
+                        <div class="config-item-description">Endereços de e-mail adicionais para receber notificações administrativas</div>
+                        
+                        <div class="mb-3">
+                            <label for="adminEmails" class="form-label">E-mails (separados por vírgula)</label>
+                            <textarea class="form-control" id="adminEmails" name="email.admin_emails" rows="2" placeholder="admin@exemplo.com, suporte@exemplo.com">{{ configs.get('admin_emails', '') }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-file-alt me-2"></i> Templates de E-mail</h5>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover email-templates-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Template</th>
+                                    <th>Descrição</th>
+                                    <th>Última atualização</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Boas-vindas</td>
+                                    <td>E-mail enviado para novos usuários</td>
+                                    <td>25/04/2025</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary me-1" data-template="welcome">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-template="welcome">
+                                            <i class="fas fa-paper-plane"></i> Testar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Redefinição de Senha</td>
+                                    <td>E-mail enviado para redefinição de senha</td>
+                                    <td>25/04/2025</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary me-1" data-template="password_reset">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-template="password_reset">
+                                            <i class="fas fa-paper-plane"></i> Testar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Notificação de Laudo</td>
+                                    <td>Notificação sobre novos laudos</td>
+                                    <td>25/04/2025</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary me-1" data-template="report_notification">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-template="report_notification">
+                                            <i class="fas fa-paper-plane"></i> Testar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Alerta de Estoque</td>
+                                    <td>Alerta sobre itens com estoque baixo</td>
+                                    <td>25/04/2025</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-primary me-1" data-template="stock_alert">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-template="stock_alert">
+                                            <i class="fas fa-paper-plane"></i> Testar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="text-end mt-4">
+                    <button type="button" class="btn btn-outline-secondary me-2" id="resetEmailForm">
+                        <i class="fas fa-undo me-1"></i> Restaurar Padrões
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="saveEmailConfig">
+                        <i class="fas fa-save me-1"></i> Salvar Configurações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para teste de e-mail -->
+<div class="modal fade" id="testEmailModal" tabindex="-1" aria-labelledby="testEmailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testEmailModalLabel">Testar Configurações de E-mail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="testEmailAddress" class="form-label">Endereço de E-mail para Teste</label>
+                    <input type="email" class="form-control" id="testEmailAddress" placeholder="seu@email.com">
+                    <div class="form-text">Um e-mail de teste será enviado para este endereço.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="testEmailSubject" class="form-label">Assunto</label>
+                    <input type="text" class="form-control" id="testEmailSubject" value="Teste de Configuração de E-mail - Zelopack">
+                </div>
+                <div class="mb-3">
+                    <label for="testEmailMessage" class="form-label">Mensagem</label>
+                    <textarea class="form-control" id="testEmailMessage" rows="3">Este é um e-mail de teste enviado pelo Sistema Zelopack para verificar as configurações de SMTP.</textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="sendTestEmail">
+                    <i class="fas fa-paper-plane me-1"></i> Enviar E-mail de Teste
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para edição de template de e-mail -->
+<div class="modal fade" id="editTemplateModal" tabindex="-1" aria-labelledby="editTemplateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTemplateModalLabel">Editar Template de E-mail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="templateSubject" class="form-label">Assunto</label>
+                    <input type="text" class="form-control" id="templateSubject">
+                </div>
+                <div class="mb-3">
+                    <label for="templateBody" class="form-label">Conteúdo do E-mail</label>
+                    <textarea class="form-control" id="templateBody" rows="15"></textarea>
+                    <div class="form-text">
+                        Variáveis disponíveis: {{nome}}, {{email}}, {{empresa}}, {{data}}, {{link}}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveTemplate">
+                    <i class="fas fa-save me-1"></i> Salvar Template
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Referências aos elementos
+        const form = document.getElementById('emailConfigForm');
+        const resetBtn = document.getElementById('resetEmailForm');
+        const saveBtn = document.getElementById('saveEmailConfig');
+        const testEmailBtn = document.getElementById('testEmailBtn');
+        const sendTestEmailBtn = document.getElementById('sendTestEmail');
+        
+        // Modal de teste de e-mail
+        const testEmailModal = new bootstrap.Modal(document.getElementById('testEmailModal'));
+        
+        // Modal de edição de template
+        const editTemplateModal = new bootstrap.Modal(document.getElementById('editTemplateModal'));
+        
+        // Evento de envio do formulário
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Coletar dados do formulário
+            const formData = new FormData(form);
+            const settings = {};
+            
+            for (const [key, value] of formData.entries()) {
+                // Remover o prefixo "email." para enviar apenas o nome da configuração
+                const configName = key.replace('email.', '');
+                settings[configName] = value;
+            }
+            
+            // Verificar se os checkboxes não marcados (não incluídos no FormData)
+            const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const configName = checkbox.name.replace('email.', '');
+                if (!formData.has(checkbox.name)) {
+                    settings[configName] = 'false';
+                } else {
+                    settings[configName] = 'true';
+                }
+            });
+            
+            // Enviar dados para o servidor
+            fetch('{{ url_for("configuracoes.update_config") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({
+                    section: 'email',
+                    settings: settings
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', 'Configurações de e-mail atualizadas com sucesso!');
+                } else {
+                    showNotification('error', 'Erro ao atualizar configurações: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                showNotification('error', 'Erro ao processar solicitação.');
+            });
+        });
+        
+        // Botão para testar configurações de e-mail
+        testEmailBtn.addEventListener('click', function() {
+            testEmailModal.show();
+        });
+        
+        // Botão para enviar e-mail de teste
+        sendTestEmailBtn.addEventListener('click', function() {
+            const testEmail = document.getElementById('testEmailAddress').value;
+            const testSubject = document.getElementById('testEmailSubject').value;
+            const testMessage = document.getElementById('testEmailMessage').value;
+            
+            if (!testEmail) {
+                showNotification('error', 'Por favor, informe um endereço de e-mail válido.');
+                return;
+            }
+            
+            // Coletar dados do formulário para usar nas configurações de teste
+            const smtpServer = document.getElementById('smtpServer').value;
+            const smtpPort = document.getElementById('smtpPort').value;
+            const smtpUsername = document.getElementById('smtpUsername').value;
+            const smtpPassword = document.getElementById('smtpPassword').value;
+            const smtpEncryption = document.getElementById('smtpEncryption').value;
+            const smtpAuth = document.getElementById('smtpAuth').checked;
+            const fromEmail = document.getElementById('fromEmail').value;
+            const fromName = document.getElementById('fromName').value;
+            
+            // Verificar configurações mínimas
+            if (!smtpServer || !smtpPort) {
+                showNotification('error', 'Por favor, configure o servidor SMTP e a porta antes de testar.');
+                return;
+            }
+            
+            // Simular envio (em um sistema real, estas configurações seriam enviadas ao servidor)
+            sendTestEmailBtn.disabled = true;
+            sendTestEmailBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Enviando...';
+            
+            // Simular tempo de envio (2 segundos)
+            setTimeout(() => {
+                // Em um sistema real, esta seria uma chamada AJAX para o backend
+                testEmailModal.hide();
+                sendTestEmailBtn.disabled = false;
+                sendTestEmailBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Enviar E-mail de Teste';
+                
+                showNotification('success', 'E-mail de teste enviado com sucesso para ' + testEmail);
+            }, 2000);
+        });
+        
+        // Botão para resetar o formulário
+        resetBtn.addEventListener('click', function() {
+            if (confirm('Deseja restaurar todas as configurações de e-mail para os valores padrão? Esta ação não pode ser desfeita.')) {
+                form.reset();
+                
+                // Definir valores padrão para campos
+                document.getElementById('smtpPort').value = '587';
+                document.getElementById('smtpEncryption').value = 'tls';
+                document.getElementById('smtpAuth').checked = true;
+                document.getElementById('fromName').value = 'Sistema Zelopack';
+                document.getElementById('notifyNewReport').checked = true;
+                document.getElementById('notifyReportUpdate').checked = true;
+                document.getElementById('notifyUserCreate').checked = true;
+                document.getElementById('notifyLowStock').checked = true;
+                document.getElementById('notifySystemEvents').checked = true;
+                document.getElementById('adminEmails').value = '';
+                
+                showNotification('info', 'Formulário restaurado para valores padrão. Clique em Salvar para aplicar as alterações.');
+            }
+        });
+        
+        // Eventos para botões de edição de template
+        document.querySelectorAll('button[data-template]').forEach(button => {
+            button.addEventListener('click', function() {
+                const templateType = this.getAttribute('data-template');
+                
+                if (this.innerHTML.includes('Editar')) {
+                    // Abrir modal de edição
+                    document.getElementById('editTemplateModalLabel').textContent = 'Editar Template de E-mail: ' + templateType;
+                    
+                    // Carregar conteúdo do template (simulado)
+                    let templateSubject = '';
+                    let templateBody = '';
+                    
+                    switch(templateType) {
+                        case 'welcome':
+                            templateSubject = 'Bem-vindo ao Sistema Zelopack';
+                            templateBody = 'Olá {{nome}},\n\nSeja bem-vindo ao Sistema Zelopack!\n\nSeu cadastro foi realizado com sucesso e agora você já pode acessar o sistema usando seu e-mail ({{email}}) e a senha informada durante o cadastro.\n\nPara acessar o sistema, clique no link abaixo:\n{{link}}\n\nEm caso de dúvidas, entre em contato com o administrador do sistema.\n\nAtenciosamente,\nEquipe Zelopack';
+                            break;
+                        case 'password_reset':
+                            templateSubject = 'Redefinição de Senha - Sistema Zelopack';
+                            templateBody = 'Olá {{nome}},\n\nRecebemos uma solicitação para redefinir sua senha no Sistema Zelopack.\n\nPara definir uma nova senha, clique no link abaixo:\n{{link}}\n\nSe você não solicitou a redefinição de senha, por favor ignore este e-mail ou entre em contato com o administrador do sistema.\n\nO link acima será válido por 24 horas.\n\nAtenciosamente,\nEquipe Zelopack';
+                            break;
+                        case 'report_notification':
+                            templateSubject = 'Novo Laudo Disponível - Sistema Zelopack';
+                            templateBody = 'Olá {{nome}},\n\nUm novo laudo foi registrado no Sistema Zelopack em {{data}}.\n\nDetalhes do laudo:\nCódigo: {{codigo}}\nTipo: {{tipo}}\nFornecedor: {{fornecedor}}\n\nPara visualizar o laudo completo, acesse o sistema através do link abaixo:\n{{link}}\n\nAtenciosamente,\nEquipe Zelopack';
+                            break;
+                        case 'stock_alert':
+                            templateSubject = 'Alerta de Estoque Baixo - Sistema Zelopack';
+                            templateBody = 'Olá {{nome}},\n\nO sistema detectou itens com estoque baixo que precisam de atenção.\n\nItens com estoque baixo:\n{{itens}}\n\nPara visualizar mais detalhes, acesse o sistema através do link abaixo:\n{{link}}\n\nAtenciosamente,\nEquipe Zelopack';
+                            break;
+                    }
+                    
+                    document.getElementById('templateSubject').value = templateSubject;
+                    document.getElementById('templateBody').value = templateBody;
+                    
+                    editTemplateModal.show();
+                } else if (this.innerHTML.includes('Testar')) {
+                    // Abrir modal de teste de e-mail
+                    document.getElementById('testEmailModalLabel').textContent = 'Testar Template: ' + templateType;
+                    
+                    // Preencher com dados de teste
+                    let testSubject = '';
+                    let testMessage = '';
+                    
+                    switch(templateType) {
+                        case 'welcome':
+                            testSubject = 'Bem-vindo ao Sistema Zelopack';
+                            testMessage = 'Este é um e-mail de teste do template de boas-vindas.';
+                            break;
+                        case 'password_reset':
+                            testSubject = 'Redefinição de Senha - Sistema Zelopack';
+                            testMessage = 'Este é um e-mail de teste do template de redefinição de senha.';
+                            break;
+                        case 'report_notification':
+                            testSubject = 'Novo Laudo Disponível - Sistema Zelopack';
+                            testMessage = 'Este é um e-mail de teste do template de notificação de laudo.';
+                            break;
+                        case 'stock_alert':
+                            testSubject = 'Alerta de Estoque Baixo - Sistema Zelopack';
+                            testMessage = 'Este é um e-mail de teste do template de alerta de estoque.';
+                            break;
+                    }
+                    
+                    document.getElementById('testEmailSubject').value = testSubject;
+                    document.getElementById('testEmailMessage').value = testMessage;
+                    
+                    testEmailModal.show();
+                }
+            });
+        });
+        
+        // Salvar template
+        document.getElementById('saveTemplate').addEventListener('click', function() {
+            const templateSubject = document.getElementById('templateSubject').value;
+            const templateBody = document.getElementById('templateBody').value;
+            
+            // Validar
+            if (!templateSubject || !templateBody) {
+                showNotification('error', 'Por favor, preencha todos os campos do template.');
+                return;
+            }
+            
+            // Simular salvamento (em um sistema real, estas configurações seriam enviadas ao servidor)
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Salvando...';
+            
+            // Simular tempo de envio (1 segundo)
+            setTimeout(() => {
+                // Em um sistema real, esta seria uma chamada AJAX para o backend
+                editTemplateModal.hide();
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-save me-1"></i> Salvar Template';
+                
+                showNotification('success', 'Template de e-mail salvo com sucesso!');
+            }, 1000);
+        });
+        
+        // Função para obter token CSRF
+        function getCsrfToken() {
+            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        }
+        
+        // Função para mostrar notificações
+        function showNotification(type, message) {
+            const alertClass = type === 'success' ? 'alert-success' : 
+                             type === 'error' ? 'alert-danger' : 
+                             type === 'info' ? 'alert-info' : 'alert-warning';
+                              
+            const alertIcon = type === 'success' ? '<i class="fas fa-check-circle me-2"></i>' : 
+                            type === 'error' ? '<i class="fas fa-exclamation-circle me-2"></i>' : 
+                            type === 'info' ? '<i class="fas fa-info-circle me-2"></i>' : '<i class="fas fa-exclamation-triangle me-2"></i>';
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                ${alertIcon} ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Remover automaticamente após 5 segundos
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(alertDiv);
+                }, 300);
+            }, 5000);
+        }
+    });
+</script>
+{% endblock %}

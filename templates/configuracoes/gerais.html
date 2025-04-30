@@ -1,0 +1,679 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurações Gerais - Zelopack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .config-header {
+        background: linear-gradient(135deg, #4682b4 0%, #1e5799 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .config-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .config-header p {
+        opacity: 0.85;
+        max-width: 80%;
+    }
+    
+    .config-section {
+        margin-bottom: 2rem;
+    }
+    
+    .config-section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #343a40;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 0.5rem;
+    }
+    
+    .config-item {
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        transition: all 0.2s ease;
+        background-color: #f8f9fa;
+        border-left: 4px solid #4682b4;
+    }
+    
+    .config-item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .config-item-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+    
+    .config-item-description {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+    
+    .config-input {
+        margin-top: 0.5rem;
+    }
+    
+    .action-btn {
+        margin-right: 0.5rem;
+    }
+    
+    .feature-icon {
+        background-color: #f8f9fa;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #4682b4;
+        margin-bottom: 1rem;
+    }
+    
+    .nav-breadcrumb {
+        background-color: transparent;
+        margin-bottom: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Navegação -->
+    <nav aria-label="breadcrumb" class="nav-breadcrumb mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Início</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('configuracoes.index') }}">Configurações</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Gerais</li>
+        </ol>
+    </nav>
+
+    <!-- Cabeçalho de Configurações -->
+    <div class="config-header mb-4 p-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-sliders-h me-2"></i> Configurações Gerais</h1>
+                <p class="mb-0">Configure parâmetros gerais e funcionamento do sistema e aplicação.</p>
+            </div>
+            <div>
+                <a href="{{ url_for('configuracoes.index') }}" class="btn btn-light">
+                    <i class="fas fa-arrow-left me-1"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Formulário de Configurações -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form id="generalConfigForm">
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-building me-2"></i> Informações da Empresa</h5>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Dados Básicos</div>
+                        <div class="config-item-description">Informações gerais sobre a empresa que utiliza o sistema</div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="companyName" class="form-label">Nome da Empresa</label>
+                                <input type="text" class="form-control" id="companyName" name="general.company_name" placeholder="Zelopack Ltda." value="{{ configs.get('company_name', 'Zelopack Ltda.') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tradingName" class="form-label">Nome Fantasia</label>
+                                <input type="text" class="form-control" id="tradingName" name="general.trading_name" placeholder="Zelopack" value="{{ configs.get('trading_name', 'Zelopack') }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="cnpj" class="form-label">CNPJ</label>
+                                <input type="text" class="form-control" id="cnpj" name="general.cnpj" placeholder="00.000.000/0001-00" value="{{ configs.get('cnpj', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inscricaoEstadual" class="form-label">Inscrição Estadual</label>
+                                <input type="text" class="form-control" id="inscricaoEstadual" name="general.state_registration" placeholder="000.000.000.000" value="{{ configs.get('state_registration', '') }}">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Contato e Endereço</div>
+                        <div class="config-item-description">Informações de contato e localização da empresa</div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="phoneNumber" class="form-label">Telefone</label>
+                                <input type="text" class="form-control" id="phoneNumber" name="general.phone_number" placeholder="(00) 0000-0000" value="{{ configs.get('phone_number', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="email" name="general.email" placeholder="contato@zelopack.com.br" value="{{ configs.get('email', '') }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="address" class="form-label">Endereço</label>
+                                <input type="text" class="form-control" id="address" name="general.address" placeholder="Rua Exemplo, 123" value="{{ configs.get('address', '') }}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="city" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="city" name="general.city" placeholder="São Paulo" value="{{ configs.get('city', '') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="state" class="form-label">Estado</label>
+                                <input type="text" class="form-control" id="state" name="general.state" placeholder="SP" value="{{ configs.get('state', '') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="zipCode" class="form-label">CEP</label>
+                                <input type="text" class="form-control" id="zipCode" name="general.zip_code" placeholder="00000-000" value="{{ configs.get('zip_code', '') }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-cog me-2"></i> Configurações do Sistema</h5>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Nome e Logo</div>
+                        <div class="config-item-description">Configure o nome e logotipo do sistema exibidos nos relatórios e interface</div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="systemName" class="form-label">Nome do Sistema</label>
+                                <input type="text" class="form-control" id="systemName" name="general.system_name" placeholder="Sistema Zelopack" value="{{ configs.get('system_name', 'Sistema Zelopack') }}">
+                                <div class="form-text">Exibido no título da página e cabeçalho do sistema.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="systemVersion" class="form-label">Versão do Sistema</label>
+                                <input type="text" class="form-control" id="systemVersion" name="general.system_version" placeholder="1.0.0" value="{{ configs.get('system_version', '1.0.0') }}">
+                                <div class="form-text">Versão atual do sistema, exibida no rodapé.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="systemLogo" class="form-label">Logo do Sistema</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="systemLogo" name="general.system_logo" value="{{ configs.get('system_logo', '/static/img/logo.png') }}" readonly>
+                                <button class="btn btn-outline-primary" type="button" id="changeLogoBtn">
+                                    Alterar Logo
+                                </button>
+                            </div>
+                            <div class="form-text">A logo é exibida no cabeçalho e nos relatórios gerados pelo sistema.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Configurações Regionais</div>
+                        <div class="config-item-description">Configure fuso horário, idioma e formatos regionais do sistema</div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="timezone" class="form-label">Fuso Horário</label>
+                                <select class="form-select" id="timezone" name="general.timezone">
+                                    <option value="America/Sao_Paulo" {% if configs.get('timezone') == 'America/Sao_Paulo' or not configs.get('timezone') %}selected{% endif %}>América/São Paulo (GMT-3)</option>
+                                    <option value="America/Recife" {% if configs.get('timezone') == 'America/Recife' %}selected{% endif %}>América/Recife (GMT-3)</option>
+                                    <option value="America/Manaus" {% if configs.get('timezone') == 'America/Manaus' %}selected{% endif %}>América/Manaus (GMT-4)</option>
+                                    <option value="America/Rio_Branco" {% if configs.get('timezone') == 'America/Rio_Branco' %}selected{% endif %}>América/Rio Branco (GMT-5)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="language" class="form-label">Idioma</label>
+                                <select class="form-select" id="language" name="general.language">
+                                    <option value="pt-BR" {% if configs.get('language') == 'pt-BR' or not configs.get('language') %}selected{% endif %}>Português (Brasil)</option>
+                                    <option value="en-US" {% if configs.get('language') == 'en-US' %}selected{% endif %}>English (United States)</option>
+                                    <option value="es-ES" {% if configs.get('language') == 'es-ES' %}selected{% endif %}>Español</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="dateFormat" class="form-label">Formato de Data</label>
+                                <select class="form-select" id="dateFormat" name="general.date_format">
+                                    <option value="DD/MM/YYYY" {% if configs.get('date_format') == 'DD/MM/YYYY' or not configs.get('date_format') %}selected{% endif %}>DD/MM/YYYY</option>
+                                    <option value="MM/DD/YYYY" {% if configs.get('date_format') == 'MM/DD/YYYY' %}selected{% endif %}>MM/DD/YYYY</option>
+                                    <option value="YYYY-MM-DD" {% if configs.get('date_format') == 'YYYY-MM-DD' %}selected{% endif %}>YYYY-MM-DD</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="numberFormat" class="form-label">Formato de Número</label>
+                                <select class="form-select" id="numberFormat" name="general.number_format">
+                                    <option value="pt-BR" {% if configs.get('number_format') == 'pt-BR' or not configs.get('number_format') %}selected{% endif %}>1.234,56 (BR)</option>
+                                    <option value="en-US" {% if configs.get('number_format') == 'en-US' %}selected{% endif %}>1,234.56 (US)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-file-alt me-2"></i> Relatórios e Documentos</h5>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Configurações de Relatórios</div>
+                        <div class="config-item-description">Configure a geração de relatórios e documentos</div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="showLogo" name="general.show_logo_in_reports" {% if configs.get('show_logo_in_reports', 'true') == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="showLogo">
+                                Exibir logo nos relatórios
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="showFooter" name="general.show_footer_in_reports" {% if configs.get('show_footer_in_reports', 'true') == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="showFooter">
+                                Exibir rodapé nos relatórios
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="enablePagination" name="general.enable_pagination_in_reports" {% if configs.get('enable_pagination_in_reports', 'true') == 'true' %}checked{% endif %}>
+                            <label class="form-check-label" for="enablePagination">
+                                Habilitar paginação nos relatórios
+                            </label>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="defaultPaperSize" class="form-label">Tamanho de Papel Padrão</label>
+                                <select class="form-select" id="defaultPaperSize" name="general.default_paper_size">
+                                    <option value="A4" {% if configs.get('default_paper_size') == 'A4' or not configs.get('default_paper_size') %}selected{% endif %}>A4</option>
+                                    <option value="Letter" {% if configs.get('default_paper_size') == 'Letter' %}selected{% endif %}>Carta (Letter)</option>
+                                    <option value="Legal" {% if configs.get('default_paper_size') == 'Legal' %}selected{% endif %}>Ofício (Legal)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h5 class="config-section-title"><i class="fas fa-list-ul me-2"></i> Personalização de Módulos</h5>
+                    
+                    <div class="config-item">
+                        <div class="config-item-title">Módulos Ativos</div>
+                        <div class="config-item-description">Controle quais módulos estão disponíveis no sistema</div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="moduleReports" name="general.module_reports_enabled" {% if configs.get('module_reports_enabled', 'true') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="moduleReports">
+                                        Módulo de Laudos
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="moduleCalculations" name="general.module_calculations_enabled" {% if configs.get('module_calculations_enabled', 'true') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="moduleCalculations">
+                                        Módulo de Cálculos
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="moduleDocuments" name="general.module_documents_enabled" {% if configs.get('module_documents_enabled', 'true') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="moduleDocuments">
+                                        Módulo de Documentos
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="moduleSuppliers" name="general.module_suppliers_enabled" {% if configs.get('module_suppliers_enabled', 'true') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="moduleSuppliers">
+                                        Módulo de Fornecedores
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="moduleUsers" name="general.module_users_enabled" {% if configs.get('module_users_enabled', 'true') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="moduleUsers">
+                                        Módulo de Usuários
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="moduleDashboard" name="general.module_dashboard_enabled" {% if configs.get('module_dashboard_enabled', 'true') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="moduleDashboard">
+                                        Módulo de Dashboard
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="moduleSettings" name="general.module_settings_enabled" {% if configs.get('module_settings_enabled', 'true') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="moduleSettings">
+                                        Módulo de Configurações
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="moduleForms" name="general.module_forms_enabled" {% if configs.get('module_forms_enabled', 'true') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="moduleForms">
+                                        Módulo de Formulários
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="moduleInventory" name="general.module_inventory_enabled" {% if configs.get('module_inventory_enabled', 'true') == 'true' %}checked{% endif %}>
+                                    <label class="form-check-label" for="moduleInventory">
+                                        Módulo de Estoque
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-end mt-4">
+                    <button type="button" class="btn btn-outline-secondary me-2" id="resetGeneralForm">
+                        <i class="fas fa-undo me-1"></i> Restaurar Padrões
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="saveGeneralConfig">
+                        <i class="fas fa-save me-1"></i> Salvar Configurações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para upload de logo -->
+<div class="modal fade" id="logoModal" tabindex="-1" aria-labelledby="logoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoModalLabel">Alterar Logo do Sistema</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="logoFile" class="form-label">Selecione uma imagem</label>
+                    <input class="form-control" type="file" id="logoFile" accept="image/*">
+                    <div class="form-text">Tamanho recomendado: 200x60 pixels. Formatos: PNG, JPG, SVG.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="uploadLogo">
+                    <i class="fas fa-upload me-1"></i> Enviar Logo
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Referências aos elementos
+        const form = document.getElementById('generalConfigForm');
+        const resetBtn = document.getElementById('resetGeneralForm');
+        const saveBtn = document.getElementById('saveGeneralConfig');
+        const changeLogoBtn = document.getElementById('changeLogoBtn');
+        const uploadLogoBtn = document.getElementById('uploadLogo');
+        
+        // Modal de logo
+        const logoModal = new bootstrap.Modal(document.getElementById('logoModal'));
+        
+        // Abrir modal de logo
+        changeLogoBtn.addEventListener('click', function() {
+            logoModal.show();
+        });
+        
+        // Upload de logo
+        uploadLogoBtn.addEventListener('click', function() {
+            const logoFile = document.getElementById('logoFile').files[0];
+            
+            if (!logoFile) {
+                showNotification('error', 'Por favor, selecione um arquivo de imagem.');
+                return;
+            }
+            
+            // Verificar tipo de arquivo
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml'];
+            if (!validTypes.includes(logoFile.type)) {
+                showNotification('error', 'Por favor, selecione um arquivo de imagem válido (PNG, JPG, GIF ou SVG).');
+                return;
+            }
+            
+            // Criar FormData
+            const formData = new FormData();
+            formData.append('logo', logoFile);
+            
+            // Simular envio
+            uploadLogoBtn.disabled = true;
+            uploadLogoBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Enviando...';
+            
+            // Enviar arquivo para o servidor
+            fetch('{{ url_for("configuracoes.upload_logo") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                uploadLogoBtn.disabled = false;
+                uploadLogoBtn.innerHTML = '<i class="fas fa-upload me-1"></i> Enviar Logo';
+                
+                if (data.success) {
+                    // Atualizar campo de logo
+                    document.getElementById('systemLogo').value = data.logo_url;
+                    logoModal.hide();
+                    showNotification('success', 'Logo atualizada com sucesso!');
+                } else {
+                    showNotification('error', 'Erro ao enviar logo: ' + data.message);
+                }
+            })
+            .catch(error => {
+                uploadLogoBtn.disabled = false;
+                uploadLogoBtn.innerHTML = '<i class="fas fa-upload me-1"></i> Enviar Logo';
+                console.error('Erro:', error);
+                showNotification('error', 'Erro ao processar upload.');
+            });
+        });
+        
+        // Evento de envio do formulário
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Coletar dados do formulário
+            const formData = new FormData(form);
+            const settings = {};
+            
+            for (const [key, value] of formData.entries()) {
+                // Remover o prefixo "general." para enviar apenas o nome da configuração
+                const configName = key.replace('general.', '');
+                settings[configName] = value;
+            }
+            
+            // Verificar se os checkboxes não marcados (não incluídos no FormData)
+            const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const configName = checkbox.name.replace('general.', '');
+                if (!formData.has(checkbox.name)) {
+                    settings[configName] = 'false';
+                } else {
+                    settings[configName] = 'true';
+                }
+            });
+            
+            // Enviar dados para o servidor
+            fetch('{{ url_for("configuracoes.update_config") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({
+                    section: 'general',
+                    settings: settings
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', 'Configurações gerais atualizadas com sucesso!');
+                } else {
+                    showNotification('error', 'Erro ao atualizar configurações: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                showNotification('error', 'Erro ao processar solicitação.');
+            });
+        });
+        
+        // Formatar CNPJ
+        const cnpjInput = document.getElementById('cnpj');
+        cnpjInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 14) {
+                value = value.substring(0, 14);
+            }
+            
+            if (value.length > 0) {
+                // Formatar CNPJ: 00.000.000/0001-00
+                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            }
+            
+            e.target.value = value;
+        });
+        
+        // Formatar CEP
+        const zipCodeInput = document.getElementById('zipCode');
+        zipCodeInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 8) {
+                value = value.substring(0, 8);
+            }
+            
+            if (value.length > 0) {
+                // Formatar CEP: 00000-000
+                value = value.replace(/^(\d{5})(\d)/, '$1-$2');
+            }
+            
+            e.target.value = value;
+        });
+        
+        // Formatar telefone
+        const phoneInput = document.getElementById('phoneNumber');
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            
+            if (value.length > 0) {
+                // Formatar telefone: (00) 0000-0000 ou (00) 00000-0000
+                if (value.length <= 10) {
+                    value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+                    value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                } else {
+                    value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+                    value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                }
+            }
+            
+            e.target.value = value;
+        });
+        
+        // Botão para resetar o formulário
+        resetBtn.addEventListener('click', function() {
+            if (confirm('Deseja restaurar todas as configurações gerais para os valores padrão? Esta ação não pode ser desfeita.')) {
+                form.reset();
+                
+                // Definir valores padrão
+                document.getElementById('companyName').value = 'Zelopack Ltda.';
+                document.getElementById('tradingName').value = 'Zelopack';
+                document.getElementById('systemName').value = 'Sistema Zelopack';
+                document.getElementById('systemVersion').value = '1.0.0';
+                document.getElementById('systemLogo').value = '/static/img/logo.png';
+                document.getElementById('timezone').value = 'America/Sao_Paulo';
+                document.getElementById('language').value = 'pt-BR';
+                document.getElementById('dateFormat').value = 'DD/MM/YYYY';
+                document.getElementById('numberFormat').value = 'pt-BR';
+                document.getElementById('defaultPaperSize').value = 'A4';
+                
+                document.getElementById('showLogo').checked = true;
+                document.getElementById('showFooter').checked = true;
+                document.getElementById('enablePagination').checked = true;
+                
+                document.getElementById('moduleReports').checked = true;
+                document.getElementById('moduleCalculations').checked = true;
+                document.getElementById('moduleDocuments').checked = true;
+                document.getElementById('moduleSuppliers').checked = true;
+                document.getElementById('moduleUsers').checked = true;
+                document.getElementById('moduleDashboard').checked = true;
+                document.getElementById('moduleSettings').checked = true;
+                document.getElementById('moduleForms').checked = true;
+                document.getElementById('moduleInventory').checked = true;
+                
+                showNotification('info', 'Formulário restaurado para valores padrão. Clique em Salvar para aplicar as alterações.');
+            }
+        });
+        
+        // Função para obter token CSRF
+        function getCsrfToken() {
+            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        }
+        
+        // Função para mostrar notificações
+        function showNotification(type, message) {
+            const alertClass = type === 'success' ? 'alert-success' : 
+                             type === 'error' ? 'alert-danger' : 
+                             type === 'info' ? 'alert-info' : 'alert-warning';
+                              
+            const alertIcon = type === 'success' ? '<i class="fas fa-check-circle me-2"></i>' : 
+                            type === 'error' ? '<i class="fas fa-exclamation-circle me-2"></i>' : 
+                            type === 'info' ? '<i class="fas fa-info-circle me-2"></i>' : '<i class="fas fa-exclamation-triangle me-2"></i>';
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                ${alertIcon} ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Remover automaticamente após 5 segundos
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(alertDiv);
+                }, 300);
+            }, 5000);
+        }
+    });
+</script>
+{% endblock %}
