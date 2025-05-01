@@ -187,14 +187,20 @@ def gerar_atividades_mes(ano, mes):
         else:  # Terça a domingo
             atividades_dia[3].append("E.T.E")
         
-        # 2. Análise de Água
-        if dia_semana == 0 or dia_semana == 3:  # Segunda ou Quinta
+        # 2. Análise de Água - distribuição por dia da semana
+        if dia_semana == 0:      # Segunda-feira
             atividades_dia[1].append("ANÁLISE DE ÁGUA")
-        elif dia_semana == 1 or dia_semana == 4:  # Terça ou Sexta
+        elif dia_semana == 1:    # Terça-feira
             atividades_dia[2].append("ANÁLISE DE ÁGUA")
-        elif dia_semana == 2 or dia_semana == 5:  # Quarta ou Sábado
+        elif dia_semana == 2:    # Quarta-feira
             atividades_dia[3].append("ANÁLISE DE ÁGUA")
-        elif dia_semana == 6:  # Domingo
+        elif dia_semana == 3:    # Quinta-feira
+            atividades_dia[1].append("ANÁLISE DE ÁGUA")
+        elif dia_semana == 4:    # Sexta-feira
+            atividades_dia[2].append("ANÁLISE DE ÁGUA")
+        elif dia_semana == 5:    # Sábado
+            atividades_dia[3].append("ANÁLISE DE ÁGUA")
+        elif dia_semana == 6:    # Domingo
             # No domingo, todos os turnos realizam análise de água (se houver expediente)
             atividades_dia[1].append("ANÁLISE DE ÁGUA*")
             atividades_dia[2].append("ANÁLISE DE ÁGUA*")
