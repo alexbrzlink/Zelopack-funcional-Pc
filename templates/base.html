@@ -71,11 +71,6 @@
                             <i class="fas fa-calendar-alt me-1"></i> Calendário Lab
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="nav-dashboard" href="{{ url_for('dashboard.index') }}">
-                            <i class="fas fa-th-large me-1"></i> Painel de Controle
-                        </a>
-                    </li>
                     {% if current_user.role == 'admin' %}
                     <li class="nav-item">
                         <a class="nav-link" id="nav-configuracoes" href="{{ url_for('configuracoes.index') }}">
@@ -132,6 +127,11 @@
                             <li>
                                 <a class="dropdown-item" href="{{ url_for('banco_dados.index') }}">
                                     <i class="fas fa-database me-1"></i> Banco de Dados
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('dashboard.index') }}">
+                                    <i class="fas fa-th-large me-1"></i> Painel de Controle
                                 </a>
                             </li>
                             {% endif %}
