@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma Anual de Atividades - {{ ano }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        
+        .print-container {
+            width: 100%;
+            padding: 10px;
+        }
+        
+        .annual-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-year {
+            font-size: 24px;
+            font-weight: bold;
+            background-color: #6c757d;
+            color: white;
+            padding: 5px 15px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .calendar-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .month-card {
+            border: 1px solid #dee2e6;
+        }
+        
+        .month-header {
+            background-color: #6c757d;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        
+        .month-calendar {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .month-calendar th {
+            background-color: #e9ecef;
+            color: #495057;
+            text-align: center;
+            padding: 3px;
+            font-size: 10px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .month-calendar td {
+            border: 1px solid #dee2e6;
+            height: 30px;
+            width: 30px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 10px;
+        }
+        
+        .day-number {
+            position: relative;
+        }
+        
+        .has-activity-1::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 4px;
+            background-color: #007bff;
+            border-radius: 50%;
+        }
+        
+        .has-activity-2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 4px;
+            height: 4px;
+            background-color: #28a745;
+            border-radius: 50%;
+        }
+        
+        .has-activity-3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 4px;
+            height: 4px;
+            background-color: #ffc107;
+            border-radius: 50%;
+        }
+        
+        .legend {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            background-color: #f8f9fa;
+        }
+        
+        .legend h4 {
+            margin-top: 0;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+            color: #495057;
+            font-size: 14px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .legend-color-1 {
+            background-color: #007bff;
+        }
+        
+        .legend-color-2 {
+            background-color: #28a745;
+        }
+        
+        .legend-color-3 {
+            background-color: #ffc107;
+        }
+        
+        .notes {
+            margin-top: 15px;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .notes p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+<body>
+    <div class="print-container">
+        <div class="annual-header">
+            <div class="calendar-year">{{ ano }}</div>
+            <div class="calendar-title">CRONOGRAMA ANUAL DE ATIVIDADES - CONTROLE DE QUALIDADE</div>
+        </div>
+        
+        <div class="month-grid">
+            {% for mes in range(1, 7) %}
+                <div class="month-card">
+                    <div class="month-header">{{ meses[mes] }}</div>
+                    <table class="month-calendar">
+                        <thead>
+                            <tr>
+                                <th>D</th>
+                                <th>S</th>
+                                <th>T</th>
+                                <th>Q</th>
+                                <th>Q</th>
+                                <th>S</th>
+                                <th>S</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set primeiro_dia = calendario[mes]['primeiro_dia'] %}
+                            {% set dias_no_mes = calendario[mes]['dias_no_mes'] %}
+                            {% set atividades_mes = calendario[mes]['atividades'] %}
+                            
+                            <tr>
+                                {% for i in range(7) %}
+                                    {% if i < primeiro_dia.weekday() %}
+                                        <td></td>
+                                    {% else %}
+                                        {% set dia = i - primeiro_dia.weekday() + 1 %}
+                                        <td>
+                                            <div class="day-number
+                                                {% if dia in atividades_mes and atividades_mes[dia][1] %}has-activity-1{% endif %}
+                                                {% if dia in atividades_mes and atividades_mes[dia][2] %}has-activity-2{% endif %}
+                                                {% if dia in atividades_mes and atividades_mes[dia][3] %}has-activity-3{% endif %}
+                                            ">
+                                                {{ dia }}
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            
+                            {% set dias_contador = 7 - primeiro_dia.weekday() + 1 %}
+                            {% for semana in range((dias_no_mes - dias_contador) // 7 + 1) %}
+                                <tr>
+                                    {% for dia in range(dias_contador + semana * 7, dias_contador + (semana + 1) * 7) %}
+                                        {% if dia <= dias_no_mes %}
+                                            <td>
+                                                <div class="day-number
+                                                    {% if dia in atividades_mes and atividades_mes[dia][1] %}has-activity-1{% endif %}
+                                                    {% if dia in atividades_mes and atividades_mes[dia][2] %}has-activity-2{% endif %}
+                                                    {% if dia in atividades_mes and atividades_mes[dia][3] %}has-activity-3{% endif %}
+                                                ">
+                                                    {{ dia }}
+                                                </div>
+                                            </td>
+                                        {% else %}
+                                            <td></td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="month-grid">
+            {% for mes in range(7, 13) %}
+                <div class="month-card">
+                    <div class="month-header">{{ meses[mes] }}</div>
+                    <table class="month-calendar">
+                        <thead>
+                            <tr>
+                                <th>D</th>
+                                <th>S</th>
+                                <th>T</th>
+                                <th>Q</th>
+                                <th>Q</th>
+                                <th>S</th>
+                                <th>S</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set primeiro_dia = calendario[mes]['primeiro_dia'] %}
+                            {% set dias_no_mes = calendario[mes]['dias_no_mes'] %}
+                            {% set atividades_mes = calendario[mes]['atividades'] %}
+                            
+                            <tr>
+                                {% for i in range(7) %}
+                                    {% if i < primeiro_dia.weekday() %}
+                                        <td></td>
+                                    {% else %}
+                                        {% set dia = i - primeiro_dia.weekday() + 1 %}
+                                        <td>
+                                            <div class="day-number
+                                                {% if dia in atividades_mes and atividades_mes[dia][1] %}has-activity-1{% endif %}
+                                                {% if dia in atividades_mes and atividades_mes[dia][2] %}has-activity-2{% endif %}
+                                                {% if dia in atividades_mes and atividades_mes[dia][3] %}has-activity-3{% endif %}
+                                            ">
+                                                {{ dia }}
+                                            </div>
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            
+                            {% set dias_contador = 7 - primeiro_dia.weekday() + 1 %}
+                            {% for semana in range((dias_no_mes - dias_contador) // 7 + 1) %}
+                                <tr>
+                                    {% for dia in range(dias_contador + semana * 7, dias_contador + (semana + 1) * 7) %}
+                                        {% if dia <= dias_no_mes %}
+                                            <td>
+                                                <div class="day-number
+                                                    {% if dia in atividades_mes and atividades_mes[dia][1] %}has-activity-1{% endif %}
+                                                    {% if dia in atividades_mes and atividades_mes[dia][2] %}has-activity-2{% endif %}
+                                                    {% if dia in atividades_mes and atividades_mes[dia][3] %}has-activity-3{% endif %}
+                                                ">
+                                                    {{ dia }}
+                                                </div>
+                                            </td>
+                                        {% else %}
+                                            <td></td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="legend">
+            <h4>Legenda:</h4>
+            <div style="display: flex; justify-content: space-around;">
+                <div class="legend-item">
+                    <span class="legend-color legend-color-1"></span>
+                    <span>1º Turno</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color legend-color-2"></span>
+                    <span>2º Turno</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color legend-color-3"></span>
+                    <span>3º Turno</span>
+                </div>
+            </div>
+            
+            <div class="notes">
+                <p>AOS DOMINGOS COM EXPEDIENTE, TODOS OS TURNOS REALIZAM ANÁLISE DE ÁGUA DE TODOS OS PONTOS</p>
+                <p>TODOS TURNOS REALIZAM ANÁLISE DE PERÓXIDO CONCENTRADO (TBA) DAS 3 LINHAS DIARIAMENTE</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma de Atividades - {{ mes_nome }} {{ ano }}</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 10mm;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        
+        .print-container {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .calendar-header {
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .calendar-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 5px;
+            color: #333;
+        }
+        
+        .calendar-year {
+            background-color: #6c757d;
+            color: white;
+            font-weight: bold;
+            display: inline-block;
+            padding: 5px 15px;
+            margin-right: 10px;
+        }
+        
+        .calendar-month {
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        
+        .calendar-table th {
+            background-color: #6c757d;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            font-weight: 600;
+            border: 1px solid #dee2e6;
+        }
+        
+        .calendar-table td {
+            border: 1px solid #dee2e6;
+            height: 80px;
+            vertical-align: top;
+            padding: 3px;
+            position: relative;
+        }
+        
+        .calendar-table td.other-month {
+            background-color: #f3f3f3;
+        }
+        
+        .day-number {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .activity {
+            font-size: 9px;
+            margin-bottom: 2px;
+            padding: 2px;
+            border-radius: 2px;
+        }
+        
+        .activity-1 {
+            background-color: #d1ecf1; /* Azul claro */
+        }
+        
+        .activity-2 {
+            background-color: #d4edda; /* Verde claro */
+        }
+        
+        .activity-3 {
+            background-color: #fff3cd; /* Amarelo claro */
+        }
+        
+        .footer-notes {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin-top: 15px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .footer-notes h4 {
+            margin-top: 0;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 5px;
+            color: #495057;
+        }
+        
+        .footer-notes p {
+            margin: 5px 0;
+            font-size: 12px;
+            color: #495057;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .calendar-subtitle {
+            text-align: right;
+            font-size: 14px;
+            color: #495057;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="print-container">
+        <div class="calendar-header">
+            <div class="calendar-year">{{ ano }}</div>
+            <div class="calendar-month">{{ mes_nome }}</div>
+            <div class="calendar-subtitle">CRONOGRAMA DE ATIVIDADES<br>CONTROLE DE QUALIDADE</div>
+        </div>
+        
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th>DOMINGO</th>
+                    <th>SEGUNDA-FEIRA</th>
+                    <th>TERÇA-FEIRA</th>
+                    <th>QUARTA-FEIRA</th>
+                    <th>QUINTA-FEIRA</th>
+                    <th>SEXTA-FEIRA</th>
+                    <th>SÁBADO</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set primeiro_dia_semana = primeiro_dia.weekday() %}
+                
+                <tr>
+                    {% for i in range(7) %}
+                        {% if i < primeiro_dia.weekday() %}
+                            {% set dia_anterior = dias_no_mes_anterior - primeiro_dia.weekday() + i + 1 %}
+                            <td class="other-month">
+                                <div class="day-number">{{ dia_anterior }}</div>
+                            </td>
+                        {% else %}
+                            {% set dia = i - primeiro_dia.weekday() + 1 %}
+                            <td>
+                                <div class="day-number">{{ dia }}</div>
+                                <div class="day-activities">
+                                    {% if dia in atividades %}
+                                        {% for turno, ativs in atividades[dia].items() %}
+                                            {% if ativs %}
+                                                {% for atividade in ativs %}
+                                                    <div class="activity activity-{{ turno }}">{{ turno }}º {{ atividade }}</div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                
+                {% set dias_contador = 7 - primeiro_dia.weekday() + 1 %}
+                {% for semana in range((dias_no_mes - dias_contador) // 7 + 1) %}
+                    <tr>
+                        {% for dia in range(dias_contador + semana * 7, dias_contador + (semana + 1) * 7) %}
+                            {% if dia <= dias_no_mes %}
+                                <td>
+                                    <div class="day-number">{{ dia }}</div>
+                                    <div class="day-activities">
+                                        {% if dia in atividades %}
+                                            {% for turno, ativs in atividades[dia].items() %}
+                                                {% if ativs %}
+                                                    {% for atividade in ativs %}
+                                                        <div class="activity activity-{{ turno }}">{{ turno }}º {{ atividade }}</div>
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            {% else %}
+                                {% set dia_proximo = dia - dias_no_mes %}
+                                <td class="other-month">
+                                    <div class="day-number">{{ dia_proximo }}</div>
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="footer-notes">
+            <h4>Anotações:</h4>
+            <p>AOS DOMINGOS COM EXPEDIENTE, TODOS OS TURNOS REALIZAM ANÁLISE DE ÁGUA DE TODOS OS PONTOS</p>
+            <p>TODOS TURNOS REALIZAM ANÁLISE DE PERÓXIDO CONCENTRADO (TBA) DAS 3 LINHAS DIARIAMENTE</p>
+        </div>
+    </div>
+</body>
+</html>
