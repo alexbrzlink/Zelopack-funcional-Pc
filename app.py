@@ -561,6 +561,7 @@ from blueprints.calculos import calculos_bp
 from blueprints.estatisticas.routes import estatisticas_bp
 from blueprints.configuracoes.routes import configuracoes_bp
 from blueprints.alertas.routes import alertas_bp
+from blueprints.laboratorio import laboratorio_bp
 from blueprints.banco_dados.routes import banco_dados_bp
 from blueprints.estoque import estoque_bp
 # Importar novos blueprints
@@ -587,6 +588,7 @@ app.register_blueprint(forms_editor_bp)
 # Registrar novos blueprints
 app.register_blueprint(document_editor_bp)
 app.register_blueprint(technical_bp)
+app.register_blueprint(laboratorio_bp)
 
 # Função para atualizar o banco de dados de forma incremental
 def setup_database():
