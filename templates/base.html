@@ -67,6 +67,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" id="nav-laboratorio" href="{{ url_for('laboratorio.index') }}">
+                            <i class="fas fa-calendar-alt me-1"></i> Calendário Lab
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" id="nav-dashboard" href="{{ url_for('dashboard.index') }}">
                             <i class="fas fa-th-large me-1"></i> Painel de Controle
                         </a>
@@ -189,6 +194,7 @@
                         <li><a href="{{ url_for('documents.index') }}">Documentos</a></li>
                         <li><a href="{{ url_for('estoque.index') }}">Estoque</a></li>
                         <li><a href="{{ url_for('estoque.estoque_luvas') }}">Controle de Luvas</a></li>
+                        <li><a href="{{ url_for('laboratorio.index') }}">Calendário Laboratório</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">
