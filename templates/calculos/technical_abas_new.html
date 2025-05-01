@@ -142,6 +142,36 @@
         text-align: center;
         color: #6c757d;
     }
+    
+    /* Estilos para relógios digitais */
+    .digital-clock {
+        font-family: 'Roboto Mono', monospace;
+        background-color: #0d253f;
+        color: #5ff8ff;
+        padding: 10px 5px;
+        border-radius: 5px;
+        letter-spacing: 1px;
+        text-shadow: 0 0 5px #5ff8ff;
+        box-shadow: 0 0 10px rgba(0,123,255,0.2);
+    }
+
+    /* Estilo para o checkbox de Produção Completa */
+    .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    
+    /* Estilo para os cards dos relógios */
+    .card.bg-light {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .card.bg-light:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
 </style>
 {% endblock %}
 
@@ -456,7 +486,8 @@
                                 {% set description = 'Calcula o tempo estimado para finalizar o TQ com base na capacidade total, volume atual e linha utilizada.' %}
                                 {% set formula = 'Tempo = (TQ Total - TQ Atual) ÷ Vazão da Linha' %}
                                 {% set inputs = [
-                                    {'name': 'tq_total', 'label': 'Capacidade Total do TQ', 'unit': 'L', 'step': '1'},
+                                    {'name': 'tq_total', 'label': 'Capacidade Total do TQ', 'unit': 'L', 'step': '1', 'max': '32000'},
+                                    {'name': 'producao_completa', 'label': 'Produção Completa', 'type': 'checkbox', 'description': 'Remove o limite de litros quando selecionada'},
                                     {'name': 'tq_atual', 'label': 'Volume Atual no TQ', 'unit': 'L', 'step': '1'},
                                     {'name': 'linha', 'label': 'Linha Utilizada', 'unit': '', 'step': '', 'select': [
                                         {'value': '1000ml', 'text': '1000ml'},
@@ -564,10 +595,17 @@
                                                     {% elif input.type is defined and input.type == 'time' %}
                                                         <input type="time" class="form-control" name="{{ input.name }}" 
                                                                {% if input.value is defined %}value="{{ input.value }}"{% endif %} required>
+                                                    {% elif input.type is defined and input.type == 'checkbox' %}
+                                                        <div class="form-check mt-2">
+                                                            <input type="checkbox" class="form-check-input" name="{{ input.name }}" id="{{ input.name }}_{{ id }}">
+                                                            <label class="form-check-label" for="{{ input.name }}_{{ id }}">
+                                                                {{ input.description }}
+                                                            </label>
+                                                        </div>
                                                     {% else %}
                                                         <div class="input-with-unit">
                                                             <input type="number" class="form-control" name="{{ input.name }}" 
-                                                                   step="{{ input.step }}" {% if input.value is defined %}value="{{ input.value }}"{% endif %} required>
+                                                                   step="{{ input.step }}" {% if input.max is defined %}max="{{ input.max }}"{% endif %} {% if input.value is defined %}value="{{ input.value }}"{% endif %} required>
                                                             <span class="input-unit">{{ input.unit }}</span>
                                                         </div>
                                                     {% endif %}
@@ -594,14 +632,6 @@
                                         <div class="result-value" id="tempo-restante-{{ id }}">-</div>
                                     </div>
                                     <div class="result-item">
-                                        <div class="result-label">Horário de Finalização:</div>
-                                        <div class="result-value" id="hora-finalizacao-{{ id }}">-</div>
-                                    </div>
-                                    <div class="result-item">
-                                        <div class="result-label">Horário de Metade do TQ:</div>
-                                        <div class="result-value" id="hora-metade-{{ id }}">-</div>
-                                    </div>
-                                    <div class="result-item">
                                         <div class="result-label">Vazão Utilizada:</div>
                                         <div class="result-value" id="vazao-utilizada-{{ id }}">-</div>
                                     </div>
@@ -619,18 +649,30 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Relógio digital -->
-                                    <div class="mt-3 d-flex justify-content-center align-items-center">
-                                        <div class="text-center">
-                                            <i class="fas fa-clock fa-2x mb-2 text-primary"></i>
-                                            <div class="h4" id="current-time-{{ id }}">--:--</div>
-                                            <div class="small text-muted">Hora Atual</div>
-                                        </div>
-                                        <div class="mx-4">→</div>
-                                        <div class="text-center">
-                                            <i class="fas fa-flag-checkered fa-2x mb-2 text-success"></i>
-                                            <div class="h4" id="finish-time-{{ id }}">--:--</div>
-                                            <div class="small text-muted">Hora Finalização</div>
+                                    <!-- Relógios digitais melhorados -->
+                                    <div class="mt-4">
+                                        <div class="row text-center">
+                                            <div class="col-md-4">
+                                                <div class="card bg-light p-3">
+                                                    <i class="fas fa-clock fa-2x mb-2 text-primary"></i>
+                                                    <div class="h3 digital-clock" id="current-time-{{ id }}">--:--</div>
+                                                    <div class="text-muted">Hora Atual</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="card bg-light p-3">
+                                                    <i class="fas fa-hourglass-half fa-2x mb-2 text-warning"></i>
+                                                    <div class="h3 digital-clock" id="half-time-{{ id }}">--:--</div>
+                                                    <div class="text-muted">Metade do TQ</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="card bg-light p-3">
+                                                    <i class="fas fa-flag-checkered fa-2x mb-2 text-success"></i>
+                                                    <div class="h3 digital-clock" id="finish-time-{{ id }}">--:--</div>
+                                                    <div class="text-muted">Finalização</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -866,10 +908,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             case 21: // Tempo de Finalização (TQ)
                 // Obter valores específicos para o cálculo de TQ
-                const tqTotal = parseFloat(form.querySelector('input[name="tq_total"]').value) || 0;
+                let tqTotal = parseFloat(form.querySelector('input[name="tq_total"]').value) || 0;
+                const producaoCompleta = form.querySelector('input[name="producao_completa"]').checked;
                 const tqAtual = parseFloat(form.querySelector('input[name="tq_atual"]').value) || 0;
                 const linha = form.querySelector('select[name="linha"]').value;
                 const horaAtualInput = form.querySelector('input[name="hora_atual"]').value || '';
+                
+                // Verificar produção completa (sem limite) ou aplicar limite de 32.000 litros
+                if (!producaoCompleta && tqTotal > 32000) {
+                    tqTotal = 32000; // Limite máximo se não for produção completa
+                }
                 
                 // Definir a vazão com base na linha selecionada
                 let vazao = 0;
@@ -885,7 +933,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Calcular tempo para finalizar em minutos
                 const tempoFinalMinutos = volumeRestante / vazao;
                 
-                // Calcular o tempo até a metade do TQ
+                // Calcular o tempo até a metade do TQ - mantém fórmula correta
                 const meioTqLitros = tqTotal / 2;
                 const volumeAteMeio = Math.max(0, meioTqLitros - tqAtual);
                 const tempoMeioMinutos = volumeAteMeio / vazao;
@@ -921,8 +969,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Exibir os resultados no HTML
                 document.getElementById('tempo-restante-' + id).textContent = tempoFormatado;
-                document.getElementById('hora-finalizacao-' + id).textContent = horaFinalizacaoFormatada;
-                document.getElementById('hora-metade-' + id).textContent = horaMeioFormatada;
                 document.getElementById('vazao-utilizada-' + id).textContent = vazao + ' L/min';
                 
                 // Atualizar a barra de progresso
@@ -931,10 +977,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 progressBar.textContent = percentualAtual.toFixed(1) + '%';
                 progressBar.setAttribute('aria-valuenow', percentualAtual);
                 
-                // Atualizar o relógio digital
+                // Atualizar os relógios digitais melhorados
                 document.getElementById('current-time-' + id).textContent = 
                     `${horaAtual.getHours().toString().padStart(2, '0')}:${horaAtual.getMinutes().toString().padStart(2, '0')}`;
                 document.getElementById('finish-time-' + id).textContent = horaFinalizacaoFormatada;
+                document.getElementById('half-time-' + id).textContent = horaMeioFormatada;
                 
                 // Atualizar o valor total do TQ na escala
                 document.getElementById('tq-total-value-' + id).textContent = tqTotal + 'L';
