@@ -726,7 +726,7 @@ def registrar_historico_calculo(tipo_calculo, dados):
     logging.info(f"Cálculo [{tipo_calculo}] realizado por {usuario}: {dados}")
     
     # Implementação futura: salvar no banco de dados
-    # from app import db
+    # from extensions import db
     # from models import HistoricoCalculo
     # 
     # historico = HistoricoCalculo(

@@ -11,7 +11,7 @@ from flask import render_template, send_file, abort, Response, jsonify, request,
 from flask_login import login_required, current_user
 from flask_wtf.csrf import generate_csrf
 from . import forms_bp
-from app import db, csrf
+from extensions import db, csrf
 from models import StandardFields, FormPreset
 from models import FormPreset
 import openpyxl

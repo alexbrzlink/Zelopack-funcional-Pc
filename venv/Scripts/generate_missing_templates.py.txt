@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""
+Gera esqueleto de templates faltantes no projeto ZeloPack.
+Varre todo o código à procura de chamadas render_template e cria arquivos HTML mínimos para cada template não existente.
+"""
+import os
+import re
+
+# 1) Caminho raiz do seu app (ajuste se necessário)
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+APP_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, os.pardir))
+
+# 2) Padrão para capturar render_template('nome.html')
+pattern = re.compile(r"render_template\(\s*['\"]([^'\"]+\.html)['\"]")
+referenced = set()
+
+# 3) Varre arquivos .py buscando referências a templates
+for root, _, files in os.walk(APP_ROOT):
+    for fname in files:
+        if fname.endswith('.py'):
+            path = os.path.join(root, fname)
+            try:
+                text = open(path, encoding='utf-8').read()
+            except Exception as e:
+                print(f"Erro ao ler {path}: {e}")
+                continue
+            for m in pattern.finditer(text):
+                referenced.add(m.group(1))
+
+# 4) Coleta templates já existentes em templates/
+templates_dir = os.path.join(APP_ROOT, 'templates')
+existing = set()
+for root, _, files in os.walk(templates_dir):
+    for fname in files:
+        if fname.endswith('.html'):
+            rel = os.path.relpath(os.path.join(root, fname), templates_dir)
+            existing.add(rel.replace('\\', '/'))
+
+# 5) Determina quais estão faltando
+missing = sorted(referenced - existing)
+print(f"Total de templates referenciados: {len(referenced)}")
+print(f"Templates existentes encontrados: {len(existing)}")
+print(f"Templates faltantes: {len(missing)}")
+
+# 6) Esqueleto básico para novos templates
+skeleton = (
+    "{% extends 'base.html' %}\n"
+    "{% block title %}{name}{% endblock %}\n"
+    "{% block content %}\n"
+    "<h1>Página: {name}</h1>\n"
+    "<p><!-- TODO: implementar {name} --></p>\n"
+    "{% endblock %}\n"
+)
+
+# 7) Cria os arquivos faltantes
+for tpl in missing:
+    dest = os.path.join(templates_dir, tpl)
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    with open(dest, 'w', encoding='utf-8') as f:
+        f.write(skeleton.format(name=tpl))
+    print(f"Criado esqueleto: {tpl}")
+
+print("Processo concluído.")

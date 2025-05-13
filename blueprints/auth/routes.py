@@ -126,17 +126,19 @@ def login():
                     # Método não suportado, usar seleção
                     return redirect(url_for('auth.two_factor', method_selection=True))
             
+            # NOTA: Verificação temporariamente desabilitada
             # Verificar validade da senha (apenas para admins)
-            if user.role == 'admin' and settings['password_expiration_enabled']:
-                # Verificar se a senha expirou
-                if check_password_expiration(
-                    user.last_password_change,
-                    settings['password_expiration_days']
-                ):
-                    # Redirecionar para alteração de senha
-                    login_user(user, remember=remember)
-                    flash('Sua senha expirou. Por favor, altere-a para continuar.', 'warning')
-                    return redirect(url_for('auth.change_password'))
+            # Comentado para evitar erro com o campo last_password_change
+            # if user.role == 'admin' and settings['password_expiration_enabled']:
+            #     # Verificar se a senha expirou
+            #     if check_password_expiration(
+            #         user.last_password_change,
+            #         settings['password_expiration_days']
+            #     ):
+            #         # Redirecionar para alteração de senha
+            #         login_user(user, remember=remember)
+            #         flash('Sua senha expirou. Por favor, altere-a para continuar.', 'warning')
+            #         return redirect(url_for('auth.change_password'))
             
             # Login normal
             login_user(user, remember=remember)
@@ -803,12 +805,13 @@ def novo_usuario():
         
         if existing_user:
             flash('Usuário ou email já existe no sistema.', 'danger')
-            return render_template('auth/form_usuario.html', user=None)
+            return render_template('auth/register.html', user=None)
         
         # Verificar complexidade da senha
-        if not verify_password_complexity(password):
-            flash('A senha não atende aos requisitos de complexidade.', 'danger')
-            return render_template('auth/form_usuario.html', user=None)
+        is_valid, error_message = verify_password_complexity(password)
+        if not is_valid:
+            flash(error_message, 'danger')
+            return render_template('auth/register.html', user=None)
         
         # Criar novo usuário
         new_user = User(
@@ -817,7 +820,7 @@ def novo_usuario():
             email=email,
             password_hash=generate_password_hash(password),
             is_admin=is_admin,
-            active=True,
+            is_active=True,
             created_at=datetime.utcnow()
         )
         

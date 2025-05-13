@@ -1,0 +1,130 @@
+2025-04-25 19:27:37,250 - INFO - Iniciando verificação automática (timestamp: 20250425_192737)
+2025-04-25 19:27:37,251 - INFO - Verificando arquivos estáticos...
+2025-04-25 19:27:37,307 - ERROR - Erro ao verificar static/img/logo.png: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+2025-04-25 19:27:37,308 - ERROR - Erro ao verificar static/img/favicon.png: 'utf-8' codec can't decode byte 0x89 in position 0: invalid start byte
+2025-04-25 19:27:37,308 - INFO - Verificados 21 arquivos estáticos
+2025-04-25 19:27:37,308 - INFO - Verificando arquivos Python...
+2025-04-25 19:27:37,369 - ERROR - Erro ao verificar blueprints/reports/__init__.py: multiple repeat at position 13
+2025-04-25 19:27:37,386 - ERROR - Erro ao verificar blueprints/dashboard/__init__.py: multiple repeat at position 13
+2025-04-25 19:27:37,478 - INFO - Verificados 53 arquivos Python
+2025-04-25 19:27:37,478 - INFO - Verificando templates...
+2025-04-25 19:27:37,484 - INFO - Verificados 39 arquivos de template
+2025-04-25 19:27:37,485 - INFO - Verificando modelos de banco de dados...
+2025-04-25 19:27:37,485 - INFO - Verificados 18 modelos de banco de dados
+2025-04-25 19:27:37,485 - INFO - Verificando endpoints de API...
+2025-04-25 19:27:37,489 - INFO - Verificados 97 endpoints de API em 13 arquivos
+2025-04-25 19:27:37,489 - INFO - Verificando mecanismos de autenticação...
+2025-04-25 19:27:37,492 - INFO - Executando testes de componentes...
+2025-04-25 19:27:38,172 - INFO - Testes de componentes: 0 passaram, 0 falharam
+2025-04-25 19:27:38,176 - INFO - Resultados salvos em tests/reports/check_report_20250425_192737.json
+2025-04-25 19:47:31,297 - INFO - Último check carregado: 20250425_192737
+2025-04-25 19:47:31,297 - INFO - Iniciando verificação automática (timestamp: 20250425_194731)
+2025-04-25 19:47:31,298 - INFO - Verificando arquivos estáticos...
+2025-04-25 19:47:31,486 - ERROR - Erro ao verificar static/img/logo.png: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+2025-04-25 19:47:31,486 - ERROR - Erro ao verificar static/img/favicon.png: 'utf-8' codec can't decode byte 0x89 in position 0: invalid start byte
+2025-04-25 19:47:31,486 - INFO - Verificados 21 arquivos estáticos
+2025-04-25 19:47:31,487 - INFO - Verificando arquivos Python...
+2025-04-25 19:47:31,636 - ERROR - Erro ao verificar blueprints/reports/__init__.py: multiple repeat at position 13
+2025-04-25 19:47:31,662 - ERROR - Erro ao verificar blueprints/dashboard/__init__.py: multiple repeat at position 13
+2025-04-25 19:47:31,795 - INFO - Verificados 53 arquivos Python
+2025-04-25 19:47:31,795 - INFO - Verificando templates...
+2025-04-25 19:47:31,870 - INFO - Verificados 39 arquivos de template
+2025-04-25 19:47:31,871 - INFO - Verificando modelos de banco de dados...
+2025-04-25 19:47:31,871 - INFO - Verificados 18 modelos de banco de dados
+2025-04-25 19:47:31,872 - INFO - Verificando endpoints de API...
+2025-04-25 19:47:31,883 - INFO - Verificados 97 endpoints de API em 13 arquivos
+2025-04-25 19:47:31,883 - INFO - Verificando mecanismos de autenticação...
+2025-04-25 19:47:31,887 - INFO - Executando testes de componentes...
+2025-04-25 19:47:32,761 - INFO - Testes de componentes: 0 passaram, 0 falharam
+2025-04-25 19:47:32,769 - INFO - Aplicando correções automáticas...
+2025-04-25 19:47:32,773 - INFO - Correção aplicada em static/css/style.css: Uso excessivo de !important (11 ocorrências)
+2025-04-25 19:47:32,775 - INFO - Correção aplicada em static/js/login.js: Uso de console.log() em código de produção
+2025-04-25 19:47:32,780 - INFO - Correção aplicada em static/js/animations.js: Uso de console.log() em código de produção
+2025-04-25 19:47:32,781 - INFO - Correção aplicada em static/js/calculos.js: Uso de console.log() em código de produção
+2025-04-25 19:47:32,781 - INFO - Correção aplicada em static/js/calculos_ultra.js: Uso de console.log() em código de produção
+2025-04-25 19:47:32,782 - INFO - Correção aplicada em static/js/main.js: Uso de 'var' em vez de let/const
+2025-04-25 19:47:32,785 - INFO - Correção aplicada em reset_report_table.py: Uso de print() em código de produção
+2025-04-25 19:47:32,786 - INFO - Correção aplicada em generate_icon.py: Uso de print() em código de produção
+2025-04-25 19:47:32,787 - INFO - Correção aplicada em create_installer_images.py: Uso de print() em código de produção
+2025-04-25 19:47:32,789 - INFO - Correção aplicada em package_all.py: Uso de print() em código de produção
+2025-04-25 19:47:32,799 - INFO - Correção aplicada em zelopack_app.py: Uso de print() em código de produção
+2025-04-25 19:47:32,810 - INFO - Correção aplicada em check_admin.py: Uso de print() em código de produção
+2025-04-25 19:47:32,811 - INFO - Correção aplicada em check_alex.py: Uso de print() em código de produção
+2025-04-25 19:47:32,811 - INFO - Correção aplicada em login_as_alex.py: Uso de print() em código de produção
+2025-04-25 19:47:32,812 - INFO - Correção aplicada em update_db_schema.py: Uso de print() em código de produção
+2025-04-25 19:47:32,812 - INFO - Correção aplicada em update_report_schema.py: Uso de print() em código de produção
+2025-04-25 19:47:32,813 - INFO - Correção aplicada em fix_db.py: Uso de print() em código de produção
+2025-04-25 19:47:32,813 - INFO - Correção aplicada em extract_excel.py: Uso de print() em código de produção
+2025-04-25 19:47:32,814 - INFO - Correção aplicada em create_tables.py: Uso de print() em código de produção
+2025-04-25 19:47:32,815 - INFO - Correção aplicada em sync_database.py: Uso de print() em código de produção
+2025-04-25 19:47:32,816 - INFO - Correção aplicada em app.py: Uso de print() em código de produção
+2025-04-25 19:47:32,817 - INFO - Correção aplicada em run_tests.py: Uso de print() em código de produção
+2025-04-25 19:47:32,818 - INFO - Correção aplicada em auto_check.py: Uso de print() em código de produção
+2025-04-25 19:47:32,822 - INFO - Correção aplicada em blueprints/auth/__init__.py: Uso de print() em código de produção
+2025-04-25 19:47:32,822 - INFO - Correção aplicada em blueprints/auth/routes.py: Uso de print() em código de produção
+2025-04-25 19:47:32,823 - INFO - Correção aplicada em blueprints/templates/__init__.py: Uso de print() em código de produção
+2025-04-25 19:47:32,823 - INFO - Correção aplicada em blueprints/documents/__init__.py: Uso de print() em código de produção
+2025-04-25 19:47:32,824 - INFO - Correção aplicada em blueprints/forms/__init__.py: Uso de print() em código de produção
+2025-04-25 19:47:32,824 - INFO - Correção aplicada em blueprints/forms/routes.py: Uso de print() em código de produção
+2025-04-25 19:47:32,825 - INFO - Correção aplicada em blueprints/forms/routes_editor.py: Uso de print() em código de produção
+2025-04-25 19:47:32,825 - INFO - Correção aplicada em blueprints/editor/__init__.py: Uso de print() em código de produção
+2025-04-25 19:47:32,826 - INFO - Correção aplicada em blueprints/calculos/__init__.py: Uso de print() em código de produção
+2025-04-25 19:47:32,826 - INFO - Correção aplicada em utils/dashboard.py: Uso de print() em código de produção
+2025-04-25 19:47:32,827 - INFO - Total de 33 correções aplicadas
+2025-04-25 19:47:32,834 - INFO - Resultados salvos em tests/reports/check_report_20250425_194731.json
+2025-04-25 19:48:16,246 - INFO - Agendando verificações a cada 5 minutos
+2025-04-25 19:48:16,247 - INFO - Último check carregado: 20250425_194731
+2025-04-25 19:48:16,247 - INFO - Iniciando verificação automática (timestamp: 20250425_194816)
+2025-04-25 19:48:16,248 - INFO - Verificando arquivos estáticos...
+2025-04-25 19:48:16,288 - ERROR - Erro ao verificar static/img/logo.png: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+2025-04-25 19:48:16,288 - ERROR - Erro ao verificar static/img/favicon.png: 'utf-8' codec can't decode byte 0x89 in position 0: invalid start byte
+2025-04-25 19:48:16,288 - INFO - Verificados 21 arquivos estáticos
+2025-04-25 19:48:16,288 - INFO - Verificando arquivos Python...
+2025-04-25 19:48:16,365 - ERROR - Erro ao verificar blueprints/reports/__init__.py: multiple repeat at position 13
+2025-04-25 19:48:16,384 - ERROR - Erro ao verificar blueprints/dashboard/__init__.py: multiple repeat at position 13
+2025-04-25 19:48:16,493 - INFO - Verificados 53 arquivos Python
+2025-04-25 19:48:16,494 - INFO - Verificando templates...
+2025-04-25 19:48:16,504 - INFO - Verificados 39 arquivos de template
+2025-04-25 19:48:16,504 - INFO - Verificando modelos de banco de dados...
+2025-04-25 19:48:16,505 - INFO - Verificados 18 modelos de banco de dados
+2025-04-25 19:48:16,505 - INFO - Verificando endpoints de API...
+2025-04-25 19:48:16,511 - INFO - Verificados 97 endpoints de API em 13 arquivos
+2025-04-25 19:48:16,513 - INFO - Verificando mecanismos de autenticação...
+2025-04-25 19:48:16,517 - INFO - Executando testes de componentes...
+2025-04-25 19:48:17,334 - INFO - Testes de componentes: 0 passaram, 0 falharam
+2025-04-25 19:48:17,334 - INFO - Aplicando correções automáticas...
+2025-04-25 19:48:17,336 - INFO - Correção aplicada em static/js/login.js: Uso de console.log() em código de produção
+2025-04-25 19:48:17,336 - INFO - Correção aplicada em static/js/animations.js: Uso de console.log() em código de produção
+2025-04-25 19:48:17,337 - INFO - Correção aplicada em static/js/calculos.js: Uso de console.log() em código de produção
+2025-04-25 19:48:17,338 - INFO - Correção aplicada em static/js/calculos_ultra.js: Uso de console.log() em código de produção
+2025-04-25 19:48:17,351 - INFO - Total de 4 correções aplicadas
+2025-04-25 19:48:17,356 - INFO - Resultados salvos em tests/reports/check_report_20250425_194816.json
+2025-04-25 19:48:17,356 - ERROR - Erro no agendamento: Logger.debug() missing 1 required positional argument: 'msg'
+2025-04-25 19:56:36,804 - INFO - Agendando verificações a cada 5 minutos
+2025-04-25 19:56:36,805 - INFO - Último check carregado: 20250425_194816
+2025-04-25 19:56:36,805 - INFO - Iniciando verificação automática (timestamp: 20250425_195636)
+2025-04-25 19:56:36,805 - INFO - Verificando arquivos estáticos...
+2025-04-25 19:56:36,857 - ERROR - Erro ao verificar static/img/logo.png: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+2025-04-25 19:56:36,857 - ERROR - Erro ao verificar static/img/favicon.png: 'utf-8' codec can't decode byte 0x89 in position 0: invalid start byte
+2025-04-25 19:56:36,857 - INFO - Verificados 21 arquivos estáticos
+2025-04-25 19:56:36,857 - INFO - Verificando arquivos Python...
+2025-04-25 19:56:36,931 - ERROR - Erro ao verificar blueprints/reports/__init__.py: multiple repeat at position 13
+2025-04-25 19:56:36,952 - ERROR - Erro ao verificar blueprints/dashboard/__init__.py: multiple repeat at position 13
+2025-04-25 19:56:37,040 - INFO - Verificados 56 arquivos Python
+2025-04-25 19:56:37,040 - INFO - Verificando templates...
+2025-04-25 19:56:37,050 - INFO - Verificados 40 arquivos de template
+2025-04-25 19:56:37,050 - INFO - Verificando modelos de banco de dados...
+2025-04-25 19:56:37,050 - INFO - Verificados 18 modelos de banco de dados
+2025-04-25 19:56:37,050 - INFO - Verificando endpoints de API...
+2025-04-25 19:56:37,057 - INFO - Verificados 97 endpoints de API em 13 arquivos
+2025-04-25 19:56:37,057 - INFO - Verificando mecanismos de autenticação...
+2025-04-25 19:56:37,060 - INFO - Executando testes de componentes...
+2025-04-25 19:56:37,714 - INFO - Testes de componentes: 0 passaram, 0 falharam
+2025-04-25 19:56:37,714 - INFO - Aplicando correções automáticas...
+2025-04-25 19:56:37,716 - INFO - Correção aplicada em static/js/login.js: Uso de console.log() em código de produção
+2025-04-25 19:56:37,717 - INFO - Correção aplicada em static/js/animations.js: Uso de console.log() em código de produção
+2025-04-25 19:56:37,718 - INFO - Correção aplicada em static/js/calculos.js: Uso de console.log() em código de produção
+2025-04-25 19:56:37,719 - INFO - Correção aplicada em static/js/calculos_ultra.js: Uso de console.log() em código de produção
+2025-04-25 19:56:37,722 - INFO - Correção aplicada em app.py: Uso de logger.debug() em código de produção
+2025-04-25 19:56:37,724 - INFO - Total de 5 correções aplicadas
+2025-04-25 19:56:37,727 - INFO - Resultados salvos em tests/reports/check_report_20250425_195636.json

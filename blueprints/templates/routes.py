@@ -16,7 +16,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
 
 from . import templates_bp
-from app import db
+from extensions import db
 from blueprints.templates.forms import ImportTemplateForm, CreateTemplateForm, FillReportForm
 from models import ReportTemplate, Report, User, Client, Sample, ReportAttachment
 

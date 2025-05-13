@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurações de Segurança - ZeloPack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0">Configurações de Segurança</h4>
+                    <a href="{{ url_for('auth.usuarios') }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-users"></i> Gerenciar Usuários
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-shield-alt"></i> Estas configurações afetam a segurança do sistema ZeloPack. Apenas administradores podem modificá-las.
+                    </div>
+                    
+                    <div class="row">
+                        <!-- Autenticação em duas etapas -->
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Autenticação em Duas Etapas</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label>Status:</label>
+                                            <span class="badge {{ settings.two_factor_enabled ? 'bg-success' : 'bg-danger' }}">
+                                                {{ settings.two_factor_enabled ? 'Ativado' : 'Desativado' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label>Método:</label>
+                                            <span class="badge bg-primary">{{ settings.two_factor_method|upper }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="#" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-cog"></i> Configurar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Política de senhas -->
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Política de Senhas</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label>Tamanho mínimo:</label>
+                                            <span class="badge bg-secondary">{{ settings.password_min_length }} caracteres</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label>Expiração de senha:</label>
+                                            <span class="badge {{ settings.password_expiration_days ? 'bg-success' : 'bg-danger' }}">
+                                                {{ settings.password_expiration_days ? settings.password_expiration_days ~ ' dias' : 'Desativado' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label>Histórico de senhas:</label>
+                                            <span class="badge {{ settings.password_history_count ? 'bg-success' : 'bg-danger' }}">
+                                                {{ settings.password_history_count ? settings.password_history_count ~ ' senhas' : 'Desativado' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="#" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-cog"></i> Configurar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tentativas de login -->
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Controle de Tentativas de Login</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label>Tentativas máximas:</label>
+                                            <span class="badge bg-secondary">{{ settings.max_login_attempts }} tentativas</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label>Tempo de bloqueio:</label>
+                                            <span class="badge bg-secondary">{{ settings.login_lockout_minutes }} minutos</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="#" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-cog"></i> Configurar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Logs de atividade -->
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Logs de Atividade</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label>Retenção de logs:</label>
+                                            <span class="badge bg-secondary">{{ settings.log_retention_days }} dias</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="{{ url_for('auth.activities') if 'activities' in url_for('auth') else '#' }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-list"></i> Ver Atividades
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

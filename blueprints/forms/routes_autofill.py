@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from flask import render_template, jsonify, request, current_app, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app import db
+from extensions import db
 from models import FormPreset, StandardFields
 import json
 

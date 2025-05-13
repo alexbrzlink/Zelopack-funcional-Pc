@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurar Autenticador - ZeloPack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Configurar Aplicativo Autenticador</h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-mobile-alt fa-4x text-primary mb-3"></i>
+                        <h5>Instale um aplicativo autenticador</h5>
+                        <p class="text-muted">
+                            Se ainda não tiver um, instale um aplicativo autenticador como 
+                            Google Authenticator, Microsoft Authenticator ou Authy.
+                        </p>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        Siga os passos abaixo para configurar a autenticação em duas etapas.
+                    </div>
+                    
+                    <div class="steps">
+                        <div class="step mb-4">
+                            <h6>1. Escaneie o código QR</h6>
+                            <p class="text-muted small">
+                                Abra seu aplicativo autenticador e escaneie o código QR abaixo.
+                            </p>
+                            <div class="text-center py-3">
+                                <img src="{{ qr_code }}" alt="QR Code" class="img-fluid border p-2" style="max-width: 200px;">
+                            </div>
+                        </div>
+                        
+                        <div class="step mb-4">
+                            <h6>2. Ou adicione manualmente usando esta chave</h6>
+                            <p class="text-muted small">
+                                Se não conseguir escanear o QR code, você pode inserir esta chave manualmente.
+                            </p>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" value="{{ secret_key }}" readonly>
+                                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <h6>3. Verifique a configuração</h6>
+                            <p class="text-muted small">
+                                Digite o código de 6 dígitos gerado pelo seu aplicativo autenticador para verificar a configuração.
+                            </p>
+                            <form method="post" action="{{ url_for('auth.verify_totp_setup') }}">
+                                {{ csrf_token() }}
+                                <input type="hidden" name="secret_key" value="{{ secret_key }}">
+                                
+                                <div class="form-group mb-3">
+                                    <label for="code">Código de Verificação</label>
+                                    <input type="text" class="form-control" id="code" name="code" 
+                                           placeholder="Digite o código de 6 dígitos" required autocomplete="off">
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{{ url_for('auth.login') }}" class="btn btn-link">Cancelar</a>
+                                    <button type="submit" class="btn btn-primary">Verificar e Ativar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function copyToClipboard() {
+    const copyText = document.querySelector(".input-group input");
+    copyText.select();
+    document.execCommand("copy");
+    alert("Chave copiada para a área de transferência!");
+}
+</script>
+{% endblock %}
+{% endblock %}

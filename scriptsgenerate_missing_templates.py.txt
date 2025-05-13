@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+import os
+import re
+
+# 1) Caminho raiz do seu app
+APP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+# 2) Coleta de todos os nomes referenciados em render_template("x.html")
+pattern = re.compile(r'render_template\(\s*[\'"]([^\'"]+\.html)[\'"]')
+referenced = set()
+for subdir, _, files in os.walk(APP_ROOT):
+    for fname in files:
+        if fname.endswith(".py"):
+            path = os.path.join(subdir, fname)
+            text = open(path, encoding="utf-8").read()
+            for m in pattern.finditer(text):
+                referenced.add(m.group(1))
+
+# 3) Coleta de todos os templates existentes em templates/
+templates_dir = os.path.join(APP_ROOT, "templates")
+existing = set()
+for subdir, _, files in os.walk(templates_dir):
+    for fname in files:
+        if fname.endswith(".html"):
+            # caminho relativo a templates/
+            rel = os.path.relpath(os.path.join(subdir, fname), templates_dir)
+            existing.add(rel.replace("\\", "/"))
+
+# 4) Determina o conjunto de faltantes
+missing = sorted(referenced - existing)
+print(f"Templates referenciados: {len(referenced)}, encontrados: {len(existing)}, faltando: {len(missing)}")
+
+# 5) Cria um esqueleto básico para cada faltante
+skeleton = (
+    "{% extends 'base.html' %}\n"
+    "{% block content %}\n"
+    "<h1>Template: {name}</h1>\n"
+    "<p>– TODO: implementar esta página.</p>\n"
+    "{% endblock %}\n"
+)
+
+for tpl in missing:
+    dest = os.path.join(templates_dir, tpl)
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    with open(dest, "w", encoding="utf-8") as f:
+        f.write(skeleton.format(name=tpl))
+    print(f"  • Criado skeleton: {tpl}")

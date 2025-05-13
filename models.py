@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db
+from extensions import db
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey, Text
 from sqlalchemy.orm import relationship
 import json
@@ -510,9 +510,9 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='analista')  # admin, analista, gestor
     is_active = db.Column(db.Boolean, default=True)
-    last_login = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_login = db.Column(db.DateTime, nullable=True)
     last_ip = db.Column(db.String(45), nullable=True)  # Para armazenar o último IP usado
     last_user_agent = db.Column(db.String(255), nullable=True)  # Para armazenar informações do navegador
     
@@ -520,6 +520,14 @@ class User(UserMixin, db.Model):
     def is_admin(self):
         """Verifica se o usuário é administrador."""
         return self.role == 'admin'
+
+    @is_admin.setter
+    def is_admin(self, value):
+        """Define se o usuário é administrador."""
+        if value in [True, 1, '1', 'True', 'true', 'yes', 'y']:
+            self.role = 'admin'
+        else:
+            self.role = 'user'
     
     def __repr__(self):
         return f'<User {self.username}>'

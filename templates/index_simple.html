@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: #35424a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .success-box {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: inline-block;
+            background: #35424a;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #29353d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ZeloPack Industria</h1>
+        <p>Sistema de Gerenciamento</p>
+    </header>
+    
+    <div class="container">
+        <div class="success-box">
+            <h2>Configuração Concluída!</h2>
+            <p>O sistema está conectado ao banco de dados PostgreSQL com sucesso.</p>
+        </div>
+        
+        <div class="card">
+            <h2>Próximos Passos</h2>
+            <p>O sistema está funcionando com configurações básicas. Você pode:</p>
+            <ul>
+                <li>Configurar o banco de dados e criar o usuário admin</li>
+                <li>Testar a conexão com o banco de dados</li>
+                <li>Continuar o desenvolvimento do sistema</li>
+            </ul>
+            
+            <a href="/setup-db" class="btn">Configurar Banco de Dados</a>
+            <a href="/teste-db" class="btn">Testar Conexão</a>
+        </div>
+    </div>
+</body>
+</html>

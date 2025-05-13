@@ -1,0 +1,1 @@
+# Script para atualizar o banco de dados\nfrom app import app\nfrom extensions import db\n\nwith app.app_context():\n    # Atualizar o esquema do banco de dados\n    db.create_all()\n    print("Esquema do banco de dados atualizado com sucesso!")

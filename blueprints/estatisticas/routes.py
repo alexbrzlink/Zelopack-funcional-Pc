@@ -7,7 +7,8 @@ import io
 import base64
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from flask_login import login_required, current_user
-from models import TechnicalDocument, Supplier, User, UserActivity, db
+from models import TechnicalDocument, Supplier, User, UserActivity
+from extensions import db
 import matplotlib
 matplotlib.use('Agg')  # Define o backend não interativo
 import matplotlib.pyplot as plt

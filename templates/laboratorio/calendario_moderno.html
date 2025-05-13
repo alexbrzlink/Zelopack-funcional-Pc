@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendário de Atividades - Controle de Qualidade{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/calendar-zelopack.css') }}" rel="stylesheet">
+
+<style>
+    /* Esquema de cores da ZeloPack */
+    :root {
+        --zelopack-primary: #0069A0;      /* Azul principal da ZeloPack */
+        --zelopack-secondary: #00A1CB;    /* Azul claro/secundário */
+        --zelopack-accent: #00B3A0;       /* Verde água/turquesa */
+        --zelopack-dark: #004A70;         /* Azul escuro */
+        --zelopack-light: #E6F4F9;        /* Azul muito claro/background */
+        --zelopack-contrast: #F26522;     /* Laranja (cor de contraste) */
+        
+        /* Substituindo cores padrão pelas cores da ZeloPack */
+        --primary: var(--zelopack-primary);
+        --primary-light: var(--zelopack-secondary);
+        --primary-dark: var(--zelopack-dark);
+        --secondary: var(--zelopack-secondary);
+        --secondary-light: #7ED4E6;
+        --accent: var(--zelopack-accent);
+        --accent-light: #66D9C9;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+    }
+
+    body {
+        background-color: var(--zelopack-light);
+    }
+    
+    /* Estilos para a logo da ZeloPack */
+    .logo-container {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+    }
+    
+    .zelopack-logo {
+        height: 50px;
+        margin-right: 15px;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        transition: all 0.3s ease;
+    }
+    
+    .zelopack-logo:hover {
+        transform: scale(1.05);
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    }
+
+    .calendar-container {
+        margin-top: 2rem;
+        padding: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        background-color: #fff;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .calendar-header {
+        background: linear-gradient(135deg, var(--zelopack-primary) 0%, var(--zelopack-dark) 100%);
+        color: white;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .calendar-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+        transform: rotate(30deg);
+    }
+
+    .calendar-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .calendar-title i {
+        margin-right: 0.8rem;
+        font-size: 1.5rem;
+    }
+
+    .calendar-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .calendar-navigation {
+        display: flex;
+        align-items: center;
+    }
+
+    .calendar-current-month {
+        font-size: 1.4rem;
+        font-weight: 500;
+        padding: 0.5rem 1.5rem;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        margin: 0 1rem;
+    }
+
+    .calendar-nav-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .calendar-nav-btn:hover {
+        background-color: var(--zelopack-contrast);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .calendar-actions {
+        display: flex;
+        gap: 0.8rem;
+    }
+
+    .calendar-action-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        font-size: 0.9rem;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .calendar-action-btn:hover {
+        background-color: var(--zelopack-contrast);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .calendar-action-btn.active {
+        background-color: white;
+        color: var(--zelopack-primary);
+        border-color: var(--zelopack-primary);
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(0, 105, 160, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Container principal do calendário -->
+    <div class="calendar-container animate__animated animate__fadeIn">
+        <!-- Cabeçalho do calendário -->
+        <div class="calendar-header zelopack-theme">
+            <div class="logo-container">
+                <div class="zelopack-logo-text">ZELOPACK</div>
+            </div>
+            <h1 class="calendar-title"><i class="fas fa-calendar-alt"></i> Calendário de Atividades</h1>
+            
+            <div class="calendar-controls">
+                <div class="calendar-navigation">
+                    <button class="calendar-nav-btn" id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                    <div class="calendar-current-month">{{ mes_nome }} {{ ano }}</div>
+                    <button class="calendar-nav-btn" id="next-month"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                
+                <div class="calendar-actions">
+                    <a href="{{ url_for('laboratorio.calendario') }}" class="calendar-action-btn active"><i class="fas fa-calendar-day"></i> Mensal</a>
+                    <a href="{{ url_for('laboratorio.calendario_anual') }}" class="calendar-action-btn"><i class="fas fa-calendar-alt"></i> Anual</a>
+                    <a href="{{ url_for('laboratorio.imprimir_calendario', ano=ano, mes=mes) }}" class="calendar-action-btn" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Corpo do calendário - implementação com FullCalendar -->
+        <div class="calendar-body p-4" id="calendar"></div>
+        
+        <!-- Informações adicionais -->
+        <div class="calendar-info">
+            <div class="row mt-4 px-4 pb-4">
+                <div class="col-md-6">
+                    <div class="calendar-legend">
+                        <h3 class="legend-title"><i class="fas fa-info-circle"></i> Legenda</h3>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(to right, #3b82f6, #60a5fa);"></div>
+                                <div class="legend-text">1º Turno - 07:00h às 15:00h</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(to right, #10b981, #34d399);"></div>
+                                <div class="legend-text">2º Turno - 15:00h às 23:00h</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(to right, #f59e0b, #fbbf24);"></div>
+                                <div class="legend-text">3º Turno - 23:00h às 07:00h</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="calendar-notes">
+                        <h3 class="notes-title"><i class="fas fa-clipboard-list"></i> Anotações</h3>
+                        <div class="notes-content">
+                            <p><i class="fas fa-check-circle"></i> AOS DOMINGOS COM EXPEDIENTE, TODOS OS TURNOS REALIZAM ANÁLISE DE ÁGUA DE TODOS OS PONTOS</p>
+                            <p><i class="fas fa-check-circle"></i> TODOS TURNOS REALIZAM ANÁLISE DE PERÓXIDO CONCENTRADO (TBA) DAS 3 LINHAS DIARIAMENTE</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para detalhes do dia -->
+<div class="modal fade" id="dayDetailsModal" tabindex="-1" aria-labelledby="dayDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dayDetailsModalLabel">Detalhes do Dia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body" id="dayActivitiesDetails">
+                <!-- Conteúdo preenchido via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/pt-br.js"></script>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+
+<!-- Script personalizado do calendário ZeloPack (usando a nova versão) -->
+<script src="{{ url_for('static', filename='js/calendario-zelopack-new.js') }}"></script>
+{% endblock %}

@@ -6,7 +6,8 @@ import json
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from flask_login import login_required, current_user
-from models import Alert, User, db
+from models import Alert, User
+from extensions import db
 from utils.activity_logger import log_view, log_action
 
 # Configuração do logger

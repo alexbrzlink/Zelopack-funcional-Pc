@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 
-from app import db
+from extensions import db
 from models import CategoriaEstoque, ItemEstoque, MovimentacaoEstoque
 from . import estoque_bp
 

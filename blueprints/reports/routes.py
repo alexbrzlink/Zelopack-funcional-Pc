@@ -12,7 +12,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm, cm
 
-from app import db
+from extensions import db
 from models import Report, Category, Supplier
 from utils.search import search_reports
 from utils.file_handler import save_file, allowed_file, get_file_size

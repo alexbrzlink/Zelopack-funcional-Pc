@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Redefinir Senha de Usuário - ZeloPack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Redefinir Senha: {{ user.username }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{{ url_for('auth.reset_usuario_senha', user_id=user.id) }}">
+                        {{ csrf_token() }}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Você está definindo uma nova senha para o usuário <strong>{{ user.name }}</strong>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="password">Nova Senha</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <small class="form-text text-muted">
+                                A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.
+                            </small>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="confirm_password">Confirmar Senha</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+                        
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">Redefinir Senha</button>
+                            <a href="{{ url_for('auth.usuarios') }}" class="btn btn-secondary ml-2">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

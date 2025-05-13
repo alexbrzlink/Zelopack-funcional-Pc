@@ -30,7 +30,7 @@ try:
 except ImportError:
     convert_from_path = None
 
-from app import db
+from extensions import db
 from models import TechnicalDocument, DocumentAttachment, User
 from blueprints.documents import documents_bp
 from blueprints.documents.forms import DocumentForm, DocumentSearchForm

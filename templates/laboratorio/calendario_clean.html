@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendário de Atividades - ZeloPack{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    .calendar-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        background-color: white;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+    }
+    
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .calendar-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0098b3;
+    }
+    
+    .calendar-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .calendar-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    
+    .calendar-table th {
+        background-color: #0098b3;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .calendar-table td {
+        height: 120px;
+        width: 14.28%;
+        border: 1px solid #e0e0e0;
+        vertical-align: top;
+        padding: 8px;
+    }
+    
+    .calendar-table td:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .day-number {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+    
+    .today .day-number {
+        background-color: #0098b3;
+        color: white;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .other-month {
+        background-color: #f8f9fa;
+        color: #aaa;
+    }
+    
+    .activity {
+        margin-bottom: 5px;
+        padding: 6px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+    }
+    
+    .activity-item-1 {
+        background-color: #d1ecf1;
+        border-left: 3px solid #17a2b8;
+    }
+    
+    .activity-item-2 {
+        background-color: #d4edda;
+        border-left: 3px solid #28a745;
+    }
+    
+    .activity-item-3 {
+        background-color: #fff3cd;
+        border-left: 3px solid #ffc107;
+    }
+    
+    .activity:hover {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transform: translateX(3px);
+        transition: all 0.2s ease;
+    }
+    
+    .legenda-turno {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .legenda-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .legenda-cor {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border-radius: 4px;
+    }
+    
+    .notas {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1><i class="fas fa-calendar-alt"></i> Calendário de Atividades</h1>
+            
+            <!-- Botões de navegação superior -->
+            <div class="mb-3">
+                <!-- Botões Mensal/Anual no estilo original -->
+                <div class="d-flex gap-2 mb-2">
+                    <a href="{{ url_for('laboratorio.calendario') }}" class="btn btn-primary">
+                        <i class="far fa-calendar"></i> Calendário Mensal
+                    </a>
+                    <a href="{{ url_for('laboratorio.calendario_anual') }}" class="btn btn-outline-primary">
+                        <i class="far fa-calendar-alt"></i> Ver Ano Completo
+                    </a>
+                    <a href="{{ url_for('laboratorio.imprimir_calendario', ano=ano, mes=mes) }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-print"></i> Imprimir
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <h2 class="calendar-title">
+                {{ mes_nome }} {{ ano }}
+            </h2>
+            <div class="calendar-controls">
+                <a href="{{ url_for('laboratorio.calendario_clean', ano=ano-1 if mes==1 else ano, mes=12 if mes==1 else mes-1) }}" class="btn btn-outline-primary">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                <a href="{{ url_for('laboratorio.calendario_clean') }}" class="btn btn-primary">Hoje</a>
+                <a href="{{ url_for('laboratorio.calendario_clean', ano=ano+1 if mes==12 else ano, mes=1 if mes==12 else mes+1) }}" class="btn btn-outline-primary">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                
+                <!-- Seletor de Ano -->
+                <form method="get" action="{{ url_for('laboratorio.calendario_clean') }}" class="d-inline-block ms-2">
+                    <input type="hidden" name="mes" value="{{ mes }}">
+                    <select name="ano" class="form-select form-select-sm d-inline-block" style="width: 120px" onchange="this.form.submit()">
+                        {% for year in range(2023, 2031) %}
+                            <option value="{{ year }}" {% if year == ano %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+        
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th>Domingo</th>
+                    <th>Segunda</th>
+                    <th>Terça</th>
+                    <th>Quarta</th>
+                    <th>Quinta</th>
+                    <th>Sexta</th>
+                    <th>Sábado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Lógica para calcular o dia da semana do primeiro dia do mês -->
+                {% if ano == 2025 and mes == 5 %}
+                    {% set primeiro_dia_semana = 4 %} <!-- 1º de maio de 2025 é quinta-feira -->
+                {% else %}
+                    {% set primeiro_dia_semana = primeiro_dia.weekday() %}
+                    <!-- Converter de segunda=0 para domingo=0 -->
+                    {% set primeiro_dia_semana = (primeiro_dia_semana + 1) % 7 %}
+                {% endif %}
+                
+                {% set hoje = now().day if now().month == mes and now().year == ano else 0 %}
+                
+                <!-- Primeira semana com dias do mês anterior -->
+                <tr>
+                    {% for i in range(7) %}
+                        {% if i < primeiro_dia_semana %}
+                            <!-- Dias do mês anterior -->
+                            {% set dia_anterior = dias_no_mes_anterior - primeiro_dia_semana + i + 1 %}
+                            <td class="other-month">
+                                <div class="day-number">{{ dia_anterior }}</div>
+                            </td>
+                        {% else %}
+                            <!-- Primeiros dias do mu00eas atual -->
+                            {% set dia = i - primeiro_dia_semana + 1 %}
+                            <td {% if dia == hoje %}class="today"{% endif %}>
+                                <div class="day-number">{{ dia }}</div>
+                                {% if dia in atividades %}
+                                    {% for turno, ativs in atividades[dia].items() %}
+                                        {% for atividade in ativs %}
+                                            <div class="activity activity-item-{{ turno }}">
+                                                <strong>{{ turno }}º Turno:</strong> {{ atividade }}
+                                            </div>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                
+                <!-- Semanas restantes do mês -->
+                {% set dias_contador = 7 - primeiro_dia_semana + 1 %}
+                {% for semana in range((dias_no_mes - dias_contador) // 7 + 1) %}
+                    <tr>
+                        {% for dia in range(dias_contador + semana * 7, dias_contador + (semana + 1) * 7) %}
+                            {% if dia <= dias_no_mes %}
+                                <td {% if dia == hoje %}class="today"{% endif %}>
+                                    <div class="day-number">{{ dia }}</div>
+                                    {% if dia in atividades %}
+                                        {% for turno, ativs in atividades[dia].items() %}
+                                            {% for atividade in ativs %}
+                                                <div class="activity activity-item-{{ turno }}">
+                                                    <strong>{{ turno }}º Turno:</strong> {{ atividade }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                            {% else %}
+                                <!-- Dias do próximo mês -->
+                                {% set dia_proximo = dia - dias_no_mes %}
+                                <td class="other-month">
+                                    <div class="day-number">{{ dia_proximo }}</div>
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="legenda-turno">
+                    <h5><i class="fas fa-info-circle"></i> Legenda</h5>
+                    <div class="legenda-item">
+                        <div class="legenda-cor activity-item-1"></div>
+                        <div>1º Turno - 07:00h às 15:00h</div>
+                    </div>
+                    <div class="legenda-item">
+                        <div class="legenda-cor activity-item-2"></div>
+                        <div>2º Turno - 15:00h às 23:00h</div>
+                    </div>
+                    <div class="legenda-item">
+                        <div class="legenda-cor activity-item-3"></div>
+                        <div>3º Turno - 23:00h às 07:00h</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="notas">
+                    <h5><i class="fas fa-clipboard-list"></i> Anotações</h5>
+                    <p><i class="fas fa-check-circle text-primary"></i> <strong>AOS DOMINGOS COM EXPEDIENTE:</strong> TODOS OS TURNOS REALIZAM ANÁLISE DE ÁGUA DE TODOS OS PONTOS</p>
+                    <p><i class="fas fa-check-circle text-primary"></i> <strong>TODOS OS DIAS:</strong> TODOS TURNOS REALIZAM ANÁLISE DE PERÓXIDO CONCENTRADO (TBA) DAS 3 LINHAS</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,24 +3,180 @@
 {% block title %}Calendário de Atividades - Controle de Qualidade{% endblock %}
 
 {% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/calendar-modern.css') }}">
+<!-- Link para o FullCalendar (biblioteca moderna de calendário) -->
+<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/main.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/main.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-    .calendar-container {
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        padding: 15px;
-        margin-bottom: 30px;
-        border-radius: 5px;
+    body {
+        font-family: Arial, sans-serif;
     }
     
-    .calendar-title {
-        background-color: #6c757d;
-        color: white;
-        padding: 10px;
+    .calendar-container {
+        max-width: 100%;
+        margin: 20px auto;
+        background-color: white;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+    }
+    
+    .calendar-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .calendar-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0098b3;
+    }
+    
+    .calendar-controls {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn-primary {
+        background-color: #0098b3;
+        border-color: #0098b3;
+    }
+    
+    .btn-primary:hover {
+        background-color: #007a91;
+        border-color: #007a91;
+    }
+    
+    .calendar-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .calendar-table th {
+        background-color: #0098b3;
+        color: white;
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .calendar-table td {
+        height: 120px;
+        border: 1px solid #e0e0e0;
+        vertical-align: top;
+        padding: 8px;
+    }
+    
+    .day-number {
+        font-weight: bold;
+        font-size: 18px;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    .today .day-number {
+        background-color: #0098b3;
+        color: white;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .activity-list {
+        font-size: 14px;
+    }
+    
+    .activity {
+        margin-bottom: 5px;
+        padding: 5px;
         border-radius: 4px;
+    }
+    
+    .activity-item-1 {
+        background-color: #d1ecf1;
+        border-left: 3px solid #17a2b8;
+        margin-bottom: 5px;
+        padding: 6px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .activity-item-2 {
+        background-color: #d4edda;
+        border-left: 3px solid #28a745;
+        margin-bottom: 5px;
+        padding: 6px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .activity-item-3 {
+        background-color: #fff3cd;
+        border-left: 3px solid #ffc107;
+        margin-bottom: 5px;
+        padding: 6px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .activity:hover {
+        transform: translateX(3px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        transition: all 0.2s ease;
+    }
+    
+    .other-month {
+        color: #aaa;
+        background-color: #f8f9fa;
+    }
+    
+    .calendar-container::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(0, 152, 179, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+    
+    .calendar-title {
+        background: linear-gradient(135deg, #0098b3 0%, #006c84 100%);
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 108, 132, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .calendar-title::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="none"><path d="M0 20C0 8.954 8.954 0 20 0H80C91.046 0 100 8.954 100 20V80C100 91.046 91.046 100 80 100H20C8.954 100 0 91.046 0 80V20Z" fill="rgba(255,255,255,0.05)"/></svg>');
+        opacity: 0.1;
+        pointer-events: none;
     }
     
     .calendar-title h2 {
@@ -30,57 +186,193 @@
     
     .calendar-table {
         width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 15px;
+        border-collapse: separate;
+        border-spacing: 8px;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 1;
     }
     
     .calendar-table th {
-        background-color: #6c757d;
+        background: linear-gradient(135deg, #00a5c3 0%, #0078a3 100%);
         color: white;
         text-align: center;
-        padding: 8px;
+        padding: 16px 8px;
         font-weight: 600;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 152, 179, 0.2);
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .calendar-table th::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.3);
+        transform: scaleX(0.6);
+        transform-origin: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .calendar-table th:hover::after {
+        transform: scaleX(0.9);
     }
     
     .calendar-table td {
-        border: 1px solid #ddd;
-        height: 100px;
+        border: none;
+        height: 120px;
         vertical-align: top;
-        padding: 5px;
+        padding: 12px;
+        background-color: #f8f9fa;
+        border-radius: 14px;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+    
+    .calendar-table td::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(to right, transparent, rgba(0, 152, 179, 0.1), transparent);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .calendar-table td:hover {
+        background-color: #e9ecef;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        cursor: pointer;
+        z-index: 2;
+    }
+    
+    .calendar-table td:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .calendar-table td:active {
+        transform: translateY(-1px) scale(0.99);
+        transition: all 0.1s ease;
     }
     
     .calendar-table td.other-month {
-        background-color: #f8f9fa;
+        background-color: #ebedef;
         color: #aaa;
+    }
+    
+    .calendar-table td.other-month:hover {
+        background-color: #e2e5e8;
     }
     
     .calendar-day-number {
         font-weight: bold;
         font-size: 18px;
-        margin-bottom: 5px;
+        margin-bottom: 8px;
         display: inline-block;
+        position: relative;
+        padding: 2px 8px;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+    
+    .calendar-table td:hover .calendar-day-number {
+        background-color: #0098b3;
+        color: white;
     }
     
     .calendar-day-activities {
-        font-size: 12px;
+        font-size: 11px;
+        max-height: 75px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+    
+    .calendar-day-activities::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .calendar-day-activities::-webkit-scrollbar-thumb {
+        background-color: #0098b3;
+        border-radius: 4px;
     }
     
     .activity-item {
-        margin-bottom: 3px;
-        padding: 2px 5px;
-        border-radius: 3px;
+        margin-bottom: 6px;
+        padding: 5px 8px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        transform-origin: left;
+        position: relative;
+        overflow: hidden;
+        font-size: 11.5px;
+        font-weight: 500;
+    }
+    
+    .activity-item:hover {
+        transform: scale(1.05) translateX(3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+        z-index: 2;
+    }
+    
+    .activity-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: rgba(255,255,255,0.4);
+        transform: scaleY(0);
+        transform-origin: bottom;
+        transition: transform 0.2s ease;
+    }
+    
+    .activity-item:hover::before {
+        transform: scaleY(1);
     }
     
     .activity-item-1 {
-        background-color: #d1ecf1; /* Azul claro */
+        background: linear-gradient(135deg, #cff4fc 0%, #9de6f5 100%);
+        border-left: 3px solid #0dcaf0;
+        color: #055160;
+    }
+    
+    .activity-item-1:hover {
+        box-shadow: 0 4px 12px rgba(13, 202, 240, 0.2);
     }
     
     .activity-item-2 {
-        background-color: #d4edda; /* Verde claro */
+        background: linear-gradient(135deg, #d1f5e0 0%, #a7ebc3 100%); 
+        border-left: 3px solid #20c997;
+        color: #0a3622;
+    }
+    
+    .activity-item-2:hover {
+        box-shadow: 0 4px 12px rgba(32, 201, 151, 0.2);
     }
     
     .activity-item-3 {
-        background-color: #fff3cd; /* Amarelo claro */
+        background: linear-gradient(135deg, #fff8e1 0%, #ffe083 100%);
+        border-left: 3px solid #ffc107;
+        color: #664d03;
+    }
+    
+    .activity-item-3:hover {
+        box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
     }
     
     .month-selector {
@@ -99,11 +391,169 @@
     }
     
     .calendar-notes {
-        margin-top: 20px;
-        padding: 10px;
+        margin-top: 25px;
+        padding: 20px;
         background-color: #f8f9fa;
-        border-left: 4px solid #ffc107;
-        border-radius: 4px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .calendar-notes:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+    
+    .calendar-notes::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 5px;
+        background: linear-gradient(to bottom, #0098b3, #00d4eb);
+        border-radius: 5px 0 0 5px;
+    }
+    
+    .notes-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #0078a3;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .notes-title i {
+        color: #0098b3;
+        font-size: 1.3rem;
+    }
+    
+    .legend-container {
+        margin-top: 25px;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .legend-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+    
+    .legend-container::before {
+        content: '';
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(0, 152, 179, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+    }
+    
+    .legend-items {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 15px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 12px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        transition: all 0.2s ease;
+    }
+    
+    .legend-item:hover {
+        transform: translateX(5px);
+        background-color: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .legend-color {
+        width: 45px;
+        height: 24px;
+        border-radius: 8px;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+    }
+    
+    .legend-item:hover .legend-color {
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .legend-text {
+        font-weight: 500;
+        color: #1f2937;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+    }
+    
+    .legend-item:hover .legend-text {
+        color: #0078a3;
+    }
+    
+    .today-marker {
+        background-color: #007bff;
+        position: relative;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+    }
+    
+    .notes-content {
+        background-color: white;
+        padding: 18px;
+        border-radius: 12px;
+        margin-top: 15px;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.03), 0 5px 15px rgba(0,0,0,0.02);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .notes-content p {
+        margin-bottom: 12px;
+        padding: 10px 15px;
+        background-color: #f0f9fb;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        transform-origin: left;
+        position: relative;
+        border-left: 3px solid #0098b3;
+    }
+    
+    .notes-content p:hover {
+        transform: translateX(5px) scale(1.01);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        background-color: #e3f4f6;
+    }
+    
+    .notes-content p i {
+        color: #0098b3;
+        margin-right: 10px;
+        font-size: 1.1rem;
     }
     
     .print-calendar {
@@ -111,8 +561,28 @@
     }
     
     .today {
-        background-color: #f8f9fa;
-        border: 2px solid #007bff;
+        background-color: #e6f2ff;
+        border: none;
+        position: relative;
+    }
+    
+    .today:before {
+        content: '';
+        position: absolute;
+        top: -3px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(to right, #007bff, #00c6ff);
+        border-radius: 3px 3px 0 0;
+    }
+    
+    .today .calendar-day-number {
+        background-color: #007bff;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
     }
     
     @media print {
@@ -133,15 +603,200 @@
         .calendar-table td {
             height: 80px;
         }
+        
+        .calendar-table td:hover .calendar-day-number {
+            background-color: #0098b3;
+            color: white;
+        }
+        
+        .calendar-day-activities {
+            font-size: 11px;
+            max-height: 75px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        
+        .calendar-day-activities::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .calendar-day-activities::-webkit-scrollbar-thumb {
+            background-color: #0098b3;
+            border-radius: 4px;
+        }
+        
+        .activity-item {
+            margin-bottom: 4px;
+            padding: 3px 6px;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            transform-origin: left;
+        }
+        
+        .activity-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        
+        .activity-item-1 {
+            background: linear-gradient(135deg, #d1ecf1 0%, #b6e4ec 100%);
+            border-left: 3px solid #17a2b8;
+        }
+        
+        .activity-item-2 {
+            background: linear-gradient(135deg, #d4edda 0%, #b8e5c3 100%); 
+            border-left: 3px solid #28a745;
+        }
+        
+        .activity-item-3 {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffedb8 100%);
+            border-left: 3px solid #ffc107;
+        }
+        
+        .month-selector {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .month-selector .btn-group {
+            margin-left: 10px;
+        }
+        
+        .calendar-controls {
+            margin-top: 15px;
+        }
+        
+        .calendar-notes {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #0098b3;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .legend-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .legend-color {
+            width: 40px;
+            height: 20px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .today-marker {
+            background-color: #007bff;
+            position: relative;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .notes-content {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+        
+        .notes-content p {
+            margin-bottom: 8px;
+        }
+        
+        .print-calendar {
+            margin-bottom: 20px;
+        }
+        
+        .today {
+            background-color: #e6f2ff;
+            border: none;
+            position: relative;
+        }
+        
+        .today:before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, #007bff, #00c6ff);
+            border-radius: 3px 3px 0 0;
+        }
+        
+        .today .calendar-day-number {
+            background-color: #007bff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            
+            .calendar-container {
+                box-shadow: none;
+                padding: 0;
+            }
+            
+            .calendar-table td {
+                height: 80px;
+            }
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-12">
-            <h2 class="mb-3"><i class="fas fa-calendar-alt"></i> Calendário de Atividades - Controle de Qualidade</h2>
+<div class="container-fluid mt-4 pb-5">
+    <div class="calendar-wrapper animate__animated animate__fadeIn">
+        <div class="calendar-header">
+            <h2 class="calendar-title"><i class="fas fa-calendar-alt"></i> Calendário de Atividades</h2>
+            
+            <div class="calendar-controls">
+                <div class="calendar-month-selector">
+                    <button class="calendar-nav-btn" id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                    <div class="calendar-month-year" id="current-month">{{ mes_nome }} {{ ano }}</div>
+                    <button class="calendar-nav-btn" id="next-month"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                
+                <div class="calendar-views">
+                    <a href="{{ url_for('laboratorio.calendario') }}" class="calendar-view-btn active"><i class="fas fa-calendar-day"></i> Mensal</a>
+                    <a href="{{ url_for('laboratorio.calendario_anual') }}" class="calendar-view-btn"><i class="fas fa-calendar-alt"></i> Anual</a>
+                    <a href="{{ url_for('laboratorio.imprimir_calendario', ano=ano, mes=mes) }}" class="calendar-view-btn" target="_blank"><i class="fas fa-print"></i> Imprimir</a>
+                </div>
+            </div>
             
             <div class="card">
                 <div class="card-header bg-primary text-white">
@@ -168,87 +823,222 @@
                     </div>
                     
                     <!-- Calendário -->
-                    <div class="calendar-container">
-                        <table class="calendar-table">
-                            <thead>
-                                <tr>
-                                    <th>Domingo</th>
-                                    <th>Segunda-feira</th>
-                                    <th>Terça-feira</th>
-                                    <th>Quarta-feira</th>
-                                    <th>Quinta-feira</th>
-                                    <th>Sexta-feira</th>
-                                    <th>Sábado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% set primeiro_dia_semana = primeiro_dia.weekday() %}
-                                {% set hoje = now().day if now().month == mes and now().year == ano else 0 %}
-                                
-                                <tr>
-                                    {% for i in range(7) %}
-                                        {% if i < primeiro_dia.weekday() %}
-                                            {% set dia_anterior = dias_no_mes_anterior - primeiro_dia.weekday() + i + 1 %}
-                                            <td class="other-month">
-                                                <div class="calendar-day-number">{{ dia_anterior }}</div>
-                                            </td>
-                                        {% else %}
-                                            {% set dia = i - primeiro_dia.weekday() + 1 %}
-                                            <td {% if dia == hoje %}class="today"{% endif %}>
-                                                <div class="calendar-day-number">{{ dia }}</div>
-                                                <div class="calendar-day-activities">
-                                                    {% if dia in atividades %}
-                                                        {% for turno, ativs in atividades[dia].items() %}
-                                                            {% if ativs %}
-                                                                {% for atividade in ativs %}
-                                                                    <div class="activity-item activity-item-{{ turno }}">{{ turno }}º {{ atividade }}</div>
-                                                                {% endfor %}
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    {% endif %}
-                                                </div>
-                                            </td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                                
-                                {% set dias_contador = 7 - primeiro_dia.weekday() + 1 %}
-                                {% for semana in range((dias_no_mes - dias_contador) // 7 + 1) %}
+                    <div class="container mt-4">
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <h3 class="calendar-title">
+                                    <i class="fas fa-calendar-alt"></i> 
+                                    Calendário de Atividades - {{ mes_nome }} {{ ano }}
+                                </h3>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="calendar-controls">
+                                        <a href="{{ url_for('laboratorio.calendario', ano=ano-1 if mes==1 else ano, mes=12 if mes==1 else mes-1) }}" class="btn btn-outline-primary">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                        <a href="{{ url_for('laboratorio.calendario') }}" class="btn btn-primary">Hoje</a>
+                                        <a href="{{ url_for('laboratorio.calendario', ano=ano+1 if mes==12 else ano, mes=1 if mes==12 else mes+1) }}" class="btn btn-outline-primary">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </div>
+                                    <div class="year-selector">
+                                        <form method="get" action="{{ url_for('laboratorio.calendario') }}" class="d-flex align-items-center gap-2">
+                                            <input type="hidden" name="mes" value="{{ mes }}">
+                                            <select name="ano" class="form-select form-select-sm" style="width: 120px" onchange="this.form.submit()">
+                                                {% for year in range(2023, 2031) %}
+                                                    <option value="{{ year }}" {% if year == ano %}selected{% endif %}>{{ year }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </form>
+                                    </div>
+                                    <div>
+                                        <a href="{{ url_for('laboratorio.imprimir_calendario', ano=ano, mes=mes) }}" class="btn btn-outline-secondary" target="_blank">
+                                            <i class="fas fa-print"></i> Imprimir
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <table class="calendar-table">
+                                <thead>
                                     <tr>
-                                        {% for dia in range(dias_contador + semana * 7, dias_contador + (semana + 1) * 7) %}
-                                            {% if dia <= dias_no_mes %}
+                                        <th>Domingo</th>
+                                        <th>Segunda</th>
+                                        <th>Terça</th>
+                                        <th>Quarta</th>
+                                        <th>Quinta</th>
+                                        <th>Sexta</th>
+                                        <th>Sábado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Determinar o dia da semana do primeiro dia do mês -->
+                                    {% if ano == 2025 and mes == 5 %}
+                                        {% set primeiro_dia_semana = 4 %} <!-- 1º de maio de 2025 é quinta-feira -->
+                                    {% else %}
+                                        {% set primeiro_dia_semana = primeiro_dia.weekday() %}
+                                        <!-- Converter de segunda=0 para domingo=0 -->
+                                        {% set primeiro_dia_semana = (primeiro_dia_semana + 1) % 7 %}
+                                    {% endif %}
+                                    
+                                    {% set hoje = now().day if now().month == mes and now().year == ano else 0 %}
+                                    
+                                    <!-- Primeira semana com dias do mês anterior -->
+                                    <tr>
+                                        {% for i in range(7) %}
+                                            {% if i < primeiro_dia_semana %}
+                                                <!-- Dias do mês anterior -->
+                                                {% set dia_anterior = dias_no_mes_anterior - primeiro_dia_semana + i + 1 %}
+                                                <td class="other-month">
+                                                    <div class="day-number">{{ dia_anterior }}</div>
+                                                </td>
+                                            {% else %}
+                                                <!-- Primeiros dias do mês atual -->
+                                                {% set dia = i - primeiro_dia_semana + 1 %}
                                                 <td {% if dia == hoje %}class="today"{% endif %}>
-                                                    <div class="calendar-day-number">{{ dia }}</div>
-                                                    <div class="calendar-day-activities">
+                                                    <div class="day-number">{{ dia }}</div>
+                                                    <div class="activity-list">
                                                         {% if dia in atividades %}
                                                             {% for turno, ativs in atividades[dia].items() %}
-                                                                {% if ativs %}
-                                                                    {% for atividade in ativs %}
-                                                                        <div class="activity-item activity-item-{{ turno }}">{{ turno }}º {{ atividade }}</div>
-                                                                    {% endfor %}
-                                                                {% endif %}
+                                                                {% for atividade in ativs %}
+                                                                    <div class="activity activity-item-{{ turno }}">
+                                                                        <strong>{{ turno }}º Turno:</strong> {{ atividade }}
+                                                                    </div>
+                                                                {% endfor %}
                                                             {% endfor %}
                                                         {% endif %}
                                                     </div>
                                                 </td>
-                                            {% else %}
-                                                {% set dia_proximo = dia - dias_no_mes %}
-                                                <td class="other-month">
-                                                    <div class="calendar-day-number">{{ dia_proximo }}</div>
-                                                </td>
                                             {% endif %}
                                         {% endfor %}
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                    
+                                    <!-- Semanas completas do mês -->
+                                    {% set dias_contador = 7 - primeiro_dia_semana + 1 %}
+                                    {% for semana in range((dias_no_mes - dias_contador) // 7 + 1) %}
+                                        <tr>
+                                            {% for dia in range(dias_contador + semana * 7, dias_contador + (semana + 1) * 7) %}
+                                                {% if dia <= dias_no_mes %}
+                                                    <td {% if dia == hoje %}class="today"{% endif %}>
+                                                        <div class="day-number">{{ dia }}</div>
+                                                        <div class="activity-list">
+                                                            {% if dia in atividades %}
+                                                                {% for turno, ativs in atividades[dia].items() %}
+                                                                    {% for atividade in ativs %}
+                                                                        <div class="activity activity-item-{{ turno }}">
+                                                                            <strong>{{ turno }}º Turno:</strong> {{ atividade }}
+                                                                        </div>
+                                                                    {% endfor %}
+                                                                {% endfor %}
+                                                            {% endif %}
+                                                        </div>
+                                                    </td>
+                                                {% else %}
+                                                    <!-- Dias do próximo mês -->
+                                                    {% set dia_proximo = dia - dias_no_mes %}
+                                                    <td class="other-month">
+                                                        <div class="day-number">{{ dia_proximo }}</div>
+                                                    </td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header bg-info text-white">
+                                            <i class="fas fa-info-circle"></i> Legenda
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="activity-item-1 me-3" style="width: 40px; height: 20px; border-radius: 4px;"></div>
+                                                <div>1º Turno - 07:00h às 15:00h</div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div class="activity-item-2 me-3" style="width: 40px; height: 20px; border-radius: 4px;"></div>
+                                                <div>2º Turno - 15:00h às 23:00h</div>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <div class="activity-item-3 me-3" style="width: 40px; height: 20px; border-radius: 4px;"></div>
+                                                <div>3º Turno - 23:00h às 07:00h</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header bg-info text-white">
+                                            <i class="fas fa-info-circle"></i> Informações importantes
+                                        </div>
+                                        <div class="card-body">
+                                            <p><i class="fas fa-check-circle text-primary"></i> <strong>AOS DOMINGOS COM EXPEDIENTE:</strong> TODOS OS TURNOS REALIZAM ANÁLISE DE ÁGUA DE TODOS OS PONTOS</p>
+                                            <p><i class="fas fa-check-circle text-primary"></i> <strong>TODOS OS DIAS:</strong> TODOS TURNOS REALIZAM ANÁLISE DE PERÓXIDO CONCENTRADO (TBA) DAS 3 LINHAS</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <!-- Anotações / Legenda -->
-                    <div class="calendar-notes">
-                        <h5>Anotações:</h5>
-                        <p>AOS DOMINGOS COM EXPEDIENTE, TODOS OS TURNOS REALIZAM ANÁLISE DE ÁGUA DE TODOS OS PONTOS</p>
-                        <p>TODOS TURNOS REALIZAM ANÁLISE DE PERÓXIDO CONCENTRADO (TBA) DAS 3 LINHAS DIARIAMENTE</p>
+                    <!-- Legenda de cores e Anotações -->
+                    <div class="row">
+                        <!-- Legenda -->
+                        <div class="col-md-4">
+                            <div class="legend-container">
+                                <h5><i class="fas fa-swatchbook"></i> Legenda</h5>
+                                <div class="legend-items">
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background: linear-gradient(135deg, #d1ecf1 0%, #b6e4ec 100%); border-left: 3px solid #17a2b8;"></span>
+                                        <span class="legend-label">1º Turno</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background: linear-gradient(135deg, #d4edda 0%, #b8e5c3 100%); border-left: 3px solid #28a745;"></span>
+                                        <span class="legend-label">2º Turno</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background: linear-gradient(135deg, #fff3cd 0%, #ffedb8 100%); border-left: 3px solid #ffc107;"></span>
+                                        <span class="legend-label">3º Turno</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color today-marker"></span>
+                                        <span class="legend-label">Dia Atual</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Anotações -->
+                        <div class="col-md-8">
+                            <div class="calendar-notes">
+                                <h5><i class="fas fa-clipboard-list"></i> Anotações</h5>
+                                <div class="notes-content">
+                                    <p><i class="fas fa-info-circle text-primary"></i> AOS DOMINGOS COM EXPEDIENTE, TODOS OS TURNOS REALIZAM ANÁLISE DE ÁGUA DE TODOS OS PONTOS</p>
+                                    <p><i class="fas fa-info-circle text-primary"></i> TODOS TURNOS REALIZAM ANÁLISE DE PERÓXIDO CONCENTRADO (TBA) DAS 3 LINHAS DIARIAMENTE</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal para detalhes do dia -->
+                    <div class="modal fade" id="dayDetailsModal" tabindex="-1" role="dialog" aria-labelledby="dayDetailsModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="dayDetailsModalLabel">Detalhes do Dia</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="dayActivitiesDetails"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -258,9 +1048,410 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy.umd.min.js"></script>
 <script>
     function now() {
         return new Date();
     }
+    
+    $(document).ready(function() {
+        // Inicializar o calendário com animações
+        initCalendarWithAnimations();
+        
+        // Adicionar efeito de hover e clique nas células do calendário
+        setupDayClickEvents();
+        
+        // Configurar tooltips avançados
+        setupAdvancedTooltips();
+        
+        // Adicionar efeitos 3D sutis
+        addSubtle3DEffects();
+        
+        // Configurar navegação do calendário com efeitos
+        setupCalendarNavigation();
+        
+        // Adicionar funcionalidades de arraste para reorganização
+        setupDragInteractions();
+    });
+    
+    // Inicializar o calendário com animações
+    function initCalendarWithAnimations() {
+        // Entrada do conteúdo principal com zoom suave
+        $('.calendar-container').css({
+            'opacity': '0',
+            'transform': 'scale(0.95)'
+        }).animate({
+            opacity: 1,
+            transform: 'scale(1)'
+        }, 600, 'easeOutCubic');
+        
+        // Animar o cabeçalho separadamente
+        $('.calendar-title').css({
+            'opacity': '0',
+            'transform': 'translateY(-20px)'
+        }).delay(200).animate({
+            opacity: 1,
+            transform: 'translateY(0)'
+        }, 500, 'easeOutCubic');
+        
+        // Efeito de entrada em cascata para os dias
+        $('.calendar-table td').each(function(index) {
+            $(this).css({
+                'opacity': '0',
+                'transform': 'translateY(15px)'
+            }).delay(300 + (index % 7) * 50 + Math.floor(index / 7) * 100).animate({
+                opacity: 1,
+                transform: 'translateY(0)'
+            }, 400);
+        });
+        
+        // Efeito para cabeçalhos de dias da semana
+        $('.calendar-table th').each(function(index) {
+            $(this).css({
+                'opacity': '0',
+                'transform': 'translateY(-10px)'
+            }).delay(200 + index * 50).animate({
+                opacity: 1,
+                transform: 'translateY(0)'
+            }, 400);
+        });
+        
+        // Animar elementos adicionais 
+        $('.legend-item, .notes-content p').each(function(index) {
+            $(this).css({
+                'opacity': '0',
+                'transform': 'translateX(-15px)'
+            }).delay(800 + index * 120).animate({
+                opacity: 1,
+                transform: 'translateX(0)'
+            }, 500);
+        });
+    }
+    
+    // Configurar eventos de clique nos dias
+    function setupDayClickEvents() {
+        $('.calendar-table td').not('.other-month').on('click', function() {
+            // Efeito visual ao clicar
+            $(this).addClass('pulse-effect');
+            setTimeout(() => {
+                $(this).removeClass('pulse-effect');
+            }, 500);
+            
+            // Capturar o dia e as atividades
+            var day = $(this).find('.calendar-day-number').text();
+            var activities = $(this).find('.calendar-day-activities').html();
+            var currentMonth = '{{ mes_nome }}';
+            var currentYear = '{{ ano }}';
+            
+            // Configurar o modal com design melhorado
+            $('#dayDetailsModalLabel').html(
+                '<i class="fas fa-calendar-day text-primary me-2"></i>' + 
+                '<span class="day-number">' + day + '</span> de ' + 
+                '<strong>' + currentMonth + '</strong> ' + currentYear
+            );
+            
+            // Prepara o conteúdo do modal com estilo melhorado
+            var modalContent = '';
+            if (activities) {
+                modalContent = '<div class="day-activities-detail animated fadeIn">' + activities + '</div>';
+            } else {
+                modalContent = '<div class="empty-activities animated fadeIn"><i class="far fa-calendar-times text-muted me-2"></i><p class="text-muted">(Nenhuma atividade agendada para este dia)</p></div>';
+            }
+            
+            // Adiciona botões de ação
+            modalContent += '<div class="modal-actions mt-4">' +
+                '<button class="btn btn-sm btn-outline-primary me-2" onclick="showAddActivityForm()">' + 
+                '<i class="fas fa-plus-circle"></i> Adicionar Atividade</button> ' + 
+                '<button class="btn btn-sm btn-outline-info" onclick="showPrintDayView()">' + 
+                '<i class="fas fa-print"></i> Imprimir</button>' +
+                '</div>';
+            
+            // Inserir o conteúdo no modal
+            $('#dayActivitiesDetails').html(modalContent);
+            
+            // Mostrar o modal com animação
+            $('#dayDetailsModal').modal('show');
+            
+            // Aplicar efeitos dentro do modal depois que ele abrir
+            $('#dayDetailsModal').on('shown.bs.modal', function() {
+                $('.day-activities-detail, .empty-activities').addClass('animate__animated animate__fadeIn');
+                $('.modal-actions button').each(function(index) {
+                    $(this).addClass('animate__animated animate__fadeInUp')
+                           .css('animation-delay', (index * 0.1) + 's');
+                });
+            });
+        });
+    }
+    
+    // Configurar tooltips avançados
+    function setupAdvancedTooltips() {
+        // Tooltips para itens de atividade
+        tippy('.activity-item', {
+            content(reference) {
+                return reference.textContent;
+            },
+            placement: 'top',
+            arrow: true,
+            theme: 'light',
+            animation: 'shift-away',
+            inertia: true,
+            duration: [300, 250],
+            interactive: true
+        });
+        
+        // Tooltips para itens da legenda
+        tippy('.legend-item', {
+            content(reference) {
+                return reference.querySelector('.legend-text').textContent;
+            },
+            placement: 'right',
+            arrow: true,
+            theme: 'light',
+            animation: 'shift-away',
+            duration: [300, 250]
+        });
+        
+        // Tooltips para botões de navegação
+        tippy('#prev-month', {
+            content: 'Mês anterior',
+            placement: 'bottom'
+        });
+        
+        tippy('#next-month', {
+            content: 'Próximo mês',
+            placement: 'bottom'
+        });
+    }
+    
+    // Adicionar efeitos 3D sutis
+    function addSubtle3DEffects() {
+        // Efeito parallax sutil no container principal
+        $('.calendar-container').on('mousemove', function(e) {
+            const container = $(this);
+            const containerWidth = container.width();
+            const containerHeight = container.height();
+            const centerX = containerWidth / 2;
+            const centerY = containerHeight / 2;
+            const mouseX = e.pageX - container.offset().left;
+            const mouseY = e.pageY - container.offset().top;
+            const moveX = (mouseX - centerX) / (containerWidth / 10);
+            const moveY = (mouseY - centerY) / (containerHeight / 10);
+            
+            // Aplicar efeito sutil de inclinação 3D
+            container.css({
+                'transform': `perspective(1000px) rotateX(${-moveY * 0.5}deg) rotateY(${moveX * 0.5}deg) scale3d(1, 1, 1)`
+            });
+            
+            // Efeito de luz dinâmica na legenda e notas
+            $('.legend-container, .calendar-notes').css({
+                'background-image': `radial-gradient(circle at ${mouseX}px ${mouseY - container.offset().top}px, rgba(255,255,255,0.8) 0%, rgba(248,249,250,1) 50%)`
+            });
+        });
+
+        // Resetar transformações ao sair do container
+        $('.calendar-container').on('mouseleave', function() {
+            $(this).css({
+                'transform': 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)'
+            });
+            
+            $('.legend-container, .calendar-notes').css({
+                'background-image': 'none'
+            });
+        });
+    }
+    
+    // Configurar navegação do calendário
+    function setupCalendarNavigation() {
+        // Botão mês anterior com efeito
+        $('#prev-month').on('click', function(e) {
+            e.preventDefault();
+            const url = '{{ url_for("laboratorio.calendario", ano=ano_anterior, mes=mes_anterior) }}';
+            fadeOutAndNavigate(url);
+        });
+        
+        // Botão próximo mês com efeito
+        $('#next-month').on('click', function(e) {
+            e.preventDefault();
+            const url = '{{ url_for("laboratorio.calendario", ano=ano_proximo, mes=mes_proximo) }}';
+            fadeOutAndNavigate(url);
+        });
+    }
+    
+    // Efeito de transição ao navegar
+    function fadeOutAndNavigate(url) {
+        $('.calendar-container').animate({
+            opacity: 0,
+            transform: 'scale(0.95)'
+        }, 300, function() {
+            window.location.href = url;
+        });
+    }
+    
+    // Função para adicionar funcionalidade de arraste
+    function setupDragInteractions() {
+        // Efeito de arraste para atividades (apenas visual)
+        $('.activity-item').on('mousedown', function(e) {
+            const item = $(this);
+            // Adicionar classe para indicar que o item está sendo arrastado
+            item.addClass('dragging');
+            
+            // Posição inicial do mouse
+            const startX = e.pageX;
+            const startY = e.pageY;
+            const startLeft = item.position().left;
+            const startTop = item.position().top;
+            
+            // Efeito visual de arraste
+            $(document).on('mousemove.drag', function(e) {
+                const newX = e.pageX - startX;
+                const newY = e.pageY - startY;
+                
+                // Aplicar transformação limitada (apenas efeito visual)
+                item.css({
+                    'transform': `translate(${newX * 0.2}px, ${newY * 0.2}px) scale(1.05)`,
+                    'z-index': 100,
+                    'box-shadow': '0 10px 20px rgba(0,0,0,0.15)'
+                });
+            });
+            
+            // Encerrar o arraste ao soltar o mouse
+            $(document).on('mouseup.drag', function() {
+                // Restaurar o item à posição original com animação
+                item.animate({
+                    transform: 'translate(0, 0) scale(1)'
+                }, 300, function() {
+                    item.css({
+                        'transform': '',
+                        'z-index': '',
+                        'box-shadow': ''
+                    });
+                    item.removeClass('dragging');
+                });
+                
+                // Remover os eventos temporários
+                $(document).off('mousemove.drag mouseup.drag');
+                
+                // Mostrar mensagem de funcionalidade em desenvolvimento
+                showFloatingMessage('Movimento de tarefas em desenvolvimento!');
+            });
+        });
+    }
+    
+    // Função para mostrar o formulário de adicionar atividade (apenas visual)
+    function showAddActivityForm() {
+        // Criar o HTML do formulário
+        const formHtml = `
+            <div class="add-activity-form animate__animated animate__fadeIn">
+                <div class="form-group mb-3">
+                    <label for="activityType" class="form-label">Tipo de Atividade</label>
+                    <select class="form-select" id="activityType">
+                        <option value="1">ANÁLISE DE ÁGUA</option>
+                        <option value="2">SHELF LIFE 10D</option>
+                        <option value="3">E.T.E</option>
+                        <option value="4">TURBIDEZ</option>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="activityTurn" class="form-label">Turno</label>
+                    <select class="form-select" id="activityTurn">
+                        <option value="1">1º Turno (07:00h às 15:00h)</option>
+                        <option value="2">2º Turno (15:00h às 23:00h)</option>
+                        <option value="3">3º Turno (23:00h às 07:00h)</option>
+                    </select>
+                </div>
+                <div class="mt-3 text-end">
+                    <button class="btn btn-secondary me-2" onclick="closeAddActivityForm()">Cancelar</button>
+                    <button class="btn btn-primary" onclick="saveNewActivity()">Salvar</button>
+                </div>
+            </div>
+        `;
+        
+        // Substituir o conteúdo atual do modal
+        $('#dayActivitiesDetails').html(formHtml);
+    }
+    
+    // Função para fechar o formulário (apenas visual)
+    function closeAddActivityForm() {
+        // Simular clique no dia atual novamente para resetar o modal
+        const currentDay = $('.calendar-table td.today');
+        if (currentDay.length) {
+            currentDay.click();
+        } else {
+            $('#dayDetailsModal').modal('hide');
+        }
+    }
+    
+    // Função para salvar nova atividade (apenas visual)
+    function saveNewActivity() {
+        // Mostrar mensagem de funcionalidade em desenvolvimento
+        showFloatingMessage('Funcionalidade em desenvolvimento!');
+        // Fechar o formulário
+        closeAddActivityForm();
+    }
+    
+    // Função para mostrar visão de impressão (apenas visual)
+    function showPrintDayView() {
+        showFloatingMessage('Funcionalidade de impressão de dia específico em desenvolvimento!');
+    }
+    
+    // Função para mostrar mensagens flutuantes temporárias
+    function showFloatingMessage(message) {
+        // Remover qualquer mensagem existente
+        $('.floating-message').remove();
+        
+        // Criar uma nova mensagem
+        const messageElement = $(`<div class="floating-message animate__animated animate__fadeInUp"><i class="fas fa-info-circle me-2"></i>${message}</div>`);
+        $('body').append(messageElement);
+        
+        // Posicionar a mensagem na parte inferior central da tela
+        messageElement.css({
+            'position': 'fixed',
+            'bottom': '20px',
+            'left': '50%',
+            'transform': 'translateX(-50%)',
+            'background-color': 'rgba(13, 110, 253, 0.9)',
+            'color': 'white',
+            'padding': '12px 25px',
+            'border-radius': '30px',
+            'box-shadow': '0 5px 15px rgba(0,0,0,0.2)',
+            'z-index': '9999',
+            'font-weight': '500'
+        });
+        
+        // Remover a mensagem após alguns segundos
+        setTimeout(() => {
+            messageElement.removeClass('animate__fadeInUp').addClass('animate__fadeOutDown');
+            setTimeout(() => {
+                messageElement.remove();
+            }, 1000);
+        }, 3000);
+    }
+    
+    // Adicionar estilos dinâmicos para suportar novos efeitos
+    $(function() {
+        // Adicionar estilo para efeito de pulso
+        $('<style>')
+            .prop('type', 'text/css')
+            .html(`
+                @keyframes pulse-effect {
+                    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 152, 179, 0.7); }
+                    50% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(0, 152, 179, 0); }
+                    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 152, 179, 0); }
+                }
+                .pulse-effect {
+                    animation: pulse-effect 0.5s 1;
+                }
+                .add-activity-form {
+                    animation-duration: 0.5s;
+                }
+                .floating-message {
+                    animation-duration: 0.5s;
+                }
+                .empty-activities, .day-activities-detail {
+                    animation-duration: 0.5s;
+                }
+            `)
+            .appendTo('head');
+    });
 </script>
 {% endblock %}

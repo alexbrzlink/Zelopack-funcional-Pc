@@ -1,94 +1,114 @@
+#!/usr/bin/env python3
 """
-Script para criação das tabelas do banco de dados.
-Execute este script quando precisar criar ou atualizar as tabelas do banco de dados.
+Script para criação e atualização das tabelas do banco de dados.
+Execute este script da raiz do projeto (mesma pasta de main.py/app.py) para garantir que imports funcionem corretamente.
 """
-import os
 import sys
+import os
 import logging
-from datetime import datetime
 
-# Configurar logging
-logging.basicConfig(level=logging.DEBUG)
+# Ajusta o diretório de trabalho e o path para evitar imports duplicados
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Garante que o script seja executado a partir da raiz do projeto
+os.chdir(BASE_DIR)
+
+# Remove possíveis duplicações no sys.path
+if BASE_DIR in sys.path:
+    sys.path = [p for p in sys.path if os.path.abspath(p) != BASE_DIR]
+# Insere BASE_DIR uma única vez
+sys.path.insert(0, BASE_DIR)
+
+# Configuração de logging
+logging.basicConfig(level=logging.DEBUG, format='[%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
 
-def create_all_tables():
-    """Cria todas as tabelas no banco de dados."""
+# Importa a aplicação e o db de app.py (ou main.py se preferir)
+try:
     from app import app, db
-    import models
+    logger.debug("Importado app e db de app.py")
+except ModuleNotFoundError:
+    try:
+        from main import app, db
+        logger.debug("Importado app e db de main.py")
+    except ModuleNotFoundError:
+        logger.error("Não foi possível importar 'app' nem 'main'. Verifique se os arquivos existem em %s", BASE_DIR)
+        sys.exit(1)
 
+
+def create_all_tables():
+    """Cria todas as tabelas definidas nos modelos e inicializa dados padrão."""
     with app.app_context():
         try:
-            # Criar todas as tabelas definidas nos modelos
+            logger.debug("Criando tabelas no banco...")
             db.create_all()
-            logger.info("Todas as tabelas foram criadas com sucesso.")
-            
-            # Adicionar dados iniciais
-            initialize_default_data(db, models)
-            
+            logger.info("Tabelas criadas ou já existentes.")
+            initialize_default_data()
             return True
         except Exception as e:
-            logger.error(f"Erro ao criar tabelas: {str(e)}")
+            logger.error(f"Erro ao criar tabelas: {e}")
             return False
 
-def initialize_default_data(db, models):
-    """Inicializa o banco de dados com dados padrão."""
-    try:
-        # Categorias padrão
-        if models.Category.query.count() == 0:
-            default_categories = [
-                models.Category(name="Microbiológico", description="Laudos de análises microbiológicas"),
-                models.Category(name="Físico-Químico", description="Laudos de análises físico-químicas"),
-                models.Category(name="Sensorial", description="Laudos de análises sensoriais"),
-                models.Category(name="Embalagem", description="Laudos de análises de embalagens"),
-                models.Category(name="Shelf-life", description="Laudos de testes de vida útil")
-            ]
-            db.session.add_all(default_categories)
-            db.session.commit()
-            logger.info("Categorias padrão adicionadas.")
-    except Exception as e:
-        logger.error(f"Erro ao adicionar categorias: {str(e)}")
-        db.session.rollback()
 
-    try:
-        # Fornecedores padrão
-        if models.Supplier.query.count() == 0:
-            default_suppliers = [
-                models.Supplier(name="Fornecedor Interno", contact_name="Laboratório Zelopack", email="lab@zelopack.com.br"),
-                models.Supplier(name="Laboratório Externo", contact_name="Contato do Laboratório", email="contato@labexterno.com.br"),
-                models.Supplier(name="Consultoria ABC", contact_name="Consultor", email="contato@consultoriaabc.com.br")
-            ]
-            db.session.add_all(default_suppliers)
-            db.session.commit()
-            logger.info("Fornecedores padrão adicionados.")
-    except Exception as e:
-        logger.error(f"Erro ao adicionar fornecedores: {str(e)}")
-        db.session.rollback()
+def initialize_default_data():
+    """Insere categorias, fornecedores e usuário admin padrão se não existirem."""
+    # Importa modelos localmente para evitar mapeamentos duplicados
+    import models
+    Category = models.Category
+    Supplier = models.Supplier
+    User = models.User
 
-    try:
-        # Usuário admin padrão
-        if models.User.query.count() == 0:
-            admin_user = models.User(
-                username='admin',
-                email='admin@zelopack.com.br',
-                name='Administrador',
-                role='admin',
-                is_active=True
-            )
-            admin_user.set_password('Alex')
-            db.session.add(admin_user)
-            db.session.commit()
-            logger.info("Usuário administrador padrão criado.")
-    except Exception as e:
-        logger.error(f"Erro ao criar usuário admin: {str(e)}")
-        db.session.rollback()
+    # Categorias padrão
+    if Category.query.count() == 0:
+        defaults = [
+            ("Microbiológico", "Laudos de análises microbiológicas"),
+            ("Físico-Químico", "Laudos de análises físico-químicas"),
+            ("Sensorial", "Laudos de análises sensoriais"),
+            ("Embalagem", "Laudos de análises de embalagens"),
+            ("Shelf-life", "Laudos de testes de vida útil")
+        ]
+        for name, desc in defaults:
+            db.session.add(Category(name=name, description=desc))
+        db.session.commit()
+        logger.info("Categorias padrão adicionadas.")
 
-if __name__ == "__main__":
-    logger.debug("Iniciando criação das tabelas do banco de dados...")
+    # Fornecedores padrão
+    if Supplier.query.count() == 0:
+        defaults = [
+            ("Fornecedor Interno", "Laboratório Zelopack", "lab@zelopack.com.br"),
+            ("Laboratório Externo", "Contato do Laboratório", "contato@labexterno.com.br"),
+            ("Consultoria ABC", "Consultor", "contato@consultoriaabc.com.br")
+        ]
+        for name, contact, email in defaults:
+            db.session.add(Supplier(name=name, contact_name=contact, email=email))
+        db.session.commit()
+        logger.info("Fornecedores padrão adicionados.")
+
+    # Usuário admin padrão
+    if User.query.count() == 0:
+        admin_password = os.environ.get('ADMIN_PASSWORD', 'ChangeThis2024!')
+        admin = User(
+            username='admin',
+            email='admin@zelopack.com.br',
+            name='Administrador',
+            role='admin',
+            is_active=True
+        )
+        admin.set_password(admin_password)
+        db.session.add(admin)
+        db.session.commit()
+        logger.info("Usuário administrador padrão criado.")
+
+
+def main():
+    logger.debug("Iniciando processo de criação/verificação de tabelas...")
     success = create_all_tables()
-    
     if success:
         logger.debug("Processo concluído com sucesso!")
         sys.exit(0)
     else:
         logger.debug("Ocorreram erros durante o processo. Verifique os logs.")
         sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+

@@ -1,0 +1,28 @@
+2025-04-25 19:56:36,804 - INFO - Agendando verificações a cada 5 minutos
+2025-04-25 19:56:36,805 - INFO - Último check carregado: 20250425_194816
+2025-04-25 19:56:36,805 - INFO - Iniciando verificação automática (timestamp: 20250425_195636)
+2025-04-25 19:56:36,805 - INFO - Verificando arquivos estáticos...
+2025-04-25 19:56:36,857 - ERROR - Erro ao verificar static/img/logo.png: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+2025-04-25 19:56:36,857 - ERROR - Erro ao verificar static/img/favicon.png: 'utf-8' codec can't decode byte 0x89 in position 0: invalid start byte
+2025-04-25 19:56:36,857 - INFO - Verificados 21 arquivos estáticos
+2025-04-25 19:56:36,857 - INFO - Verificando arquivos Python...
+2025-04-25 19:56:36,931 - ERROR - Erro ao verificar blueprints/reports/__init__.py: multiple repeat at position 13
+2025-04-25 19:56:36,952 - ERROR - Erro ao verificar blueprints/dashboard/__init__.py: multiple repeat at position 13
+2025-04-25 19:56:37,040 - INFO - Verificados 56 arquivos Python
+2025-04-25 19:56:37,040 - INFO - Verificando templates...
+2025-04-25 19:56:37,050 - INFO - Verificados 40 arquivos de template
+2025-04-25 19:56:37,050 - INFO - Verificando modelos de banco de dados...
+2025-04-25 19:56:37,050 - INFO - Verificados 18 modelos de banco de dados
+2025-04-25 19:56:37,050 - INFO - Verificando endpoints de API...
+2025-04-25 19:56:37,057 - INFO - Verificados 97 endpoints de API em 13 arquivos
+2025-04-25 19:56:37,057 - INFO - Verificando mecanismos de autenticação...
+2025-04-25 19:56:37,060 - INFO - Executando testes de componentes...
+2025-04-25 19:56:37,714 - INFO - Testes de componentes: 0 passaram, 0 falharam
+2025-04-25 19:56:37,714 - INFO - Aplicando correções automáticas...
+2025-04-25 19:56:37,716 - INFO - Correção aplicada em static/js/login.js: Uso de console.log() em código de produção
+2025-04-25 19:56:37,717 - INFO - Correção aplicada em static/js/animations.js: Uso de console.log() em código de produção
+2025-04-25 19:56:37,718 - INFO - Correção aplicada em static/js/calculos.js: Uso de console.log() em código de produção
+2025-04-25 19:56:37,719 - INFO - Correção aplicada em static/js/calculos_ultra.js: Uso de console.log() em código de produção
+2025-04-25 19:56:37,722 - INFO - Correção aplicada em app.py: Uso de logger.debug() em código de produção
+2025-04-25 19:56:37,724 - INFO - Total de 5 correções aplicadas
+2025-04-25 19:56:37,727 - INFO - Resultados salvos em tests/reports/check_report_20250425_195636.json

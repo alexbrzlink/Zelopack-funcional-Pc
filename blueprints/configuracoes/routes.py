@@ -7,7 +7,8 @@ import os
 from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
-from models import SystemConfig, User, db
+from models import SystemConfig, User
+from extensions import db
 from werkzeug.security import generate_password_hash
 from utils.activity_logger import log_view, log_action
 from werkzeug.utils import secure_filename

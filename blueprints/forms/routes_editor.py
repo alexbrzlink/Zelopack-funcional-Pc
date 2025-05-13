@@ -33,7 +33,7 @@ from .online_editor import (
 )
 
 # Importações de modelos
-from app import db
+from extensions import db
 from models import FormPreset, StandardFields
 
 # Criar blueprint para o editor universal

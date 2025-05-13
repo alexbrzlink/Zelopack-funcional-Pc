@@ -76,7 +76,7 @@ def editor():
                          marcas=marcas, 
                          fornecedores_df=fornecedores_df)
 
-from app import socketio
+from extensions import socketio
 
 @socketio.on('update_content')
 def handle_update_content(data):

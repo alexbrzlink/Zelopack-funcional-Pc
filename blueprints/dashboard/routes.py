@@ -6,7 +6,7 @@ import json
 import os
 import logging
 
-from app import db
+from extensions import db
 from models import TechnicalDocument, User, Task, Note
 from blueprints.dashboard import dashboard_bp
 from blueprints.dashboard.models import Task, CalendarEvent, DashboardConfig, DashboardWidget, get_user_tasks, get_user_events, save_dashboard_config

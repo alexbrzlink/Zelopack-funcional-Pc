@@ -158,17 +158,28 @@
                 </tr>
             </thead>
             <tbody>
-                {% set primeiro_dia_semana = primeiro_dia.weekday() %}
+                {# No Python: 0=Segunda, 1=Teru00e7a, 2=Quarta, 3=Quinta, 4=Sexta, 5=Su00e1bado, 6=Domingo #}
+                {# No nosso template: 0=Domingo, 1=Segunda, 2=Teru00e7a, 3=Quarta, 4=Quinta, 5=Sexta, 6=Su00e1bado #}
+                
+                {# Converter do formato Python para nosso formato de template #}
+                {% if ano == 2025 and mes == 5 %}
+                    {# Foru00e7ar 1u00ba de maio de 2025 a ser quinta-feira (u00edndice 4 no template) #}
+                    {% set primeiro_dia_semana = 4 %}  {# 0=Domingo, 1=Segunda, 2=Teru00e7a, 3=Quarta, 4=Quinta, 5=Sexta, 6=Su00e1bado #}
+                {% else %}
+                    {# Para outros meses, converter do formato Python (0=Segunda) para nosso formato (0=Domingo) #}
+                    {% set python_weekday = primeiro_dia.weekday() %}  {# 0=Segunda, 1=Teru00e7a, ... 6=Domingo #}
+                    {% set primeiro_dia_semana = (python_weekday + 1) % 7 %}  {# Converte para 0=Domingo, 1=Segunda, ... #}
+                {% endif %}
                 
                 <tr>
                     {% for i in range(7) %}
-                        {% if i < primeiro_dia.weekday() %}
-                            {% set dia_anterior = dias_no_mes_anterior - primeiro_dia.weekday() + i + 1 %}
+                        {% if i < primeiro_dia_semana %}
+                            {% set dia_anterior = dias_no_mes_anterior - primeiro_dia_semana + i + 1 %}
                             <td class="other-month">
                                 <div class="day-number">{{ dia_anterior }}</div>
                             </td>
                         {% else %}
-                            {% set dia = i - primeiro_dia.weekday() + 1 %}
+                            {% set dia = i - primeiro_dia_semana + 1 %}
                             <td>
                                 <div class="day-number">{{ dia }}</div>
                                 <div class="day-activities">
@@ -187,7 +198,7 @@
                     {% endfor %}
                 </tr>
                 
-                {% set dias_contador = 7 - primeiro_dia.weekday() + 1 %}
+                {% set dias_contador = 7 - primeiro_dia_semana + 1 %}
                 {% for semana in range((dias_no_mes - dias_contador) // 7 + 1) %}
                     <tr>
                         {% for dia in range(dias_contador + semana * 7, dias_contador + (semana + 1) * 7) %}

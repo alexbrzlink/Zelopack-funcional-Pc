@@ -3,7 +3,7 @@ Eventos em tempo real para o editor de documentos.
 """
 from flask_socketio import emit, join_room, leave_room
 from flask import request
-from app import socketio
+from extensions import socketio
 import logging
 
 # Dicionário para armazenar o estado dos documentos em edição

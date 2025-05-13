@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendário de Atividades - Controle de Qualidade{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    
+    .calendar-container {
+        max-width: 100%;
+        margin: 20px auto;
+        background-color: white;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+    }
+    
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .calendar-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #0098b3;
+    }
+    
+    .calendar-controls {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn-primary {
+        background-color: #0098b3;
+        border-color: #0098b3;
+    }
+    
+    .btn-primary:hover {
+        background-color: #007a91;
+        border-color: #007a91;
+    }
+    
+    .calendar-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .calendar-table th {
+        background-color: #0098b3;
+        color: white;
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .calendar-table td {
+        height: 120px;
+        border: 1px solid #e0e0e0;
+        vertical-align: top;
+        padding: 8px;
+    }
+    
+    .day-number {
+        font-weight: bold;
+        font-size: 18px;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    
+    .today .day-number {
+        background-color: #0098b3;
+        color: white;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .activity-list {
+        font-size: 14px;
+    }
+    
+    .activity {
+        margin-bottom: 5px;
+        padding: 5px;
+        border-radius: 4px;
+    }
+    
+    .turno-1 {
+        background-color: #d1ecf1;
+        border-left: 3px solid #17a2b8;
+    }
+    
+    .turno-2 {
+        background-color: #d4edda;
+        border-left: 3px solid #28a745;
+    }
+    
+    .turno-3 {
+        background-color: #fff3cd;
+        border-left: 3px solid #ffc107;
+    }
+    
+    .other-month {
+        color: #aaa;
+        background-color: #f8f9fa;
+    }
+    
+    .legend {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border-radius: 4px;
+    }
+    
+    .notes {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <div class="calendar-title">
+                <i class="fas fa-calendar-alt"></i> Calendário de Atividades - {{ mes_nome }} {{ ano }}
+            </div>
+            <div class="calendar-controls">
+                <a href="{{ url_for('laboratorio.calendario_simples', ano=ano-1 if mes==1 else ano, mes=12 if mes==1 else mes-1) }}" class="btn btn-outline-primary"><i class="fas fa-chevron-left"></i></a>
+                <a href="{{ url_for('laboratorio.calendario_simples') }}" class="btn btn-primary">Hoje</a>
+                <a href="{{ url_for('laboratorio.calendario_simples', ano=ano+1 if mes==12 else ano, mes=1 if mes==12 else mes+1) }}" class="btn btn-outline-primary"><i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+        
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th>Domingo</th>
+                    <th>Segunda</th>
+                    <th>Terça</th>
+                    <th>Quarta</th>
+                    <th>Quinta</th>
+                    <th>Sexta</th>
+                    <th>Sábado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set hoje = now().day if now().month == mes and now().year == ano else 0 %}
+                
+                {% if ano == 2025 and mes == 5 %}
+                    {% set primeiro_dia_semana = 4 %} <!-- 1º de maio de 2025 é quinta-feira (índice 4) -->
+                {% else %}
+                    {% set primeiro_dia_semana = primeiro_dia.weekday() %} <!-- 0=Segunda, 1=Terça, ... -->
+                    <!-- Converter para formato 0=Domingo, 1=Segunda, ... -->
+                    {% set primeiro_dia_semana = (primeiro_dia_semana + 1) % 7 %}
+                {% endif %}
+                
+                <!-- Primeira linha com possíveis dias do mês anterior -->
+                <tr>
+                    {% for i in range(7) %}
+                        {% if i < primeiro_dia_semana %}
+                            <!-- Dias do mês anterior -->
+                            <td class="other-month">
+                                <div class="day-number">{{ dias_no_mes_anterior - primeiro_dia_semana + i + 1 }}</div>
+                            </td>
+                        {% else %}
+                            <!-- Primeiros dias do mês atual -->
+                            {% set dia = i - primeiro_dia_semana + 1 %}
+                            <td {% if dia == hoje %}class="today"{% endif %}>
+                                <div class="day-number">{{ dia }}</div>
+                                <div class="activity-list">
+                                    {% if dia in atividades %}
+                                        {% for turno, ativs in atividades[dia].items() %}
+                                            {% for atividade in ativs %}
+                                                <div class="activity turno-{{ turno }}">
+                                                    <strong>{{ turno }}º Turno:</strong> {{ atividade }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                
+                <!-- Semanas restantes -->
+                {% set dias_contador = 7 - primeiro_dia_semana + 1 %}
+                {% for semana in range((dias_no_mes - dias_contador) // 7 + 1) %}
+                    <tr>
+                        {% for dia in range(dias_contador + semana * 7, dias_contador + (semana + 1) * 7) %}
+                            {% if dia <= dias_no_mes %}
+                                <td {% if dia == hoje %}class="today"{% endif %}>
+                                    <div class="day-number">{{ dia }}</div>
+                                    <div class="activity-list">
+                                        {% if dia in atividades %}
+                                            {% for turno, ativs in atividades[dia].items() %}
+                                                {% for atividade in ativs %}
+                                                    <div class="activity turno-{{ turno }}">
+                                                        <strong>{{ turno }}º Turno:</strong> {{ atividade }}
+                                                    </div>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            {% else %}
+                                <!-- Dias do próximo mês -->
+                                <td class="other-month">
+                                    <div class="day-number">{{ dia - dias_no_mes }}</div>
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="legend">
+                    <h5><i class="fas fa-info-circle"></i> Legenda</h5>
+                    <div class="legend-item">
+                        <div class="legend-color turno-1"></div>
+                        <div>1º Turno - 07:00h às 15:00h</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color turno-2"></div>
+                        <div>2º Turno - 15:00h às 23:00h</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color turno-3"></div>
+                        <div>3º Turno - 23:00h às 07:00h</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="notes">
+                    <h5><i class="fas fa-clipboard-list"></i> Anotações</h5>
+                    <p><i class="fas fa-check-circle text-primary"></i> AOS DOMINGOS COM EXPEDIENTE, TODOS OS TURNOS REALIZAM ANÁLISE DE ÁGUA DE TODOS OS PONTOS</p>
+                    <p><i class="fas fa-check-circle text-primary"></i> TODOS TURNOS REALIZAM ANÁLISE DE PERÓXIDO CONCENTRADO (TBA) DAS 3 LINHAS DIARIAMENTE</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Ativar tooltips se bootstrap estiver disponível
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+    });
+</script>
+{% endblock %}

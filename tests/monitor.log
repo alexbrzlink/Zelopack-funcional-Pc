@@ -1,0 +1,10 @@
+2025-04-25 19:13:08,874 - INFO - Regras padrão criadas e salvas em tests/improvement_rules.json
+2025-04-25 19:13:08,874 - INFO - Iniciando ciclo de monitoramento
+2025-04-25 19:13:08,874 - INFO - Iniciando testes de componentes
+2025-04-25 19:13:15,264 - INFO - Testes de componentes concluídos com status: False
+2025-04-25 19:13:15,265 - INFO - Iniciando análise de código para melhorias
+2025-04-25 19:13:15,790 - INFO - Análise concluída, encontradas 609 possíveis melhorias
+2025-04-25 19:13:15,791 - INFO - Verificando métricas de performance
+2025-04-25 19:13:15,792 - INFO - Tentando corrigir automaticamente problemas (modo simulação)
+2025-04-25 19:13:15,807 - INFO - Correções automáticas: 254 simuladas
+2025-04-25 19:13:15,821 - INFO - Relatório completo gerado: tests/reports/zelopack_report_2025-04-25_19-13-15.json

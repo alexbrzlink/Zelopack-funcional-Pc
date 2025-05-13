@@ -9,7 +9,8 @@ import psycopg2
 from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, current_app, send_file
 from flask_login import login_required, current_user
-from models import DatabaseBackup, User, db
+from models import DatabaseBackup, User
+from extensions import db
 from utils.activity_logger import log_view, log_action
 from werkzeug.utils import secure_filename
 

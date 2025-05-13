@@ -8,59 +8,27 @@ DEFAULT_ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD") or "ChangeThis2024!"
 from datetime import datetime
 
 from flask import Flask, flash, redirect, url_for, session
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user, login_user
-from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.orm import DeclarativeBase
-from flask_socketio import SocketIO
-
-# Configurar logging
-logging.basicConfig(level=logging.DEBUG)
-
-# Classe base para modelos SQLAlchemy
-class Base(DeclarativeBase):
-    pass
-
-# Inicializar SQLAlchemy
-db = SQLAlchemy(model_class=Base)
+from extensions import db, csrf, socketio
 
 # Criar aplicação Flask
 app = Flask(__name__)
-# Uso de variável de ambiente para secret_key com geração de chave segura caso não definida
 import secrets
 app.secret_key = os.environ.get("SESSION_SECRET") or secrets.token_hex(32)
 
-# Inicializa o Socket.IO
-socketio = SocketIO(app, cors_allowed_origins="*")
-
-# Configurar banco de dados
-database_url = os.environ.get("DATABASE_URL")
-# PostgreSQL usa "postgres://" por padrão, mas SQLAlchemy prefere "postgresql://"
-if database_url and database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = database_url or "sqlite:///zelopack.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_recycle": 300,
-    "pool_pre_ping": True,
-}
-
-# Configurações para upload de arquivos
-app.config["UPLOAD_FOLDER"] = os.path.join(os.getcwd(), "uploads")
-app.config["ATTACHED_ASSETS_FOLDER"] = os.path.join(os.getcwd(), "attached_assets")
+# Configuração
+app.config.from_object('config.DevelopmentConfig')
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB limite máximo
 app.config["ALLOWED_EXTENSIONS"] = {"pdf", "doc", "docx", "xls", "xlsx"}
 
+# Inicializar componentes
+db.init_app(app)
+csrf.init_app(app)
+socketio.init_app(app, cors_allowed_origins="*")
+
 # Garantir que a pasta de uploads exista
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-
-# Inicializar o banco de dados
-db.init_app(app)
-
-# Inicializar proteção CSRF
-csrf = CSRFProtect()
-csrf.init_app(app)
 
 # Configuração do CSRF
 # Em ambiente de desenvolvimento, podemos deixar o CSRF mais permissivo
@@ -348,12 +316,10 @@ def login_direct():
     
     logger.debug("Login automático bem-sucedido! Redirecionando para o dashboard...")
     flash(f'Bem-vindo, {user.name}! Login automático realizado com sucesso.', 'success')
-    return redirect(url_for('dashboard.index'))
-    
 @app.route("/validar-sistema")
 def system_validation():
     """Validação completa do sistema para diagnóstico"""
-    from models import User, Category, Supplier, Report
+    from models_temp import User, Category, Supplier, Report
     from werkzeug.security import generate_password_hash, check_password_hash
     
     results = []
@@ -670,3 +636,15 @@ with app.app_context():
     except Exception as e:
         logger.debug(f"Erro ao criar usuário admin: {e}")
         db.session.rollback()
+
+# Rota principal do sistema
+@app.route('/')
+def index():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard.index'))
+    else:
+        return redirect(url_for('auth.login'))
+
+# Iniciar o servidor web quando executado diretamente
+if __name__ == "__main__":
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
